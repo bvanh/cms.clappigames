@@ -1,9 +1,9 @@
 import fetch from "isomorphic-unfetch";
-import apiLogin from "../api/urlLogin";
-
-function getToken(username, password) {
+import { apiLogin } from "../api/urlLogin";
+import { dispatchSwitchLogin } from "../redux/actions/index";
+function getTokenAndLogin(username, password) {
   let resStatus = 0;
-  fetch(apiLogin.rootApiLogin, {
+  const token = fetch(apiLogin.rootApiLogin, {
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     method: "POST",
     body: `username=${username}&password=${password}`
@@ -27,12 +27,15 @@ function getToken(username, password) {
         };
         localStorage.setItem("tokenCms", JSON.stringify(userToken));
         localStorage.setItem("accessTokenCms", JSON.stringify(userAccessToken));
+        // login function
+        dispatchSwitchLogin(true);
         return result;
       }
     })
     .catch(error => {
       console.log("Request failed", error);
     });
+  return token;
 }
 function getDuoIndex(userName) {
   const token = fetch(apiLogin.getSig + userName, {
@@ -56,4 +59,4 @@ function chekDuo(sigValue) {
     body: `sig_response=${sigValue}`
   });
 }
-export { getToken, getDuoIndex, chekDuo };
+export { getTokenAndLogin, getDuoIndex, chekDuo };

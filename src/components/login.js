@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import { Form, Icon, Input, Button, Checkbox } from "antd";
-import { getToken, getDuoIndex, chekDuo } from "../utils/checkLogin";
+import { getTokenAndLogin, getDuoIndex, chekDuo } from "../utils/checkLogin";
+import UploadMedia from "../components/media/upload";
+import Danhsach from "../components/users/listUsers";
 import DuoWebSDK from "duo_web_sdk";
-import apiLogin from "../api/urlLogin";
+import { apiLogin } from "../api/urlLogin";
 import "../App.css";
 const STATE_AUTH_PASSED = "STATE_AUTH_PASSED";
 const STATE_AUTH_FAILED = "STATE_AUTH_FAILED";
@@ -10,56 +12,57 @@ const STATE_AUTH_PENDING = "STATE_AUTH_PENDING";
 const SHOW_IFRAME = "SHOW_IFRAME";
 function NormalLoginForm(props) {
   const { getFieldDecorator } = props.form;
-  const [getSigRequest, setSigRequest] = useState("");
   const [duoAuthState, setDuoAuthState] = useState(STATE_AUTH_PENDING);
   const handleSubmit = async e => {
     e.preventDefault();
     props.form.validateFields((err, values) => {
       if (!err) {
-        getToken(values.username, values.password);
-        let getSig = getDuoIndex(values.username);
-        getSig.then(val => {
-          setDuoAuthState(SHOW_IFRAME);
-          initDuoFrame(val);
-        });
+        getTokenAndLogin(values.username, values.password);
+        // statusLogin.then(val => {
+        //   if(val!= undefined){
+
+        //   }
+
+        // let getSig = getDuoIndex(values.username);
+        // getSig.then(val => {
+        //   setDuoAuthState(STATE_AUTH_PASSED);
+        //   // initDuoFrame(val);
+        // });
       }
     });
   };
-  function initDuoFrame(json) {
-    console.log(json);
-    // initialize the frame with the parameters
-    // we have retrieved from the server
-    DuoWebSDK.init({
-      iframe: "duo-frame",
-      host: json.api_hostname,
-      sig_request: json.sig_request,
-      submit_callback: submitPostAction.bind(this)
-    });
-  }
-  function submitPostAction(form) {
-    console.log("form");
-    // // Submit the signed response to our backend for verification.
-    // const data = JSON.stringify({ signedResponse: form.sig_response.value });
-    fetch(apiLogin.checkLoginFinal, {
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      method: "POST",
-      body: `sig_response=${form.sig_response.value}`
-    })
-      .then(response => {
-        console.log(response);
-        if (response.ok) {
-          setDuoAuthState(STATE_AUTH_PASSED);
-          console.log(response);
-        } else {
-          setDuoAuthState(STATE_AUTH_FAILED);
-        }
-      })
-      .catch(error => console.log(error));
-  }
+  // function initDuoFrame(json) {
+  //   console.log(json);
+  //   // initialize the frame with the parameters
+  //   // we have retrieved from the server
+  //   DuoWebSDK.init({
+  //     iframe: "duo-frame",
+  //     host: json.api_hostname,
+  //     sig_request: json.sig_request,
+  //     submit_callback: submitPostAction.bind(this)
+  //   });
+  // }
+  // function submitPostAction(form) {
+  //   fetch(apiLogin.checkLoginFinal, {
+  //     headers: { "Content-Type": "application/x-www-form-urlencoded" },
+  //     method: "POST",
+  //     body: `sig_response=${form.sig_response.value}`
+  //   })
+  //     .then(response => {
+  //       console.log(response);
+  //       if (response.ok) {
+  //         setDuoAuthState(STATE_AUTH_PASSED);
+  //         console.log(response);
+  //       } else {
+  //         setDuoAuthState(STATE_AUTH_FAILED);
+  //       }
+  //     })
+  //     .catch(error => console.log(error));
+  // }
   let content = "";
   switch (duoAuthState) {
     case STATE_AUTH_PASSED:
-      content = <h3>Successfully passed Duo Authentication!</h3>;
+      // content = <Danhsach />;
       break;
     case STATE_AUTH_FAILED:
       content = <h3>fail</h3>;
@@ -117,6 +120,7 @@ function NormalLoginForm(props) {
             Or <a href="">register now!</a>
           </Form.Item>
         </Form>
+        // <UploadMedia/>
       );
       break;
   }
