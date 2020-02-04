@@ -1,9 +1,9 @@
 import fetch from "isomorphic-unfetch";
-import apiLogin from "../api/urlLogin";
+import { apiLogin } from "../api/urlLogin";
 
 function getToken(username, password) {
   let resStatus = 0;
-  fetch(apiLogin.rootApiLogin, {
+  const token = fetch(apiLogin.rootApiLogin, {
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     method: "POST",
     body: `username=${username}&password=${password}`
@@ -33,6 +33,7 @@ function getToken(username, password) {
     .catch(error => {
       console.log("Request failed", error);
     });
+  return token;
 }
 function getDuoIndex(userName) {
   const token = fetch(apiLogin.getSig + userName, {
