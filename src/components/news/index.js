@@ -4,7 +4,7 @@ import { gql } from "apollo-boost";
 import { useQuery, useMutation } from "@apollo/react-hooks";
 import {Link} from 'react-router-dom'
 
-function Danhsach() {
+function ListNews() {
   const [selectedRowKeys, setSelectRowKeys] = useState([]);
   const [pageIndex, setPageIndex] = useState({ currentPage: 1 });
   const AppQuery = gql`
@@ -97,4 +97,4 @@ function Danhsach() {
   );
 }
 
-export default Danhsach;
+export default ListNews;

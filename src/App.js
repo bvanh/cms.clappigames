@@ -5,10 +5,13 @@ import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import { connect } from "react-redux";
 import Danhsach from "./components/users/listUsers";
 import Detail from "./components/users/userDetail";
-import UpdateInforUser from './components/users/updateUser'
+import NewsEditor from "./components/news/newsEdit";
 import { ApolloProvider } from "@apollo/react-hooks";
 import ApolloClient from "apollo-boost";
 import checkTokenFinal from "./utils/checkToken";
+import { Layout, Menu, Icon } from "antd";
+
+const { Header, Content, Footer, Sider } = Layout;
 
 checkTokenFinal();
 function App(props) {
@@ -29,9 +32,66 @@ function App(props) {
   return (
     <ApolloProvider client={client}>
       <Router>
-        <Route exact path="/" render={() => <Danhsach />} />
-        <Route exact path="/users/detail" render={props => <Detail {...props} />} />
-        <Route exact path="/users/detail/update" render={props => <UpdateInforUser {...props} />} />
+        <Layout>
+          <Sider
+            collapsedWidth="0"
+            style={{
+              overflow: "auto"
+              // height: '170vh',
+              // position: 'fixed',
+              // left: 0,
+            }}
+            onBreakpoint={broken => {
+              console.log(broken);
+            }}
+            onCollapse={(collapsed, type) => {
+              console.log(collapsed, type);
+            }}
+          >
+            <div className="logo" />
+            <Menu theme="dark" mode="inline" defaultSelectedKeys={["1"]}>
+              <Menu.Item key="1">
+                <Link to="/">
+                  <Icon type="user" />
+                  <span className="nav-text">USERS</span>
+                </Link>
+              </Menu.Item>
+              <Menu.Item key="2">
+              <Link to="/news/edit">
+                <Icon type="video-camera" />
+                <span className="nav-text">NEWS</span>
+                </Link>
+              </Menu.Item>
+              <Menu.Item key="3">
+                <Icon type="upload" />
+                <span className="nav-text">MEDIA</span>
+              </Menu.Item>
+              <Menu.Item key="4">
+                <Icon type="user" />
+                <span className="nav-text">CHARGES</span>
+              </Menu.Item>
+            </Menu>
+          </Sider>
+          <Layout>
+            <Header style={{ background: "#fff", padding: 0 }} />
+            <Content style={{ margin: "24px 16px 0" }}>
+              <Route exact path="/" render={() => <Danhsach />} />
+              <Route
+                exact
+                path="/users/detail"
+                render={props => <Detail {...props} />}
+              />
+              <Route
+                exact
+                path="/news/edit"
+                render={props => <NewsEditor {...props} />}
+              />
+            </Content>
+            <Footer style={{ textAlign: "center" }}>
+              Ant Design ©2018 Created by Ant UED
+            </Footer>
+          </Layout>
+        </Layout>
       </Router>
     </ApolloProvider>
   );

@@ -8,8 +8,10 @@ function checkToken() {
   if (oldAccessToken === null) {
     dispatchSwitchLogin(false);
   } else if (currentTime - oldAccessToken.timestamp > 3300000) {
+    console.log('can refresh')
     return true;
   } else {
+    console.log('k can refresh')
     return false;
   }
 }
@@ -20,6 +22,7 @@ const getRefreshToken = () => {
     dispatchSwitchLogin(false);
     return false;
   } else {
+    console.log('chuan bi refresh')
     const db = fetch(apiToken.REFRESHTOKEN, {
       headers: {
         "Content-Type": "application/x-www-form-urlencoded"
