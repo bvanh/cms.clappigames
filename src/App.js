@@ -10,6 +10,7 @@ import { ApolloProvider } from "@apollo/react-hooks";
 import ApolloClient from "apollo-boost";
 import checkTokenFinal from "./utils/checkToken";
 import { Layout, Menu, Icon } from "antd";
+import ListNews from "./components/news/index";
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -23,6 +24,7 @@ function App(props) {
     );
   }
   const token = JSON.parse(localStorage.getItem("accessTokenCms"));
+  console.log(token);
   const client = new ApolloClient({
     uri: "https://api.cms.cubegame.vn/graphql",
     headers: {
@@ -57,9 +59,9 @@ function App(props) {
                 </Link>
               </Menu.Item>
               <Menu.Item key="2">
-              <Link to="/news/edit">
-                <Icon type="video-camera" />
-                <span className="nav-text">NEWS</span>
+                <Link to="/news">
+                  <Icon type="video-camera" />
+                  <span className="nav-text">NEWS</span>
                 </Link>
               </Menu.Item>
               <Menu.Item key="3">
@@ -81,6 +83,7 @@ function App(props) {
                 path="/users/detail"
                 render={props => <Detail {...props} />}
               />
+              <Route exact path="/news" render={() => <ListNews />} />
               <Route
                 exact
                 path="/news/edit"

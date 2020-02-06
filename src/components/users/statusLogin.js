@@ -1,5 +1,5 @@
 import React from "react";
-import { queryLogin } from "../../utils/queryQrapql";
+import { queryLogin } from "../../utils/queryUsers";
 import { useQuery, useMutation } from "@apollo/react-hooks";
 
 function LoginStatus() {

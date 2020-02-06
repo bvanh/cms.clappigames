@@ -1,59 +1,80 @@
 import React, { useState, useEffect } from "react";
 import { Table, Button, Pagination } from "antd";
-import { gql } from "apollo-boost";
+import moment from "moment";
 import { useQuery, useMutation } from "@apollo/react-hooks";
-import {Link} from 'react-router-dom'
+import { queryGetNews } from "../../utils/queryNews";
+import { Link } from "react-router-dom";
 
 function ListNews() {
   const [selectedRowKeys, setSelectRowKeys] = useState([]);
-  const [pageIndex, setPageIndex] = useState({ currentPage: 1 });
-  const AppQuery = gql`
-    query {
-      listUsersByType(currentPage: ${pageIndex.currentPage}, pageSize: 10, type: 0, search: "") {
-        count
-        rows {
-          userId
-          username
-          coin
-          email,
-          fakeId
-        }
-      }
-    }
-  `;
-  const { loading, error, data } = useQuery(AppQuery);
+  const [pageIndex, setPageIndex] = useState({
+    currentPage: 1,
+    pageSize: 10,
+    search: "",
+    fromDate: "06/28/2019",
+    toDate: "11/06/2019"
+  });
+
+  const { loading, error, data } = useQuery(
+    queryGetNews(
+      pageIndex.currentPage,
+      pageIndex.pageSize,
+      pageIndex.search,
+      pageIndex.fromDate,
+      pageIndex.toDate
+    )
+  );
   const [loading2, setLoading] = useState(false);
-  const columns = [
-    {
-      title: "Name",
-      dataIndex: "username"
-    },
-    {
-      title: "Age",
-      dataIndex: "userId"
-    },
-    {
-      title: "C.coin",
-      dataIndex: "coin"
-    },
-    {
-      title: "Email",
-      dataIndex: "email"
-    },
-    {
-      title: "Action",
-      key: "action",
-  
-      render: (text, record) => (
-        <span>
-          <Link to={`users/detail?userId=${record.userId}`}>Chi tiết</Link>
-        </span>
-       
-      )
-    }
-  ];
+
   if (loading) return "Loading...";
   if (error) return `Error! ${error.message}`;
+  const columns = [
+    {
+      title: "Title",
+      dataIndex: "title",
+      key: "title",
+      width: "25%"
+    },
+    {
+      title: "Type",
+      dataIndex: "type",
+      key: "type"
+    },
+    {
+      title: "ID",
+      dataIndex: "newsId",
+      key: "newsId"
+    },
+    {
+      title: "Platform",
+      dataIndex: "partner",
+      key: "platform",
+      render: index => <span>{index.partnerName}</span>
+    },
+
+    {
+      title: "Thời gian",
+      dataIndex: "createAt",
+      key: "time",
+      render: time => (
+        <span>{moment.utc(Number(time)).format("HH:mm DD-MM-YYYY")}</span>
+      )
+    },
+    {
+      title: "status",
+      dataIndex: "status",
+      key: "status"
+    },
+    {
+      title: 'Action',
+      key: 'action',
+      render: (text, record) => (
+        <span>
+          <Link to={`news/edit?newsId=${record.newsId}`}>Edit</Link>
+        </span>
+      ),
+    },
+  ];
   const onSelectChange = selectedRowKeys => {
     console.log("selectedRowKeys changed: ", selectedRowKeys);
     setSelectRowKeys(selectedRowKeys);
@@ -84,15 +105,15 @@ function ListNews() {
       <Table
         rowSelection={rowSelection}
         columns={columns}
-        dataSource={data.listUsersByType.rows}
+        dataSource={data.listNewsByType.rows}
         pagination={false}
       />
-      <Pagination
+      {/* <Pagination
         current={pageIndex.currentPage}
         total={data.listUsersByType.count}
         pageSize={10}
         onChange={goPage}
-      />
+      /> */}
     </div>
   );
 }

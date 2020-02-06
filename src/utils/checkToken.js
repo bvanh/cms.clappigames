@@ -1,17 +1,16 @@
 import { dispatchSwitchLogin } from "../redux/actions/index";
 import { apiToken, apiLogin } from "../api/urlLogin";
 
-
 function checkToken() {
   const oldAccessToken = JSON.parse(localStorage.getItem("accessTokenCms"));
   const currentTime = new Date().getTime();
   if (oldAccessToken === null) {
     dispatchSwitchLogin(false);
   } else if (currentTime - oldAccessToken.timestamp > 3300000) {
-    console.log('can refresh')
+    console.log("can refresh");
     return true;
   } else {
-    console.log('k can refresh')
+    console.log("k can refresh");
     return false;
   }
 }
@@ -22,7 +21,7 @@ const getRefreshToken = () => {
     dispatchSwitchLogin(false);
     return false;
   } else {
-    console.log('chuan bi refresh')
+    const token = JSON.parse(localStorage.getItem("accessTokenCms"));
     const db = fetch(apiToken.REFRESHTOKEN, {
       headers: {
         "Content-Type": "application/x-www-form-urlencoded"
@@ -42,6 +41,7 @@ const getRefreshToken = () => {
       .catch(function(error) {
         console.log("Request failed", error);
       });
+    console.log(token);
     return db;
   }
 };
