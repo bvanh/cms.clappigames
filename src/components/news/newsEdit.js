@@ -1,58 +1,96 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import JoditEditor from "jodit-react";
-import { queryNewsDetail } from "../../utils/queryNews";
-import { useQuery } from "@apollo/react-hooks";
+import { queryNewsDetail, queryUpdateNews } from "../../utils/queryNews";
+import { useLazyQuery, useMutation } from "@apollo/react-hooks";
 import { Input, Select } from "antd";
-import ListNews from ".";
+// import ListNews from ".";
 const { Option } = Select;
-const NewsEditor = props => {
-  const query = new URLSearchParams(props.location.search);
+const listType = {
+  type: ["NEWS", "EVENT", "SLIDER", "NOTICE", "GUIDE"],
+  status: ["COMPLETE", "DELETED", "INPUT"]
+};
+
+const NewsEditor = ({ demo }) => {
+  const query = new URLSearchParams(window.location.search);
   const editor = useRef(null);
-  const [content, setContent] = useState();
-  const [newsIndex, setNewsIndex] = useState({ title: "", type: "NEWS" });
-  const { loading, error, data, refetch } = useQuery(
+  const [newsContent, setNewsContent] = useState("");
+  const [newsIndex, setNewsIndex] = useState({
+    title: "",
+    type: "",
+    status: "",
+    content: ""
+  });
+  const [getData, { loading, data }]= useLazyQuery(
     queryNewsDetail(query.get("newsId"))
   );
-  if (loading) return "Loading...";
-  if (error) return `Error! ${error.message}`;
-  console.log(data)
+  useEffect(  () => {
+    async getData();
+    // if (data) {
+    //   setNewsIndex(data.listNews[0]);
+    //   console.log(newsIndex)
+    if (loading) return <p>Loading ...</p>;
+    if(data){
+      setNewsIndex(data.listNews[0]);
+    }
+    // }
+  },[]);
   const config = {
     readonly: false, // all options from https://xdsoft.net/jodit/doc/
     uploader: {
       insertImageAsBase64URI: true
     }
   };
+  //
+  const handleChangeType = (e, val) => {
+    setNewsIndex({ ...newsIndex, [val.props.name]: e });
+  };
+  const printType = listType.type.map((val, index) => (
+    <Option value={val} name="type" key={index}>
+      {val}
+    </Option>
+  ));
+  const printStatus = listType.status.map((val, index) => (
+    <Option value={val} name="status" key={index}>
+      {val}
+    </Option>
+  ));
+  const getTitle = e => {
+    setNewsIndex({ ...newsIndex, title: e.target.value });
+  };
+  const { content, title, status, type } = newsIndex;
   return (
-    <>
+    <div>
       <p>
         title{" "}
-        <Input
-          placeholder=""
-          // value={userInfor.sdt}
-          name="title"
-          // onChange={getInforUser}
-        />
+        <Input placeholder="" value={title} name="title" onChange={getTitle} />
       </p>
       <Select
-        defaultValue={newsIndex.type}
+        defaultValue={type}
         style={{ width: 120 }}
-        // onChange={handleChange}
+        onChange={(e, value) => handleChangeType(e, value)}
       >
-        <Option value="NEWS">NEWS</Option>
-        <Option value="lucy">Lucy</Option>
-        <Option value="Yiminghe">yiminghe</Option>
+        {printType}
+      </Select>
+      <Select
+        defaultValue={status}
+        style={{ width: 120 }}
+        onChange={(e, value) => handleChangeType(e, value)}
+      >
+        {printStatus}
       </Select>
       <JoditEditor
         ref={editor}
-        value={data.listNews[0].content}
+        value={content}
         config={config}
         tabIndex={1} // tabIndex of textarea
-        onBlur={newContent => setContent(newContent)} // preferred to use only this option to update the content for performance reasons
-        onChange={newContent => {
-          console.log(newContent);
-        }}
+        onBlur={newContent =>
+          setNewsIndex({ ...newsIndex, content: newContent })
+        } // preferred to use only this option to update the content for performance reasons
+        // onChange={newContent => {
+        //   setNewsIndex({ ...newsIndex, content: newContent })
+        // }}
       />
-    </>
+    </div>
   );
 };
 
