@@ -1,47 +1,50 @@
 import React, { useState } from "react";
 import { Upload, Icon, message, Button } from "antd";
-import { queryUploadImages } from "../../utils/queryMedia";
+import { queryUploadImages, queryUploadImage } from "../../utils/queryMedia";
 import { useMutation } from "@apollo/react-hooks";
 
 const { Dragger } = Upload;
 
 function UploadImages() {
-  const [fileListImage, setFileListImage] = useState([]);
+  const [fileImage, setFileListImage] = useState();
   const props = {
     name: "file",
     multiple: true,
     action: "https://www.mocky.io/v2/5cc8019d300000980a055e76",
     onChange(info) {
-    //   console.log(info);
+      //   console.log(info);
       const { status } = info.file;
       if (status !== "uploading") {
         // console.log(info.file, info.fileList);
       }
       if (status === "done") {
         message.success(`${info.file.name} file uploaded successfully.`);
-        console.log(info);
-        setFileListImage(info.fileList);
+        console.log(info.file);
+        setFileListImage(info.file.originFileObj);
       } else if (status === "error") {
         message.error(`${info.file.name} file upload failed.`);
       }
     }
   };
-  const [uploadImages] = useMutation(queryUploadImages, {
+  const [uploadImage] = useMutation(queryUploadImage, {
     variables: {
       partnerName: "clappigames",
-      files: fileListImage
+      file: [fileImage]
     }
   });
   const submitUploadImages = () => {
-    const demo = uploadImages();
-    console.log(demo, fileListImage);
+    const demo = uploadImage();
+    console.log(demo, fileImage);
   };
-  const onChange = ({ target: { validity, files } }) =>{
-    // validity.valid &&
-    // multipleUploadMutation({ variables: { files } }).then(() => {
-    //   apolloClient.resetStore()
-    console.log(validity,files)
+  // const onChange = e => {
+  //   setFileListImage(e.target.files[0]);
+  // };
+  const onChange = ({
+    target: {
+      validity,
+      files: [file]
     }
+  }) => validity.valid && uploadImage({ variables: { partnerName: "clappigames",file } });
   return (
     <>
       <Dragger {...props}>
@@ -52,7 +55,7 @@ function UploadImages() {
           Click or drag file to this area to upload
         </p>
       </Dragger>
-      <input type="file" multiple required onChange={onChange} />
+      <input type="file" onChange={onChange} />
       <Button onClick={submitUploadImages}>upload</Button>
     </>
   );

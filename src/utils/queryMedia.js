@@ -10,7 +10,7 @@ const queryListImages = gql`
   }
 `;
 const queryUploadImages = gql`
-  mutation MultipleUploadImages($partnerName: String!, $files: [Upload!]!) {
+  mutation MultipleUploadImages($partnerName: String!, $files: [Upload]) {
     multipleUploadImages(partnerName: $partnerName, files: $files) {
       id
       name
@@ -19,4 +19,14 @@ const queryUploadImages = gql`
     }
   }
 `;
-export { queryListImages, queryUploadImages };
+const queryUploadImage = gql`
+  mutation SingleUploadImage($partnerName: String!, $file: Upload) {
+    singleUploadImage(partnerName: $partnerName, file: $file) {
+      id
+      name
+      path
+      url
+    }
+  }
+`;
+export { queryListImages, queryUploadImages, queryUploadImage };

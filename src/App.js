@@ -11,6 +11,9 @@ import AddNews from "./components/news/addnews";
 import ListImages from "./components/media/index";
 import { ApolloProvider } from "@apollo/react-hooks";
 import ApolloClient from "apollo-boost";
+import { InMemoryCache } from "apollo-cache-inmemory";
+import { createUploadLink } from "apollo-upload-client";
+
 import checkTokenFinal from "./utils/checkToken";
 import { Layout, Menu, Icon } from "antd";
 
@@ -27,6 +30,10 @@ function App(props) {
 
   checkTokenFinal();
   const client = new ApolloClient({
+    // cache: new InMemoryCache(),
+    // link: createUploadLink({
+    //   uri: "https://api.cms.cubegame.vn/graphql"
+    // }),
     uri: "https://api.cms.cubegame.vn/graphql",
     headers: {
       Authorization: `Bearer ${props.token.accessToken}`
