@@ -20,20 +20,22 @@ const NewsEditor = ({ demo }) => {
     status: "",
     content: ""
   });
-  const [getData, { loading, data }]= useLazyQuery(
+  const { loading, data,error }= useLazyQuery(
     queryNewsDetail(query.get("newsId"))
   );
-  useEffect(  () => {
-    async getData();
-    // if (data) {
-    //   setNewsIndex(data.listNews[0]);
-    //   console.log(newsIndex)
-    if (loading) return <p>Loading ...</p>;
-    if(data){
-      setNewsIndex(data.listNews[0]);
-    }
-    // }
-  },[]);
+  if (loading) return "Loading...";
+  if (error) return `Error! ${error.message}`;
+  // useEffect(  () => {
+  //   async getData();
+  //   // if (data) {
+  //   //   setNewsIndex(data.listNews[0]);
+  //   //   console.log(newsIndex)
+  //   if (loading) return <p>Loading ...</p>;
+  //   if(data){
+  //     setNewsIndex(data.listNews[0]);
+  //   }
+  //   // }
+  // },[]);
   const config = {
     readonly: false, // all options from https://xdsoft.net/jodit/doc/
     uploader: {
