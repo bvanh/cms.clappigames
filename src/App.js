@@ -6,14 +6,15 @@ import { connect } from "react-redux";
 import Danhsach from "./components/users/listUsers";
 import Detail from "./components/users/userDetail";
 import NewsEditor from "./components/news/newsEdit";
+import ListNews from "./components/news/index";
+import AddNews from "./components/news/addnews";
+import Media from "./components/media/index";
 import { ApolloProvider } from "@apollo/react-hooks";
 import ApolloClient from "apollo-boost";
 import checkTokenFinal from "./utils/checkToken";
 import { Layout, Menu, Icon } from "antd";
-import ListNews from "./components/news/index";
 
 const { Header, Content, Footer, Sider } = Layout;
-
 checkTokenFinal();
 function App(props) {
   if (props.isLogin === false || props.isLogin === null) {
@@ -23,12 +24,24 @@ function App(props) {
       </Router>
     );
   }
-  const token = JSON.parse(localStorage.getItem("accessTokenCms"));
-  console.log(token);
+  
+  // const token = JSON.parse(localStorage.getItem("accessTokenCms"));
+  // // console.log(token);
+  // // let demo = null;
+  // let getToken = checkTokenFinal();
+  // console.log(getToken)
+  // // getToken.then(val => console.log(val));
+  // // console.log(getToken)
+  // // if (getToken === "none refresh") {
+  // //   setAccessToken(token);
+  // // } else {
+  // //   getToken.then(val => setAccessToken(val.accessToken));
+  // // }
+  checkTokenFinal();
   const client = new ApolloClient({
     uri: "https://api.cms.cubegame.vn/graphql",
     headers: {
-      Authorization: `Bearer ${token.accessToken}`
+      Authorization: `Bearer ${props.token.accessToken}`
     }
   });
   return (
@@ -65,8 +78,10 @@ function App(props) {
                 </Link>
               </Menu.Item>
               <Menu.Item key="3">
-                <Icon type="upload" />
-                <span className="nav-text">MEDIA</span>
+                <Link to="/media">
+                  <Icon type="upload" />
+                  <span className="nav-text">MEDIA</span>
+                </Link>
               </Menu.Item>
               <Menu.Item key="4">
                 <Icon type="user" />
@@ -89,6 +104,8 @@ function App(props) {
                 path="/news/edit"
                 render={props => <NewsEditor {...props} />}
               />
+              <Route exact path="/news/addnews" render={() => <AddNews />} />
+              <Route exact path="/media" render={() => <Media />} />
             </Content>
             <Footer style={{ textAlign: "center" }}>
               Ant Design ©2018 Created by Ant UED
@@ -101,7 +118,8 @@ function App(props) {
 }
 function mapStateToProps(state) {
   return {
-    isLogin: state.isLogin
+    isLogin: state.isLogin,
+    token: state.accessToken
   };
 }
 export default connect(mapStateToProps, null)(App);

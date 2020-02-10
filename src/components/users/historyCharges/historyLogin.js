@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Row, Col, Table, Menu, Icon } from "antd";
+import {Table, Pagination } from "antd";
 import { queryHistotyLogin } from "../../../utils/queryUsers";
 import { useQuery } from "@apollo/react-hooks";
 import moment from "moment";
@@ -37,12 +37,23 @@ const HistoryLogin = props => {
       key: "gameId"
     }
   ];
+  const { currentPage, pageSize } = pageIndex;
+  const goPage = val => {
+    setPageIndex({ ...pageIndex, currentPage: val });
+  };
   return (
     <>
       <Table
         dataSource={data.listLoginUsersByUser.rows}
         key={record => record.partner.partnerId}
         columns={columns}
+        pagination={false}
+      />
+      <Pagination
+        current={currentPage}
+        total={data.listLoginUsersByUser.count}
+        pageSize={pageSize}
+        onChange={goPage}
       />
     </>
   );

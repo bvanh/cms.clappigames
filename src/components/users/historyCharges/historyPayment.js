@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { Row, Col, Table, Menu, Icon } from "antd";
+import React, { useState } from "react";
+import { Table, Pagination } from "antd";
 import { queryHistotyPayment } from "../../../utils/queryUsers";
 import { useQuery } from "@apollo/react-hooks";
 import moment from "moment";
@@ -19,41 +19,54 @@ const HistoryPayment = props => {
       render: index => <span>{JSON.parse(index).gameUserId}</span>
     },
     {
-        title: "discount",
-        dataIndex: "payload",
-        key: "chargeId",
-        render: index => <span>{JSON.parse(index).discount}</span>
-      },
-      ,
+      title: "discount",
+      dataIndex: "payload",
+      key: "chargeId",
+      render: index => <span>{JSON.parse(index).discount}</span>
+    },
+    ,
     {
-        title: "createTime",
-        dataIndex: "payload",
-        key: "createtime",
-        render: index => <span>{JSON.parse(index).createAt}</span>
-      },
-      ,
+      title: "createTime",
+      dataIndex: "payload",
+      key: "createtime",
+      render: index => <span>{JSON.parse(index).createAt}</span>
+    },
+    ,
     {
-        title: "endTime",
-        dataIndex: "payload",
-        key: "endtime",
-        render: index => <span>{JSON.parse(index).endAt}</span>
-      },
-      ,
+      title: "endTime",
+      dataIndex: "payload",
+      key: "endtime",
+      render: index => <span>{JSON.parse(index).endAt}</span>
+    },
+    ,
     {
-        title: "coin",
-        dataIndex: "payload",
-        key: "coin",
-        render: index => <span>{JSON.parse(index).coin}</span>
-      },
+      title: "coin",
+      dataIndex: "payload",
+      key: "coin",
+      render: index => <span>{JSON.parse(index).coin}</span>
+    },
     {
       title: "trạng thái",
       dataIndex: "status",
       key: "status"
     }
   ];
+  const { currentPage, pageSize } = pageIndex;
+  const goPage = val => {
+    setPageIndex({ ...pageIndex, currentPage: val });
+  };
   return (
     <>
-      <Table dataSource={data.listPartnerChargesByUser.rows} columns={columns} />
+      <Table
+        dataSource={data.listPartnerChargesByUser.rows}
+        columns={columns}
+      />
+      <Pagination
+        current={currentPage}
+        total={data.listPartnerChargesByUser.count}
+        pageSize={pageSize}
+        onChange={goPage}
+      />
     </>
   );
 };

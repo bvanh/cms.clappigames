@@ -1,0 +1,25 @@
+const buttonListToolbar = [
+  "undo",
+  "redo",
+  "font",
+  "fontSize",
+  "formatBlock",
+  "bold",
+  "underline",
+  "italic",
+  "strike",
+  "fontColor",
+  "hiliteColor",
+  "removeFormat",
+  "outdent",
+  "indent",
+  "align",
+  "horizontalRule",
+  "list",
+  "link",
+  "image",
+  "fullScreen",
+  "codeView",
+  "preview"
+];
+export default buttonListToolbar;

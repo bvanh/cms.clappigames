@@ -13,7 +13,7 @@
   }
 }
 
-.App{
+.App {
   background-color: #f1f1f1;
   min-height: 100vh;
   display: flex;
@@ -42,4 +42,7 @@ iframe {
   max-width: 620px;
   height: 330px;
   border: none;
+}
+._se_tab_content_image>.se-dialog-body>.se-dialog-form:nth-of-type(1) {
+  display: none !important;
 }

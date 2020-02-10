@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Row, Col, Table, Menu, Icon } from "antd";
+import { Row, Col, Table, Pagination} from "antd";
 import { queryHistotyCharges } from "../../../utils/queryUsers";
 import { useQuery } from "@apollo/react-hooks";
 import moment from "moment";
@@ -55,11 +55,25 @@ const HistoryCharges = props => {
   const callback = key => {
     console.log(key);
   };
+  const { currentPage, pageSize } = pageIndex;
+  const goPage = val => {
+    setPageIndex({ ...pageIndex, currentPage: val });
+  };
   return (
     <>
       <Tabs onChange={callback} type="card">
         <TabPane tab="Lịch sử nạp Coin" key="1">
-          <Table dataSource={data.listChargesByUser.rows} columns={columns} />
+          <Table
+            dataSource={data.listChargesByUser.rows}
+            columns={columns}
+            pagination={false}
+          />
+          <Pagination
+            current={currentPage}
+            total={data.listChargesByUser.count}
+            pageSize={pageSize}
+            onChange={goPage}
+          />
         </TabPane>
         <TabPane tab="Lịch sử mua vật phẩm" key="2">
           <HistoryPayment userId={props.userId} />

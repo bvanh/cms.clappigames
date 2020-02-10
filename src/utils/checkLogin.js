@@ -1,6 +1,6 @@
 import fetch from "isomorphic-unfetch";
 import { apiLogin } from "../api/urlLogin";
-import { dispatchSwitchLogin } from "../redux/actions/index";
+import { dispatchSwitchLogin,dispatchSetAccessToken } from "../redux/actions/index";
 function getTokenAndLogin(username, password) {
   let resStatus = 0;
   const token = fetch(apiLogin.rootApiLogin, {
@@ -13,25 +13,26 @@ function getTokenAndLogin(username, password) {
       return response.json();
     })
     .then(result => {
-      if (resStatus !== 200) {
-        // thisObj.setState({
-        //   validateStatus: "error",
-        //   message: "Please doulbe check your information."
-        // });
-        console.log(result.status);
-      } else {
-        let userToken = { token: result, timestamp: new Date().getTime() };
-        let userAccessToken = {
-          accessToken: result.accessToken,
-          timestamp: new Date().getTime()
-        };
-        localStorage.setItem("tokenCms", JSON.stringify(userToken));
-        localStorage.setItem("accessTokenCms", JSON.stringify(userAccessToken));
+      // if (resStatus !== 200) {
+      //   // thisObj.setState({
+      //   //   validateStatus: "error",
+      //   //   message: "Please doulbe check your information."
+      //   // });
+      //   console.log(result.status);
+      // } else {
+      //   let userToken = { token: result, timestamp: new Date().getTime() };
+      //   let userAccessToken = {
+      //     accessToken: result.accessToken,
+      //     timestamp: new Date().getTime()
+      //   };
+      //   localStorage.setItem("tokenCms", JSON.stringify(userToken));
+      //   localStorage.setItem("accessTokenCms", JSON.stringify(userAccessToken));
+      //   dispatchSetAccessToken(userAccessToken)
         // login function
-        dispatchSwitchLogin(true);
+        // dispatchSwitchLogin(true);
         return result;
       }
-    })
+    )
     .catch(error => {
       console.log("Request failed", error);
     });

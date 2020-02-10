@@ -1,7 +1,6 @@
 const actions = {
-    SWITCH_LOGIN:'SWITCH_LOGIN'
-    // GET_DATA: "GET_DATA",
-    // GET_CONTENT:'GET_CONTENT'
-  };
-  export { actions };
-  
+  SWITCH_LOGIN: "SWITCH_LOGIN",
+  SET_ACCESSTOKEN: "SET_ACCESSTOKEN",
+  SET_TOKEN:'SET_TOKEN'
+};
+export { actions };

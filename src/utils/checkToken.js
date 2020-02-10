@@ -1,11 +1,13 @@
 import { dispatchSwitchLogin } from "../redux/actions/index";
 import { apiToken, apiLogin } from "../api/urlLogin";
+import { dispatchSetAccessToken } from "../redux/actions/index";
 
 function checkToken() {
   const oldAccessToken = JSON.parse(localStorage.getItem("accessTokenCms"));
   const currentTime = new Date().getTime();
   if (oldAccessToken === null) {
     dispatchSwitchLogin(false);
+    // return true;
   } else if (currentTime - oldAccessToken.timestamp > 3300000) {
     console.log("can refresh");
     return true;
@@ -36,6 +38,7 @@ const getRefreshToken = () => {
           timestamp: new Date().getTime()
         };
         localStorage.setItem("accessTokenCms", JSON.stringify(userAccessToken));
+        // dispatchSetAccessToken(userAccessToken);
         return result;
       })
       .catch(function(error) {
@@ -47,7 +50,8 @@ const getRefreshToken = () => {
 };
 function checkTokenFinal() {
   if (checkToken()) {
-    getRefreshToken();
-  }
+    let demo = getRefreshToken();
+    demo.then(val => dispatchSetAccessToken(val));
+  };
 }
 export default checkTokenFinal;

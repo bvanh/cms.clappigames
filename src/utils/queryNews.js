@@ -19,6 +19,16 @@ const queryGetNews = (currentPage, pageSize, searchValue, fromDate, toDate) => {
         }
     `;
 };
+const queryGetPlatform = () => {
+  return gql`
+    query {
+      listPartners {
+        partnerId
+        partnerName
+      }
+    }
+  `;
+};
 const queryNewsDetail = newsId => {
   return gql`
     query {
@@ -29,23 +39,49 @@ const queryNewsDetail = newsId => {
         createAt
         type
         status
+        platform
       }
     }
   `;
 };
-const queryUpdateNews = () => {
-  return gql`
-  mutation UpdateNews($newsId: Int!, $req: NewsRequest!!) {
+const UpdateNews = gql`
+  mutation UpdateNews($newsId: Int!, $req: NewsRequest!) {
     updateNews(newsId: $newsId, req: $req) {
       title
+      content
       platform
       type
       status
     }
   }
-  `;
+`;
+const createNews = gql`
+  mutation CreateNews($req: NewsRequest!) {
+    createNews(req: $req) {
+      title
+      content
+      status
+      type
+      platform
+    }
+  }
+`;
+const queryDeleteNews = gql`
+  mutation DeleteNews($newsId: Int!) {
+    deleteNews(newsId: $newsId) {
+      status
+    }
+  }
+`;
+export {
+  queryGetNews,
+  queryNewsDetail,
+  // queryUpdateNews,
+  queryGetPlatform,
+  UpdateNews,
+  createNews,
+  queryDeleteNews
 };
-export { queryGetNews, queryNewsDetail,queryUpdateNews };
 // mutation {
 //   updateNews(
 //     newsId: 77

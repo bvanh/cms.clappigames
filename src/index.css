@@ -11,3 +11,6 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+.se-dialog-body ~ .se-dialog-form ~ label {
+  display: none !important;
+}

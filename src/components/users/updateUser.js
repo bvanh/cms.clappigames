@@ -19,7 +19,7 @@ function UpdateInforUser(props) {
     dateOfBirth,
     dateOfIssue,
     placeOfIssue,
-    mobile,
+    mobile
   } = props.data;
   const [userInfor, setUserInfor] = useState({
     sdt: mobile,
@@ -65,36 +65,51 @@ function UpdateInforUser(props) {
       <Col md={16}>
         <p>thông tin tài khoản</p>
         <p>Email: {email}</p>
-        <Input
-          placeholder=""
-          value={userInfor.sdt}
-          name="sdt"
-          onChange={getInforUser}
-        />
+        <span>
+          số điện thoại{" "}
+          <Input
+            placeholder=""
+            value={userInfor.sdt}
+            name="sdt"
+            onChange={getInforUser}
+          />
+        </span>
+
         <p>Trang thai: {status}</p>
         <p>Thông tin cá nhân</p>
-        <Input
-          placeholder=""
-          value={userInfor.name}
-          name="name"
-          onChange={getInforUser}
-        />
-        <Input
-          placeholder=""
-          value={userInfor.gender}
-          name="gender"
-          onChange={getInforUser}
-        />
-        <Input
-          placeholder=""
-          value={userInfor.dateBirth}
-          name="dateBirth"
-          onChange={getInforUser}
-        />
+        <span>
+          userName{" "}
+          <Input
+            placeholder=""
+            value={userInfor.name}
+            name="name"
+            onChange={getInforUser}
+          />
+        </span>
+
+        <span>
+          gender
+          <Input
+            placeholder=""
+            value={userInfor.gender}
+            name="gender"
+            onChange={getInforUser}
+          />
+        </span>
+        <span>
+          ngày sinh
+          <Input
+            placeholder=""
+            value={userInfor.dateBirth}
+            name="dateBirth"
+            onChange={getInforUser}
+          />
+        </span>
         <p>cmnd: {identifyCard}</p>
         <p>ngày cấp:{dateOfIssue}</p>
         <p>noi cap:{placeOfIssue}</p>
-        <Button onClick={submitUpdate}>Update</Button><Button onClick={()=>props.switchEdit(false)}>Back</Button>
+        <Button onClick={submitUpdate}>Update</Button>
+        <Button onClick={() => props.switchEdit(false)}>Back</Button>
       </Col>
     </Row>
   );
