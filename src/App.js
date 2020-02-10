@@ -8,7 +8,7 @@ import Detail from "./components/users/userDetail";
 import NewsEditor from "./components/news/newsEdit";
 import ListNews from "./components/news/index";
 import AddNews from "./components/news/addnews";
-import Media from "./components/media/index";
+import ListImages from "./components/media/index";
 import { ApolloProvider } from "@apollo/react-hooks";
 import ApolloClient from "apollo-boost";
 import checkTokenFinal from "./utils/checkToken";
@@ -24,19 +24,7 @@ function App(props) {
       </Router>
     );
   }
-  
-  // const token = JSON.parse(localStorage.getItem("accessTokenCms"));
-  // // console.log(token);
-  // // let demo = null;
-  // let getToken = checkTokenFinal();
-  // console.log(getToken)
-  // // getToken.then(val => console.log(val));
-  // // console.log(getToken)
-  // // if (getToken === "none refresh") {
-  // //   setAccessToken(token);
-  // // } else {
-  // //   getToken.then(val => setAccessToken(val.accessToken));
-  // // }
+
   checkTokenFinal();
   const client = new ApolloClient({
     uri: "https://api.cms.cubegame.vn/graphql",
@@ -105,7 +93,7 @@ function App(props) {
                 render={props => <NewsEditor {...props} />}
               />
               <Route exact path="/news/addnews" render={() => <AddNews />} />
-              <Route exact path="/media" render={() => <Media />} />
+              <Route exact path="/media" render={() => <ListImages />} />
             </Content>
             <Footer style={{ textAlign: "center" }}>
               Ant Design ©2018 Created by Ant UED

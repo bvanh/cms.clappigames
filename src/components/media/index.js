@@ -1,36 +1,33 @@
-import React from 'react'
-import { Upload, Icon, message } from "antd";
+import React from "react";
+import { Upload, Icon, message, Row, Col, Card } from "antd";
+import UploadImages  from "./upload";
+import { useQuery } from "@apollo/react-hooks";
+import { queryListImages } from "../../utils/queryMedia";
 
 const { Dragger } = Upload;
 
 function Media() {
-  const props = {
-    name: "file",
-    multiple: true,
-    action: "https://www.mocky.io/v2/5cc8019d300000980a055e76",
-    onChange(info) {
-      const { status } = info.file;
-      if (status !== "uploading") {
-        console.log(info.file, info.fileList);
-      }
-      if (status === "done") {
-        message.success(`${info.file.name} file uploaded successfully.`);
-        console.log(info.file,info.fileList)
-      } else if (status === "error") {
-        message.error(`${info.file.name} file upload failed.`);
-      }
-    }
+  const gridStyle = {
+    width: "25%",
+    textAlign: "center"
   };
+  const { loading, error, data, refetch } = useQuery(queryListImages);
+  if (loading) return "Loading...";
+  if (error) return `Error! ${error.message}`;
 
+  const printListImages = data.listUploadedImages.map((val, index) => (
+    <Card.Grid style={gridStyle}>
+      <img src={val.url} alt={val.name} width="100%" />
+    </Card.Grid>
+  ));
+ 
   return (
-    <Dragger {...props}>
-      <p className="ant-upload-drag-icon">
-        <Icon type="inbox" />
-      </p>
-      <p className="ant-upload-text">
-        Click or drag file to this area to upload
-      </p>
-    </Dragger>
+    <Row>
+      <Col md={16}>{printListImages}</Col>
+      <Col md={8}>
+        <UploadImages />
+      </Col>
+    </Row>
   );
 }
 export default Media;

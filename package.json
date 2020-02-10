@@ -9,6 +9,7 @@
     "@testing-library/user-event": "^7.2.1",
     "antd": "^3.26.7",
     "apollo-boost": "^0.4.7",
+    "apollo-upload-client": "^12.1.0",
     "babel-plugin-import": "^1.13.0",
     "customize-cra": "^0.9.1",
     "duo_web_sdk": "git+https://github.com/duosecurity/duo_web_sdk.git",
