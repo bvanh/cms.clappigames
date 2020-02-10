@@ -3,7 +3,7 @@ import { Upload, Icon, message } from "antd";
 
 const { Dragger } = Upload;
 
-function UploadMedia() {
+function Media() {
   const props = {
     name: "file",
     multiple: true,
@@ -33,4 +33,4 @@ function UploadMedia() {
     </Dragger>
   );
 }
-export default UploadMedia;
+export default Media;

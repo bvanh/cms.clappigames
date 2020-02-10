@@ -6,15 +6,18 @@ import { connect } from "react-redux";
 import Danhsach from "./components/users/listUsers";
 import Detail from "./components/users/userDetail";
 import NewsEditor from "./components/news/newsEdit";
+import ListNews from "./components/news/index";
+import AddNews from "./components/news/addnews";
+import Media from "./components/media/index";
 import { ApolloProvider } from "@apollo/react-hooks";
 import ApolloClient from "apollo-boost";
 import checkTokenFinal from "./utils/checkToken";
 import { Layout, Menu, Icon } from "antd";
-import ListNews from "./components/news/index";
 
 const { Header, Content, Footer, Sider } = Layout;
 
-checkTokenFinal();
+let token = checkTokenFinal();
+
 function App(props) {
   if (props.isLogin === false || props.isLogin === null) {
     return (
@@ -65,8 +68,10 @@ function App(props) {
                 </Link>
               </Menu.Item>
               <Menu.Item key="3">
-                <Icon type="upload" />
-                <span className="nav-text">MEDIA</span>
+                <Link to="/media">
+                  <Icon type="upload" />
+                  <span className="nav-text">MEDIA</span>
+                </Link>
               </Menu.Item>
               <Menu.Item key="4">
                 <Icon type="user" />
@@ -89,6 +94,8 @@ function App(props) {
                 path="/news/edit"
                 render={props => <NewsEditor {...props} />}
               />
+              <Route exact path="/news/addnews" render={() => <AddNews />} />
+              <Route exact path="/media" render={() => <Media />} />
             </Content>
             <Footer style={{ textAlign: "center" }}>
               Ant Design ©2018 Created by Ant UED

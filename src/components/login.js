@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Form, Icon, Input, Button, Checkbox } from "antd";
 import { getTokenAndLogin, getDuoIndex, chekDuo } from "../utils/checkLogin";
-import UploadMedia from "../components/media/upload";
+import UploadMedia from "./media";
 import Danhsach from "../components/users/listUsers";
 import DuoWebSDK from "duo_web_sdk";
 import { apiLogin } from "../api/urlLogin";

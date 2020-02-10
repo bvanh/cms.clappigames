@@ -11,7 +11,7 @@ function checkToken() {
     return true;
   } else {
     console.log("k can refresh");
-    return false;
+    return true;
   }
 }
 const getRefreshToken = () => {
@@ -41,13 +41,14 @@ const getRefreshToken = () => {
       .catch(function(error) {
         console.log("Request failed", error);
       });
-    console.log(token);
+      console.log(token)
     return db;
   }
 };
 function checkTokenFinal() {
   if (checkToken()) {
-    getRefreshToken();
+   let demo= getRefreshToken();
+   return demo;
   }
 }
 export default checkTokenFinal;

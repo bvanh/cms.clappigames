@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import {
-  queryNewsDetail,
+  createNews,
   UpdateNews,
   queryGetPlatform
 } from "../../utils/queryNews";
@@ -18,37 +18,27 @@ const listType = {
   status: ["COMPLETE", "DELETED", "INPUT"]
 };
 
-const NewsEditor = () => {
-  const query = new URLSearchParams(window.location.search);
+const AddNews = () => {
   const [newContent, setNewContent] = useState("");
   const [listPlatform, setListPlatform] = useState([]);
   const [newsIndex, setNewsIndex] = useState({
     title: "",
-    type: "",
-    status: "",
+    type: "NEWS",
+    status: "COMPLETE",
     content: "",
-    platform: []
+    platform: "5A6DC0B0-B02B-40FB-BA2C-3C42EC442B89"
   });
-  const { loading, error, data } = useQuery(
-    queryNewsDetail(query.get("newsId")),
-    {
-      onCompleted: data => {
-        setNewsIndex(data.listNews[0]);
-      }
-    }
-  );
   useQuery(queryGetPlatform(), {
     onCompleted: dataPartner => {
       setListPlatform(dataPartner.listPartners);
     }
   });
   const { content, title, status, type, platform } = newsIndex;
-  const [updateNews] = useMutation(UpdateNews, {
+  const [updateNews] = useMutation(createNews, {
     variables: {
-      newsId: Number(query.get("newsId")),
       req: {
         title: title,
-        content: newContent,
+        content: content,
         platform: platform,
         type: type,
         status: status,
@@ -56,7 +46,7 @@ const NewsEditor = () => {
       }
     }
   });
-  if (loading) return <p>Loading ...</p>;
+  //   if (loading) return <p>Loading ...</p>;
   const handleChangeType = (e, val) => {
     setNewsIndex({ ...newsIndex, [val.props.name]: e });
   };
@@ -76,8 +66,15 @@ const NewsEditor = () => {
     </Option>
   ));
   const submitUpdateNews = () => {
-    let data = updateNews();
-    console.log(data);
+    if (title !== "" && content !== "") {
+      let data = updateNews();
+      data.then(val => {
+        alert("tao bai viet thanh cong");
+        setNewsIndex({ ...newsIndex, title: "", content: "" });
+      });
+    } else {
+      alert("thieu thong tin roi!");
+    }
   };
   return (
     <div>
@@ -119,10 +116,9 @@ const NewsEditor = () => {
         setContents={content}
         setOptions={{
           buttonList: [buttonListToolbar] // Or Array of button list, eg. [['font', 'align'], ['image']]
-          // Other option
         }}
         onChange={
-          newContent => setNewContent(newContent)
+          newContent => setNewsIndex({ ...newsIndex, content: newContent })
           // console.log(newContent)
         }
       />
@@ -130,4 +126,4 @@ const NewsEditor = () => {
   );
 };
 
-export default NewsEditor;
+export default AddNews;

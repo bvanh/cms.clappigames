@@ -2,11 +2,11 @@ import React, { useState, useEffect } from "react";
 import { Table, Button, Pagination } from "antd";
 import moment from "moment";
 import { useQuery, useMutation } from "@apollo/react-hooks";
-import { queryGetNews } from "../../utils/queryNews";
+import { queryGetNews, queryDeleteNews } from "../../utils/queryNews";
 import { Link } from "react-router-dom";
 
 function ListNews() {
-  const [selectedRowKeys, setSelectRowKeys] = useState([]);
+  const [selectedRows, setSelectRows] = useState([]);
   const [pageIndex, setPageIndex] = useState({
     currentPage: 1,
     pageSize: 10,
@@ -15,7 +15,7 @@ function ListNews() {
     toDate: "11/06/2019"
   });
 
-  const { loading, error, data } = useQuery(
+  const { loading, error, data, refetch } = useQuery(
     queryGetNews(
       pageIndex.currentPage,
       pageIndex.pageSize,
@@ -24,7 +24,14 @@ function ListNews() {
       pageIndex.toDate
     )
   );
-  const [loading2, setLoading] = useState(false);
+  useEffect(() => {
+    refetch();
+  }, []);
+  const [deleteNews] = useMutation(queryDeleteNews);
+  const submitDeleteNews = async value => {
+    await deleteNews({ variables: { newsId: value } });
+    refetch();
+  };
 
   if (loading) return "Loading...";
   if (error) return `Error! ${error.message}`;
@@ -66,54 +73,61 @@ function ListNews() {
       key: "status"
     },
     {
-      title: 'Action',
-      key: 'action',
+      title: "Action",
+      key: "action",
       render: (text, record) => (
         <span>
-          <Link to={`news/edit?newsId=${record.newsId}`}>Edit</Link>
+          <Link to={`news/edit?newsId=${record.newsId}`}>Edit</Link>|
+          <Link onClick={() => submitDeleteNews(record.newsId)}>Delete</Link>
         </span>
-      ),
-    },
+      )
+    }
   ];
-  const onSelectChange = selectedRowKeys => {
-    console.log("selectedRowKeys changed: ", selectedRowKeys);
-    setSelectRowKeys(selectedRowKeys);
-  };
-  const rowSelection = {
-    selectedRowKeys,
-    onChange: onSelectChange
-  };
-  const hasSelected = selectedRowKeys.length > 0;
+  // const onSelectChange = (selectedRowKeys, selectedRows) => {
+  //   console.log("selectedRowKeys changed: ", selectedRowKeys, selectedRows);
+  //   setSelectRowKeys(selectedRowKeys);
+  // };
+  // const rowSelection = {
+  //   onChange: (selectedRowKeys, selectedRows) => {
+  //     setSelectRows(selectedRows);
+  //     console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+  //   }
+  // };
+  // const hasSelected = selectedRows.length > 0;
   const goPage = pageNumber => {
-    setPageIndex({ currentPage: pageNumber });
+    setPageIndex({ ...pageIndex, currentPage: pageNumber });
   };
+  // const filterData=data.listNewsByType.rows.filter(val=>val.status!=='DELETED')
   return (
     <div>
       <div style={{ marginBottom: 16 }}>
-        <Button
+        {/* <Button
           type="primary"
           // onClick={this.start}
           disabled={!hasSelected}
           loading={loading2}
         >
           Reload
+        </Button> */}
+        <Button type="primary">
+          <Link to="/news/addnews">Addnew</Link>
         </Button>
-        <span style={{ marginLeft: 8 }}>
-          {hasSelected ? `Selected ${selectedRowKeys.length} items` : ""}
-        </span>
+        {/* <span style={{ marginLeft: 8 }}>
+          {hasSelected ? `Selected ${selectedRows.length} items` : ""}
+        </span> */}
       </div>
       <Table
-        rowSelection={rowSelection}
+        // rowSelection={rowSelection}
         columns={columns}
         dataSource={data.listNewsByType.rows}
         pagination={false}
       />
-      {/* <Pagination
+      <Pagination
         current={pageIndex.currentPage}
-        total={data.listUsersByType.count}
+        total={data.listNewsByType.count}
         pageSize={10}
         onChange={goPage}
-      /> */}
+      />
     </div>
   );
 }
