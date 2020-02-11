@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Table, Button, Pagination } from "antd";
+import { Table, Button, Pagination, Input } from "antd";
 import { gql } from "apollo-boost";
 import { useQuery, useMutation } from "@apollo/react-hooks";
-import {Link} from 'react-router-dom'
+import { Link } from "react-router-dom";
+import "../../static/style/listUsers.css";
 
 function Danhsach() {
-  const [selectedRowKeys, setSelectRowKeys] = useState([]);
-  const [pageIndex, setPageIndex] = useState({ currentPage: 1 });
+  const [pageIndex, setPageIndex] = useState({ currentPage: 1, search: "" });
   const AppQuery = gql`
     query {
       listUsersByType(currentPage: ${pageIndex.currentPage}, pageSize: 10, type: 0, search: "") {
@@ -21,8 +21,7 @@ function Danhsach() {
       }
     }
   `;
-  const { loading, error, data } = useQuery(AppQuery);
-  const [loading2, setLoading] = useState(false);
+  const { loading, error, data, refetch } = useQuery(AppQuery);
   const columns = [
     {
       title: "Name",
@@ -43,46 +42,32 @@ function Danhsach() {
     {
       title: "Action",
       key: "action",
-  
+
       render: (text, record) => (
         <span>
           <Link to={`users/detail?userId=${record.userId}`}>Chi tiết</Link>
         </span>
-       
       )
     }
   ];
   if (loading) return "Loading...";
   if (error) return `Error! ${error.message}`;
-  const onSelectChange = selectedRowKeys => {
-    console.log("selectedRowKeys changed: ", selectedRowKeys);
-    setSelectRowKeys(selectedRowKeys);
-  };
-  const rowSelection = {
-    selectedRowKeys,
-    onChange: onSelectChange
-  };
-  const hasSelected = selectedRowKeys.length > 0;
   const goPage = pageNumber => {
-    setPageIndex({ currentPage: pageNumber });
+    setPageIndex({ ...pageIndex, currentPage: pageNumber });
+  };
+  const getValueSearch = e => {
+    setPageIndex({ ...pageIndex, search: e.target.value });
   };
   return (
-    <div>
-      <div style={{ marginBottom: 16 }}>
-        <Button
-          type="primary"
-          // onClick={this.start}
-          disabled={!hasSelected}
-          loading={loading2}
-        >
-          Reload
-        </Button>
-        <span style={{ marginLeft: 8 }}>
-          {hasSelected ? `Selected ${selectedRowKeys.length} items` : ""}
-        </span>
+    <div className="container-listUser">
+      <div className="title">
+        <h2>Tổng quan về người dùng</h2>
+        <div className="btn-search-users">
+          <Input onChange={e => getValueSearch(e)} />
+          <Button onClick={() => refetch()}>Search</Button>
+        </div>
       </div>
       <Table
-        rowSelection={rowSelection}
         columns={columns}
         dataSource={data.listUsersByType.rows}
         pagination={false}
@@ -92,6 +77,7 @@ function Danhsach() {
         total={data.listUsersByType.count}
         pageSize={10}
         onChange={goPage}
+        className="pagination-listUser"
       />
     </div>
   );

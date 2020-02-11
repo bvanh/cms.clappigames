@@ -1,5 +1,5 @@
 import React from "react";
-import { Upload, Icon, message, Row, Col, Card } from "antd";
+import { Upload, Checkbox, Row, Col, Card } from "antd";
 import UploadImages  from "./upload";
 import { useQuery } from "@apollo/react-hooks";
 import { queryListImages } from "../../utils/queryMedia";
@@ -17,15 +17,19 @@ function Media() {
 
   const printListImages = data.listUploadedImages.map((val, index) => (
     <Card.Grid style={gridStyle}>
-      <img src={val.url} alt={val.name} width="100%" />
+      <Checkbox value={val.id}><img src={val.url} alt={val.name} width="100%" /></Checkbox>
     </Card.Grid>
   ));
- 
+  const onChange=val=>{
+    console.log(val)
+  }
   return (
     <Row>
+      <Checkbox.Group style={{ width: '100%' }} onChange={onChange}>
       <Col md={16}>{printListImages}</Col>
+      </Checkbox.Group>
       <Col md={8}>
-        <UploadImages />
+        <UploadImages refetch={refetch} />
       </Col>
     </Row>
   );

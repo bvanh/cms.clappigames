@@ -1,22 +1,18 @@
 import React, { useState } from "react";
-import { Form, Icon, Input, Button, Checkbox } from "antd";
-import { getTokenAndLogin, getDuoIndex, chekDuo } from "../utils/checkLogin";
+import { Form, Icon, Input, Button } from "antd";
+import { getTokenAndLogin, getDuoIndex } from "../utils/checkLogin";
 import { connect } from "react-redux";
-import { Link } from "react-router-dom";
 import {
   dispatchSwitchLogin,
-  dispatchSetAccessToken,
-  dispatchSetToken
+  dispatchSetAccessToken
 } from "../redux/actions/index";
 import DuoWebSDK from "duo_web_sdk";
 import { apiLogin } from "../api/urlLogin";
 import "../App.css";
-const STATE_AUTH_PASSED = "STATE_AUTH_PASSED";
-const STATE_AUTH_FAILED = "STATE_AUTH_FAILED";
-const STATE_AUTH_PENDING = "STATE_AUTH_PENDING";
+import "../static/style/login.css";
 const SHOW_IFRAME = "SHOW_IFRAME";
 function NormalLoginForm(props) {
-  // console.log(props.userToken)
+  const [alertLogin, setAlertLogin] = useState("");
   const { getFieldDecorator } = props.form;
   const [duoAuthState, setDuoAuthState] = useState("");
   const handleSubmit = async e => {
@@ -32,6 +28,9 @@ function NormalLoginForm(props) {
               setDuoAuthState(SHOW_IFRAME);
               initDuoFrame(val);
             });
+            localStorage.setItem("userNameCMS", values.username);
+          }else{
+            setAlertLogin(result.message)
           }
         });
       }
@@ -56,14 +55,11 @@ function NormalLoginForm(props) {
       body: `sig_response=${form.sig_response.value}`
     })
       .then(response => {
-        console.log(form.value);
         if (response.ok) {
-          // localStorage.setItem("tokenCms", userToken);
-          // localStorage.setItem("accessTokenCms", userAccessToken);
-          // dispatchSetAccessToken(userAccessToken);
           return response.json();
         } else {
           dispatchSwitchLogin(false);
+          localStorage.removeItem("userNameCMS");
         }
       })
       .then(result => {
@@ -114,14 +110,8 @@ function NormalLoginForm(props) {
             />
           )}
         </Form.Item>
+          <p className="res-login">{alertLogin}</p>
         <Form.Item>
-          {getFieldDecorator("remember", {
-            valuePropName: "checked",
-            initialValue: true
-          })(<Checkbox>Remember me</Checkbox>)}
-          <a className="login-form-forgot" href="">
-            Forgot password
-          </a>
           <Button
             type="primary"
             htmlType="submit"
@@ -129,7 +119,6 @@ function NormalLoginForm(props) {
           >
             Log in
           </Button>
-          Or <a href="">register now!</a>
         </Form.Item>
       </Form>
     </div>

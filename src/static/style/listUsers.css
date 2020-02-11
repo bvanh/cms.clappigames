@@ -1,0 +1,28 @@
+h2 {
+  font-family: "Roboto", sans-serif;
+}
+.ant-table-thead > tr > th {
+  background: rgb(185, 185, 185);
+}
+tbody {
+  background: #fafafa;
+}
+.container-listUser {
+  padding: 1.5rem 1rem;
+  background: white;
+}
+.pagination-listUser {
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+}
+.title{
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: space-between;
+}
+.btn-search-users{
+    display: flex;
+    justify-content: space-between;
+    
+}

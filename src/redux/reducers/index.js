@@ -18,6 +18,10 @@ export default (state = initialState, action) => {
     case actions.SET_ACCESSTOKEN:
       return { ...state, accessToken: action.payload };
     case actions.SWITCH_LOGIN:
+      if (action.payload === false) {
+        localStorage.removeItem("tokenCms");
+        localStorage.removeItem("accessTokenCms");
+      }
       return { ...state, isLogin: action.payload };
     default:
       return state;

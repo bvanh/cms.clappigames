@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import "./App.css";
 import Login from "./components/login";
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import { connect } from "react-redux";
@@ -11,17 +10,16 @@ import AddNews from "./components/news/addnews";
 import ListImages from "./components/media/index";
 import { ApolloProvider } from "@apollo/react-hooks";
 import ApolloClient from "apollo-boost";
-import { InMemoryCache } from "apollo-cache-inmemory";
-import { createUploadLink } from "apollo-upload-client";
-
+import { importImage } from "./utils/importImg";
 import checkTokenFinal from "./utils/checkToken";
-import { Layout, Menu, Icon } from "antd";
+import { dispatchSwitchLogin } from "./redux/actions/index";
+import { Layout, Menu, Icon, Dropdown } from "antd";
+import "./static/style/menu.css";
 const { SubMenu } = Menu;
 const { Header, Content, Footer, Sider } = Layout;
-const link = createUploadLink({ uri: "https://api.cms.cubegame.vn/graphql",
- });
 checkTokenFinal();
 function App(props) {
+  const userName=localStorage.getItem('userNameCMS')
   if (props.isLogin === false || props.isLogin === null) {
     return (
       <Router>
@@ -32,13 +30,21 @@ function App(props) {
 
   checkTokenFinal();
   const client = new ApolloClient({
-    link,
-    cache: new InMemoryCache(),
     uri: "https://api.cms.cubegame.vn/graphql",
     headers: {
       Authorization: `Bearer ${props.token.accessToken}`
     }
   });
+  const menu = (
+    <Menu>
+      <Menu.Item>
+        <Link to="/" onClick={() => dispatchSwitchLogin(false)}>
+          <Icon type="logout" />
+          <span className="nav-text">LogOut</span>
+        </Link>
+      </Menu.Item>
+    </Menu>
+  );
   return (
     <ApolloProvider client={client}>
       <Router>
@@ -47,9 +53,6 @@ function App(props) {
             collapsedWidth="0"
             style={{
               overflow: "auto"
-              // height: '170vh',
-              // position: 'fixed',
-              // left: 0,
             }}
             onBreakpoint={broken => {
               console.log(broken);
@@ -58,23 +61,25 @@ function App(props) {
               console.log(collapsed, type);
             }}
           >
-            <div className="logo" />
+            <div className="logo">
+              <img src={importImage["logoclappigames.png"]} width="100%" />
+            </div>
             <Menu theme="dark" mode="inline" defaultSelectedKeys={["1"]}>
               <Menu.Item key="1">
                 <Link to="/">
-                  <Icon type="user" />
+                  <Icon type="idcard" />
                   <span className="nav-text">USERS</span>
                 </Link>
               </Menu.Item>
               <Menu.Item key="2">
                 <Link to="/news">
-                  <Icon type="video-camera" />
+                  <Icon type="read" />
                   <span className="nav-text">NEWS</span>
                 </Link>
               </Menu.Item>
               <Menu.Item key="3">
                 <Link to="/media">
-                  <Icon type="upload" />
+                  <Icon type="picture" />
                   <span className="nav-text">MEDIA</span>
                 </Link>
               </Menu.Item>
@@ -82,20 +87,35 @@ function App(props) {
                 key="sub1"
                 title={
                   <span>
-                    <Icon type="mail" />
+                    <Icon type="line-chart" />
                     <span>Payment</span>
                   </span>
                 }
               >
-                <Menu.Item key="5"> <Link to="/payment/coin">C.coin</Link></Menu.Item>
+                <Menu.Item key="5">
+                  {" "}
+                  <Link to="/payment/coin">C.coin</Link>
+                </Menu.Item>
                 <Menu.Item key="6">Item</Menu.Item>
                 <Menu.Item key="7">Promotion</Menu.Item>
               </SubMenu>
+              <Menu.Item key="9">
+                <Link to="/" onClick={() => dispatchSwitchLogin(false)}>
+                  <Icon type="logout" />
+                  <span className="nav-text">LogOut</span>
+                </Link>
+              </Menu.Item>
             </Menu>
           </Sider>
           <Layout>
-            <Header style={{ background: "#fff", padding: 0 }} />
-            <Content style={{ margin: "24px 16px 0" }}>
+            <Header style={{ background: "#E5E5E5", padding: 0 }}>
+              <Dropdown overlay={menu}>
+                <a className="user-avatar">
+                  {userName} <Icon type="caret-down" />
+                </a>
+              </Dropdown>
+            </Header>
+            <Content>
               <Route exact path="/" render={() => <Danhsach />} />
               <Route
                 exact
@@ -112,7 +132,7 @@ function App(props) {
               <Route exact path="/media" render={() => <ListImages />} />
             </Content>
             <Footer style={{ textAlign: "center" }}>
-              Ant Design ©2018 Created by Ant UED
+              LUSSOM ©2020
             </Footer>
           </Layout>
         </Layout>

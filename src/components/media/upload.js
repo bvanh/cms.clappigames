@@ -5,13 +5,15 @@ import { ApolloClient } from "apollo-client";
 import { ApolloProvider, Mutation } from "react-apollo";
 import { UPLOAD_IMAGE } from "../../utils/queryMedia";
 import { connect } from "react-redux";
-import { Upload, Icon, message } from "antd";
+import { Upload, Icon, message, Button } from "antd";
 
 const { Dragger } = Upload;
 
 const apolloCache = new InMemoryCache();
 function UploadImages(props) {
   const [fileImage, setFileImage] = useState(null);
+  const [statusUploadBtn, setStatusUploadBtn] = useState(true);
+
   const uploadLink = createUploadLink({
     uri: "https://api.cms.cubegame.vn/graphql",
     headers: {
@@ -24,7 +26,9 @@ function UploadImages(props) {
   });
   const configDrag = {
     name: "file",
+    accept: ".png, .jpg, .gif",
     multiple: true,
+    showUploadList: { showDownloadIcon: false },
     action: "https://www.mocky.io/v2/5cc8019d300000980a055e76",
     onChange(info) {
       const { status } = info.file;
@@ -34,6 +38,7 @@ function UploadImages(props) {
       if (status === "done") {
         message.success(`${info.file.name} file uploaded successfully.`);
         setFileImage(info.fileList);
+        setStatusUploadBtn(false);
       } else if (status === "error") {
         message.error(`${info.file.name} file upload failed.`);
       }
@@ -61,22 +66,25 @@ function UploadImages(props) {
                       from uploading company data or other band files
                     </p>
                   </Dragger>
-               
-                  <button
+
+                  <Button
                     onClick={async () => {
                       for (var key of fileImage) {
-                        if (fileImage.hasOwnProperty(key))
-                          await singleUploadStream({
-                            variables: {
-                              partnerName: "lqmt",
-                              file: key.originFileObj
-                            }
-                          });
+                        await singleUploadStream({
+                          variables: {
+                            partnerName: "lqmt",
+                            file: key.originFileObj
+                          }
+                        });
                       }
+                      props.refetch();
                     }}
+                    disabled={
+                      fileImage !== [] && fileImage !== null ? false : true
+                    }
                   >
-                    upload2
-                  </button>
+                    upload
+                  </Button>
                   {loading && <p>Loading.....</p>}
                 </>
               );
