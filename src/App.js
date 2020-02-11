@@ -16,8 +16,10 @@ import { createUploadLink } from "apollo-upload-client";
 
 import checkTokenFinal from "./utils/checkToken";
 import { Layout, Menu, Icon } from "antd";
-
+const { SubMenu } = Menu;
 const { Header, Content, Footer, Sider } = Layout;
+const link = createUploadLink({ uri: "https://api.cms.cubegame.vn/graphql",
+ });
 checkTokenFinal();
 function App(props) {
   if (props.isLogin === false || props.isLogin === null) {
@@ -30,10 +32,8 @@ function App(props) {
 
   checkTokenFinal();
   const client = new ApolloClient({
-    // cache: new InMemoryCache(),
-    // link: createUploadLink({
-    //   uri: "https://api.cms.cubegame.vn/graphql"
-    // }),
+    link,
+    cache: new InMemoryCache(),
     uri: "https://api.cms.cubegame.vn/graphql",
     headers: {
       Authorization: `Bearer ${props.token.accessToken}`
@@ -78,10 +78,19 @@ function App(props) {
                   <span className="nav-text">MEDIA</span>
                 </Link>
               </Menu.Item>
-              <Menu.Item key="4">
-                <Icon type="user" />
-                <span className="nav-text">CHARGES</span>
-              </Menu.Item>
+              <SubMenu
+                key="sub1"
+                title={
+                  <span>
+                    <Icon type="mail" />
+                    <span>Payment</span>
+                  </span>
+                }
+              >
+                <Menu.Item key="5"> <Link to="/payment/coin">C.coin</Link></Menu.Item>
+                <Menu.Item key="6">Item</Menu.Item>
+                <Menu.Item key="7">Promotion</Menu.Item>
+              </SubMenu>
             </Menu>
           </Sider>
           <Layout>
