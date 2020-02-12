@@ -45,54 +45,43 @@ function UploadImages(props) {
     }
   };
   return (
-    <div className="App">
-      <ApolloProvider client={client}>
-        <header className="App-header">
-          <h2>Stream to Server</h2>
-          <Mutation mutation={UPLOAD_IMAGE}>
-            {(singleUploadStream, { data, loading, error }) => {
-              console.log(data, loading, error);
-              return (
-                <>
-                  <Dragger {...configDrag}>
-                    <p className="ant-upload-drag-icon">
-                      <Icon type="inbox" />
-                    </p>
-                    <p className="ant-upload-text">
-                      Click or drag file to this area to upload
-                    </p>
-                    <p className="ant-upload-hint">
-                      Support for a single or bulk upload. Strictly prohibit
-                      from uploading company data or other band files
-                    </p>
-                  </Dragger>
+    <ApolloProvider client={client}>
+      <Mutation mutation={UPLOAD_IMAGE}>
+        {(singleUploadStream, { data, loading, error }) => {
+          console.log(data, loading, error);
+          return (
+            <>
+              <Dragger {...configDrag}>
+                <p className="ant-upload-drag-icon">
+                  <Icon type="file-add" />
+                </p>
+                <p className="ant-upload-text">
+                  Click or drag file to this area to upload
+                </p>
+              </Dragger>
 
-                  <Button
-                    onClick={async () => {
-                      for (var key of fileImage) {
-                        await singleUploadStream({
-                          variables: {
-                            partnerName: "lqmt",
-                            file: key.originFileObj
-                          }
-                        });
+              <Button
+                onClick={async () => {
+                  for (var key of fileImage) {
+                    await singleUploadStream({
+                      variables: {
+                        partnerName: "lqmt",
+                        file: key.originFileObj
                       }
-                      props.refetch();
-                    }}
-                    disabled={
-                      fileImage !== [] && fileImage !== null ? false : true
-                    }
-                  >
-                    upload
-                  </Button>
-                  {loading && <p>Loading.....</p>}
-                </>
-              );
-            }}
-          </Mutation>
-        </header>
-      </ApolloProvider>
-    </div>
+                    });
+                  }
+                  props.refetch();
+                }}
+                disabled={fileImage !== [] && fileImage !== null ? false : true}
+              >
+                upload
+              </Button>
+              {loading && <p>Loading.....</p>}
+            </>
+          );
+        }}
+      </Mutation>
+    </ApolloProvider>
   );
 }
 function mapStateToProps(state) {

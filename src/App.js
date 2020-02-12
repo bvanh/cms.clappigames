@@ -8,6 +8,7 @@ import NewsEditor from "./components/news/newsEdit";
 import ListNews from "./components/news/index";
 import AddNews from "./components/news/addnews";
 import ListImages from "./components/media/index";
+import ListProducts from "./components/payment/item/index";
 import { ApolloProvider } from "@apollo/react-hooks";
 import ApolloClient from "apollo-boost";
 import { importImage } from "./utils/importImg";
@@ -99,7 +100,9 @@ function App(props) {
                   {" "}
                   <Link to="/payment/coin">C.coin</Link>
                 </Menu.Item>
-                <Menu.Item key="6">Item</Menu.Item>
+                <Menu.Item key="6">
+                  <Link to="/payment/items">Item </Link>
+                </Menu.Item>
                 <Menu.Item key="7">Promotion</Menu.Item>
               </SubMenu>
               <Menu.Item key="9">
@@ -118,7 +121,13 @@ function App(props) {
                 </a>
               </Dropdown>
             </Header>
-            <Content style={{ overflow: 'initial', padding: '2.5rem 2rem', background: 'white' }}>
+            <Content
+              style={{
+                overflow: "initial",
+                padding: "2.5rem 2rem",
+                background: "white"
+              }}
+            >
               <Route exact path="/" render={() => <Danhsach />} />
               <Route
                 exact
@@ -133,6 +142,11 @@ function App(props) {
               />
               <Route exact path="/news/addnews" render={() => <AddNews />} />
               <Route exact path="/media" render={() => <ListImages />} />
+              <Route
+                exact
+                path="/payment/items"
+                render={() => <ListProducts />}
+              />
             </Content>
             <Footer style={{ textAlign: "center" }}>LUSSOM ©2020</Footer>
           </Layout>

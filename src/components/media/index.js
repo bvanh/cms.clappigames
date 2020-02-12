@@ -1,33 +1,69 @@
-import React from "react";
-import { Upload, Checkbox, Row, Col, Card } from "antd";
-import UploadImages  from "./upload";
-import { useQuery } from "@apollo/react-hooks";
-import { queryListImages } from "../../utils/queryMedia";
+import React, { useState } from "react";
+import { Upload, Checkbox, Row, Col, Card, Icon } from "antd";
+import UploadImages from "./upload";
+import { useQuery, useMutation } from "@apollo/react-hooks";
+import { queryListImages, DELETE_IMAGE } from "../../utils/queryMedia";
+import "../../static/style/media.css";
 
 const { Dragger } = Upload;
-
+const gridStyle = {
+  width: "24%",
+  textAlign: "center",
+  padding: "2px",
+  margin: ".5%",
+  position: "relative"
+};
 function Media() {
-  const gridStyle = {
-    width: "25%",
-    textAlign: "center"
-  };
+  const [selectedImage, setSelectedImage] = useState([]);
+  const [deleteImages] = useMutation(DELETE_IMAGE, {
+    variables: {
+      ids: selectedImage
+    }
+  });
   const { loading, error, data, refetch } = useQuery(queryListImages);
   if (loading) return "Loading...";
   if (error) return `Error! ${error.message}`;
 
   const printListImages = data.listUploadedImages.map((val, index) => (
-    <Card.Grid style={gridStyle}>
-      <Checkbox value={val.id}><img src={val.url} alt={val.name} width="100%" /></Checkbox>
+    <Card.Grid style={gridStyle}key={index}>
+      <Checkbox value={val.id} className="checkbox-image">
+        <img src={val.url} alt={val.name} width="100%" />
+      </Checkbox>
     </Card.Grid>
   ));
-  const onChange=val=>{
-    console.log(val)
+  const onChange = val => {
+    setSelectedImage(val);
+    console.log(val);
+  };
+  const submitDelete=()=>{
+    let demo=deleteImages();
+    refetch();
+    console.log(demo)
   }
   return (
     <Row>
-      <Checkbox.Group style={{ width: '100%' }} onChange={onChange}>
-      <Col md={16}>{printListImages}</Col>
-      </Checkbox.Group>
+      <h2>Media</h2>
+      <Col md={16}>
+        {selectedImage.length > 0 && (
+          <div className="btn-media-options">
+            <span>
+              <Icon type="close" style={{ marginRight: "5px" }} />
+              <span>{selectedImage.length}</span> items đã được chọn
+            </span>
+            <div>
+              <Icon
+                type="delete"
+                style={{ fontSize: "18px", margin: "0 5px" }}
+                onClick={submitDelete}
+              />
+              <Icon type="download" style={{ fontSize: "18px" }} />
+            </div>
+          </div>
+        )}
+        <Checkbox.Group style={{ width: "100%" }} onChange={onChange}>
+          <Col>{printListImages}</Col>
+        </Checkbox.Group>
+      </Col>
       <Col md={8}>
         <UploadImages refetch={refetch} />
       </Col>

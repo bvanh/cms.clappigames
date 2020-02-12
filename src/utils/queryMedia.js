@@ -36,4 +36,17 @@ const UPLOAD_MULTI_IMAGE = gql`
     }
   }
 `;
-export { queryListImages, queryUploadImages, UPLOAD_IMAGE, UPLOAD_MULTI_IMAGE };
+const DELETE_IMAGE = gql`
+  mutation($ids: [Int]!) {
+    deleteUploadImages(ids: $ids) {
+      name
+    }
+  }
+`;
+export {
+  queryListImages,
+  queryUploadImages,
+  UPLOAD_IMAGE,
+  UPLOAD_MULTI_IMAGE,
+  DELETE_IMAGE
+};

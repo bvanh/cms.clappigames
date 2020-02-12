@@ -1,0 +1,10 @@
+.checkbox-image > .ant-checkbox {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+.btn-media-options{
+    display: flex;
+    justify-content: space-between;
+}
+
