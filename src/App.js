@@ -19,7 +19,7 @@ const { SubMenu } = Menu;
 const { Header, Content, Footer, Sider } = Layout;
 checkTokenFinal();
 function App(props) {
-  const userName=localStorage.getItem('userNameCMS')
+  const userName = localStorage.getItem("userNameCMS");
   if (props.isLogin === false || props.isLogin === null) {
     return (
       <Router>
@@ -52,7 +52,10 @@ function App(props) {
           <Sider
             collapsedWidth="0"
             style={{
-              overflow: "auto"
+              overflow: "auto",
+              height: "100vh",
+              position: "fixed",
+              left: 0
             }}
             onBreakpoint={broken => {
               console.log(broken);
@@ -107,7 +110,7 @@ function App(props) {
               </Menu.Item>
             </Menu>
           </Sider>
-          <Layout>
+          <Layout style={{ marginLeft: 200 }}>
             <Header style={{ background: "#E5E5E5", padding: 0 }}>
               <Dropdown overlay={menu}>
                 <a className="user-avatar">
@@ -115,7 +118,7 @@ function App(props) {
                 </a>
               </Dropdown>
             </Header>
-            <Content>
+            <Content style={{ overflow: 'initial', padding: '2.5rem 2rem', background: 'white' }}>
               <Route exact path="/" render={() => <Danhsach />} />
               <Route
                 exact
@@ -131,9 +134,7 @@ function App(props) {
               <Route exact path="/news/addnews" render={() => <AddNews />} />
               <Route exact path="/media" render={() => <ListImages />} />
             </Content>
-            <Footer style={{ textAlign: "center" }}>
-              LUSSOM ©2020
-            </Footer>
+            <Footer style={{ textAlign: "center" }}>LUSSOM ©2020</Footer>
           </Layout>
         </Layout>
       </Router>

@@ -60,12 +60,14 @@ const HistoryPayment = props => {
       <Table
         dataSource={data.listPartnerChargesByUser.rows}
         columns={columns}
+        pagination={false}
       />
       <Pagination
         current={currentPage}
         total={data.listPartnerChargesByUser.count}
         pageSize={pageSize}
         onChange={goPage}
+        className="pagination-listUser"
       />
     </>
   );

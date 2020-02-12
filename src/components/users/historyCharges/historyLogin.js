@@ -54,6 +54,7 @@ const HistoryLogin = props => {
         total={data.listLoginUsersByUser.count}
         pageSize={pageSize}
         onChange={goPage}
+        className="pagination-listUser"
       />
     </>
   );

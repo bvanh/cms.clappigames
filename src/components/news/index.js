@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { Table, Button, Pagination } from "antd";
+import { Table, Button, Pagination,Input } from "antd";
 import moment from "moment";
 import { useQuery, useMutation } from "@apollo/react-hooks";
 import { queryGetNews, queryDeleteNews } from "../../utils/queryNews";
 import { Link } from "react-router-dom";
+import '../../static/style/news.css'
 
 function ListNews() {
   const [selectedRows, setSelectRows] = useState([]);
@@ -100,7 +101,7 @@ function ListNews() {
   // const filterData=data.listNewsByType.rows.filter(val=>val.status!=='DELETED')
   return (
     <div>
-      <div style={{ marginBottom: 16 }}>
+      <div style={{ marginBottom: 16 }} className='news-header'>
         {/* <Button
           type="primary"
           // onClick={this.start}
@@ -109,6 +110,8 @@ function ListNews() {
         >
           Reload
         </Button> */}
+         <Input  />
+          <Button >Search</Button>
         <Button type="primary">
           <Link to="/news/addnews">Addnew</Link>
         </Button>
@@ -127,6 +130,7 @@ function ListNews() {
         total={data.listNewsByType.count}
         pageSize={10}
         onChange={goPage}
+        className="pagination-listUser"
       />
     </div>
   );

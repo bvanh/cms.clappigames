@@ -1,0 +1,11 @@
+.news-header{
+    display: flex;
+    justify-content: space-between;
+}
+.news-header {
+    display: flex;
+    justify-content: flex-end;
+}
+.news-header>input{
+    width: 20%;
+}

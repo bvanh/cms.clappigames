@@ -1,5 +1,20 @@
 import { gql } from "apollo-boost";
-const AppQuery = query => {
+const queryGetListUsers = gql`
+    query listUsersByType($currentPage: Int!, $pageSize: Int!, $type: Int!, $search: String){
+      listUsersByType(currentPage: $currentPage, pageSize: $pageSize, type: $type, search: $search) {
+        count
+        rows {
+          userId
+          username
+          coin
+          email,
+          fakeId
+        }
+      }
+    }
+  `;
+
+const queryGetDataUserDetail = query => {
   return gql`
     query {
       listUsers(userId:"${query.get("userId")}") {
@@ -43,7 +58,8 @@ const queryLogin = query => {
     }
     `;
 };
-const queryHistotyCharges = (currentPage, pageSize, userId) => {
+// const queryHistotyCharges=()=
+const queryHistotyChargesByUsers = (currentPage, pageSize, userId) => {
   return gql`
   query{
     listChargesByUser(currentPage: ${currentPage}, pageSize: ${pageSize}, userId:"${userId}"){
@@ -94,9 +110,10 @@ const queryHistotyLogin = (currentPage, pageSize, userId) => {
   `;
 };
 export {
-  AppQuery,
+  queryGetListUsers,
+  queryGetDataUserDetail,
   queryLogin,
-  queryHistotyCharges,
+  queryHistotyChargesByUsers,
   queryHistotyPayment,
   queryHistotyLogin
 };

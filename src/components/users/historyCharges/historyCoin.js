@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Row, Col, Table, Pagination} from "antd";
-import { queryHistotyCharges } from "../../../utils/queryUsers";
+import { queryHistotyChargesByUsers } from "../../../utils/queryUsers";
 import { useQuery } from "@apollo/react-hooks";
 import moment from "moment";
 import HistoryPayment from "./historyPayment";
@@ -12,7 +12,7 @@ const HistoryCharges = props => {
   const [pageIndex, setPageIndex] = useState({ currentPage: 1, pageSize: 5 });
   const [currentMenu, setCurrentMenu] = useState("historyCoin");
   const { loading, error, data } = useQuery(
-    queryHistotyCharges(pageIndex.currentPage, pageIndex.pageSize, props.userId)
+    queryHistotyChargesByUsers(pageIndex.currentPage, pageIndex.pageSize, props.userId)
   );
   if (loading) return `loading...`;
   if (error) return `Error! ${error.message}`;
@@ -73,6 +73,7 @@ const HistoryCharges = props => {
             total={data.listChargesByUser.count}
             pageSize={pageSize}
             onChange={goPage}
+            className="pagination-listUser"
           />
         </TabPane>
         <TabPane tab="Lịch sử mua vật phẩm" key="2">
