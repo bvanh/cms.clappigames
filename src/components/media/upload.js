@@ -33,7 +33,7 @@ function UploadImages(props) {
     onChange(info) {
       const { status } = info.file;
       if (status !== "uploading") {
-        console.log(info.file, info.fileList);
+        console.log("loading...");
       }
       if (status === "done") {
         message.success(`${info.file.name} file uploaded successfully.`);

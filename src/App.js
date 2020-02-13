@@ -8,6 +8,7 @@ import NewsEditor from "./components/news/newsEdit";
 import ListNews from "./components/news/index";
 import AddNews from "./components/news/addnews";
 import ListImages from "./components/media/index";
+import ListCoin from './components/payment/coin/listCoin'
 import ListProducts from "./components/payment/item/index";
 import { ApolloProvider } from "@apollo/react-hooks";
 import ApolloClient from "apollo-boost";
@@ -97,7 +98,6 @@ function App(props) {
                 }
               >
                 <Menu.Item key="5">
-                  {" "}
                   <Link to="/payment/coin">C.coin</Link>
                 </Menu.Item>
                 <Menu.Item key="6">
@@ -146,6 +146,11 @@ function App(props) {
                 exact
                 path="/payment/items"
                 render={() => <ListProducts />}
+              />
+              <Route
+                exact
+                path="/payment/coin"
+                render={() => <ListCoin />}
               />
             </Content>
             <Footer style={{ textAlign: "center" }}>LUSSOM ©2020</Footer>

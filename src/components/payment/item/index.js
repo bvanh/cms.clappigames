@@ -3,6 +3,7 @@ import { Table, Button, Pagination, Input, Row, Col } from "antd";
 import { queryGetListProducts } from "../../../utils/queryProducts";
 import { useLazyQuery } from "@apollo/react-hooks";
 import { Link } from "react-router-dom";
+import ListPartnerChages from './listPartnerCharges'
 // import "../../static/style/listUsers.css";
 
 function ListItems() {
@@ -46,7 +47,7 @@ function ListItems() {
       key: "baseCoin"
     },
     {
-      title: "promo",
+      title: "Promotion",
       dataIndex: "discount",
       key: "discount"
     },
@@ -120,7 +121,7 @@ function ListItems() {
       </Col>
       <Col md={12}>
         <Col>Xu hướng mua Item</Col>
-        <Col></Col>
+        <ListPartnerChages/>
       </Col>
     </Row>
   );

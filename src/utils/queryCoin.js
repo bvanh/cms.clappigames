@@ -1,5 +1,6 @@
 import { gql } from "apollo-boost";
-const queryGetListProducts = gql`
+
+const queryGetListCoin = gql`
   query listProductsByPaymentType(
     $currentPage: Int!
     $pageSize: Int!
@@ -12,56 +13,48 @@ const queryGetListProducts = gql`
     ) {
       count
       rows {
-        productName
         baseCoin
         type
         discount
         productId
+        price
       }
     }
   }
 `;
-// lịch sử giao dịch theo items
-const queryGetListPartnerCharges = gql`
-  query listPartnerChargesByType(
+// tạo product
+
+// lịc sử giao dịch
+const queryGetListCharges = gql`
+  query listChargesByType(
     $currentPage: Int!
     $pageSize: Int!
     $type: Int!
-    $partnerId: String
-    $os: String
-    $userType: String
     $search: String
-    $status: String
     $fromDate: String!
     $toDate: String!
   ) {
-    listPartnerChargesByType(
+    listChargesByType(
       currentPage: $currentPage
       pageSize: $pageSize
       type: $type
-      fromDate: $fromDate
       search: $search
-      status: $status
+      fromDate: $fromDate
       toDate: $toDate
-      partnerId: $partnerId
-      os: $os
-      userType: $userType
     ) {
       count
       rows {
-        partnerChargeId
-      user {
-        username
-        nickname
-      }
-      coin
-      partner {
-        partnerName
-      }
-      status
-      createAt
+        createAt
+        chargeId
+        baseCoin
+        paymentType
+        status
+        user {
+          username
+          nickname
+        }
       }
     }
   }
 `;
-export { queryGetListProducts, queryGetListPartnerCharges };
+export { queryGetListCoin, queryGetListCharges };

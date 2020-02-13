@@ -6,6 +6,7 @@ const queryListImages = gql`
       id
       name
       partnerName
+      status
     }
   }
 `;

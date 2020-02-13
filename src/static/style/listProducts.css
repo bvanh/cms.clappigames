@@ -1,0 +1,10 @@
+.products-title {
+  display: flex;
+  margin-bottom: 1rem;
+  justify-content: space-between;
+  flex-direction: column;
+}
+.products-title>div:first-child{
+    display: flex;
+    justify-content: space-between;
+}
