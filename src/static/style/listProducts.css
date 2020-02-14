@@ -8,3 +8,49 @@
     display: flex;
     justify-content: space-between;
 }
+.products-content>.section1>div{
+  display: flex;
+  justify-content: space-between;
+}
+.edit-product-content-title{
+  margin: 5px;
+  color: black;
+}
+.products-content>.section1>div>div{
+  display: flex;
+  flex-direction: column;
+}
+.products-content>.section1>div>div>span{
+  padding-left: 1rem;
+  font-size: 14px;
+  margin-top: .5rem;
+}
+.product-input-update{
+  display: flex;
+  flex-direction: column;
+  margin-top: .7rem;
+}
+.product-input-update>span{
+  margin: .3rem 0;
+}
+.products-content>.section2>div{
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  background: #f3f3f3;
+  margin-left: 1rem;
+}
+.products-content>.section2>div>span{
+  margin-top: .5rem;
+  display: flex;
+  justify-content: space-between;
+}
+.product-input-update>div{
+  display: flex;
+  justify-content: space-between;
+  margin-top: .7rem;
+}
+.product-input-update>div>div{
+  display: flex;
+  flex-direction: column;
+}

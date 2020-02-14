@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Table, Button, Pagination, Input, Row, Col } from "antd";
-import { queryGetListProducts } from "../../../utils/queryProducts";
+import { queryGetListProducts } from "../../../utils/queryPartnerProducts";
 import { useLazyQuery } from "@apollo/react-hooks";
 import { Link } from "react-router-dom";
 import ListPartnerChages from './listPartnerCharges'

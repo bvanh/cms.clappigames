@@ -8,8 +8,9 @@ import NewsEditor from "./components/news/newsEdit";
 import ListNews from "./components/news/index";
 import AddNews from "./components/news/addnews";
 import ListImages from "./components/media/index";
-import ListCoin from './components/payment/coin/listCoin'
+import ListCoin from './components/payment/coin/listCoin/listCoin'
 import ListProducts from "./components/payment/item/index";
+import EditProductCoin from './components/payment/coin/listCoin/editCoin'
 import { ApolloProvider } from "@apollo/react-hooks";
 import ApolloClient from "apollo-boost";
 import { importImage } from "./utils/importImg";
@@ -148,12 +149,16 @@ function App(props) {
                 render={() => <ListProducts />}
               />
               <Route
-                exact
                 path="/payment/coin"
                 render={() => <ListCoin />}
               />
+                <Route
+                exact
+                path="/payment/coin/edit"
+                render={() => <EditProductCoin />}
+              />
             </Content>
-            <Footer style={{ textAlign: "center" }}>LUSSOM ©2020</Footer>
+            <Footer style={{ textAlign: "center",position:"fixed",bottom:'0',width:'100%' }}>LUSSOM ©2020</Footer>
           </Layout>
         </Layout>
       </Router>

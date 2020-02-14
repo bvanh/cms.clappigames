@@ -17,12 +17,24 @@ const queryGetListCoin = gql`
         type
         discount
         productId
+        productName
         price
       }
     }
   }
 `;
-// tạo product
+// list product theo id
+const queryGetProductById = gql`
+query listProducts( $productId: String){
+  listProducts(productId:$productId){
+    productName
+    type
+    sort
+    price
+    status
+  }
+}
+`;
 
 // lịc sử giao dịch
 const queryGetListCharges = gql`
@@ -57,4 +69,4 @@ const queryGetListCharges = gql`
     }
   }
 `;
-export { queryGetListCoin, queryGetListCharges };
+export { queryGetListCoin, queryGetListCharges, queryGetProductById };

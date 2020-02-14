@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Table, Button, Pagination, Input, Row, Col, Select } from "antd";
 import {
   queryGetListPartnerCharges
-} from "../../../utils/queryProducts";
+} from "../../../utils/queryPartnerProducts";
 import { useLazyQuery } from "@apollo/react-hooks";
 import { Link } from "react-router-dom";
 

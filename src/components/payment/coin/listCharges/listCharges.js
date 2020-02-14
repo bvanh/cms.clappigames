@@ -3,11 +3,11 @@ import { Table, Button, Pagination, Input, Row, Col, Select } from "antd";
 import {
     queryGetListCoin,
     queryGetListCharges
-} from "../../../utils/queryCoin";
+} from "../../../../utils/queryCoin";
 import { useLazyQuery } from "@apollo/react-hooks";
 import { Link } from "react-router-dom";
 
-import "../../../static/style/listProducts.css";
+import "../../../../static/style/listProducts.css";
 
 const { Option } = Select;
 function ListCharges() {

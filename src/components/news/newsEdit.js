@@ -33,7 +33,7 @@ const NewsEditor = () => {
     queryNewsDetail(query.get("newsId")),
     {
       onCompleted: data => {
-        setNewsIndex(data.listNews[0]);
+        setNewsIndex(data.listNews[0]); 
       }
     }
   );
