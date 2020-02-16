@@ -11,7 +11,7 @@ const radioStyle = {
   height: "24px",
   lineHeight: "30px"
 };
-function CreateProductCoin() {
+function CreateProductCoin(props) {
   const userName = localStorage.getItem("userNameCMS");
   const query = new URLSearchParams(window.location.search);
   const productId = query.get("productId");
@@ -68,7 +68,7 @@ function CreateProductCoin() {
     ));
     return (
       <Row>
-        <Link to="/payment/coin">
+        <Link to="/payment/coin" onClick={()=>props.setIsCreateCoin(false)}>
           <span>
             <Icon type="arrow-left" style={{ paddingRight: ".2rem" }} />
             Danh sách Coin

@@ -9,8 +9,9 @@ import ListNews from "./components/news/index";
 import AddNews from "./components/news/addnews";
 import ListImages from "./components/media/index";
 import ListCoin from './components/payment/coin/listCoin/listCoin'
-import ListProducts from "./components/payment/item/index";
+import ListPartnerItems from "./components/payment/item/listPartnerProduct/index";
 import EditProductCoin from './components/payment/coin/listCoin/editCoin'
+import EditPartnerProductItem from './components/payment/item/listPartnerProduct/editItems'
 import { ApolloProvider } from "@apollo/react-hooks";
 import ApolloClient from "apollo-boost";
 import { importImage } from "./utils/importImg";
@@ -144,11 +145,17 @@ function App(props) {
               <Route exact path="/news/addnews" render={() => <AddNews />} />
               <Route exact path="/media" render={() => <ListImages />} />
               <Route
-                exact
+              exact            
                 path="/payment/items"
-                render={() => <ListProducts />}
+                render={() => <ListPartnerItems />}
+              />
+                 <Route
+                exact
+                path="/payment/items/edit"
+                render={() => <EditPartnerProductItem/>}
               />
               <Route
+              exact
                 path="/payment/coin"
                 render={() => <ListCoin />}
               />

@@ -1,23 +1,28 @@
 import { gql } from "apollo-boost";
-const queryGetListProducts = gql`
-  query listProductsByPaymentType(
-    $currentPage: Int!
-    $pageSize: Int!
-    $type: String
+const queryGetListPartnerProducts = gql`
+  query listPartnerProducts(
+    $partnerProductId: String
+    $partnerId: String
+    $productId: String
+    $productName: String
+    $partnerProductName: String
   ) {
-    listProductsByPaymentType(
-      currentPage: $currentPage
-      pageSize: $pageSize
-      type: $type
+    listPartnerProducts(
+      partnerProductId: $partnerProductId
+      partnerId: $partnerId
+      productId: $productId
+      productName: $productName
+      partnerProductName: $partnerProductName
     ) {
-      count
-      rows {
-        productName
-        baseCoin
+      partnerProductId
+      partnerId
+      productName
+      promotion {
         type
-        discount
-        productId
       }
+      coin
+      createAt
+      status
     }
   }
 `;
@@ -50,18 +55,35 @@ const queryGetListPartnerCharges = gql`
       count
       rows {
         partnerChargeId
-      user {
-        username
-        nickname
-      }
-      coin
-      partner {
-        partnerName
-      }
-      status
-      createAt
+        user {
+          username
+          nickname
+        }
+        coin
+        partner {
+          partnerName
+        }
+        status
+        createAt
       }
     }
   }
 `;
-export { queryGetListProducts, queryGetListPartnerCharges };
+const queryGetPartnerProductById = gql`
+  query listPartnerProducts($partnerProductId: String) {
+    listPartnerProducts(partnerProductId: $partnerProductId) {
+      productName
+      partnerId
+      partnerProductName
+      promotionId
+      status
+      coin
+      productId
+    }
+  }
+`;
+export {
+  queryGetListPartnerProducts,
+  queryGetListPartnerCharges,
+  queryGetPartnerProductById
+};

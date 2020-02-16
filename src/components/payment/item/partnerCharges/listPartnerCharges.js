@@ -2,11 +2,11 @@ import React, { useState, useEffect } from "react";
 import { Table, Button, Pagination, Input, Row, Col, Select } from "antd";
 import {
   queryGetListPartnerCharges
-} from "../../../utils/queryPartnerProducts";
+} from "../../../../utils/queryPartnerProducts";
 import { useLazyQuery } from "@apollo/react-hooks";
 import { Link } from "react-router-dom";
 
-import "../../../static/style/listProducts.css";
+import "../../../../static/style/listProducts.css";
 
 const { Option } = Select;
 function ListPartnerCharges() {
@@ -60,7 +60,8 @@ function ListPartnerCharges() {
     {
       title: "Id",
       dataIndex: "partnerChargeId",
-      key: "chargeId"
+      key: "chargeId",
+      // fixed:'left'
     },
     {
       title: "UserName",
@@ -112,6 +113,7 @@ function ListPartnerCharges() {
           columns={columns}
           dataSource={dataPartnerCharges.listPartnerChargesByType.rows}
           pagination={false}
+          scroll={{ x: 1300 }}
         />)}
     </>
   );

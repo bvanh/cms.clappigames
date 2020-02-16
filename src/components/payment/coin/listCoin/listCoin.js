@@ -8,7 +8,7 @@ import ListCharges from "../listCharges/listCharges";
 import CreateProductCoin from "../listCoin/addnewCoin";
 import { deleteCoinProduct } from "../../../../utils/mutation/productCoin";
 import { fromPromise } from "apollo-boost";
-function ListCoin() {
+function ListCoin(props) {
   const [pageIndex, setPageIndex] = useState({
     currentPage: 1,
     type: "",
@@ -133,7 +133,7 @@ function ListCoin() {
   };
   const hasSelected = itemsForDelete.length > 0;
   if (loading) return "Loading...";
-  if (isCreateCoin) return <CreateProductCoin />;
+  if (isCreateCoin) return <CreateProductCoin setIsCreateCoin={setIsCreateCoin} />;
   if (isCreateCoin === false)
     return (
       <Row>
