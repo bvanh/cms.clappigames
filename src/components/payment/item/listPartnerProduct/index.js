@@ -3,7 +3,7 @@ import { Table, Button, Pagination, Input, Row, Col } from "antd";
 import CreatePartnerItems from "./createItems";
 import { deletePartnerProducts } from "../../../../utils/mutation/partnerProductItems";
 import { queryGetListPartnerProducts } from "../../../../utils/queryPartnerProducts";
-import { useLazyQuery,useMutation } from "@apollo/react-hooks";
+import { useLazyQuery, useMutation, useQuery } from "@apollo/react-hooks";
 import { Link } from "react-router-dom";
 import ListPartnerChages from "../partnerCharges/listPartnerCharges";
 // import "../../static/style/listUsers.css";
@@ -11,32 +11,24 @@ import ListPartnerChages from "../partnerCharges/listPartnerCharges";
 function ListPartnerItems() {
   const [pageIndex, setPageIndex] = useState({
     currentPage: 1,
-    type: "",
-    pageSize: 10
+    pageSize: 10,
+    partnerId: ""
   });
   const [isCreateItem, setIsCreateItem] = useState(false);
   const [dataProducts, setData] = useState(null);
   const [itemsForDelete, setItemsForDelete] = useState([]);
-  const { currentPage, type, pageSize } = pageIndex;
-  const [getData, { loading, data }] = useLazyQuery(
-    queryGetListPartnerProducts,
+  const { currentPage, pageSize, partnerId } = pageIndex;
+  const { loading, error, data, refetch } = useQuery(
+    queryGetListPartnerProducts(currentPage, pageSize, partnerId),
     {
+      fetchPolicy: "cache-and-network",
       onCompleted: data => {
         setData(data);
+        console.log('fds')
       }
     }
   );
-  useEffect(() => {
-    getData({
-      variables: {
-        currentPage: currentPage,
-        type: type,
-        pageSize: pageSize
-        // search: search
-      }
-    });
-  }, []);
-  const [deleteProduct] = useMutation(deletePartnerProducts, {
+  const [deletePartnerProduct] = useMutation(deletePartnerProducts, {
     variables: {
       ids: itemsForDelete
     }
@@ -54,6 +46,11 @@ function ListPartnerItems() {
           </Link>
         </span>
       )
+    },
+    {
+      title: "Status",
+      dataIndex: "status",
+      key: "status"
     },
     {
       title: "Id",
@@ -81,25 +78,10 @@ function ListPartnerItems() {
       key: "time"
     },
     {
-      title: "Status",
-      dataIndex: "status",
-      key: "status"
-    },
-    {
       title: "partnerId",
       dataIndex: "partnerId",
       key: "partnerId"
     }
-    // {
-    //   title: "Action",
-    //   key: "action",
-
-    //   render: (text, record) => (
-    //     <span>
-    //       <Link to={`users/detail?userId=${record.userId}`}>Chi tiết</Link>
-    //     </span>
-    //   )
-    // }
   ];
   const rowSelection = {
     onChange: (selectRowsKeys, selectedRows) => {
@@ -108,23 +90,22 @@ function ListPartnerItems() {
     }
   };
   const submitDeletePartnerProduct = async () => {
-    const demo = await deleteProduct();
-    // refetch();
-    console.log(demo);
+    await deletePartnerProduct();
+    refetch();
   };
   const hasSelected = itemsForDelete.length > 0;
   const getValueSearch = e => {
     setPageIndex({ ...pageIndex, search: e.target.value });
   };
   const onSearch = () => {
-    getData({
-      variables: {
-        currentPage: currentPage,
-        type: type,
-        pageSize: pageSize
-        // search: search
-      }
-    });
+    // getData({
+    //   variables: {
+    //     currentPage: currentPage,
+    //     type: type,
+    //     pageSize: pageSize
+    //     // search: search
+    //   }
+    // });
   };
   if (loading) return "Loading...";
   if (isCreateItem)
@@ -156,8 +137,8 @@ function ListPartnerItems() {
               <Table
                 rowSelection={rowSelection}
                 columns={columns}
-                dataSource={dataProducts.listPartnerProducts}
-                scroll={{ x: 1000 }}
+                dataSource={dataProducts.listPartnerProductsByPartner.rows}
+              // scroll={{ x: 1000 }}
               />
               {/* <Pagination
             current={pageIndex.currentPage}

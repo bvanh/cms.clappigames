@@ -113,7 +113,7 @@ function ListPartnerCharges() {
           columns={columns}
           dataSource={dataPartnerCharges.listPartnerChargesByType.rows}
           pagination={false}
-          scroll={{ x: 1300 }}
+          //  
         />)}
     </>
   );

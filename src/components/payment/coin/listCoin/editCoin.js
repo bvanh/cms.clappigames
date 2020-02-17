@@ -12,7 +12,7 @@ import {
 } from "antd";
 
 import { queryGetProductById } from "../../../../utils/queryCoin";
-import { UpdateProduct } from "../../../../utils/mutation/productCoin";
+import { updateProduct } from "../../../../utils/mutation/productCoin";
 import { useLazyQuery, useMutation } from "@apollo/react-hooks";
 import { Link } from "react-router-dom";
 import "../../../../static/style/listProducts.css";
@@ -37,6 +37,7 @@ function EditProductCoin() {
     status: ""
   });
   const [getData] = useLazyQuery(queryGetProductById, {
+    fetchPolicy:"cache-and-network",
     onCompleted: data => {
       setDataProduct(data.listProducts[0]);
       setOldDataProduct({ ...oldDataProduct, oldData: data.listProducts[0] });
@@ -50,13 +51,13 @@ function EditProductCoin() {
     });
   }, []);
   const { productName, status, price, sort, type } = dataProduct;
-  const [updateCoin] = useMutation(UpdateProduct, {
+  const [updateCoin] = useMutation(updateProduct, {
     variables: {
       productId: productId,
       req: {
         productName: productName,
         sort: sort,
-        price: price,
+        price: Number(price),
         type: type,
         status: status
       }
@@ -153,8 +154,8 @@ function EditProductCoin() {
                 <Radio style={radioStyle} value="COMPLETE">
                   COMPLETE
                 </Radio>
-                <Radio style={radioStyle} value="DELETE">
-                  DELETE
+                <Radio style={radioStyle} value="DELETED">
+                  DELETED
                 </Radio>
               </Radio.Group>
             </div>

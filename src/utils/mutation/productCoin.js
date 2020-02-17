@@ -1,7 +1,7 @@
 // update product
 import { gql } from "apollo-boost";
-const UpdateProduct = gql`
-  mutation UpdateProduct($productId: String!, $req: ProductRequest!) {
+const updateProduct = gql`
+  mutation updateProduct($productId: String!, $req: ProductRequest!) {
     updateProduct(productId: $productId, req: $req) {
       productName
     }
@@ -26,4 +26,4 @@ mutation deleteProducts($ids:[String]!){
     }
 }
 `;
-export { UpdateProduct, createProduct,deleteCoinProduct };
+export { updateProduct, createProduct,deleteCoinProduct };

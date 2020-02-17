@@ -1,31 +1,23 @@
 import { gql } from "apollo-boost";
-const queryGetListPartnerProducts = gql`
-  query listPartnerProducts(
-    $partnerProductId: String
-    $partnerId: String
-    $productId: String
-    $productName: String
-    $partnerProductName: String
-  ) {
-    listPartnerProducts(
-      partnerProductId: $partnerProductId
-      partnerId: $partnerId
-      productId: $productId
-      productName: $productName
-      partnerProductName: $partnerProductName
-    ) {
-      partnerProductId
-      partnerId
-      productName
-      promotion {
-        type
+const queryGetListPartnerProducts = (currentPage, pageSize, partnerId) => {
+  return gql`
+    query {
+      listPartnerProductsByPartner(currentPage: ${currentPage},pageSize: ${pageSize},partnerId: "${partnerId}") {
+        count
+        rows {
+          partnerProductId
+          partnerId
+          productName
+          promotion {
+            type
+          }
+          coin
+          createAt
+          status
+        }
       }
-      coin
-      createAt
-      status
-    }
-  }
-`;
+    }`;
+};
 // lịch sử giao dịch theo items
 const queryGetListPartnerCharges = gql`
   query listPartnerChargesByType(

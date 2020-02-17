@@ -13,7 +13,7 @@ import {
 import { queryGetPlatform } from "../../../../utils/queryNews";
 import { queryGetPartnerProductById } from "../../../../utils/queryPartnerProducts";
 import { updatePartnerProductItem } from "../../../../utils/mutation/partnerProductItems";
-import { useLazyQuery, useMutation,useQuery } from "@apollo/react-hooks";
+import { useLazyQuery, useMutation, useQuery } from "@apollo/react-hooks";
 import { Link } from "react-router-dom";
 import "../../../../static/style/listProducts.css";
 const { Option } = Select;
@@ -41,26 +41,34 @@ function EditPartnerProductItem() {
     status: ""
   });
 
-  const { loading, error, data } = useQuery(queryGetPlatform(), {
+  useQuery(queryGetPlatform(), {
     onCompleted: dataPartner => {
       setListPlatform(dataPartner.listPartners);
     }
   });
-  const [getData] = useLazyQuery(queryGetPartnerProductById, {
-    onCompleted: data => {
-      setDataPartnerProduct(data.listPartnerProducts[0]);
-      setOldDataPartnerProduct({
-        ...oldDataPartnerProduct,
-        oldData: data.listPartnerProducts[0]
-      });
-    }
-  });
-  useEffect(() => {
-    getData({
+  const { data, loading, error, refetch } = useQuery(
+    queryGetPartnerProductById,
+    {
       variables: {
         partnerProductId: partnerProductId
+      },
+      onCompleted: data => {
+        setDataPartnerProduct(data.listPartnerProducts[0]);
+        setOldDataPartnerProduct({
+          ...oldDataPartnerProduct,
+          oldData: data.listPartnerProducts[0]
+        });
       }
-    });
+    }
+  );
+  useEffect(() => {
+    refetch();
+    // getData({
+    //   variables: {
+    //     partnerProductId: partnerProductId
+    //   }
+    // });
+    // console.log('edit')
   }, []);
   const {
     productName,
@@ -103,6 +111,7 @@ function EditPartnerProductItem() {
     result.then(val => {
       if (val) {
         alert("update thành công!");
+        refetch();
         setOldDataPartnerProduct({
           ...oldDataPartnerProduct,
           statusBtnCancel: true
@@ -117,7 +126,9 @@ function EditPartnerProductItem() {
     setDataPartnerProduct({ ...dataPartnerProduct, partnerId: value });
   }
   const printPlatform = dataListPlatform.map((val, index) => (
-    <Option value={val.partnerId} key={index}>{val.partnerName}</Option>
+    <Option value={val.partnerId} key={index}>
+      {val.partnerName}
+    </Option>
   ));
   if (dataPartnerProduct !== null) {
     return (
@@ -200,7 +211,7 @@ function EditPartnerProductItem() {
               <span className="edit-product-content-title">Mã khuyến mãi</span>
               <Input
                 value={promotionId}
-                type='number'
+                type="number"
                 name="promotionId"
                 onChange={getNewInfoItem}
               ></Input>
@@ -216,8 +227,8 @@ function EditPartnerProductItem() {
                 <Radio style={radioStyle} value="COMPLETE">
                   COMPLETE
                 </Radio>
-                <Radio style={radioStyle} value="DELETE">
-                  DELETE
+                <Radio style={radioStyle} value="DELETED">
+                  DELETED
                 </Radio>
               </Radio.Group>
             </div>

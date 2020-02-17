@@ -18,11 +18,15 @@ function ListCoin(props) {
   const [dataCoin, setDataCoin] = useState(null);
   const [itemsForDelete, setItemsForDelete] = useState([]);
   const { currentPage, type, pageSize } = pageIndex;
-  const [getDataCoin, { loading, data ,refetch }] = useLazyQuery(queryGetListCoin, {
-    onCompleted: data => {
-      setDataCoin(data);
+  const [getDataCoin, { loading, data, refetch }] = useLazyQuery(
+    queryGetListCoin,
+    {
+      fetchPolicy: "cache-and-network",
+      onCompleted: data => {
+        setDataCoin(data);
+      }
     }
-  });
+  );
   const [deleteProduct] = useMutation(deleteCoinProduct, {
     variables: {
       ids: itemsForDelete
@@ -120,20 +124,25 @@ function ListCoin(props) {
       }
     });
   };
+  let demo=''; 
   const rowSelection = {
-    onChange: (selectRowsKeys, selectedRows) => {
+    onChange: (selectRowsKeys, selectedRows,record) => {
       const itemsIdForDelete = selectedRows.map((val, index) => val.productId);
       setItemsForDelete(itemsIdForDelete);
-    }
+    },
+    onSelect: ( record) => {   
+      // console.log()
+    },
   };
-  const submitDeleteProduct = async() => {
-    const demo =  await deleteProduct();
+  const submitDeleteProduct = async () => {
+    const demo = await deleteProduct();
     refetch();
     console.log(demo);
   };
   const hasSelected = itemsForDelete.length > 0;
   if (loading) return "Loading...";
-  if (isCreateCoin) return <CreateProductCoin setIsCreateCoin={setIsCreateCoin} />;
+  if (isCreateCoin)
+    return <CreateProductCoin setIsCreateCoin={setIsCreateCoin} />;
   if (isCreateCoin === false)
     return (
       <Row>
@@ -175,9 +184,7 @@ function ListCoin(props) {
         </Col>
         <Col md={12}>
           <Col>Xu hướng mua Item</Col>
-          <Col>
-            <ListCharges />
-          </Col>
+          <Col>{/* <ListCharges /> */}</Col>
         </Col>
       </Row>
     );
