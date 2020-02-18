@@ -11,7 +11,7 @@ import {
   Rate
 } from "antd";
 import { queryGetPlatform } from "../../../../utils/queryNews";
-import { queryGetPartnerProductById } from "../../../../utils/queryPartnerProducts";
+import { queryGetRefPartnerProducts } from "../../../../utils/queryPartnerProducts";
 import { createPartnerProduct } from "../../../../utils/mutation/partnerProductItems";
 import { useLazyQuery, useMutation, useQuery } from "@apollo/react-hooks";
 import { Link } from "react-router-dom";
@@ -22,22 +22,31 @@ const radioStyle = {
   height: "24px",
   lineHeight: "30px"
 };
-function CreatePartnerItems() {
+function CreatePartnerItems(props) {
   const userName = localStorage.getItem("userNameCMS");
   const query = new URLSearchParams(window.location.search);
   const partnerProductId = query.get("partnerProductId");
   const [oldDataPartnerProduct, setOldDataPartnerProduct] = useState({
     statusBtnCancel: false,
-    oldData: null
+    oldData: {
+      productName: "",
+      partnerId: "",
+      productId: "",
+      coin: "",
+      partnerProductName: "",
+      promotionId: "",
+      status: ""
+    }
   });
   const [dataListPlatform, setListPlatform] = useState([]);
+  const [dataListRefProduct, setListRefProduct] = useState([]);
   const [dataPartnerProduct, setDataPartnerProduct] = useState({
     productName: "",
     partnerId: "",
     productId: "",
-    coin: 0,
+    coin: "",
     partnerProductName: "",
-    promotionId: 0,
+    promotionId: "",
     status: ""
   });
 
@@ -55,6 +64,14 @@ function CreatePartnerItems() {
     partnerId,
     promotionId
   } = dataPartnerProduct;
+  const [getRefPartnerProduct] = useLazyQuery(
+    queryGetRefPartnerProducts(partnerId),
+    {
+      onCompleted: data => {
+        setListRefProduct(data.listRefPartnerProducts);
+      }
+    }
+  );
   const [createItem] = useMutation(createPartnerProduct, {
     variables: {
       req: {
@@ -90,23 +107,46 @@ function CreatePartnerItems() {
           ...oldDataPartnerProduct,
           statusBtnCancel: true
         });
+        setDataPartnerProduct(oldDataPartnerProduct.oldData);
       }
     });
   };
   const cancelUpdate = () => {
     setDataPartnerProduct(oldDataPartnerProduct.oldData);
   };
-  function changePartnerName(value) {
-    setDataPartnerProduct({ ...dataPartnerProduct, partnerId: value });
+  const changePartnerProductName = async val => {
+    await setDataPartnerProduct({
+      ...dataPartnerProduct,
+      partnerProductName: JSON.parse(val).productName,
+      productId: JSON.parse(val).productId
+    });
+  };
+  async function changePartnerName(val) {
+    await setDataPartnerProduct({ ...dataPartnerProduct, partnerId: val });
+    getRefPartnerProduct();
   }
   const printPlatform = dataListPlatform.map((val, index) => (
     <Option value={val.partnerId} key={index}>
       {val.partnerName}
     </Option>
   ));
+  const printRefProduct = dataListRefProduct.map(function(val, index) {
+    if (index <= 0) {
+      return null;
+    } else {
+      return (
+        <Option
+          value={`{"productId":"${val.productId}","productName":"${val.productName}"}`}
+          key={index}
+        >
+          {val.productName}
+        </Option>
+      );
+    }
+  });
   return (
     <Row>
-      <Link to="/payment/items">
+      <Link to="/payment/items" onClick={() => props.setIsCreateItem(false)}>
         <span>
           <Icon type="arrow-left" style={{ paddingRight: ".2rem" }} />
           Danh sách Items
@@ -123,7 +163,22 @@ function CreatePartnerItems() {
               >
                 Hủy
               </Button>
-              <Button onClick={submitCreateItem}>Lưu mới C.coin</Button>
+              <Button
+                onClick={submitCreateItem}
+                disabled={
+                  productName === "" ||
+                  partnerId === "" ||
+                  productId === "" ||
+                  coin === "" ||
+                  partnerProductName === "" ||
+                  promotionId === 0 ||
+                  status === ""
+                    ? true
+                    : false
+                }
+              >
+                Thêm mới C.coin
+              </Button>
             </p>
           </div>
         </div>
@@ -152,13 +207,20 @@ function CreatePartnerItems() {
               >
                 {printPlatform}
               </Select>
-              <span className="edit-product-content-title">ProductId</span>
-              <Input
-                value={productId}
-                name="productId"
-                onChange={getNewInfoItem}
-              ></Input>
             </div>
+            <span className="edit-product-content-title">ProductIdAndName</span>
+            <Select
+              value={
+                productId === ""
+                  ? null
+                  : `{"productId":"${productId}","productName":"${partnerProductName}"}`
+              }
+              style={{ width: "100%", marginTop: "0" }}
+              onChange={changePartnerProductName}
+              disabled={dataListRefProduct.length === 0 ? true : false}
+            >
+              {printRefProduct}
+            </Select>
             <span className="edit-product-content-title">Tên Item</span>
             <Input
               value={productName}
@@ -171,14 +233,6 @@ function CreatePartnerItems() {
               type="number"
               max="9990000000"
               name="coin"
-              onChange={getNewInfoItem}
-            ></Input>
-            <span className="edit-product-content-title">
-              PartnerProductName
-            </span>
-            <Input
-              value={partnerProductName}
-              name="partnerProductName"
               onChange={getNewInfoItem}
             ></Input>
             <span className="edit-product-content-title">Mã khuyến mãi</span>

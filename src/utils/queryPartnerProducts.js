@@ -18,6 +18,17 @@ const queryGetListPartnerProducts = (currentPage, pageSize, partnerId) => {
       }
     }`;
 };
+// get productId
+const queryGetRefPartnerProducts = partnerId => {
+  return gql`
+  query{
+ listRefPartnerProducts(partnerId:"${partnerId}"){
+    productId
+    productName
+  }
+}
+  `;
+};
 // lịch sử giao dịch theo items
 const queryGetListPartnerCharges = gql`
   query listPartnerChargesByType(
@@ -77,5 +88,6 @@ const queryGetPartnerProductById = gql`
 export {
   queryGetListPartnerProducts,
   queryGetListPartnerCharges,
-  queryGetPartnerProductById
+  queryGetPartnerProductById,
+  queryGetRefPartnerProducts
 };

@@ -79,7 +79,7 @@ function ListNews() {
       render: (text, record) => (
         <span>
           <Link to={`news/edit?newsId=${record.newsId}`}>Edit</Link>|
-          <Link onClick={() => submitDeleteNews(record.newsId)}>Delete</Link>
+          <a onClick={() => submitDeleteNews(record.newsId)}>Delete</a>
         </span>
       )
     }

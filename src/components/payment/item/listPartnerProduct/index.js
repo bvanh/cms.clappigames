@@ -24,7 +24,6 @@ function ListPartnerItems() {
       fetchPolicy: "cache-and-network",
       onCompleted: data => {
         setData(data);
-        console.log('fds')
       }
     }
   );
@@ -109,7 +108,7 @@ function ListPartnerItems() {
   };
   if (loading) return "Loading...";
   if (isCreateItem)
-    return <CreatePartnerItems setIsCreateItem={setIsCreateItem} />;
+    return <CreatePartnerItems setIsCreateItem={setIsCreateItem}/>;
   if (isCreateItem === false)
     return (
       <Row>

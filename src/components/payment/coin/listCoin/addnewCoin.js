@@ -27,7 +27,6 @@ function CreateProductCoin(props) {
     status: ""
   });
   const { productName, status, price, sort, type } = dataProduct;
-  const { data } = useQuery(queryGetPaymentType);
   const [createCoin] = useMutation(createProduct, {
     variables: {
       req: {
@@ -62,103 +61,104 @@ function CreateProductCoin(props) {
   const cancelUpdate = () => {
     setDataProduct(oldDataProduct.oldData);
   };
-  if (data && data.__type) {
-    const printPaymentTypes = data.__type.enumValues.map((val, index) => (
-      <Radio value={val.name}>{val.name}</Radio>
-    ));
-    return (
-      <Row>
-        <Link to="/payment/coin" onClick={()=>props.setIsCreateCoin(false)}>
-          <span>
-            <Icon type="arrow-left" style={{ paddingRight: ".2rem" }} />
-            Danh sách Coin
-          </span>
-        </Link>
-        <div className="products-title">
+  const { enumValues } = props.data.__type;
+  const printPaymentTypes = enumValues.map((val, index) => (
+    <Radio value={val.name}key={index}>{val.name}</Radio>
+  ));
+  return (
+    <Row>
+      <Link to="/payment/coin" onClick={() => props.setIsCreateCoin(false)}>
+        <span>
+          <Icon type="arrow-left" style={{ paddingRight: ".2rem" }} />
+          Danh sách Coin
+        </span>
+      </Link>
+      <div className="products-title">
+        <div>
+          <h2>Tạo mới C.coin</h2>
           <div>
-            <h2>Tạo mới C.coin</h2>
-            <div>
-              <p>
-                <Button
-                  onClick={cancelUpdate}
-                  disabled={oldDataProduct.statusBtnCancel}
-                >
-                  Hủy
-                </Button>
-                <Button onClick={submitUpdateCoin}>Tạo mới C.coin</Button>
-              </p>
-            </div>
+            <p>
+              <Button
+                onClick={cancelUpdate}
+                disabled={oldDataProduct.statusBtnCancel}
+              >
+                Hủy
+              </Button>
+              <Button onClick={submitUpdateCoin}>Tạo mới C.coin</Button>
+            </p>
           </div>
         </div>
-        <Row className="products-content">
-          <Col md={12} className="section1">
+      </div>
+      <Row className="products-content">
+        <Col md={12} className="section1">
+          <div>
             <div>
-              <div>
-                <p className="edit-product-content-title">Mã C.coin</p>
-                <span>Mã tự tạo: AUTO </span>
-              </div>
-              <div>
-                <p className="edit-product-content-title">
-                  Đang trong khuyến mãi?
-                </p>
-                <span>Mã KM: Demo </span>
-              </div>
+              <p className="edit-product-content-title">Mã C.coin</p>
+              <span>Mã tự tạo: AUTO </span>
             </div>
-            <div className="product-input-update">
-              <span className="edit-product-content-title">Tên C.coin</span>
-              <Input name="productName" onChange={getNameAndPrice}></Input>
-              <span className="edit-product-content-title">Giá (VNĐ)</span>
-              <Input
-                type="number"
-                max="9990000000"
-                name="price"
-                onChange={getNameAndPrice}
-              ></Input>
-              <div>
-                <Col>
-                  <span className="edit-product-content-title">
-                    Thứ tự ưu tiên
-                  </span>
-                  <Rate count={10} onChange={getSort} value={sort} />
-                </Col>
-                <Col>
-                  <span className="edit-product-content-title"style={{marginTop:'5px'}}>
-                    Kiểu thanh toán
-                  </span>
-                  <Radio.Group name="type" onChange={getStatusAndType}>
-                    {printPaymentTypes}
-                  </Radio.Group>
-                </Col>
-              </div>
-            </div>
-          </Col>
-          <Col md={8} className="section2">
             <div>
-              <p className="edit-product-content-title">Trạng thái</p>
-              <Radio.Group onChange={getStatusAndType} name="status">
-                <Radio style={radioStyle} value="INPUT">
-                  INPUT
-                </Radio>
-                <Radio style={radioStyle} value="COMPLETE">
-                  COMPLETE
-                </Radio>
-                <Radio style={radioStyle} value="DELETE">
-                  DELETE
-                </Radio>
-              </Radio.Group>
+              <p className="edit-product-content-title">
+                Đang trong khuyến mãi?
+              </p>
+              <span>Mã KM: Demo </span>
             </div>
-            <div style={{ marginTop: "1rem" }}>
-              <p className="edit-product-content-title">Khởi tạo</p>
-              <span>
-                Người tạo: <span>{userName}</span>
-              </span>
+          </div>
+          <div className="product-input-update">
+            <span className="edit-product-content-title">Tên C.coin</span>
+            <Input name="productName" onChange={getNameAndPrice}></Input>
+            <span className="edit-product-content-title">Giá (VNĐ)</span>
+            <Input
+              type="number"
+              max="9990000000"
+              name="price"
+              onChange={getNameAndPrice}
+            ></Input>
+            <div>
+              <Col>
+                <span className="edit-product-content-title">
+                  Thứ tự ưu tiên
+                </span>
+                <Rate count={10} onChange={getSort} value={sort} />
+              </Col>
+              <Col>
+                <span
+                  className="edit-product-content-title"
+                  style={{ marginTop: "5px" }}
+                >
+                  Kiểu thanh toán
+                </span>
+                <Radio.Group name="type" onChange={getStatusAndType}>
+                  {printPaymentTypes}
+                </Radio.Group>
+              </Col>
             </div>
-          </Col>
-        </Row>
+          </div>
+        </Col>
+        <Col md={8} className="section2">
+          <div>
+            <p className="edit-product-content-title">Trạng thái</p>
+            <Radio.Group onChange={getStatusAndType} name="status">
+              <Radio style={radioStyle} value="INPUT">
+                INPUT
+              </Radio>
+              <Radio style={radioStyle} value="COMPLETE">
+                COMPLETE
+              </Radio>
+              <Radio style={radioStyle} value="DELETE">
+                DELETE
+              </Radio>
+            </Radio.Group>
+          </div>
+          <div style={{ marginTop: "1rem" }}>
+            <p className="edit-product-content-title">Khởi tạo</p>
+            <span>
+              Người tạo: <span>{userName}</span>
+            </span>
+          </div>
+        </Col>
       </Row>
-    );
-  }
-  return <p>Loading...</p>
+    </Row>
+  );
 }
 
 export default CreateProductCoin;

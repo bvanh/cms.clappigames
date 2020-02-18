@@ -11,7 +11,10 @@ import {
   Rate
 } from "antd";
 import { queryGetPlatform } from "../../../../utils/queryNews";
-import { queryGetPartnerProductById } from "../../../../utils/queryPartnerProducts";
+import {
+  queryGetPartnerProductById,
+  queryGetRefPartnerProducts
+} from "../../../../utils/queryPartnerProducts";
 import { updatePartnerProductItem } from "../../../../utils/mutation/partnerProductItems";
 import { useLazyQuery, useMutation, useQuery } from "@apollo/react-hooks";
 import { Link } from "react-router-dom";
@@ -31,6 +34,7 @@ function EditPartnerProductItem() {
     oldData: null
   });
   const [dataListPlatform, setListPlatform] = useState([]);
+  const [dataListRefProduct, setListRefProduct] = useState([]);
   const [dataPartnerProduct, setDataPartnerProduct] = useState({
     productName: "",
     partnerId: "",
@@ -40,7 +44,6 @@ function EditPartnerProductItem() {
     promotionId: 0,
     status: ""
   });
-
   useQuery(queryGetPlatform(), {
     onCompleted: dataPartner => {
       setListPlatform(dataPartner.listPartners);
@@ -61,15 +64,6 @@ function EditPartnerProductItem() {
       }
     }
   );
-  useEffect(() => {
-    refetch();
-    // getData({
-    //   variables: {
-    //     partnerProductId: partnerProductId
-    //   }
-    // });
-    // console.log('edit')
-  }, []);
   const {
     productName,
     status,
@@ -79,6 +73,17 @@ function EditPartnerProductItem() {
     partnerId,
     promotionId
   } = dataPartnerProduct;
+  const [getRefPartnerProduct] = useLazyQuery(
+    queryGetRefPartnerProducts(partnerId),
+    {
+      onCompleted: data => {
+        setListRefProduct(data.listRefPartnerProducts);
+      }
+    }
+  );
+  useEffect(() => {
+    getRefPartnerProduct();
+  }, []);
   const [updateCoin] = useMutation(updatePartnerProductItem, {
     variables: {
       partnerProductId: partnerProductId,
@@ -125,11 +130,39 @@ function EditPartnerProductItem() {
   function changePartnerName(value) {
     setDataPartnerProduct({ ...dataPartnerProduct, partnerId: value });
   }
+  const changePartnerProductName = async val => {
+    await setDataPartnerProduct({
+      ...dataPartnerProduct,
+      partnerProductName: JSON.parse(val).productName,
+      productId: JSON.parse(val).productId
+    });
+  };
   const printPlatform = dataListPlatform.map((val, index) => (
     <Option value={val.partnerId} key={index}>
       {val.partnerName}
     </Option>
   ));
+  const printRefProduct = dataListRefProduct.map(function(val, index) {
+    if (index = 0) {
+      return (
+        <Option
+          value={`{"productId":"${productId}","productName":"${partnerProductName}"}`}
+          key={index}
+        >
+          {partnerProductName}
+        </Option>
+      );
+    } else {
+      return (
+        <Option
+          value={`{"productId":"${val.productId}","productName":"${val.productName}"}`}
+          key={index}
+        >
+          {val.productName}
+        </Option>
+      );
+    }
+  });
   if (dataPartnerProduct !== null) {
     return (
       <Row>
@@ -179,12 +212,21 @@ function EditPartnerProductItem() {
                 >
                   {printPlatform}
                 </Select>
-                <span className="edit-product-content-title">ProductId</span>
-                <Input
-                  value={productId}
-                  name="productId"
-                  onChange={getNewInfoItem}
-                ></Input>
+                <span className="edit-product-content-title">
+                  ProductIdAndName
+                </span>
+                <Select
+                  value={
+                    dataListRefProduct.length === 0
+                      ? ""
+                      : `{"productId":"${productId}","productName":"${partnerProductName}"}`
+                  }
+                  style={{ width: "100%", marginTop: "0" }}
+                  onChange={changePartnerProductName}
+                  disabled={dataListRefProduct.length === 0 ? true : false}
+                >
+                  {printRefProduct}
+                </Select>
               </div>
               <span className="edit-product-content-title">Tên Item</span>
               <Input
@@ -198,14 +240,6 @@ function EditPartnerProductItem() {
                 type="number"
                 max="9990000000"
                 name="coin"
-                onChange={getNewInfoItem}
-              ></Input>
-              <span className="edit-product-content-title">
-                PartnerProductName
-              </span>
-              <Input
-                value={partnerProductName}
-                name="partnerProductName"
                 onChange={getNewInfoItem}
               ></Input>
               <span className="edit-product-content-title">Mã khuyến mãi</span>
