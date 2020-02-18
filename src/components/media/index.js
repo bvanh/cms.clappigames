@@ -2,8 +2,10 @@ import React, { useState } from "react";
 import { Upload, Checkbox, Row, Col, Card, Icon } from "antd";
 import UploadImages from "./upload";
 import { useQuery, useMutation } from "@apollo/react-hooks";
-import { queryListImages, DELETE_IMAGE } from "../../utils/queryMedia";
+import { queryListImages } from "../../utils/queryMedia";
+import {DELETE_IMAGE} from '../../utils/mutation/media'
 import "../../static/style/media.css";
+import {Link} from 'react-router-dom'
 
 const gridStyle = {
   width: "24%",
@@ -45,7 +47,7 @@ function Media() {
   };
   return (
     <Row>
-      <h2>Media</h2>
+      <h2>Media</h2><Link to='/media/album'><h2>Album</h2></Link>
       <Col md={16}>
         {selectedImage.length > 0 && (
           <div className="btn-media-options">

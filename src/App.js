@@ -8,6 +8,7 @@ import NewsEditor from "./components/news/newsEdit";
 import ListNews from "./components/news/index";
 import AddNews from "./components/news/addnews";
 import ListImages from "./components/media/index";
+import Album from './components/media/album'
 import ListCoin from './components/payment/coin/listCoin/listCoin'
 import ListPartnerItems from "./components/payment/item/listPartnerProduct/index";
 import EditProductCoin from './components/payment/coin/listCoin/editCoin'
@@ -144,6 +145,7 @@ function App(props) {
               />
               <Route exact path="/news/addnews" render={() => <AddNews />} />
               <Route exact path="/media" render={() => <ListImages />} />
+              <Route exact path="/media/album" render={() => <Album />} />
               <Route
               exact            
                 path="/payment/items"
