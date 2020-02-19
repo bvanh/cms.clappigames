@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import { Upload, Checkbox, Row, Col, Card, Icon } from "antd";
+import { Upload, Checkbox, Row, Col, Card, Icon, Button } from "antd";
 import UploadImages from "./upload";
 import { useQuery, useMutation } from "@apollo/react-hooks";
 import { queryListImages } from "../../utils/queryMedia";
-import {DELETE_IMAGE} from '../../utils/mutation/media'
+import { DELETE_IMAGE, CREATE_ALBUM } from '../../utils/mutation/media'
 import "../../static/style/media.css";
-import {Link} from 'react-router-dom'
+import { Link } from 'react-router-dom'
 
 const gridStyle = {
   width: "24%",
@@ -22,6 +22,15 @@ function Media() {
       ids: selectedImage
     }
   });
+  const [createAlbum] = useMutation(CREATE_ALBUM, {
+    variables: {
+      req: {
+        user: 'vietanh',
+        name: "demo4",
+        data: `{"listImages":${JSON.stringify(selectedImage)}}`
+      }
+    }
+  })
   const { loading, error, data, refetch } = useQuery(queryListImages, {
     onCompleted: data => setDataImage(data)
   });
@@ -38,15 +47,20 @@ function Media() {
   });
   const onChange = val => {
     setSelectedImage(val);
-    console.log(val);
+    console.log(JSON.stringify({ images: val }));
   };
   const submitDelete = async () => {
     await deleteImages();
     await refetch();
     setSelectedImage([]);
   };
+  const submitCreateAlbum=()=>{
+    const demo=createAlbum();
+    console.log(demo)
+  }
   return (
     <Row>
+      <Button onClick={submitCreateAlbum}>Tạo album</Button>
       <h2>Media</h2><Link to='/media/album'><h2>Album</h2></Link>
       <Col md={16}>
         {selectedImage.length > 0 && (

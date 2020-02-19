@@ -8,3 +8,30 @@
     justify-content: space-between;
 }
 
+/* album */
+.container-album{
+  display:flex;
+  flex-direction: column;
+}
+.create-album{
+  display: flex;
+  flex-direction: column;
+  background: rgb(234, 234, 234);
+}
+.input-album-name{
+  padding: 0;
+  border: none;
+  background: rgb(234, 234, 234);
+  border-bottom: 1.5px solid;
+  border-radius: 0;
+  height: 35px;
+    margin-left: 0.5rem;
+    font-size: 1rem;
+}
+.create-album-pick{
+  height: 55px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+}

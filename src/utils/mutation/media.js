@@ -23,7 +23,13 @@ const DELETE_ALBUM = gql`
     }
   }
 `;
-const CREATE_ALBUM=gql`
-
-`
-export { UPLOAD_IMAGE, DELETE_IMAGE,DELETE_ALBUM };
+const CREATE_ALBUM = gql`
+mutation ($req:AdminAlbumRequest!){
+  createAdminAlbum(req:$req){
+    name
+    user
+    data
+  }
+}
+`;
+export { UPLOAD_IMAGE, DELETE_IMAGE, DELETE_ALBUM, CREATE_ALBUM };
