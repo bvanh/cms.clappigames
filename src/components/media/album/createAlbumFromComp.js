@@ -3,7 +3,7 @@ import { InMemoryCache } from "apollo-cache-inmemory";
 import { createUploadLink } from "apollo-upload-client";
 import { ApolloClient } from "apollo-client";
 import { ApolloProvider, Mutation } from "react-apollo";
-import { UPLOAD_IMAGE } from "../../utils/mutation/media";
+import { UPLOAD_IMAGE } from "../../../utils/mutation/media";
 import { connect } from "react-redux";
 import { Upload, Icon, message, Button } from "antd";
 import { undefinedVarMessage } from "graphql/validation/rules/NoUndefinedVariables";

@@ -26,4 +26,20 @@ const queryGetListAlbumByAdmin = (currentPage, pageSize, userAdmin) => {
     }
   `;
 };
-export { queryListImages, queryGetListAlbumByAdmin };
+const queryGetImagesFromAlbumByType = (id, userAdmin) => {
+  return gql`
+  query {
+    listAdminAlbums(id:${id},user:"${userAdmin}"){
+      name
+      data
+      user
+      status
+    }
+  }
+  `;
+};
+export {
+  queryListImages,
+  queryGetListAlbumByAdmin,
+  queryGetImagesFromAlbumByType
+};

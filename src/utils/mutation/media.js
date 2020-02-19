@@ -24,12 +24,12 @@ const DELETE_ALBUM = gql`
   }
 `;
 const CREATE_ALBUM = gql`
-mutation ($req:AdminAlbumRequest!){
-  createAdminAlbum(req:$req){
-    name
-    user
-    data
+  mutation($req: AdminAlbumRequest!) {
+    createAdminAlbum(req: $req) {
+      data
+      name
+      id
+    }
   }
-}
 `;
 export { UPLOAD_IMAGE, DELETE_IMAGE, DELETE_ALBUM, CREATE_ALBUM };
