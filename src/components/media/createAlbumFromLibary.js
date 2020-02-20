@@ -6,6 +6,7 @@ import { queryListImages } from "../../utils/queryMedia";
 import { DELETE_IMAGE, CREATE_ALBUM } from "../../utils/mutation/media";
 import "../../static/style/media.css";
 import { Link } from "react-router-dom";
+import createAlbumFromComp from "./createAlbumFromComp";
 
 const gridStyle = {
   width: "24%",
@@ -57,6 +58,7 @@ function CreateAlbumFromLibary() {
         <Button onClick={showImages}>chọn ảnh</Button>
         <span>{selectedImage.length}</span> items đã được chọn
         <p> {printImageSelected}</p>
+        <Button onClick={()=>createAlbum()}>Tạo album</Button>
       </div>
       <Modal
         title="Basic Modal"
