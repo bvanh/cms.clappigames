@@ -5,7 +5,8 @@ const initialState = {
   dataContent: [],
   userToken: null,
   userAccessToken: null,
-  accessToken: JSON.parse(localStorage.getItem("accessTokenCms"))
+  accessToken: JSON.parse(localStorage.getItem("accessTokenCms")),
+  visibleModalNews: false
 };
 export default (state = initialState, action) => {
   switch (action.type) {
@@ -23,6 +24,12 @@ export default (state = initialState, action) => {
         localStorage.removeItem("accessTokenCms");
       }
       return { ...state, isLogin: action.payload };
+    case actions.SHOW_IMAGES_NEWS:
+      return {
+        ...state,
+        visibleModalNews: action.value
+      }
+
     default:
       return state;
   }

@@ -3,7 +3,7 @@ import { InMemoryCache } from "apollo-cache-inmemory";
 import { createUploadLink } from "apollo-upload-client";
 import { ApolloClient } from "apollo-client";
 import { ApolloProvider, Mutation } from "react-apollo";
-import { UPLOAD_IMAGE } from "../../utils/mutation/media";
+import { UPLOAD_IMAGE } from "../../../utils/mutation/media";
 import { connect } from "react-redux";
 import { Upload, Icon, message, Button } from "antd";
 import { undefinedVarMessage } from "graphql/validation/rules/NoUndefinedVariables";
@@ -12,7 +12,7 @@ const { Dragger } = Upload;
 
 const apolloCache = new InMemoryCache();
 function CreateAlbumFromComp(props) {
-  const [fileImage, setFileImage] = useState(null);
+  const [fileImage, setFileImage] = useState([]);
   const [statusUploadBtn, setStatusUploadBtn] = useState(true);
   const [imagesForAlbum, setImagesForAlbum] = useState([]);
   const uploadLink = createUploadLink({
@@ -56,8 +56,8 @@ function CreateAlbumFromComp(props) {
       ...props.imagesForAlbum,
       data.singleUploadImage.url
     ]);
-    console.log(data);
   };
+  console.log(fileImage);
   return (
     <ApolloProvider client={client}>
       <Mutation
@@ -80,19 +80,23 @@ function CreateAlbumFromComp(props) {
 
               <Button
                 onClick={async () => {
-                  for (var key of fileImage) {
-                    await singleUploadStream({
-                      variables: {
-                        partnerName: "lqmt",
-                        file: key.originFileObj
-                      }
-                    });
+                  if(props.albumName ===''){
+                    console.log('thieu tên album')
+                  }else{
+                    for (var key of fileImage) {
+                      await singleUploadStream({
+                        variables: {
+                          partnerName: "lqmt",
+                          file: key.originFileObj
+                        }
+                      });
+                    }
+                    await props.submitCreateAlbum();
+                    props.setPickDataImages();
+                    props.removeAlbumName();
                   }
-                  await props.createAlbum();
-                  props.setPickDataImages();
-                  props.removeAlbumName();
                 }}
-                disabled={fileImage !== [] && fileImage !== null ? false : true}
+                disabled={fileImage.length === 0 ? true : false}
               >
                 Tạo album
               </Button>

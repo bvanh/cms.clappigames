@@ -22,15 +22,6 @@ function Media() {
       ids: selectedImage
     }
   });
-  const [createAlbum] = useMutation(CREATE_ALBUM, {
-    variables: {
-      req: {
-        user: 'vietanh',
-        name: "demo4",
-        data: `{"listImages":${JSON.stringify(selectedImage)}}`
-      }
-    }
-  })
   const { loading, error, data, refetch } = useQuery(queryListImages, {
     onCompleted: data => setDataImage(data)
   });
@@ -54,13 +45,8 @@ function Media() {
     await refetch();
     setSelectedImage([]);
   };
-  const submitCreateAlbum=()=>{
-    const demo=createAlbum();
-    console.log(demo)
-  }
   return (
     <Row>
-      <Button onClick={submitCreateAlbum}>Tạo album</Button>
       <h2>Media</h2><Link to='/media/album'><h2>Album</h2></Link>
       <Col md={16}>
         {selectedImage.length > 0 && (

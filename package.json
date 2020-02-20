@@ -25,7 +25,7 @@
     "react-scripts": "3.3.1",
     "react-use-upload": "^0.5.9",
     "redux": "^4.0.5",
-    "suneditor-react": "^2.5.1"
+    "suneditor-react": "^2.6.7"
   },
   "scripts": {
     "start": "react-app-rewired start",

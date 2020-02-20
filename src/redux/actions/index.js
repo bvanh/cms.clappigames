@@ -16,7 +16,14 @@ const switchLogin = payload => {
 const setToken = (userToken, accessToken) => {
   return {
     type: actions.SET_TOKEN,
-    userToken, accessToken
+    userToken,
+    accessToken
+  };
+};
+const showImagesNews = value => {
+  return {
+    type: actions.SHOW_IMAGES_NEWS,
+    value
   };
 };
 function dispatchSwitchLogin(data) {
@@ -28,4 +35,7 @@ function dispatchSetAccessToken(data) {
 function dispatchSetToken(userToken, accessToken) {
   store.dispatch(setToken(userToken, accessToken));
 }
-export { dispatchSwitchLogin, dispatchSetAccessToken, dispatchSetToken };
+function dispatchShowImagesNews(value) {
+  store.dispatch(showImagesNews(value));
+}
+export { dispatchSwitchLogin, dispatchSetAccessToken, dispatchSetToken, dispatchShowImagesNews };

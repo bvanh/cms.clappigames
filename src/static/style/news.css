@@ -9,3 +9,30 @@
 .news-header>input{
     width: 20%;
 }
+/* css modal images */
+.listImages_news{
+    width: 90% !important;
+    margin: 0 auto;
+    height: 15rem;
+}
+.listImages_news>.ant-modal-content>.ant-modal-body{
+    overflow-y: scroll;
+    height: 25rem;  
+    width: 100%;
+}
+.ant-modal-footer>span{
+    display: flex;
+    align-items: center;
+}
+.list-images-news{
+    width: 20%;
+}
+.list-images-news>.ant-radio{
+    display: none;
+}
+.image-news{
+    border: 3px solid #8c8c8c;
+}
+.ant-radio-wrapper-checked>span>img{
+    border-color: rgb(209, 48, 48);
+}

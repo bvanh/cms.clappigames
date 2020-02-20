@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { Upload, Checkbox, Row, Col, Card, Icon, Button, Modal } from "antd";
-import UploadImages from "./upload";
+import UploadImages from "../upload";
 import { useQuery, useMutation } from "@apollo/react-hooks";
-import { queryListImages } from "../../utils/queryMedia";
-import { DELETE_IMAGE, CREATE_ALBUM } from "../../utils/mutation/media";
-import "../../static/style/media.css";
+import { queryListImages } from "../../../utils/queryMedia";
+import { DELETE_IMAGE, CREATE_ALBUM } from "../../../utils/mutation/media";
+import "../../../static/style/media.css";
 import { Link } from "react-router-dom";
 import createAlbumFromComp from "./createAlbumFromComp";
 
@@ -15,8 +15,8 @@ const gridStyle = {
   margin: ".5%",
   position: "relative"
 };
-function CreateAlbumFromLibary() {
-  const [selectedImage, setSelectedImage] = useState([]);
+function CreateAlbumFromLibary(props) {
+  const { imagesForAlbum } = props;
   const [dataImage, setDataImage] = useState([]);
   const [visible, setVisible] = useState(true);
   const { loading, error, data, refetch } = useQuery(queryListImages, {
@@ -24,9 +24,8 @@ function CreateAlbumFromLibary() {
   });
   if (loading) return "Loading...";
   if (error) return `Error! ${error.message}`;
-  const onChange = val => {
-    setSelectedImage(val);
-    console.log(JSON.stringify({ images: val }));
+  const getImagesForAlbum = valImg => {
+   props.setImagesForAlbum(valImg)
   };
   const handleOk = e => {
     setVisible(false);
@@ -49,16 +48,16 @@ function CreateAlbumFromLibary() {
       );
     }
   });
-  const printImageSelected = selectedImage.map((val, index) => (
-    <img src={val} width="15%" />
+  const printImageSelected = imagesForAlbum.map((val, index) => (
+    <img src={val} width="15%" key={index} />
   ));
   return (
     <>
       <div>
         <Button onClick={showImages}>chọn ảnh</Button>
-        <span>{selectedImage.length}</span> items đã được chọn
+        <span>{imagesForAlbum.length}</span> items đã được chọn
         <p> {printImageSelected}</p>
-        <Button onClick={()=>createAlbum()}>Tạo album</Button>
+        <Button onClick={() => props.submitCreateAlbum()}>Tao album</Button>
       </div>
       <Modal
         title="Basic Modal"
@@ -68,15 +67,19 @@ function CreateAlbumFromLibary() {
       >
         <Row>
           <Col>
-            {selectedImage.length > 0 && (
+            {imagesForAlbum.length > 0 && (
               <div className="btn-media-options">
                 <span>
                   <Icon type="close" style={{ marginRight: "5px" }} />
-                  <span>{selectedImage.length}</span> items đã được chọn
+                  <span>{imagesForAlbum.length}</span> items đã được chọn
                 </span>
               </div>
             )}
-            <Checkbox.Group style={{ width: "100%" }} onChange={onChange}>
+            <Checkbox.Group
+              style={{ width: "100%" }}
+              defaultValue={imagesForAlbum}
+              onChange={getImagesForAlbum}
+            >
               <Col>{printListImages}</Col>
             </Checkbox.Group>
           </Col>

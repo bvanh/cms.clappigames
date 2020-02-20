@@ -69,11 +69,6 @@ function ListNews() {
       )
     },
     {
-      title: "status",
-      dataIndex: "status",
-      key: "status"
-    },
-    {
       title: "Action",
       key: "action",
       render: (text, record) => (

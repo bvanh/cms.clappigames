@@ -7,15 +7,17 @@ import {
 import { useMutation, useQuery } from "@apollo/react-hooks";
 import { gql } from "apollo-boost";
 import buttonListToolbar from "../../utils/itemToolbar";
+import ListImagesForNews from './modalImageUrl/imgsUrl'
 import { Input, Select, Button } from "antd";
-import SunEditor from "suneditor-react";
+import SunEditor, { buttonList } from "suneditor-react";
+import { dispatchShowImagesNews } from '../../redux/actions'
 import "suneditor/dist/css/suneditor.min.css"; // Import Sun Editor's CSS File
 
 // import ListNews from ".";
 const { Option } = Select;
 const listType = {
   type: ["NEWS", "EVENT", "SLIDER", "NOTICE", "GUIDE"],
-  status: ["COMPLETE", "DELETED", "INPUT"]
+  status: ["COMPLETE", "INPUT"]
 };
 
 const NewsEditor = () => {
@@ -33,7 +35,7 @@ const NewsEditor = () => {
     queryNewsDetail(query.get("newsId")),
     {
       onCompleted: data => {
-        setNewsIndex(data.listNews[0]); 
+        setNewsIndex(data.listNews[0]);
       }
     }
   );
@@ -115,10 +117,11 @@ const NewsEditor = () => {
         {printPlatform}
       </Select>
       <Button onClick={submitUpdateNews}>Update</Button>
+      <Button onClick={()=>dispatchShowImagesNews(true)}>Lấy đường dẫn Image</Button>
       <SunEditor
         setContents={content}
         setOptions={{
-          buttonList: [buttonListToolbar] // Or Array of button list, eg. [['font', 'align'], ['image']]
+          buttonList: buttonList.complex // Or Array of button list, eg. [['font', 'align'], ['image']]
           // Other option
         }}
         onChange={
@@ -126,6 +129,7 @@ const NewsEditor = () => {
           // console.log(newContent)
         }
       />
+      <ListImagesForNews />
     </div>
   );
 };

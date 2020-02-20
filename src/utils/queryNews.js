@@ -10,7 +10,6 @@ const queryGetNews = (currentPage, pageSize, searchValue, fromDate, toDate) => {
                 createAt
                 type
                 platform
-                status
                 partner {
                     partnerName
                   }
@@ -35,10 +34,10 @@ const queryNewsDetail = newsId => {
       listNews(newsId: ${newsId}) {
         newsId
         title
+        status
         content
         createAt
         type
-        status
         platform
       }
     }
@@ -51,7 +50,6 @@ const UpdateNews = gql`
       content
       platform
       type
-      status
     }
   }
 `;
@@ -60,7 +58,6 @@ const createNews = gql`
     createNews(req: $req) {
       title
       content
-      status
       type
       platform
     }
@@ -69,7 +66,7 @@ const createNews = gql`
 const queryDeleteNews = gql`
   mutation DeleteNews($newsId: Int!) {
     deleteNews(newsId: $newsId) {
-      status
+      title
     }
   }
 `;
