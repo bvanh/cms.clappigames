@@ -6,7 +6,8 @@ const initialState = {
   userToken: null,
   userAccessToken: null,
   accessToken: JSON.parse(localStorage.getItem("accessTokenCms")),
-  visibleModalNews: false
+  visibleModalNews: false,
+  urlImg: ""
 };
 export default (state = initialState, action) => {
   switch (action.type) {
@@ -28,8 +29,12 @@ export default (state = initialState, action) => {
       return {
         ...state,
         visibleModalNews: action.value
-      }
-
+      };
+    case actions.SET_URL_IMAGES:
+      return {
+        ...state,
+        urlImg: action.value
+      };
     default:
       return state;
   }

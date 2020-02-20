@@ -1,18 +1,14 @@
-import React, { useState,useEffect } from "react";
-import { Upload, Checkbox, Row, Col, Card, Icon, Button } from "antd";
-import { useQuery, useMutation,useLazyQuery } from "@apollo/react-hooks";
+import React, { useState, useEffect } from "react";
+import { Upload, Checkbox, Row, Col, Card, Icon, Button, Radio } from "antd";
+import { useQuery, useMutation, useLazyQuery } from "@apollo/react-hooks";
 import { queryGetImagesFromAlbumByType } from "../../../utils/queryMedia";
-// import { DELETE_IMAGE, CREATE_ALBUM } from "../../utils/mutation/media";
+import {
+  dispatchShowImagesNews,
+  dispatchSetUrlImage
+} from "../../../redux/actions";
 import "../../../static/style/media.css";
 import { Link } from "react-router-dom";
 
-const gridStyle = {
-  width: "24%",
-  textAlign: "center",
-  padding: "2px",
-  margin: ".5%",
-  position: "relative"
-};
 function AlbumDetailImages(props) {
   const userAdmin = localStorage.getItem("userNameCMS");
   const [pageIndex, setPageIndex] = useState({
@@ -24,41 +20,34 @@ function AlbumDetailImages(props) {
   const [selectedImage, setSelectedImage] = useState([]);
   const [isCreateAlbum, setIsCreateAlbum] = useState(false);
   const [imagesDetailAlbum, setImagesDetailAlbum] = useState([]);
-  const [pickDataImages, setPickDataImages] = useState({
-    fromComp: "",
-    fromLibary: ""
-  });
   const { albumName } = pageIndex;
-  const { fromComp, fromLibary } = pickDataImages;
   const [dataImage, setDataImage] = useState([]);
   //   const [deleteImages] = useMutation(DELETE_IMAGE, {
   //     variables: {
   //       ids: selectedImage
   //     }
   //   });
-  const [getListImage] = useLazyQuery(
+  const { data, loading, error } = useQuery(
     queryGetImagesFromAlbumByType(props.albumId, userAdmin),
     {
       onCompleted: data => {
-        setImagesDetailAlbum(JSON.parse(data.listAdminAlbums[0].data).listImages)
+        setImagesDetailAlbum(
+          JSON.parse(data.listAdminAlbums[0].data).listImages
+        );
+        console.log(data);
       }
     }
   );
-  useEffect(()=>{
-      getListImage();
-  },[])
- 
-//   const { listImages } = JSON.parse(data.listAdminAlbums[0].data);
-//   const onChange = val => {
-//     setSelectedImage(val);
-//     console.log(JSON.stringify({ images: val }));
-//   };
+  // useEffect(() => {
+  //   getListImage();
+  // }, []);
+  const getUrl = e => {
+    dispatchSetUrlImage(e.target.value);
+  };
   const printListImages = imagesDetailAlbum.map((val, index) => (
-    <Card.Grid style={gridStyle} key={index}>
-      <Checkbox value={val} className="checkbox-image">
-        <img src={val} alt={val.name} width="100%" />
-      </Checkbox>
-    </Card.Grid>
+    <Radio value={val} key={index} className="list-images-news">
+      <img src={val} width="30%" className="image-news" alt={val.name} />
+    </Radio>
   ));
   //   const submitDelete = async () => {
   //     await deleteImages();
@@ -69,9 +58,11 @@ function AlbumDetailImages(props) {
   return (
     <Row>
       <Col md={16}>
-          {/* } */}
-        <Checkbox.Group style={{ width: "100%" }} >
-          <div>{printListImages}</div>
+        {/* } */}
+        <Checkbox.Group style={{ width: "100%" }}>
+          <Radio.Group buttonStyle="solid" onChange={getUrl}>
+            {printListImages}
+          </Radio.Group>
         </Checkbox.Group>
       </Col>
     </Row>

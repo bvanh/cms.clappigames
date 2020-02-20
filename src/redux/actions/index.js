@@ -26,6 +26,12 @@ const showImagesNews = value => {
     value
   };
 };
+const setUrlImage = value => {
+  return {
+    type: actions.SET_URL_IMAGES,
+    value
+  };
+};
 function dispatchSwitchLogin(data) {
   store.dispatch(switchLogin(data));
 }
@@ -38,4 +44,13 @@ function dispatchSetToken(userToken, accessToken) {
 function dispatchShowImagesNews(value) {
   store.dispatch(showImagesNews(value));
 }
-export { dispatchSwitchLogin, dispatchSetAccessToken, dispatchSetToken, dispatchShowImagesNews };
+function dispatchSetUrlImage(value) {
+  store.dispatch(setUrlImage(value));
+}
+export {
+  dispatchSwitchLogin,
+  dispatchSetAccessToken,
+  dispatchSetToken,
+  dispatchShowImagesNews,
+  dispatchSetUrlImage
+};

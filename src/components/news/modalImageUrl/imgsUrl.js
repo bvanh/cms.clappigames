@@ -17,7 +17,10 @@ import { queryListImages } from "../../../utils/queryMedia";
 import { connect } from "react-redux";
 import AlbumImageInNews from "./albumImageNews";
 import AlbumDetailImages from "./albumDetaiImages";
-import { dispatchShowImagesNews } from "../../../redux/actions";
+import {
+  dispatchShowImagesNews,
+  dispatchSetUrlImage
+} from "../../../redux/actions";
 import { DELETE_IMAGE, CREATE_ALBUM } from "../../../utils/mutation/media";
 import "../../../static/style/media.css";
 import { Link } from "react-router-dom";
@@ -29,7 +32,6 @@ function ListImagesForNews(props) {
     isShow: true,
     albumId: null
   });
-  const [imgUrl, setImgUrl] = useState("");
   const { isShow, albumId } = isDetailAlbum;
   const { loading, error, data, refetch } = useQuery(queryListImages, {
     onCompleted: data => setDataImage(data)
@@ -46,26 +48,33 @@ function ListImagesForNews(props) {
     }
   });
   const getUrl = e => {
-    setImgUrl(e.target.value);
+    dispatchSetUrlImage(e.target.value);
   };
+  const setIsAlbum = () => {
+    setDetailAlbum({ isShow: true, albumId: null });
+  };
+  const operations = <Button>Tải ảnh lên</Button>;
+  console.log(albumId,isShow)
   return (
     <>
       <Modal
         visible={props.visible}
         className="listImages_news"
+        onOk={() => dispatchShowImagesNews(false)}
+        onCancel={() => dispatchShowImagesNews(false)}
         footer={[
           <span>
             {" "}
             URL:{" "}
             <input
-              value={imgUrl}
+              value={props.urlImg}
               style={{ marginLeft: "5px", width: "100%" }}
               disabled
             />
           </span>
         ]}
       >
-        <Tabs type="card">
+        <Tabs type="card" tabBarExtraContent={operations}>
           <TabPane tab="Tất cả ảnh" key="1">
             <Row className="listImages_news">
               <Col>
@@ -75,7 +84,15 @@ function ListImagesForNews(props) {
               </Col>
             </Row>
           </TabPane>
-          <TabPane tab="Album" key="2">
+          <TabPane
+            tab={
+              <span onClick={setIsAlbum}>
+                <Icon type="android" />
+                Album
+              </span>
+            }
+            key="2"
+          >
             {isShow ? (
               <AlbumImageInNews setDetailAlbum={setDetailAlbum} />
             ) : (
@@ -89,7 +106,8 @@ function ListImagesForNews(props) {
 }
 function mapStateToProps(state) {
   return {
-    visible: state.visibleModalNews
+    visible: state.visibleModalNews,
+    urlImg: state.urlImg
   };
 }
 export default connect(mapStateToProps, null)(ListImagesForNews);
