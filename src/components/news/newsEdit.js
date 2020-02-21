@@ -11,6 +11,13 @@ import ListImagesForNews from './modalImageUrl/imgsUrl'
 import { Input, Select, Button } from "antd";
 import SunEditor, { buttonList } from "suneditor-react";
 import { dispatchShowImagesNews } from '../../redux/actions'
+import { Editor } from 'react-draft-wysiwyg';
+import draftToHtml from 'draftjs-to-html';
+import { stateToHTML } from "draft-js-export-html";
+import { EditorState, convertToRaw } from 'draft-js';
+// ADD THIS LINE. ADJUST THE BEGINNING OF THE PATH AS NEEDED FOR YOUR PROJECT
+
+import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import "suneditor/dist/css/suneditor.min.css"; // Import Sun Editor's CSS File
 
 // import ListNews from ".";
@@ -19,11 +26,16 @@ const listType = {
   type: ["NEWS", "EVENT", "SLIDER", "NOTICE", "GUIDE"],
   status: ["COMPLETE", "INPUT"]
 };
-
 const NewsEditor = () => {
+  const html = '<p>Hey this <strong>editor</strong> rocks 😀</p>';
+  const contentBlock = htmlToDraft(html);
+  const contentState = ContentState.createFromBlockArray(contentBlock.contentBlocks);
+  const editorState = EditorState.createWithContent(contentState);
+  const contentDemo = { "entityMap": {}, "blocks": [{ "key": "637gr", "text": "Initialized from content state.", "type": "unstyled", "depth": 0, "inlineStyleRanges": [], "entityRanges": [], "data": {} }] };
   const query = new URLSearchParams(window.location.search);
   const [newContent, setNewContent] = useState("");
   const [listPlatform, setListPlatform] = useState([]);
+  const [editorState2, setEditorState] = useState(editorState)
   const [newsIndex, setNewsIndex] = useState({
     title: "",
     type: "",
@@ -81,6 +93,15 @@ const NewsEditor = () => {
     let data = updateNews();
     console.log(data);
   };
+  const getEditorState = editorState => {
+    setEditorState({ editorState, })
+    // setEditorState(val)
+    // console.log(val)
+    console.log(draftToHtml(convertToRaw(editorState)))
+    // setEditorState({editorState,editorContentHtml:stateToHTML(editorState.getCurrentContent())})
+  }
+  // console.log(draftToHtml(convertToRaw(editorState.getCurrentContent())))
+  console.log(editorState)
   return (
     <div>
       <p>
@@ -117,8 +138,8 @@ const NewsEditor = () => {
         {printPlatform}
       </Select>
       <Button onClick={submitUpdateNews}>Update</Button>
-      <Button onClick={()=>dispatchShowImagesNews(true)}>Lấy đường dẫn Image</Button>
-      <SunEditor
+      <Button onClick={() => dispatchShowImagesNews(true)}>Lấy đường dẫn Image</Button>
+      {/* <SunEditor
         setContents={content}
         setOptions={{
           buttonList: buttonList.complex // Or Array of button list, eg. [['font', 'align'], ['image']]
@@ -128,6 +149,32 @@ const NewsEditor = () => {
           newContent => setNewContent(newContent)
           // console.log(newContent)
         }
+      />  */}
+      {/* <Trumbowyg id='react-trumbowyg'
+                        buttons={
+                            [
+                                ['viewHTML'],
+                                ['formatting'],
+                                'btnGrp-semantic',
+                                ['link'],
+                                ['insertImage'],
+                                'btnGrp-justify',
+                                'btnGrp-lists',
+                                ['table'], // I ADDED THIS FOR THE TABLE PLUGIN BUTTON
+                                ['fullscreen']
+                            ]
+                        }
+                        data={this.props.someData}
+                        placeholder='Type your text!'
+                        onChange={this.props.someCallback}
+                        ref="trumbowyg"
+                    /> */}
+      <Editor
+        // initialContentState={contentDemo}
+        editorState={editorState2}
+        wrapperClassName="demo-wrapper"
+        editorClassName="demo-editor"
+        onChange={getEditorState}
       />
       <ListImagesForNews />
     </div>

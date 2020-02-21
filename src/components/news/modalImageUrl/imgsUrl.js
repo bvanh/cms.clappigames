@@ -12,6 +12,7 @@ import {
   Radio,
   Tabs
 } from "antd";
+import UploadImagesInNews from './upload'
 import { useQuery, useMutation } from "@apollo/react-hooks";
 import { queryListImages } from "../../../utils/queryMedia";
 import { connect } from "react-redux";
@@ -53,7 +54,7 @@ function ListImagesForNews(props) {
   const setIsAlbum = () => {
     setDetailAlbum({ isShow: true, albumId: null });
   };
-  const operations = <Button>Tải ảnh lên</Button>;
+  const operations = <UploadImagesInNews/>;
   console.log(albumId,isShow)
   return (
     <>
