@@ -43,7 +43,6 @@ function ListCoin(props) {
   });
   const { data } = useQuery(queryGetPaymentType, {
     onCompleted: data => {
-      // console.log(data.__type.enumValues)
       setPageIndex({ ...pageIndex, listTypePayment: data.__type.enumValues });
     }
   });
@@ -177,7 +176,6 @@ function ListCoin(props) {
   const submitDeleteProduct = async () => {
     const demo = await deleteProduct();
     refetch();
-    console.log(demo);
   };
   const printOptionsType = listTypePayment.map((val, index) => (
     <Radio style={radioStyle} value={val.name} key={index}>

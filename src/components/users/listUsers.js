@@ -17,7 +17,6 @@ function Danhsach() {
   const [getData, { loading, data }] = useLazyQuery(queryGetListUsers, {
     onCompleted: data => {
       setData(data);
-      console.log("fsffsff");
     }
   });
   useEffect(() => {

@@ -28,14 +28,14 @@ const listType = {
 };
 const NewsEditor = () => {
   const html = '<p>Hey this <strong>editor</strong> rocks 😀</p>';
-  const contentBlock = htmlToDraft(html);
-  const contentState = ContentState.createFromBlockArray(contentBlock.contentBlocks);
-  const editorState = EditorState.createWithContent(contentState);
+  // const contentBlock = htmlToDraft(html);
+  // const contentState = ContentState.createFromBlockArray(contentBlock.contentBlocks);
+  // const editorState = EditorState.createWithContent(contentState);
   const contentDemo = { "entityMap": {}, "blocks": [{ "key": "637gr", "text": "Initialized from content state.", "type": "unstyled", "depth": 0, "inlineStyleRanges": [], "entityRanges": [], "data": {} }] };
   const query = new URLSearchParams(window.location.search);
   const [newContent, setNewContent] = useState("");
   const [listPlatform, setListPlatform] = useState([]);
-  const [editorState2, setEditorState] = useState(editorState)
+  const [editorState2, setEditorState] = useState("editorState")
   const [newsIndex, setNewsIndex] = useState({
     title: "",
     type: "",
@@ -101,7 +101,7 @@ const NewsEditor = () => {
     // setEditorState({editorState,editorContentHtml:stateToHTML(editorState.getCurrentContent())})
   }
   // console.log(draftToHtml(convertToRaw(editorState.getCurrentContent())))
-  console.log(editorState)
+  // console.log(editorState)
   return (
     <div>
       <p>
