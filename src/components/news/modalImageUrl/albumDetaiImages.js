@@ -38,9 +38,6 @@ function AlbumDetailImages(props) {
       }
     }
   );
-  // useEffect(() => {
-  //   getListImage();
-  // }, []);
   const getUrl = e => {
     dispatchSetUrlImage(e.target.value);
   };

@@ -1,25 +1,29 @@
-import React, { useState } from "react";
+import React, { useState,useRef } from "react";
 import {
   queryNewsDetail,
   UpdateNews,
   queryGetPlatform
 } from "../../utils/queryNews";
+
+import JoditEditor from "jodit-react";
+import 'jodit/build/jodit.min.css';
 import { useMutation, useQuery } from "@apollo/react-hooks";
 import { gql } from "apollo-boost";
 import buttonListToolbar from "../../utils/itemToolbar";
-import ListImagesForNews from './modalImageUrl/imgsUrl'
+import ListImagesForNews from "./modalImageUrl/imgsUrl";
 import { Input, Select, Button } from "antd";
 import SunEditor, { buttonList } from "suneditor-react";
-import { dispatchShowImagesNews } from '../../redux/actions'
-import { Editor } from 'react-draft-wysiwyg';
-import draftToHtml from 'draftjs-to-html';
-import { stateToHTML } from "draft-js-export-html";
-import { EditorState, convertToRaw } from 'draft-js';
+import { dispatchShowImagesNews } from "../../redux/actions";
+// import { Editor } from "react-draft-wysiwyg";
+// import draftToHtml from "draftjs-to-html";
+// import htmlToDraft from "html-to-draftjs";
+// import { stateToHTML } from "draft-js-export-html";
+// import { EditorState, convertToRaw, ContentState } from "draft-js";
 // ADD THIS LINE. ADJUST THE BEGINNING OF THE PATH AS NEEDED FOR YOUR PROJECT
 
-import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
+import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import "suneditor/dist/css/suneditor.min.css"; // Import Sun Editor's CSS File
-
+import { convertToHTML, convertFromHTML } from "draft-convert";
 // import ListNews from ".";
 const { Option } = Select;
 const listType = {
@@ -27,15 +31,24 @@ const listType = {
   status: ["COMPLETE", "INPUT"]
 };
 const NewsEditor = () => {
-  const html = '<p>Hey this <strong>editor</strong> rocks 😀</p>';
-  const contentBlock = htmlToDraft(html);
-  const contentState = ContentState.createFromBlockArray(contentBlock.contentBlocks);
-  const editorState = EditorState.createWithContent(contentState);
-  const contentDemo = { "entityMap": {}, "blocks": [{ "key": "637gr", "text": "Initialized from content state.", "type": "unstyled", "depth": 0, "inlineStyleRanges": [], "entityRanges": [], "data": {} }] };
+  const editor = useRef(null)
+  const html = "<p>Hey this <strong>editor</strong> rocks 😀</p>";
+  // const contentBlock = htmlToDraft(html);
+  // console.log(contentBlock)
+  // const contentState = ContentState.createFromBlockArray(contentBlock.contentBlocks);
+  // const editorState = EditorState.createWithContent(contentState);
+  // const contentBlock = htmlToDraft(html);
+
+  // const contentState = ContentState.createFromBlockArray(
+  //   contentBlock.contentBlocks
+  // );
+  // const editorState = EditorState.createWithContent(contentState);
+  // const [editorState2, setEditorState] = useState(editorState);
+
   const query = new URLSearchParams(window.location.search);
   const [newContent, setNewContent] = useState("");
   const [listPlatform, setListPlatform] = useState([]);
-  const [editorState2, setEditorState] = useState(editorState)
+  const [editorState2, setEditorState] = useState("editorState");
   const [newsIndex, setNewsIndex] = useState({
     title: "",
     type: "",
@@ -44,7 +57,7 @@ const NewsEditor = () => {
     platform: []
   });
   const { loading, error, data } = useQuery(
-    queryNewsDetail(query.get("newsId")),
+    queryNewsDetail(100),
     {
       onCompleted: data => {
         setNewsIndex(data.listNews[0]);
@@ -70,6 +83,10 @@ const NewsEditor = () => {
       }
     }
   });
+  const config = {
+    readonly: false ,// all options from https://xdsoft.net/jodit/doc/,
+    height:500
+	}
   if (loading) return <p>Loading ...</p>;
   const handleChangeType = (e, val) => {
     setNewsIndex({ ...newsIndex, [val.props.name]: e });
@@ -93,15 +110,19 @@ const NewsEditor = () => {
     let data = updateNews();
     console.log(data);
   };
+
   const getEditorState = editorState => {
-    setEditorState({ editorState, })
+    // setEditorState({ editorState });
     // setEditorState(val)
     // console.log(val)
-    console.log(draftToHtml(convertToRaw(editorState)))
+    // console.log(convertToRaw(editorState.getCurrentContent()));
     // setEditorState({editorState,editorContentHtml:stateToHTML(editorState.getCurrentContent())})
-  }
+  };
   // console.log(draftToHtml(convertToRaw(editorState.getCurrentContent())))
-  console.log(editorState)
+  // console.log(editorState)
+  // let de = stateToHTML(editorState);
+  // console.log(de)
+  // console.log(contentDemo.getCurrentContent());
   return (
     <div>
       <p>
@@ -138,9 +159,11 @@ const NewsEditor = () => {
         {printPlatform}
       </Select>
       <Button onClick={submitUpdateNews}>Update</Button>
-      <Button onClick={() => dispatchShowImagesNews(true)}>Lấy đường dẫn Image</Button>
-      {/* <SunEditor
-        setContents={content}
+      <Button onClick={() => dispatchShowImagesNews(true)}>
+        Lấy đường dẫn Image
+      </Button>
+       <SunEditor
+       appendContents={content}
         setOptions={{
           buttonList: buttonList.complex // Or Array of button list, eg. [['font', 'align'], ['image']]
           // Other option
@@ -149,7 +172,7 @@ const NewsEditor = () => {
           newContent => setNewContent(newContent)
           // console.log(newContent)
         }
-      />  */}
+      />  
       {/* <Trumbowyg id='react-trumbowyg'
                         buttons={
                             [
@@ -169,13 +192,7 @@ const NewsEditor = () => {
                         onChange={this.props.someCallback}
                         ref="trumbowyg"
                     /> */}
-      <Editor
-        // initialContentState={contentDemo}
-        editorState={editorState2}
-        wrapperClassName="demo-wrapper"
-        editorClassName="demo-editor"
-        onChange={getEditorState}
-      />
+
       <ListImagesForNews />
     </div>
   );
