@@ -14,6 +14,7 @@ import ListCoin from './components/payment/coin/listCoin/listCoin'
 import ListPartnerItems from "./components/payment/item/listPartnerProduct/index";
 import EditProductCoin from './components/payment/coin/listCoin/editCoin'
 import EditPartnerProductItem from './components/payment/item/listPartnerProduct/editItems'
+import CreatePromotion from './components/payment/promotion/create/index'
 import { ApolloProvider } from "@apollo/react-hooks";
 import ApolloClient from "apollo-boost";
 import { importImage } from "./utils/importImg";
@@ -21,6 +22,7 @@ import checkTokenFinal from "./utils/checkToken";
 import { dispatchSwitchLogin } from "./redux/actions/index";
 import { Layout, Menu, Icon, Dropdown } from "antd";
 import "./static/style/menu.css";
+import CreateProductCoin from "./components/payment/coin/listCoin/addnewCoin";
 const { SubMenu } = Menu;
 const { Header, Content, Footer, Sider } = Layout;
 checkTokenFinal();
@@ -107,7 +109,7 @@ function App(props) {
                 <Menu.Item key="6">
                   <Link to="/payment/items">Item </Link>
                 </Menu.Item>
-                <Menu.Item key="7">Promotion</Menu.Item>
+                <Menu.Item key="7"> <Link to="/payment/promotion/create">Promotion</Link></Menu.Item>
               </SubMenu>
               <Menu.Item key="9">
                 <Link to="/" onClick={() => dispatchSwitchLogin(false)}>
@@ -167,6 +169,11 @@ function App(props) {
                 exact
                 path="/payment/coin/edit"
                 render={() => <EditProductCoin />}
+              />
+                 <Route
+                exact
+                path="/payment/promotion/create"
+                render={() => <CreatePromotion />}
               />
             </Content>
             <Footer style={{ textAlign: "center",position:"fixed",bottom:'0',width:'100%' }}>LUSSOM ©2020</Footer>

@@ -31,24 +31,15 @@ const listType = {
   status: ["COMPLETE", "INPUT"]
 };
 const NewsEditor = () => {
-  const editor = useRef(null)
-  const html = "<p>Hey this <strong>editor</strong> rocks 😀</p>";
+  const html = '<p>Hey this <strong>editor</strong> rocks 😀</p>';
   // const contentBlock = htmlToDraft(html);
-  // console.log(contentBlock)
   // const contentState = ContentState.createFromBlockArray(contentBlock.contentBlocks);
   // const editorState = EditorState.createWithContent(contentState);
-  // const contentBlock = htmlToDraft(html);
-
-  // const contentState = ContentState.createFromBlockArray(
-  //   contentBlock.contentBlocks
-  // );
-  // const editorState = EditorState.createWithContent(contentState);
-  // const [editorState2, setEditorState] = useState(editorState);
-
+  const contentDemo = { "entityMap": {}, "blocks": [{ "key": "637gr", "text": "Initialized from content state.", "type": "unstyled", "depth": 0, "inlineStyleRanges": [], "entityRanges": [], "data": {} }] };
   const query = new URLSearchParams(window.location.search);
   const [newContent, setNewContent] = useState("");
   const [listPlatform, setListPlatform] = useState([]);
-  const [editorState2, setEditorState] = useState("editorState");
+  const [editorState2, setEditorState] = useState("editorState")
   const [newsIndex, setNewsIndex] = useState({
     title: "",
     type: "",
@@ -120,9 +111,6 @@ const NewsEditor = () => {
   };
   // console.log(draftToHtml(convertToRaw(editorState.getCurrentContent())))
   // console.log(editorState)
-  // let de = stateToHTML(editorState);
-  // console.log(de)
-  // console.log(contentDemo.getCurrentContent());
   return (
     <div>
       <p>
