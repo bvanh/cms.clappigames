@@ -1,23 +1,29 @@
-.section1-promotion,.section2-promotion{
-    padding: .5rem;
+.section1-promotion,
+.section2-promotion {
+  padding: 0.5rem;
 }
-.section1-promotion>div,.section2-promotion>div{
-    border: 1px solid rgb(196, 194, 194);
-    padding: .5rem;
+.section1-promotion > div,
+.section2-promotion > div {
+  border: 1px solid rgb(196, 194, 194);
+  padding: 0.5rem;
 }
-.promotion-title-field{
-    margin: .5rem;
+.promotion-title-field {
+  margin: 0.5rem 0;
 }
-.choose-promo{
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
+.choose-promo {
+  display: flex;
+  flex-direction: row;
 }
-.choose-promo>label{
-    border-radius: 5px !important;
+.choose-promo > label {
+  border-radius: 0 !important;
 }
-.section2-promotion>div>div{
-    display: flex;
-    flex-direction: row;
-    padding: .5rem;
+.section2-promotion > div > div {
+  display: flex;
+  flex-direction: row;
+  padding: 0.5rem;
+}
+.btn-create-promo {
+  position: absolute;
+  top: -430%;
+  right: 8px;
 }

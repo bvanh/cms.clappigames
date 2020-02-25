@@ -23,7 +23,7 @@ import { dispatchShowImagesNews } from "../../redux/actions";
 
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import "suneditor/dist/css/suneditor.min.css"; // Import Sun Editor's CSS File
-import { convertToHTML, convertFromHTML } from "draft-convert";
+// import { convertToHTML, convertFromHTML } from "draft-convert";
 // import ListNews from ".";
 const { Option } = Select;
 const listType = {

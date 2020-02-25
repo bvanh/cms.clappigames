@@ -10,7 +10,7 @@ import {
   Select,
   Radio
 } from "antd";
-import { queryGetPaymentType } from "../../../../utils/queryPaymentType";
+import { queryGetPaymentType } from "../../../../utils/queryPaymentAndPromoType";
 import { queryGetListCoin } from "../../../../utils/queryCoin";
 import { useLazyQuery, useMutation, useQuery } from "@apollo/react-hooks";
 import { Link } from "react-router-dom";

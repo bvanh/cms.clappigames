@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Table, Button, Radio, Input, Row, Col, Icon, Rate } from "antd";
 
-import { queryGetPaymentType } from "../../../../utils/queryPaymentType";
+import { queryGetPaymentType } from "../../../../utils/queryPaymentAndPromoType";
 import { createProduct } from "../../../../utils/mutation/productCoin";
 import { useLazyQuery, useMutation, useQuery } from "@apollo/react-hooks";
 import { Link } from "react-router-dom";

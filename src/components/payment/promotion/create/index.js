@@ -11,8 +11,13 @@ import {
   Select,
   TimePicker
 } from "antd";
+import { useLazyQuery, useMutation, useQuery } from "@apollo/react-hooks";
 import "../../../../static/style/promotion.css";
 import EventByItems from "./byItem";
+import { getPromotionType } from "../../../../utils/queryPaymentAndPromoType";
+import { queryGetPlatform } from '../../../../utils/queryPlatform'
+import { getListPartnerProducts } from "../../../../utils/queryPartnerProducts";
+import { getListServer } from '../../../../utils/query/promotion'
 const { Option } = Select;
 const { RangePicker } = DatePicker;
 const daily = [
@@ -25,105 +30,99 @@ const daily = [
   "Sunday"
 ];
 function CreatePromotion() {
-  const [indexShop, setIndexShop] = useState([
-    {
-      purchaseNumber: 1,
-      purchaseItemId: null,
-      purchaseIndex: 0,
-      reward: [
-        {
-          rewardNumb: 1,
-          rewardItemId: null,
-          rewardIndex: 0
-        }
-      ]
+  const [indexPromo, setIndexPromo] = useState({
+    namePromo: null,
+    platformPromoId: "",
+    server: '-Chọn server-',
+    statusPromo: "COMPLETE",
+    datesPromo: [],
+    dailyPromo: null,
+    startTime: "",
+    endTime: "",
+    time: [indexPromo.startTimte, indexPromo.endTime]
+  });
+  const [typePromo, setTypePromo] = useState({
+    isTypePromo: 'ITEMS',
+    promoType: [{ name: "" }],
+    gamePromo: [{}],
+    listServer: [{
+      server: 0,
+      serverName: "All server"
+    }],
+    listItems: [{
+      productId: "",
+      productName: ""
+    }],
+    byItems: {
+      gamePromo: "",
+      typePromo: "",
+      serverPromo: ""
+    },
+    byEvent: {
+      name: ""
     }
-  ]);
-  const { purchaseIndex, purchaseItemId, purchaseNumber } = indexShop;
-  // const { rewardIndex, rewardItemId, rewardNumb } = indexReward;
-  const getStatus = e => {
-    console.log("radio checked", e.target.value);
-    this.setState({
-      value: e.target.value
-    });
+  });
+  const { platformPromoId, statusPromo, datesPromo, dailyPromo, hourPromo, server } = indexPromo;
+  const { isTypePromo, promoType, gamePromo, listItems, listServer } = typePromo;
+  const [getPromoType,] = useLazyQuery(getPromotionType, {
+    onCompleted: data => {
+      setTypePromo({ ...typePromo, promoType: data.__type.enumValues })
+    }
+  });
+  const [getPlatform] = useLazyQuery(queryGetPlatform, {
+    onCompleted: data => {
+      setTypePromo({ ...typePromo, gamePromo: data.listPartners })
+    }
+  })
+  const { data } = useQuery(getListPartnerProducts(platformPromoId), {
+    onCompleted: data => setTypePromo({ ...typePromo, listItems: data.listPartnerProducts })
+  })
+  const { data2 } = useQuery(getListServer(platformPromoId), {
+    onCompleted: data => {
+      setTypePromo({ ...typePromo, listServer: [...listServer, ...data.listPartnerServers] })
+    }
+  })
+  useEffect(() => {
+    getPromoType();
+    getPlatform();
+  }, [])
+  const switchPromoAndEvent = (e) => {
+    setTypePromo({ ...typePromo, isTypePromo: e.target.value })
+    if (e.target.value === 'ITEMS') {
+      getPromoType();
+    } else if (e.target.value === 'EVENT') {
+      console.log('demo')
+    }
+
+  }
+  const handleChangePlatform = (e) => {
+    setIndexPromo({ ...indexPromo, platformPromoId: e })
+  }
+  const setInfoPromo = e => {
+    setIndexPromo({ ...indexPromo, [e.target.name]: e.target.value });
   };
-  const handleChangeType = e => {
-    console.log(e);
+  const handleChangeServer = e => {
+    setIndexPromo({ ...indexPromo, server: e })
   };
   const onChangeDatePicker = (value, dateString) => {
     console.log("Selected Time: ", value);
     console.log("Formatted Selected Time: ", dateString);
   };
-
+  const setTimePromo = (timeString, val) => {
+    if (val === 'startTime') {
+      console.log(timeString)
+    } else {
+      console.log(timeString, 'd')
+    }
+  }
   const onOkDatePicker = value => {
     console.log("onOk: ", value);
   };
   const handleChangeDaily = value => {
-    console.log(`selected ${value}`);
+    setIndexPromo({ ...indexPromo, datesPromo: value })
   };
   const handleChangeDates = value => {
-    console.log(`selected ${value}`);
-  };
-  const addItem = val => {
-    const newItem = {
-      purchaseNumber: 1,
-      purchaseItemId: null,
-      purchaseIndex: val,
-      reward: [
-        {
-          rewardNumb: 1,
-          rewardItemId: null,
-          rewardIndex: 0
-        }
-      ]
-    };
-    setIndexShop([...indexShop, newItem]);
-  };
-  const reduceItem = async val => {
-    if (val !== 0) {
-      const newItem = await indexShop.filter(
-        (value, index) => value.purchaseIndex !== val
-      );
-      setIndexShop(newItem);
-    }
-  };
-  const addReward = async (val, i) => {
-    const newReward = {
-      rewardNumb: 1,
-      rewardItemId: null,
-      rewardIndex: val
-    };
-    const newShop = [...indexShop];
-    newShop[i].reward = [...newShop[i].reward, newReward];
-    setIndexShop(newShop);
-  };
-  const reduceReward = async (val, numberItem) => {
-    const newShop = [...indexShop];
-    const newReward = await indexShop[numberItem].reward.filter(
-      (value, i) => value.rewardIndex !== val
-    );
-    newShop[numberItem].reward = newReward;
-    setIndexShop(newShop);
-  };
-  const handleChooseReward = (positionItem, positionReward, val) => {
-    const newItem = [...indexShop];
-    newItem[positionItem].reward[positionReward].rewardItemId = val;
-    setIndexShop(newItem);
-  };
-  const handleChooseNumbReward = (positionItem, positionReward, e) => {
-    const newItem = [...indexShop];
-    newItem[positionItem].reward[positionReward].rewardNumb = e.target.value;
-    setIndexShop(newItem);
-  };
-  const handleChooseItem = (positionItem, value) => {
-    const newItem = [...indexShop];
-    newItem[positionItem].purchaseItemId = value;
-    setIndexShop(newItem);
-  };
-  const handleChooseNumbItem = (positionItem, e) => {
-    const newItem = [...indexShop];
-    newItem[positionItem].purchaseNumber = e.target.value;
-    setIndexShop(newItem);
+    setIndexPromo({ ...indexPromo, datesPromo: value })
   };
   const childrenDates = [];
   for (let i = 1; i <= 31; i++) {
@@ -132,6 +131,15 @@ function CreatePromotion() {
   const childrenDaily = daily.map((val, index) => (
     <Option key={index}>{val}</Option>
   ));
+  const printPromoType = typePromo.promoType.map((val, index) => (
+    <Option value={val.name} key={index}>{val.name}</Option>
+  ))
+  const printPlatform = gamePromo.map((val, i) => (
+    <Option value={val.partnerId} key={i}>{val.partnerName}</Option>
+  ))
+  const printListServer = listServer.map((val, index) => (
+    <Option value={val.server} key={index}>{val.serverName}</Option>
+  ))
   return (
     <Row className="container-promotion">
       <div className="title">
@@ -139,48 +147,68 @@ function CreatePromotion() {
           <span>quay lai</span>
           <h3>Thêm mới khuyến mãi</h3>
         </div>
-        <div>
-          <Button>Hủy</Button>
-          <Button>Tạo khuyến mãi</Button>
-        </div>
       </div>
       <Col md={12} className="section1-promotion">
         <div>
           <div>
             <p className="promotion-title-field">Tên chương trình khuyến mãi</p>
-            <Input placeholder="Vd: Chương trìn khuyến mãi mở server"></Input>
-            <p className="promotion-title-field">
-              <span style={{paddingRight:'.5rem'}}>Trạng thái</span>
-              <Radio.Group onChange={getStatus} value={1}>
-                <Radio value={1}>Kích hoạt</Radio>
-                <Radio value={2}>Chưa áp dụng</Radio>
-              </Radio.Group>
+            <Input
+              placeholder="Vd: Chương trìn khuyến mãi mở server"
+              onChange={setInfoPromo}
+              name="namePromo"
+            ></Input>
+            <p
+              className="promotion-title-field"
+              style={{ paddingRight: ".5rem" }}
+            >
+              Trạng thái
             </p>
+            <Radio.Group
+              onChange={setInfoPromo}
+              value={statusPromo}
+              name="statusPromo"
+            >
+              <Radio value="COMPLETE">Kích hoạt</Radio>
+              <Radio value="INPPUT">Chưa áp dụng</Radio>
+            </Radio.Group>
             <p className="promotion-title-field">Hình thức khuyến mãi</p>
-            <Radio.Group defaultValue="a" buttonStyle="solid" className='choose-promo'>
-              <Radio.Button value="a" style={{marginRight:"1%"}}>Khuyến mãi theo hóa đơn</Radio.Button>
-              <Radio.Button value="b" style={{marginLeft:"1%"}}>Khuyến mãi theo item</Radio.Button>
+            <Radio.Group
+              value={typePromo.isTypePromo}
+              buttonStyle="solid"
+              className="choose-promo"
+              onChange={switchPromoAndEvent}
+            >
+              <Radio.Button value='EVENT' style={{ marginRight: "1%" }}>
+                Khuyến mãi theo hóa đơn
+              </Radio.Button>
+              <Radio.Button value='ITEMS' style={{ marginLeft: "1%" }}>
+                Khuyến mãi theo item
+              </Radio.Button>
             </Radio.Group>
           </div>
           <div>
             <div>
-              <span>Chọn loại hóa đơn</span>
+              <p className="promotion-title-field">Chọn game</p>
               <Select
-                defaultValue="lucy"
                 style={{ width: 120 }}
-                onChange={handleChangeType}
+                onChange={handleChangePlatform}
+                placeholder="-Chọn game-"
               >
-                <Option value="jack">VNĐ</Option>
-                <Option value="lucy">COIN</Option>
+                {printPlatform}
               </Select>{" "}
               <span>Hình thức</span>
+              <Select style={{ width: 120 }} >
+                {printPromoType}
+              </Select>{" "}
+              <span>Server</span>
               <Select
-                defaultValue="lucy"
+                placeholder="-Chọn server-"
                 style={{ width: 120 }}
-                onChange={handleChangeType}
+                onChange={handleChangeServer}
+                name="server"
+                value={server}
               >
-                <Option value="jack">Tặng C.coin</Option>
-                <Option value="lucy">COIN</Option>
+                {printListServer}
               </Select>{" "}
             </div>
           </div>
@@ -223,39 +251,25 @@ function CreatePromotion() {
           </div>
           <div>
             Theo giờ:
-            <TimePicker format={"HH:mm"} placeholder="- Giờ bắt đầu" />
-            <TimePicker format={"HH:mm"} placeholder="- Giờ kết thúc" />
+            <TimePicker format={"HH:mm"} placeholder="- Giờ bắt đầu" onChange={(timeString) => setTimePromo(timeString, 'startTime')} />
+            <TimePicker format={"HH:mm"} placeholder="- Giờ kết thúc" onChange={(timeString) => setTimePromo(timeString, "endTime")} />
           </div>
         </div>
         <div>Khuyến mãi diễn ra từ ngày ... đến ngày ...</div>
       </Col>
-
-      <Row>
-        <Col md={24}>
-          <Row>
-            <Col md={12}>
-              <span>Số lần</span>
-              <span>Item mua</span>
-            </Col>
-            <Col md={12}>
-              <span>Số lượng</span>
-              <span>Tặng quà</span>
-            </Col>
-          </Row>
-
-          <EventByItems
-            indexShop={indexShop}
-            handleChooseItem={handleChooseItem}
-            handleChooseNumbItem={handleChooseNumbItem}
-            handleChooseReward={handleChooseReward}
-            handleChooseNumbReward={handleChooseNumbReward}
-            addItem={addItem}
-            reduceItem={reduceItem}
-            addReward={addReward}
-            reduceReward={reduceReward}
-          />
-        </Col>
-      </Row>
+      <Col md={24}>
+        <Row>
+          <Col md={12}>
+            <span>Số lần</span>
+            <span>Item mua</span>
+          </Col>
+          <Col md={12}>
+            <span>Số lượng</span>
+            <span>Tặng quà</span>
+          </Col>
+        </Row>
+        <EventByItems listItems={listItems} />
+      </Col>
     </Row>
   );
 }

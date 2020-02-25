@@ -13,7 +13,6 @@ const queryGetListPartnerProducts = (currentPage, pageSize, partnerId) => {
           }
           coin
           createAt
-          status
         }
       }
     }`;
@@ -66,7 +65,6 @@ const queryGetListPartnerCharges = gql`
         partner {
           partnerName
         }
-        status
         createAt
       }
     }
@@ -79,15 +77,25 @@ const queryGetPartnerProductById = gql`
       partnerId
       partnerProductName
       promotionId
-      status
       coin
       productId
     }
   }
 `;
+const getListPartnerProducts = partnerId => {
+  return gql`
+  query{
+    listPartnerProducts(partnerId:"${partnerId}"){
+      productName
+      productId
+    }
+  }
+`;
+};
 export {
   queryGetListPartnerProducts,
   queryGetListPartnerCharges,
   queryGetPartnerProductById,
-  queryGetRefPartnerProducts
+  queryGetRefPartnerProducts,
+  getListPartnerProducts
 };

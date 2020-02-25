@@ -11,4 +11,14 @@ const queryGetPaymentType = gql`
       }
    }
 `;
-export {queryGetPaymentType}
+const getPromotionType = gql`
+query{
+  __type(name:"promotionType"){
+      name,
+      enumValues{
+        name
+      }
+    }
+ }
+`
+export { queryGetPaymentType, getPromotionType }
