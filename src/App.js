@@ -176,7 +176,7 @@ function App(props) {
                 render={() => <CreatePromotion />}
               />
             </Content>
-            <Footer style={{ textAlign: "center",position:"fixed",bottom:'0',width:'100%' }}>LUSSOM ©2020</Footer>
+            <Footer style={{ textAlign: "center",bottom:'0',width:'100%' }}>LUSSOM ©2020</Footer>
           </Layout>
         </Layout>
       </Router>

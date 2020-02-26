@@ -15,9 +15,9 @@ import { useLazyQuery, useMutation, useQuery } from "@apollo/react-hooks";
 import "../../../../static/style/promotion.css";
 import EventByItems from "./byItem";
 import { getPromotionType } from "../../../../utils/queryPaymentAndPromoType";
-import { queryGetPlatform } from '../../../../utils/queryPlatform'
+import { queryGetPlatform } from "../../../../utils/queryPlatform";
 import { getListPartnerProducts } from "../../../../utils/queryPartnerProducts";
-import { getListServer } from '../../../../utils/query/promotion'
+import { getListServer } from "../../../../utils/query/promotion";
 const { Option } = Select;
 const { RangePicker } = DatePicker;
 const daily = [
@@ -33,28 +33,33 @@ function CreatePromotion() {
   const [indexPromo, setIndexPromo] = useState({
     namePromo: null,
     platformPromoId: "",
-    server: '-Chọn server-',
+    server: "-Chọn server-",
     statusPromo: "COMPLETE",
+    promoType: "",
+    timeTotalPromo:[],
     datesPromo: [],
     dailyPromo: null,
     startTime: "",
-    endTime: "",
-    time: [indexPromo.startTimte, indexPromo.endTime]
+    endTime: ""
   });
   const [typePromo, setTypePromo] = useState({
-    isTypePromo: 'ITEMS',
+    isTypePromo: "ITEMS",
     promoType: [{ name: "" }],
-    gamePromo: [{}],
-    listServer: [{
-      server: 0,
-      serverName: "All server"
-    }],
-    listItems: [{
-      productId: "",
-      productName: ""
-    }],
+    listGame: [{}],
+    listServer: [
+      {
+        server: 0,
+        serverName: "All server"
+      }
+    ],
+    listItems: [
+      {
+        productId: "",
+        productName: ""
+      }
+    ],
     byItems: {
-      gamePromo: "",
+      listGame: "",
       typePromo: "",
       serverPromo: ""
     },
@@ -62,84 +67,109 @@ function CreatePromotion() {
       name: ""
     }
   });
-  const { platformPromoId, statusPromo, datesPromo, dailyPromo, hourPromo, server } = indexPromo;
-  const { isTypePromo, promoType, gamePromo, listItems, listServer } = typePromo;
-  const [getPromoType,] = useLazyQuery(getPromotionType, {
+  const {
+    platformPromoId,
+    statusPromo,
+    datesPromo,
+    dailyPromo,
+    hourPromo,
+    server
+  } = indexPromo;
+  const { isTypePromo, promoType, listGame, listItems, listServer } = typePromo;
+  const [getPromoType] = useLazyQuery(getPromotionType, {
     onCompleted: data => {
-      setTypePromo({ ...typePromo, promoType: data.__type.enumValues })
+      setTypePromo({ ...typePromo, promoType: data.__type.enumValues });
     }
   });
   const [getPlatform] = useLazyQuery(queryGetPlatform, {
     onCompleted: data => {
-      setTypePromo({ ...typePromo, gamePromo: data.listPartners })
+      setTypePromo({ ...typePromo, listGame: data.listPartners });
     }
-  })
+  });
   const { data } = useQuery(getListPartnerProducts(platformPromoId), {
-    onCompleted: data => setTypePromo({ ...typePromo, listItems: data.listPartnerProducts })
-  })
+    onCompleted: data =>
+      setTypePromo({ ...typePromo, listItems: data.listPartnerProducts })
+  });
   const { data2 } = useQuery(getListServer(platformPromoId), {
     onCompleted: data => {
-      setTypePromo({ ...typePromo, listServer: [...listServer, ...data.listPartnerServers] })
+      setTypePromo({
+        ...typePromo,
+        listServer: [...listServer, ...data.listPartnerServers]
+      });
     }
-  })
+  });
   useEffect(() => {
     getPromoType();
     getPlatform();
-  }, [])
-  const switchPromoAndEvent = (e) => {
-    setTypePromo({ ...typePromo, isTypePromo: e.target.value })
-    if (e.target.value === 'ITEMS') {
+  }, []);
+  const switchPromoAndEvent = e => {
+    setTypePromo({ ...typePromo, isTypePromo: e.target.value });
+    if (e.target.value === "ITEMS") {
       getPromoType();
-    } else if (e.target.value === 'EVENT') {
-      console.log('demo')
+    } else if (e.target.value === "EVENT") {
+      console.log("demo");
     }
-
-  }
-  const handleChangePlatform = (e) => {
-    setIndexPromo({ ...indexPromo, platformPromoId: e })
-  }
+  };
+  const handleChangePlatform = e => {
+    setIndexPromo({ ...indexPromo, platformPromoId: e });
+  };
   const setInfoPromo = e => {
     setIndexPromo({ ...indexPromo, [e.target.name]: e.target.value });
   };
   const handleChangeServer = e => {
-    setIndexPromo({ ...indexPromo, server: e })
+    setIndexPromo({ ...indexPromo, server: e });
   };
   const onChangeDatePicker = (value, dateString) => {
     console.log("Selected Time: ", value);
-    console.log("Formatted Selected Time: ", dateString);
+    setIndexPromo({ ...indexPromo, timeTotalPromo: dateString });
   };
   const setTimePromo = (timeString, val) => {
-    if (val === 'startTime') {
-      console.log(timeString)
+    if (val === "startTime") {
+      setIndexPromo({ ...indexPromo, startTime: timeString });
     } else {
-      console.log(timeString, 'd')
+      setIndexPromo({ ...indexPromo, endTime: timeString });
     }
-  }
-  const onOkDatePicker = value => {
-    console.log("onOk: ", value);
   };
   const handleChangeDaily = value => {
-    setIndexPromo({ ...indexPromo, datesPromo: value })
+    setIndexPromo({ ...indexPromo, dailyPromo: value });
   };
   const handleChangeDates = value => {
-    setIndexPromo({ ...indexPromo, datesPromo: value })
+    setIndexPromo({ ...indexPromo, datesPromo: value });
+  };
+  const handleChaneIndexPromo = (val, track) => {
+    switch (track) {
+      case "setPromoType":
+        setIndexPromo({ ...indexPromo, promoType: val });
+        break;
+      default:
+        break;
+    }
+
   };
   const childrenDates = [];
   for (let i = 1; i <= 31; i++) {
     childrenDates.push(<Option key={i}>{i < 10 ? "0" + i : i}</Option>);
   }
   const childrenDaily = daily.map((val, index) => (
-    <Option key={index}>{val}</Option>
+    <Option key={index} value={index}>
+      {val}
+    </Option>
   ));
   const printPromoType = typePromo.promoType.map((val, index) => (
-    <Option value={val.name} key={index}>{val.name}</Option>
-  ))
-  const printPlatform = gamePromo.map((val, i) => (
-    <Option value={val.partnerId} key={i}>{val.partnerName}</Option>
-  ))
+    <Option value={val.name} key={index}>
+      {val.name}
+    </Option>
+  ));
+  const printPlatform = listGame.map((val, i) => (
+    <Option value={val.partnerId} key={i}>
+      {val.partnerName}
+    </Option>
+  ));
   const printListServer = listServer.map((val, index) => (
-    <Option value={val.server} key={index}>{val.serverName}</Option>
-  ))
+    <Option value={val.server} key={index}>
+      {val.serverName}
+    </Option>
+  ));
   return (
     <Row className="container-promotion">
       <div className="title">
@@ -169,7 +199,7 @@ function CreatePromotion() {
               name="statusPromo"
             >
               <Radio value="COMPLETE">Kích hoạt</Radio>
-              <Radio value="INPPUT">Chưa áp dụng</Radio>
+              <Radio value="INPUT">Chưa áp dụng</Radio>
             </Radio.Group>
             <p className="promotion-title-field">Hình thức khuyến mãi</p>
             <Radio.Group
@@ -178,10 +208,10 @@ function CreatePromotion() {
               className="choose-promo"
               onChange={switchPromoAndEvent}
             >
-              <Radio.Button value='EVENT' style={{ marginRight: "1%" }}>
+              <Radio.Button value="EVENT" style={{ marginRight: "1%" }}>
                 Khuyến mãi theo hóa đơn
               </Radio.Button>
-              <Radio.Button value='ITEMS' style={{ marginLeft: "1%" }}>
+              <Radio.Button value="ITEMS" style={{ marginLeft: "1%" }}>
                 Khuyến mãi theo item
               </Radio.Button>
             </Radio.Group>
@@ -197,7 +227,10 @@ function CreatePromotion() {
                 {printPlatform}
               </Select>{" "}
               <span>Hình thức</span>
-              <Select style={{ width: 120 }} >
+              <Select
+                style={{ width: 120 }}
+                onChange={val => handleChaneIndexPromo(val, "setPromoType")}
+              >
                 {printPromoType}
               </Select>{" "}
               <span>Server</span>
@@ -224,7 +257,6 @@ function CreatePromotion() {
               format="YYYY-MM-DD HH:mm"
               placeholder={["-Thời gian bắt đầu", "- Thời gian kết thúc"]}
               onChange={onChangeDatePicker}
-              onOk={onOkDatePicker}
             />
           </div>
           <div>
@@ -251,8 +283,20 @@ function CreatePromotion() {
           </div>
           <div>
             Theo giờ:
-            <TimePicker format={"HH:mm"} placeholder="- Giờ bắt đầu" onChange={(timeString) => setTimePromo(timeString, 'startTime')} />
-            <TimePicker format={"HH:mm"} placeholder="- Giờ kết thúc" onChange={(timeString) => setTimePromo(timeString, "endTime")} />
+            <TimePicker
+              format={"HH:mm"}
+              placeholder="- Giờ bắt đầu"
+              onChange={(time, timeString) =>
+                setTimePromo(timeString, "startTime")
+              }
+            />
+            <TimePicker
+              format={"HH:mm"}
+              placeholder="- Giờ kết thúc"
+              onChange={(time, timeString) =>
+                setTimePromo(timeString, "endTime")
+              }
+            />
           </div>
         </div>
         <div>Khuyến mãi diễn ra từ ngày ... đến ngày ...</div>
@@ -268,7 +312,7 @@ function CreatePromotion() {
             <span>Tặng quà</span>
           </Col>
         </Row>
-        <EventByItems listItems={listItems} />
+        <EventByItems listItems={listItems} indexPromo={indexPromo} />
       </Col>
     </Row>
   );

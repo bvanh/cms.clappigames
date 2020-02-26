@@ -1,8 +1,22 @@
 import React, { useState } from "react";
 import { Button, Input, Row, Col, Select } from "antd";
+import { createPromotion } from "../../../../utils/mutation/promotion";
+import { useLazyQuery, useMutation, useQuery } from "@apollo/react-hooks";
 const { Option } = Select;
 function EventByItems(props) {
   const { listItems } = props;
+  const {
+    namePromo,
+    platformPromoId,
+    server,
+    statusPromo,
+    promoType,
+    timeTotalPromo,
+    datesPromo,
+    dailyPromo,
+    startTime,
+    endTime
+  } = props.indexPromo;
   const [indexShop, setIndexShop] = useState([
     {
       purchaseNumber: 1,
@@ -17,6 +31,26 @@ function EventByItems(props) {
       ]
     }
   ]);
+  const [createPromo] = useMutation(createPromotion, {
+    variables: {
+      req: {
+        name: namePromo,
+        type: promoType,
+        status: statusPromo,
+        game: platformPromoId,
+        server: server,
+        shop: JSON.stringify(indexShop),
+        eventTime: JSON.stringify({
+          startTime: timeTotalPromo[0],
+          endTime: timeTotalPromo[1],
+          dates: datesPromo,
+          daily: dailyPromo,
+          hour: `${startTime},${endTime}`
+        })
+      }
+    },
+    onCompleted: data => console.log(data)
+  });
   const addItem = val => {
     const newItem = {
       purchaseNumber: 1,
@@ -72,7 +106,6 @@ function EventByItems(props) {
     const newItem = [...indexShop];
     newItem[positionItem].purchaseItemId = value;
     setIndexShop(newItem);
-    console.log(indexShop)
   };
   const handleChooseNumbItem = (positionItem, e) => {
     const newItem = [...indexShop];
@@ -84,11 +117,11 @@ function EventByItems(props) {
       {val.productName}
     </Option>
   ));
-  const printItem = indexShop.map(function (val, index1) {
+  const printItem = indexShop.map(function(val, index1) {
     const printReward = val.reward.map((valReward, index2) => (
       <div key={index2}>
         <Input
-          //   value={coin}
+            value={indexShop[index1].reward[index2].rewardNumb}
           type="number"
           max="10"
           name="pucharseTimes"
@@ -96,6 +129,7 @@ function EventByItems(props) {
           style={{ width: "10%" }}
         ></Input>
         <Select
+          mode="multiple"
           value={indexShop[index1].reward[index2].rewardItemId}
           style={{ width: "60%" }}
           onChange={value => handleChooseReward(index1, index2, value)}
@@ -111,7 +145,7 @@ function EventByItems(props) {
       <div key={index1}>
         <Col md={12}>
           <Input
-            //   value={coin}
+            value={indexShop[index1].purchaseNumber}
             type="number"
             max="10"
             name="pucharseTimes"
@@ -142,7 +176,7 @@ function EventByItems(props) {
     <Row>
       <div className="btn-create-promo">
         <Button>Hủy</Button>
-        <Button>Tạo khuyến mãi</Button>
+        <Button onClick={()=>createPromo()}>Tạo khuyến mãi</Button>
       </div>
       {printItem}
       <Button onClick={() => addItem(indexShop.length)}>Thêm điều kiện</Button>
