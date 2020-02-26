@@ -7,7 +7,10 @@ const initialState = {
   userAccessToken: null,
   accessToken: JSON.parse(localStorage.getItem("accessTokenCms")),
   visibleModalNews: false,
-  urlImg: ""
+  urlImg: "",
+  eventMoneyTypeIndex:{
+    isInKind:true,
+  }
 };
 export default (state = initialState, action) => {
   switch (action.type) {

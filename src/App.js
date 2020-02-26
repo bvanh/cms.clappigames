@@ -109,7 +109,7 @@ function App(props) {
                 <Menu.Item key="6">
                   <Link to="/payment/items">Item </Link>
                 </Menu.Item>
-                <Menu.Item key="7"> <Link to="/payment/promotion/create">Promotion</Link></Menu.Item>
+                <Menu.Item key="7"> <Link to="/payment/promotion/create/byItem">Promotion</Link></Menu.Item>
               </SubMenu>
               <Menu.Item key="9">
                 <Link to="/" onClick={() => dispatchSwitchLogin(false)}>
@@ -171,7 +171,6 @@ function App(props) {
                 render={() => <EditProductCoin />}
               />
                  <Route
-                exact
                 path="/payment/promotion/create"
                 render={() => <CreatePromotion />}
               />
