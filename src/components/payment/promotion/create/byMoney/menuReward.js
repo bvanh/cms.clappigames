@@ -39,6 +39,12 @@ const eventCointype = [{
 },
 ]
 const MenuRewardEventByMoney = props => {
+    const [eventByMoneyIndex,setEventByMoneyIndex]=useState({
+        type:[],
+    })
+    useQuery(getEventPaymentType, {
+    onCompleted: data => setEventByMoneyIndex({...eventByMoneyIndex,type:data.__type.})
+  })
     const printEventMoneyType = eventMoneyType.map((val, i) => (
         <Option key={i} value={val.name}>{val.description}</Option>
     ))

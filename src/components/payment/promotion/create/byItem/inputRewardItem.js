@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Button, Input, Row, Col, Select } from "antd";
-import { createPromotion } from "../../../../utils/mutation/promotion";
+import { createPromotion } from "../../../../../utils/mutation/promotion";
 import { useLazyQuery, useMutation, useQuery } from "@apollo/react-hooks";
 const { Option } = Select;
 function EventByItems(props) {
