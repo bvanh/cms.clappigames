@@ -5,7 +5,6 @@ const { Option } = Select;
 function MenuRewardByItem(props) {
   const { server } = props;
 
-   
   const { type, listGame, listServer } = props.typePromo;
   const printPromoType = type.map((val, index) => (
     <Option value={val.name} key={index}>

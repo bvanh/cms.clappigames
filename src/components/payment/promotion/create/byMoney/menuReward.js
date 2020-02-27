@@ -20,6 +20,7 @@ import {
 import { queryGetPlatform } from "../../../../../utils/queryPlatform";
 import { getListPartnerProducts } from "../../../../../utils/queryPartnerProducts";
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
+import { dispatchTypeEventByMoney } from "../../../../../redux/actions";
 const { Option } = Select;
 const { RangePicker } = DatePicker;
 
@@ -40,52 +41,113 @@ const eventCointype = [
   }
 ];
 const MenuRewardEventByMoney = props => {
+  const { server } = props;
+  const { type, listGame, listServer } = props.typePromo;
   const [eventByMoneyIndex, setEventByMoneyIndex] = useState({
-    typeEvent: [{name:""}]
+    eventType: [],
+    eventPaymentType: [],
+    value: ""
   });
-  const {typeEvent}=eventByMoneyIndex
+  const { eventType, eventPaymentType, value } = eventByMoneyIndex;
   useQuery(getEventPaymentType, {
     onCompleted: data =>
       setEventByMoneyIndex({
         ...eventByMoneyIndex,
-        type: data.__type.enumValues
+        eventType: data.__type.enumValues
       })
   });
-  const printEventMoneyType = eventMoneyType.map((val, i) => (
-    <Option key={i} value={val.name}>
+  const handleChangePaymentType = async val => {
+    if (val === "MONEY") {
+      setEventByMoneyIndex({
+        ...eventByMoneyIndex,
+        eventPaymentType: eventMoneyType,
+        value: "INKIND"
+      });
+      dispatchTypeEventByMoney('INKIND');
+      props.setIndexEventByMoney({
+        ...props.indexEventByMoney,
+        isPaymentTypeByCoin: false
+      });
+    } else if (val === "COIN") {
+      setEventByMoneyIndex({
+        ...eventByMoneyIndex,
+        eventPaymentType: eventCointype,
+        value: "ITEM"
+      });
+      dispatchTypeEventByMoney('ITEM'); 
+      props.setIndexEventByMoney({
+        ...props.indexEventByMoney,
+        isPaymentTypeByCoin: true
+      });
+    }
+  };
+  const handleChanePaymentTypeByMoney = async val => {
+    if (val === "COIN") {
+      props.getItemsForEventTypeMoney();
+    }
+    await setEventByMoneyIndex({ ...eventByMoneyIndex, value: val });
+    dispatchTypeEventByMoney(val); 
+  };
+  const printEventMoneyType = eventPaymentType.map((val, i) => (
+    <Option key={i} value={val.value}>
       {val.description}
     </Option>
   ));
-  const printEventType=typeEvent.map((val,index)=>(
-      <Option key={index} value={val.name}>{val.name}</Option>
-  ))
+  const printEventType = eventType.map((val, index) => (
+    <Option key={index} value={val.name}>
+      {val.name}
+    </Option>
+  ));
+  const printPlatform = listGame.map((val, i) => (
+    <Option value={val.partnerId} key={i}>
+      {val.partnerName}
+    </Option>
+  ));
+  const printListServer = listServer.map((val, index) => (
+    <Option value={val.server} key={index}>
+      {val.serverName}
+    </Option>
+  ));
   return (
     <div>
       <p className="promotion-title-field">Chọn loại hóa đơn</p>
       <Select
         style={{ width: 120 }}
-        // onChange={handleChangePlatform}
+        onChange={handleChangePaymentType}
         placeholder="-Chọn game-"
       >
         {printEventType}
       </Select>{" "}
       <span>Hình thức</span>
       <Select
+        value={value}
         style={{ width: 120 }}
-        // onChange={val => props.handleChaneIndexPromo(val, "setPromoType")}
+        onChange={handleChanePaymentTypeByMoney}
       >
         {printEventMoneyType}
-      </Select>{" "}
-      {/* <span>Server</span>
-        <Select
-          placeholder="-Chọn server-"
-          style={{ width: 120 }}
-          onChange={handleChangeServer}
-          name="server"
-          value={server}
-        >
-          {printListServer}
-        </Select>{" "} */}
+      </Select>
+      {props.indexEventByMoney.isPaymentTypeByCoin && (
+        <div>
+          <p className="promotion-title-field">Chọn game</p>
+          <Select
+            style={{ width: 120 }}
+            onChange={props.handleChangePlatform}
+            placeholder="-Chọn game-"
+          >
+            {printPlatform}
+          </Select>{" "}
+          <span>Server</span>
+          <Select
+            placeholder="-Chọn server-"
+            style={{ width: 120 }}
+            onChange={props.handleChangeServer}
+            name="server"
+            value={server}
+          >
+            {printListServer}
+          </Select>{" "}
+        </div>
+      )}
     </div>
   );
 };

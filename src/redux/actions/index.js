@@ -32,6 +32,12 @@ const setUrlImage = value => {
     value
   };
 };
+const setTypeEventByMoney=value=>{
+  return{
+    type:actions.SET_TYPE_EVENTMONEY,
+    value
+  }
+}
 function dispatchSwitchLogin(data) {
   store.dispatch(switchLogin(data));
 }
@@ -47,10 +53,14 @@ function dispatchShowImagesNews(value) {
 function dispatchSetUrlImage(value) {
   store.dispatch(setUrlImage(value));
 }
+function dispatchTypeEventByMoney(value) {
+  store.dispatch(setTypeEventByMoney(value));
+}
 export {
   dispatchSwitchLogin,
   dispatchSetAccessToken,
   dispatchSetToken,
   dispatchShowImagesNews,
-  dispatchSetUrlImage
+  dispatchSetUrlImage,
+  dispatchTypeEventByMoney
 };

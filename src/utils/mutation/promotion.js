@@ -8,4 +8,12 @@ const createPromotion = gql`
     }
   }
 `;
-export { createPromotion };
+const createItemEvent = gql`
+  mutation createProduct($req: ProductRequest!) {
+    createProduct(req: $req) {
+      productName
+      productId
+    }
+  }
+`;
+export { createPromotion,createItemEvent };

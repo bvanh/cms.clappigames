@@ -8,9 +8,7 @@ const initialState = {
   accessToken: JSON.parse(localStorage.getItem("accessTokenCms")),
   visibleModalNews: false,
   urlImg: "",
-  eventMoneyTypeIndex:{
-    isInKind:true,
-  }
+  typeEventByMoney: ""
 };
 export default (state = initialState, action) => {
   switch (action.type) {
@@ -37,6 +35,11 @@ export default (state = initialState, action) => {
       return {
         ...state,
         urlImg: action.value
+      };
+    case actions.SET_TYPE_EVENTMONEY:
+      return {
+        ...state,
+        typeEventByMoney: action.value
       };
     default:
       return state;

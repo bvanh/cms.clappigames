@@ -37,6 +37,9 @@ const daily = [
 ];
 function InputNameAndTypeArea(props) {
   const { statusPromo } = props;
+  const switchTypeEvent=()=>{
+
+  }
   return (
     <div>
       <p className="promotion-title-field">Tên chương trình khuyến mãi</p>
@@ -58,13 +61,11 @@ function InputNameAndTypeArea(props) {
       </Radio.Group>
       <p className="promotion-title-field">Hình thức khuyến mãi</p>
 
-      <Link to="/payment/promotion/create/byMoney">
-        <Button value="EVENT" style={{ marginRight: "1%" }}>
+        <Button  style={{ marginRight: "1%" }} onClick={()=>{props. setSwitchTypeEvent(false)}}>
           Khuyến mãi theo hóa đơn
         </Button>
-      </Link>
-      <Button value="ITEMS" style={{ marginLeft: "1%" }}>
-        <Link to="/payment/promotion/create/byItem"> Khuyến mãi theo Item</Link>
+      <Button style={{ marginLeft: "1%" }}onClick={()=>props. setSwitchTypeEvent(true)}>
+         Khuyến mãi theo Item
       </Button>
     </div>
   );
@@ -104,7 +105,7 @@ function InputTimeArea(props) {
     }
   });
   const printAlertDatesPromo = datesPromo.map((val, i) => <>{val}</>);
-  const printAlertTimeTotalPromo = timeTotalAlert.map((val, i) => <>{val}</>);
+  // const printAlertTimeTotalPromo = timeTotalAlert.map((val, i) => <>{val}</>);
   const childrenDates = [];
   for (let i = 1; i <= 31; i++) {
     childrenDates.push(<Option key={i}>{i < 10 ? "0" + i : i}</Option>);

@@ -11,4 +11,12 @@ query{
   }
 `;
 };
-export { getListServer };
+const getListItemsForEvent = gql`
+query{
+  listProducts(type:EVENT){
+   productName
+   productId
+ }
+ }
+`
+export { getListServer, getListItemsForEvent };
