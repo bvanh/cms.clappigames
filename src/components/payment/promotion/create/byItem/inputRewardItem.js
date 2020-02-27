@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import { Button, Input, Row, Col, Select } from "antd";
-import { createPromotion } from "../../../../utils/mutation/promotion";
+import { createPromotion } from "../../../../../utils/mutation/promotion";
 import { useLazyQuery, useMutation, useQuery } from "@apollo/react-hooks";
+import { getListPartnerProducts } from "../../../../../utils/queryPartnerProducts";
 const { Option } = Select;
 function EventByItems(props) {
-  const { listItems } = props;
+  const [itemsForEventTypeItem, setItemForEventTypeItem] = useState([{ productName: "", partnerProductId: "" }]);
   const {
     namePromo,
     platformPromoId,
@@ -29,6 +30,11 @@ function EventByItems(props) {
       ]
     }
   ]);
+  const { data } = useQuery(getListPartnerProducts(platformPromoId), {
+    onCompleted: data => {
+      setItemForEventTypeItem(data.listPartnerProducts);
+    }
+  });
   const [createPromo] = useMutation(createPromotion, {
     variables: {
       req: {
@@ -105,8 +111,8 @@ function EventByItems(props) {
     newItem[positionItem].purchaseTimes = e.target.value;
     setIndexShop(newItem);
   };
-  const printListItems = listItems.map((val, index) => (
-    <Option value={val.productId} key={index}>
+  const printListItems = itemsForEventTypeItem.map((val, index) => (
+    <Option value={val.partnerProductId} key={index}>
       {val.productName}
     </Option>
   ));

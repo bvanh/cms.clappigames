@@ -27,3 +27,8 @@
   top: -395px;
   right: 8px;
 }
+/*  */
+.input-coin-event-money{
+  display: flex;
+  flex-direction: row;
+}

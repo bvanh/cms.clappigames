@@ -39,36 +39,88 @@ const eventCointype = [{
 },
 ]
 const MenuRewardEventByMoney = props => {
-    const printEventMoneyType = eventMoneyType.map((val, i) => (
-        <Option key={i} value={val.name}>{val.description}</Option>
+    const { server } = props;
+    const { type, listGame, listServer } = props.typePromo;
+    const [eventByMoneyIndex, setEventByMoneyIndex] = useState({
+        eventType: [],
+        eventPaymentType: []
+    })
+    const { eventType, eventPaymentType } = eventByMoneyIndex
+    useQuery(getEventPaymentType, {
+        onCompleted: data => setEventByMoneyIndex({ ...eventByMoneyIndex, eventType: data.__type.enumValues })
+    })
+    const handleChangePaymentType = async val => {
+        const deo='ITEM'
+        if (val === 'MONEY') {
+            setEventByMoneyIndex({ ...eventByMoneyIndex, eventPaymentType: eventMoneyType })
+            props.setIndexEventByMoney({ ...props.indexEventByMoney, paymentTypeByCoin: false })
+        } else if (val === 'COIN') {
+            await props.setIndexEventByMoney({ ...props.indexEventByMoney, paymentTypeByMoney: deo })
+            await setEventByMoneyIndex({ ...eventByMoneyIndex, eventPaymentType: eventCointype })
+            props.setIndexEventByMoney({ ...props.indexEventByMoney, paymentTypeByCoin: true })
+        }
+    }
+    const handleChanePaymentTypeByMoney = val => {
+        props.setIndexEventByMoney({ ...props.indexEventByMoney, paymentTypeByMoney: val })
+        if (val === 'COIN') {
+            props.getItemsForEventTypeMoney();
+        }
+    }
+    const printEventMoneyType = eventPaymentType.map((val, i) => (
+        <Option key={i} value={val.value}>{val.description}</Option>
     ))
+    const printEventType = eventType.map((val, index) => (
+        <Option key={index} value={val.name}>{val.name}</Option>
+    ))
+    const printPlatform = listGame.map((val, i) => (
+        <Option value={val.partnerId} key={i}>
+            {val.partnerName}
+        </Option>
+    ));
+    const printListServer = listServer.map((val, index) => (
+        <Option value={val.server} key={index}>
+            {val.serverName}
+        </Option>
+    ));
     return (
         <div>
             <p className="promotion-title-field">Chọn loại hóa đơn</p>
             <Select
                 style={{ width: 120 }}
-                // onChange={handleChangePlatform}
+                onChange={handleChangePaymentType}
                 placeholder="-Chọn game-"
             >
-                {/* {printPlatform} */}
+                {printEventType}
             </Select>{" "}
             <span>Hình thức</span>
             <Select
                 style={{ width: 120 }}
-            // onChange={val => props.handleChaneIndexPromo(val, "setPromoType")}
+                onChange={handleChanePaymentTypeByMoney}
             >
                 {printEventMoneyType}
             </Select>{" "}
-            {/* <span>Server</span>
-        <Select
-          placeholder="-Chọn server-"
-          style={{ width: 120 }}
-          onChange={handleChangeServer}
-          name="server"
-          value={server}
-        >
-          {printListServer}
-        </Select>{" "} */}
+            {props.indexEventByMoney.paymentTypeByCoin &&
+                <div>
+                    <p className="promotion-title-field">Chọn game</p>
+                    <Select
+                        style={{ width: 120 }}
+                        onChange={props.handleChangePlatform}
+                        placeholder="-Chọn game-"
+                    >
+                        {printPlatform}
+                    </Select>{" "}
+                    <span>Server</span>
+                    <Select
+                        placeholder="-Chọn server-"
+                        style={{ width: 120 }}
+                        onChange={props.handleChangeServer}
+                        name="server"
+                        value={server}
+                    >
+                        {printListServer}
+                    </Select>{" "}
+                </div>
+            }
         </div>
     );
 };

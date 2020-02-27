@@ -88,6 +88,7 @@ const getListPartnerProducts = partnerId => {
     listPartnerProducts(partnerId:"${partnerId}"){
       productName
       productId
+      partnerProductId
     }
   }
 `;

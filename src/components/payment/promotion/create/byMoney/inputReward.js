@@ -1,10 +1,17 @@
-import React, { useState } from "react";
-import { Button, Input, Row, Col, Select } from "antd";
+import React, { useState, useMemo } from "react";
+import { Button, Input, Row, Col, Select, Modal, Checkbox } from "antd";
 import { createPromotion } from "../../../../../utils/mutation/promotion";
+import { getListItemsForEvent } from "../../../../../utils/query/promotion";
 import { useLazyQuery, useMutation, useQuery } from "@apollo/react-hooks";
+import { getListPartnerProducts } from "../../../../../utils/queryPartnerProducts";
 const { Option } = Select;
 function InputRewardByMoney(props) {
-  const { listItems } = props;
+  const { indexEventByMoney } = props;
+  const [listItemForEvent, setListItemForEvent] = useState({
+    isShow: false,
+    itemsForEventTypeMoney: [{ productName: "", partnerProductId: "" }]
+  });
+  const { isShow, itemsForEventTypeMoney } = listItemForEvent;
   const {
     namePromo,
     platformPromoId,
@@ -21,14 +28,35 @@ function InputRewardByMoney(props) {
     {
       purchaseTimes: 1,
       purchaseItemId: "",
-      reward: [
-        {
-          numb: 1,
-          itemId: ""
-        }
-      ]
+      itemsInkind: ""
     }
   ]);
+  const resetInput = useMemo(
+    () =>
+      setIndexShop([
+        {
+          purchaseTimes: 1,
+          purchaseItemId: "",
+          itemsInkind: ""
+        }
+      ]),
+    [indexEventByMoney.paymentTypeByMoney]
+  );
+  const { data } = useQuery(getListPartnerProducts(platformPromoId), {
+    onCompleted: data => {
+      setListItemForEvent({
+        ...listItemForEvent,
+        itemsForEventTypeMoney: data.listPartnerProducts
+      });
+      setIndexShop([
+        {
+          purchaseTimes: 1,
+          purchaseItemId: "",
+          itemsInkind: ""
+        }
+      ]);
+    }
+  });
   const [createPromo] = useMutation(createPromotion, {
     variables: {
       req: {
@@ -78,38 +106,93 @@ function InputRewardByMoney(props) {
     newItem[positionItem].purchaseTimes = e.target.value;
     setIndexShop(newItem);
   };
-  const printListItems = listItems.map((val, index) => (
-    <Option value={val.productId} key={index}>
+  const handleChooseIsKind = (positionItem, e) => {
+    const newItem = [...indexShop];
+    newItem[positionItem].itemsInkind = e.target.value;
+    setIndexShop(newItem);
+  };
+  const printListItems = itemsForEventTypeMoney.map((val, index) => (
+    <Option value={val.partnerProductId} key={index}>
       {val.productName}
     </Option>
   ));
-  const printItem = indexShop.map(function(val, index1) {
+  const printItemsForEventTypeMoney = indexEventByMoney.itemsForEventByMoney.map(
+    (val, i) => (
+      <Col span={24} key={i}>
+        <Checkbox value={val.partnerProductId}>{val.productName}</Checkbox>
+      </Col>
+    )
+  );
+  console.log(indexEventByMoney.paymentTypeByMoney)
+  const printItem = indexShop.map(function (val, index1) {
     return (
       <div key={index1}>
         <Col md={24}>
+          TỪ
           <Input
             value={indexShop[index1].purchaseTimes}
             type="number"
-            max="10"
             name="pucharseTimes"
             onChange={e => handleChooseNumbItem(index1, e)}
             style={{ width: "10%" }}
           ></Input>
-          <Select
-            value={indexShop[index1].purchaseItemId}
-            style={{ width: "90%" }}
-            onChange={value => handleChooseItem(index1, value)}
-          >
-            {printListItems}
-          </Select>{" "}
-          <span onClick={() => reduceItem(index1)}>xóa item</span>
+          ...
+          {indexEventByMoney.paymentTypeByMoney === "INKIND" && (
+            <Input
+              value={indexShop[index1].itemsInkind}
+              placeholder="-Điền quà out game-"
+              name="pucharseTimes"
+              onChange={e => handleChooseIsKind(index1, e)}
+              style={{ width: "10%" }}
+            ></Input>
+          )}
+          {indexEventByMoney.paymentTypeByMoney === "COIN" && (
+            <>
+              <Select
+                mode="multiple"
+                value={indexShop[index1].purchaseItemId}
+                style={{ width: "90%" }}
+                // onChange={value => handleChooseItem(index1, value)}
+              >
+                {printListItems}
+              </Select>{" "}
+              <span
+                onClick={() =>
+                  setListItemForEvent({ ...listItemForEvent, isShow: true })
+                }
+              >
+                show item COIN
+              </span>
+              <span onClick={() => reduceItem(index1)}>xóa item</span>
+            </>
+          )}
+          {indexEventByMoney.paymentTypeByMoney === "ITEM" && (
+            <>
+              <Select
+                mode="multiple"
+                value={indexShop[index1].purchaseItemId}
+                style={{ width: "90%" }}
+                onChange={value => handleChooseItem(index1, value)}
+              >
+                {printListItems}
+              </Select>{" "}
+              <span
+                onClick={() =>
+                  setListItemForEvent({ ...listItemForEvent, isShow: true })
+                }
+              >
+                show item
+              </span>
+              <span onClick={() => reduceItem(index1)}>xóa item</span>
+            </>
+          )}
         </Col>
       </div>
     );
   });
   return (
     <>
-    <Row>
+      <Row>
         <Col md={12}>
           <span>Tổng hóa đơn</span>
           <span>Khuyến mãi</span>
@@ -123,6 +206,23 @@ function InputRewardByMoney(props) {
         {printItem}
         <Button onClick={() => addItem()}>Thêm điều kiện</Button>
       </Row>
+      <Modal
+        title="Chọn gói C.coin"
+        centered
+        visible={isShow}
+        onOk={() => setListItemForEvent({ ...listItemForEvent, isShow: false })}
+        onCancel={() =>
+          setListItemForEvent({ ...listItemForEvent, isShow: false })
+        }
+      >
+        <div className="input-coin-event-money">
+          <Input placeholder="Nhập số lượng coin"></Input>
+          <Button>Submit</Button>
+        </div>
+        <Checkbox.Group>
+          <Row>{printItemsForEventTypeMoney}</Row>
+        </Checkbox.Group>
+      </Modal>
     </>
   );
 }
