@@ -8,7 +8,8 @@ const initialState = {
   accessToken: JSON.parse(localStorage.getItem("accessTokenCms")),
   visibleModalNews: false,
   urlImg: "",
-  typeEventByMoney: ""
+  typeEventByMoney: "",
+  nameEventByMoney:""
 };
 export default (state = initialState, action) => {
   switch (action.type) {
@@ -41,6 +42,11 @@ export default (state = initialState, action) => {
         ...state,
         typeEventByMoney: action.value
       };
+      case actions.SET_NAME_EVENT:
+        return {
+          ...state,
+          nameEventByMoney: action.value
+        };
     default:
       return state;
   }

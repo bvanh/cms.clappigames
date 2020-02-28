@@ -16,4 +16,12 @@ const createItemEvent = gql`
     }
   }
 `;
-export { createPromotion,createItemEvent };
+const createEvent = gql`
+mutation createEvent($req: EventRequest!) {
+  createEvent(req: $req) {
+    name
+    paymentType
+  }
+}
+`
+export { createPromotion, createItemEvent, createEvent };

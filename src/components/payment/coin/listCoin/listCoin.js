@@ -15,7 +15,7 @@ import { queryGetListCoin } from "../../../../utils/queryCoin";
 import { useLazyQuery, useMutation, useQuery } from "@apollo/react-hooks";
 import { Link } from "react-router-dom";
 import "../../../../static/style/listProducts.css";
-import ListCharges from "../listCharges/listCharges";
+import ChartCharges from "../listCharges/chartCacheCharges";
 import CreateProductCoin from "../listCoin/addnewCoin";
 import { deleteCoinProduct } from "../../../../utils/mutation/productCoin";
 import { fromPromise } from "apollo-boost";
@@ -34,7 +34,7 @@ function ListCoin(props) {
   const [isCreateCoin, setIsCreateCoin] = useState(false);
   const [dataCoin, setDataCoin] = useState(null);
   const [itemsForDelete, setItemsForDelete] = useState([]);
-  const { currentPage, type, pageSize,listTypePayment } = pageIndex;
+  const { currentPage, type, pageSize, listTypePayment } = pageIndex;
   const [getDataCoin, { loading, refetch }] = useLazyQuery(queryGetListCoin, {
     fetchPolicy: "cache-and-network",
     onCompleted: data => {
@@ -224,7 +224,7 @@ function ListCoin(props) {
         </Col>
         <Col md={12}>
           <Col>Xu hướng mua Item</Col>
-          <Col>{/* <ListCharges /> */}</Col>
+          <Col><ChartCharges /></Col>
         </Col>
       </Row>
     );

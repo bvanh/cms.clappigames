@@ -131,7 +131,8 @@ function CreatePromotion() {
   const handleChangeDates = value => {
     setIndexPromo({ ...indexPromo, datesPromo: value });
   };
-  const handleChangeIndexPromo = val => {
+  const handleChangeTypePromo = val => {
+    console.log(val)
     setIndexPromo({ ...indexPromo, promoType: val });
   };
   return (
@@ -159,7 +160,7 @@ function CreatePromotion() {
                   server={server}
                   typePromo={typePromo}
                   handleChangePlatform={handleChangePlatform}
-                  handleChangeIndexPromo={handleChangeIndexPromo}
+                  handleChangeTypePromo={handleChangeTypePromo}
                   handleChangeServer={handleChangeServer}
                 />
               ) : (
@@ -169,9 +170,7 @@ function CreatePromotion() {
                     getItemsForEventTypeMoney={getItemsForEventTypeMoney}
                     server={server}
                     typePromo={typePromo}
-
                     handleChangePlatform={handleChangePlatform}
-                    handleChangeIndexPromo={handleChangeIndexPromo}
                     handleChangeServer={handleChangeServer}
                   />
                 )}

@@ -32,7 +32,7 @@ function MenuRewardByItem(props) {
         {printPlatform}
       </Select>{" "}
       <span>Hình thức</span>
-      <Select style={{ width: 120 }} onChange={props.handleChaneIndexPromo}>
+      <Select style={{ width: 120 }} onChange={props.handleChangeTypePromo}>
         {printPromoType}
       </Select>{" "}
       <span>Server</span>
