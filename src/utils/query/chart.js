@@ -1,7 +1,7 @@
 import { gql } from "apollo-boost";
 
 const getListChartCharges = (fromDate, toDate) => {
-    return gql`
+  return gql`
   query {
     listCacheChargesByDate(fromDate:"${fromDate}",toDate:"${toDate}"){
       xAxis,
@@ -10,5 +10,21 @@ const getListChartCharges = (fromDate, toDate) => {
   }
 `;
 };
+const getListPartnerCharges = gql`
+  query listCachePartnerChargesByDate(
+    $fromDate: String!
+    $toDate: String!
+    $partnerId: String!
+  ) {
+    listCachePartnerChargesByDate(
+      fromDate: $fromDate
+      toDate: $toDate
+      partnerId: $partnerId
+    ) {
+      xAxis
+      yAxis
+    }
+  }
+`;
 
-export { getListChartCharges }
+export { getListChartCharges, getListPartnerCharges };

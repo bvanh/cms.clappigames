@@ -9,7 +9,8 @@ const initialState = {
   visibleModalNews: false,
   urlImg: "",
   typeEventByMoney: "",
-  nameEventByMoney:""
+  nameEventByMoney: "",
+  listPartner: []
 };
 export default (state = initialState, action) => {
   switch (action.type) {
@@ -42,11 +43,16 @@ export default (state = initialState, action) => {
         ...state,
         typeEventByMoney: action.value
       };
-      case actions.SET_NAME_EVENT:
-        return {
+    case actions.SET_NAME_EVENT:
+      return {
+        ...state,
+        nameEventByMoney: action.value
+      };
+      case actions.GET_LISTPARTNER:
+        return{
           ...state,
-          nameEventByMoney: action.value
-        };
+          listPartner:action.value
+        }
     default:
       return state;
   }

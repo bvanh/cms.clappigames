@@ -32,15 +32,21 @@ const setUrlImage = value => {
     value
   };
 };
-const setTypeEventByMoney=value=>{
-  return{
-    type:actions.SET_TYPE_EVENTMONEY,
+const setTypeEventByMoney = value => {
+  return {
+    type: actions.SET_TYPE_EVENTMONEY,
     value
   }
 }
-const setNameEventByMoney=value=>{
-  return{
-    type:actions.SET_NAME_EVENT,
+const setNameEventByMoney = value => {
+  return {
+    type: actions.SET_NAME_EVENT,
+    value
+  }
+}
+const setListPartner = value => {
+  return {
+    type: actions.GET_LISTPARTNER,
     value
   }
 }
@@ -65,6 +71,9 @@ function dispatchTypeEventByMoney(value) {
 function dispatchNameEventByMoney(value) {
   store.dispatch(setNameEventByMoney(value));
 }
+function dispatchListPartner(value) {
+  store.dispatch(setListPartner(value));
+}
 export {
   dispatchSwitchLogin,
   dispatchSetAccessToken,
@@ -72,5 +81,6 @@ export {
   dispatchShowImagesNews,
   dispatchSetUrlImage,
   dispatchTypeEventByMoney,
-  dispatchNameEventByMoney
+  dispatchNameEventByMoney,
+  dispatchListPartner
 };

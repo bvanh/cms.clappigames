@@ -6,6 +6,7 @@ import { queryGetListPartnerProducts } from "../../../../utils/queryPartnerProdu
 import { useLazyQuery, useMutation, useQuery } from "@apollo/react-hooks";
 import { Link } from "react-router-dom";
 import ListPartnerChages from "../partnerCharges/listPartnerCharges";
+import ChartPartnerChages from '../partnerCharges/chartPartnerChargesByDate'
 // import "../../static/style/listUsers.css";
 
 function ListPartnerItems() {
@@ -151,6 +152,7 @@ function ListPartnerItems() {
         </Col>
         <Col md={12}>
           <Col>Xu hướng mua Item</Col>
+           <ChartPartnerChages/>
           <ListPartnerChages />
         </Col>
       </Row>

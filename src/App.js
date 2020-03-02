@@ -19,7 +19,7 @@ import { ApolloProvider } from "@apollo/react-hooks";
 import ApolloClient from "apollo-boost";
 import { importImage } from "./utils/importImg";
 import checkTokenFinal from "./utils/checkToken";
-import { dispatchSwitchLogin } from "./redux/actions/index";
+import { dispatchSwitchLogin, dispatchListPartner } from "./redux/actions/index";
 import { Layout, Menu, Icon, Dropdown } from "antd";
 import "./static/style/menu.css";
 import CreateProductCoin from "./components/payment/coin/listCoin/addnewCoin";
@@ -35,7 +35,6 @@ function App(props) {
       </Router>
     );
   }
-
   checkTokenFinal();
   const client = new ApolloClient({
     uri: "https://api.cms.cubegame.vn/graphql",
@@ -151,31 +150,31 @@ function App(props) {
               <Route exact path="/media/album" render={() => <Album />} />
               <Route exact path="/media/album/edit" render={() => <UpdateAlbum />} />
               <Route
-              exact            
+                exact
                 path="/payment/items"
                 render={() => <ListPartnerItems />}
               />
-                 <Route
+              <Route
                 exact
                 path="/payment/items/edit"
-                render={() => <EditPartnerProductItem/>}
+                render={() => <EditPartnerProductItem />}
               />
               <Route
-              exact
+                exact
                 path="/payment/coin"
                 render={() => <ListCoin />}
               />
-                <Route
+              <Route
                 exact
                 path="/payment/coin/edit"
                 render={() => <EditProductCoin />}
               />
-                 <Route
+              <Route
                 path="/payment/promotion/create"
                 render={() => <CreatePromotion />}
               />
             </Content>
-            <Footer style={{ textAlign: "center",bottom:'0',width:'100%' }}>LUSSOM ©2020</Footer>
+            <Footer style={{ textAlign: "center", bottom: '0', width: '100%' }}>LUSSOM ©2020</Footer>
           </Layout>
         </Layout>
       </Router>

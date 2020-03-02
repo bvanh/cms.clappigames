@@ -52,7 +52,7 @@ function ListPartnerCharges() {
         toDate: toDate,
         userType: userType,
         os: os,
-        partnerId:partnerId
+        partnerId: partnerId
       }
     });
   }, []);
@@ -113,7 +113,7 @@ function ListPartnerCharges() {
           columns={columns}
           dataSource={dataPartnerCharges.listPartnerChargesByType.rows}
           pagination={false}
-          //  
+        //  
         />)}
     </>
   );
