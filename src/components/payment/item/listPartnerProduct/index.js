@@ -13,14 +13,15 @@ function ListPartnerItems() {
   const [pageIndex, setPageIndex] = useState({
     currentPage: 1,
     pageSize: 10,
-    partnerId: ""
+    partnerId: "",
+    partnerProductName: ""
   });
   const [isCreateItem, setIsCreateItem] = useState(false);
   const [dataProducts, setData] = useState(null);
   const [itemsForDelete, setItemsForDelete] = useState([]);
-  const { currentPage, pageSize, partnerId } = pageIndex;
+  const { currentPage, pageSize, partnerId, partnerProductName } = pageIndex;
   const { loading, error, data, refetch } = useQuery(
-    queryGetListPartnerProducts(currentPage, pageSize, partnerId),
+    queryGetListPartnerProducts(currentPage, pageSize, partnerId, partnerProductName),
     {
       fetchPolicy: "cache-and-network",
       onCompleted: data => {
@@ -47,11 +48,11 @@ function ListPartnerItems() {
         </span>
       )
     },
-    {
-      title: "Status",
-      dataIndex: "status",
-      key: "status"
-    },
+    // {
+    //   title: "Status",
+    //   dataIndex: "status",
+    //   key: "status"
+    // },
     {
       title: "Id",
       dataIndex: "partnerProductId",
@@ -109,7 +110,7 @@ function ListPartnerItems() {
   };
   if (loading) return "Loading...";
   if (isCreateItem)
-    return <CreatePartnerItems setIsCreateItem={setIsCreateItem}/>;
+    return <CreatePartnerItems setIsCreateItem={setIsCreateItem} />;
   if (isCreateItem === false)
     return (
       <Row>
@@ -152,7 +153,7 @@ function ListPartnerItems() {
         </Col>
         <Col md={12}>
           <Col>Xu hướng mua Item</Col>
-           <ChartPartnerChages/>
+          <ChartPartnerChages />
           <ListPartnerChages />
         </Col>
       </Row>

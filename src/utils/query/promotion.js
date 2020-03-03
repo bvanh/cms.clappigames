@@ -12,11 +12,66 @@ query{
 `;
 };
 const getListItemsForEvent = gql`
-query{
-  listProducts(type:EVENT){
-   productName
-   productId
+  query {
+    listProducts(type: EVENT) {
+      productName
+      productId
+    }
+  }
+`;
+const getListPromotionByType = (
+  currentPage,
+  pageSize,
+  status,
+  type,
+  game,
+  server,
+  name
+) => {
+  return gql`
+  query {
+    listPromotionsByType(
+      currentPage: "${currentPage}",
+      pageSize: ${pageSize},
+      status: "${status}",
+      type: "${type}",
+      game: "${game}",
+      server: ${server},
+      name: "${name}",
+    ) {
+      count
+      rows {
+      name
+      type
+      status
+      eventTime
+      }
+    }
  }
- }
-`
-export { getListServer, getListItemsForEvent };
+`;
+};
+const getListEventByType = (
+  currentPage,
+  pageSize,
+  paymentType,
+  status,
+  name
+) => {
+  return gql`
+  query{
+    listEventsByType(currentPage:"${currentPage}",pageSize:${pageSize},name:${name},paymentType:"${paymentType}",status:"${status}"){
+     count
+     rows{
+       name
+       paymentType
+       status
+     }
+   }
+   }`;
+};
+export {
+  getListServer,
+  getListItemsForEvent,
+  getListPromotionByType,
+  getListEventByType
+};

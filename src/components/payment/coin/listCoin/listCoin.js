@@ -18,7 +18,6 @@ import "../../../../static/style/listProducts.css";
 import ChartCharges from "../listCharges/chartCacheCharges";
 import CreateProductCoin from "../listCoin/addnewCoin";
 import { deleteCoinProduct } from "../../../../utils/mutation/productCoin";
-import { fromPromise } from "apollo-boost";
 const radioStyle = {
   display: "block",
   height: "30px",
@@ -56,8 +55,8 @@ function ListCoin(props) {
       variables: {
         currentPage: currentPage,
         type: type,
-        pageSize: pageSize
-        // search: search
+        pageSize: pageSize,
+        productName:""
       }
     });
   }, []);
@@ -69,8 +68,8 @@ function ListCoin(props) {
       variables: {
         currentPage: currentPage,
         type: type,
-        pageSize: pageSize
-        // search: search
+        pageSize: pageSize,
+        productName:""
       }
     });
   };
@@ -80,8 +79,8 @@ function ListCoin(props) {
       variables: {
         currentPage: currentPage,
         type: "",
-        pageSize: pageSize
-        // search: search
+        pageSize: pageSize,
+        productName:""
       }
     });
   };
@@ -162,8 +161,8 @@ function ListCoin(props) {
       variables: {
         currentPage: currentPage,
         type: type,
-        pageSize: pageSize
-        // search: search
+        pageSize: pageSize,
+        productName:""
       }
     });
   };

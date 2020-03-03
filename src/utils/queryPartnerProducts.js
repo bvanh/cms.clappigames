@@ -1,8 +1,8 @@
 import { gql } from "apollo-boost";
-const queryGetListPartnerProducts = (currentPage, pageSize, partnerId) => {
+const queryGetListPartnerProducts = (currentPage, pageSize, partnerId, partnerProductName) => {
   return gql`
     query {
-      listPartnerProductsByPartner(currentPage: ${currentPage},pageSize: ${pageSize},partnerId: "${partnerId}") {
+      listPartnerProductsByPartner(currentPage: ${currentPage},pageSize: ${pageSize},partnerId: "${partnerId}",partnerProductName:"${partnerProductName}") {
         count
         rows {
           partnerProductId

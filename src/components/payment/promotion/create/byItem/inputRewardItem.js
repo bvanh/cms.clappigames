@@ -22,7 +22,7 @@ function EventByItems(props) {
     {
       purchaseTimes: 1,
       purchaseItemId: "",
-      reward: [
+      rewards: [
         {
           numb: 1,
           itemId: ""
@@ -59,7 +59,7 @@ function EventByItems(props) {
     const newItem = {
       purchaseTimes: 1,
       purchaseItemId: null,
-      reward: [
+      rewards: [
         {
           numb: 1,
           itemId: null
@@ -80,25 +80,25 @@ function EventByItems(props) {
       itemId: null
     };
     const newShop = [...indexShop];
-    newShop[i].reward = [...newShop[i].reward, newReward];
+    newShop[i].rewards = [...newShop[i].rewards, newReward];
     setIndexShop(newShop);
   };
   const reduceReward = async (numberItem, indexReward) => {
     const newShop = [...indexShop];
-    const newReward = await indexShop[numberItem].reward.filter(
+    const newReward = await indexShop[numberItem].rewards.filter(
       (value, i) => indexReward !== i
     );
-    newShop[numberItem].reward = newReward;
+    newShop[numberItem].rewards = newReward;
     setIndexShop(newShop);
   };
   const handleChooseReward = (positionItem, positionReward, val) => {
     const newItem = [...indexShop];
-    newItem[positionItem].reward[positionReward].itemId = val;
+    newItem[positionItem].rewards[positionReward].itemId = val;
     setIndexShop(newItem);
   };
   const handleChooseNumbReward = (positionItem, positionReward, e) => {
     const newItem = [...indexShop];
-    newItem[positionItem].reward[positionReward].numb = e.target.value;
+    newItem[positionItem].rewards[positionReward].numb = e.target.value;
     setIndexShop(newItem);
   };
   const handleChooseItem = (positionItem, value) => {
@@ -117,10 +117,10 @@ function EventByItems(props) {
     </Option>
   ));
   const printItem = indexShop.map(function (val, index1) {
-    const printReward = val.reward.map((valReward, index2) => (
+    const printReward = val.rewards.map((valReward, index2) => (
       <div key={index2}>
         <Input
-          value={indexShop[index1].reward[index2].numb}
+          value={indexShop[index1].rewards[index2].numb}
           type="number"
           max="10"
           name="pucharseTimes"

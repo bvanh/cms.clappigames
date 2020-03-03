@@ -35,7 +35,7 @@ function InputrewardForShowByMoney(props) {
     {
       point: 1,
       itemsInkind: "",
-      reward: [],
+      rewards: [],
       rewardForShow: []
     }
   ]);
@@ -44,14 +44,14 @@ function InputrewardForShowByMoney(props) {
       setIndexShop([
         {
           point: 1,
-          reward: [],
+          rewards: [],
           itemsInkind: "",
           rewardForShow: []
         }
       ]),
     [props.typeEventByMoney]
   );
-  const { point, reward, itemsInkind, rewardForShow } = indexShop;
+  const { point, rewards, itemsInkind, rewardForShow } = indexShop;
   const { data } = useQuery(getListPartnerProducts(platformPromoId), {
     onCompleted: data => {
       setListItemForEvent({
@@ -61,7 +61,7 @@ function InputrewardForShowByMoney(props) {
       setIndexShop([
         {
           point: 1,
-          reward: [],
+          rewards: [],
           itemsInkind: "",
           rewardForShow: [null]
         }
@@ -134,7 +134,7 @@ function InputrewardForShowByMoney(props) {
   const addItem = () => {
     const newItem = {
       point: 1,
-      reward: [],
+      rewards: [],
       itemsInkind: "",
       rewardForShow: [null]
     };
@@ -148,7 +148,7 @@ function InputrewardForShowByMoney(props) {
   };
   const handleChooseItem = (positionItem, value) => {
     const newItem = [...indexShop];
-    newItem[positionItem].reward = value;
+    newItem[positionItem].rewards = value;
     newItem[positionItem].rewardForShow = value;
     setIndexShop(newItem);
   };
@@ -165,7 +165,7 @@ function InputrewardForShowByMoney(props) {
   const setCoinForEventTypeMoney = e => {
     const newItem = [...indexShop];
     newItem[rowItems].rewardForShow = [JSON.parse(e.target.value).productName];
-    newItem[rowItems].reward = [JSON.parse(e.target.value).productId]
+    newItem[rowItems].rewards = [JSON.parse(e.target.value).productId]
     setIndexShop(newItem);
     setItemNumb(null);
   };
@@ -184,7 +184,7 @@ function InputrewardForShowByMoney(props) {
     if (props.nameEventByMoney === "MONEY") {
       if (props.typeEventByMoney === 'INKIND') {
         const newConigInkind = await indexShop.map(
-          (val, i) => (delete val.reward, delete val.rewardForShow)
+          (val, i) => (delete val.rewards, delete val.rewardForShow)
         );
         createEventByMoney();
       } else {

@@ -5,11 +5,13 @@ const queryGetListCoin = gql`
     $currentPage: Int!
     $pageSize: Int!
     $type: String
+    $productName: String
   ) {
     listProductsByPaymentType(
       currentPage: $currentPage
       pageSize: $pageSize
       type: $type
+      productName: $productName
     ) {
       count
       rows {
