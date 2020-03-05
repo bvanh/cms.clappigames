@@ -32,3 +32,34 @@
   display: flex;
   flex-direction: row;
 }
+/* list promo */
+.btn-switch-listPromo{
+  margin-bottom: .5rem;
+}
+.container-listPromo{
+  position: relative;
+}
+.btn-search-promo{
+  display: flex;
+  justify-content: space-between;
+  position: absolute;
+  top: .2rem;
+  right: 0;
+}
+/* detail promo */
+.promo-title{
+  display: flex;
+  flex-direction: column;
+}
+.promo-title>div{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+.detail-bill-title{
+  display: flex;
+}
+.detail-game{
+  display: flex;
+}

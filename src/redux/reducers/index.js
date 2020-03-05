@@ -10,7 +10,10 @@ const initialState = {
   urlImg: "",
   typeEventByMoney: "",
   nameEventByMoney: "",
-  listPartner: []
+  // list game
+  listPartner: [],
+  // detail promo
+  detailPromo: []
 };
 export default (state = initialState, action) => {
   switch (action.type) {
@@ -48,11 +51,16 @@ export default (state = initialState, action) => {
         ...state,
         nameEventByMoney: action.value
       };
-      case actions.GET_LISTPARTNER:
-        return{
-          ...state,
-          listPartner:action.value
-        }
+    case actions.GET_LISTPARTNER:
+      return {
+        ...state,
+        listPartner: action.value
+      }
+    case actions.GET_DETAIL_PROMO:
+      return {
+        ...state,
+        detailPromo:action.value
+      }
     default:
       return state;
   }

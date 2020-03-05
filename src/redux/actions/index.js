@@ -50,6 +50,12 @@ const setListPartner = value => {
     value
   }
 }
+const getDetailPromo = value => {
+  return {
+    type: actions.GET_DETAIL_PROMO,
+    value
+  }
+}
 function dispatchSwitchLogin(data) {
   store.dispatch(switchLogin(data));
 }
@@ -74,6 +80,9 @@ function dispatchNameEventByMoney(value) {
 function dispatchListPartner(value) {
   store.dispatch(setListPartner(value));
 }
+function dispatchDetailPromo(value) {
+  store.dispatch(getDetailPromo(value));
+}
 export {
   dispatchSwitchLogin,
   dispatchSetAccessToken,
@@ -82,5 +91,6 @@ export {
   dispatchSetUrlImage,
   dispatchTypeEventByMoney,
   dispatchNameEventByMoney,
-  dispatchListPartner
+  dispatchListPartner,
+  dispatchDetailPromo
 };

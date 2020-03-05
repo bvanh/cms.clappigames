@@ -16,6 +16,7 @@ import EditProductCoin from './components/payment/coin/listCoin/editCoin'
 import EditPartnerProductItem from './components/payment/item/listPartnerProduct/editItems'
 import CreatePromotion from './components/payment/promotion/create/index'
 import ListPromoAndEvent from './components/payment/promotion/list/index'
+import DetailPromotion from './components/payment/promotion/detail/index'
 import { ApolloProvider } from "@apollo/react-hooks";
 import ApolloClient from "apollo-boost";
 import { importImage } from "./utils/importImg";
@@ -175,8 +176,13 @@ function App(props) {
                 render={() => <CreatePromotion />}
               />
               <Route
+                exact
                 path="/payment/promotion"
                 render={() => <ListPromoAndEvent />}
+              />
+              <Route
+                path="/payment/promotion/detail/promotion"
+                render={() => <DetailPromotion />}
               />
             </Content>
             <Footer style={{ textAlign: "center", bottom: '0', width: '100%' }}>LUSSOM ©2020</Footer>
