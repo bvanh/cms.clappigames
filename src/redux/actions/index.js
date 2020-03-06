@@ -56,6 +56,12 @@ const getDetailPromo = value => {
     value
   }
 }
+const switchCreatePromo = value => {
+  return {
+    type: actions.SWITCH_CREATE_PROMO,
+    value
+  }
+}
 function dispatchSwitchLogin(data) {
   store.dispatch(switchLogin(data));
 }
@@ -83,6 +89,9 @@ function dispatchListPartner(value) {
 function dispatchDetailPromo(value) {
   store.dispatch(getDetailPromo(value));
 }
+function dispatchSwitchCreatePromo(value) {
+  store.dispatch(switchCreatePromo(value));
+}
 export {
   dispatchSwitchLogin,
   dispatchSetAccessToken,
@@ -92,5 +101,6 @@ export {
   dispatchTypeEventByMoney,
   dispatchNameEventByMoney,
   dispatchListPartner,
-  dispatchDetailPromo
+  dispatchDetailPromo,
+  dispatchSwitchCreatePromo
 };

@@ -5,7 +5,9 @@ import { useLazyQuery, useMutation, useQuery } from "@apollo/react-hooks";
 import { getListPartnerProducts } from "../../../../../utils/queryPartnerProducts";
 const { Option } = Select;
 function EventByItems(props) {
-  const [itemsForEventTypeItem, setItemForEventTypeItem] = useState([{ productName: "", partnerProductId: "" }]);
+  const [itemsForEventTypeItem, setItemForEventTypeItem] = useState([
+    { productName: "", partnerProductId: "" }
+  ]);
   const {
     namePromo,
     platformPromoId,
@@ -55,6 +57,11 @@ function EventByItems(props) {
     },
     onCompleted: data => console.log(data)
   });
+  const submitCreatePromo = async () => {
+    await createPromo();
+    alert("tao thanh cong");
+    
+  };
   const addItem = () => {
     const newItem = {
       purchaseTimes: 1,
@@ -116,7 +123,7 @@ function EventByItems(props) {
       {val.productName}
     </Option>
   ));
-  const printItem = indexShop.map(function (val, index1) {
+  const printItem = indexShop.map(function(val, index1) {
     const printReward = val.rewards.map((valReward, index2) => (
       <div key={index2}>
         <Input
@@ -179,7 +186,7 @@ function EventByItems(props) {
       </Row>
       <div className="btn-create-promo">
         <Button>Hủy</Button>
-        <Button onClick={() => createPromo()}>Tạo khuyến mãi</Button>
+        <Button onClick={submitCreatePromo}>Tạo khuyến mãi</Button>
       </div>
       <Row>
         {printItem}

@@ -14,6 +14,7 @@ import { useQuery } from "react-apollo";
 const { TabPane } = Tabs;
 function DetailPromotion(props) {
   const query = new URLSearchParams(window.location.search);
+  const [isShowPromo,setIsShowPromo]=useState('1')
   const promoId = query.get("id");
   useQuery(getDetailPromotion(promoId), {
     onCompleted: data => {
@@ -39,7 +40,7 @@ function DetailPromotion(props) {
           </Radio.Group>
         </div>
       </div>
-      <Tabs activeKey="2">
+      <Tabs activeKey={isShowPromo} onChange={(key)=>setIsShowPromo(key)}>
         <TabPane tab="Hình thức khuyến mãi" key="1">
           <TypePromo />
         </TabPane>

@@ -79,14 +79,14 @@ function TypePromotion(props) {
             Game:{" "}
             <Select defaultValue="lucy" style={{ width: 120 }} disabled>
               <Option value="jack">Jack</Option>
-              <Option value="lucy">Lucy</Option>
+              <Option value="lucy">wara</Option>
             </Select>
           </span>
           <span>
             Server:{" "}
             <Select defaultValue="lucy" style={{ width: 120 }} disabled>
-              <Option value="jack">Jack</Option>
-              <Option value="lucy">Lucy</Option>
+              <Option value="jack">lqmt</Option>
+              <Option value="lucy">test 1</Option>
             </Select>
           </span>
         </div>

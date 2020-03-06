@@ -151,6 +151,7 @@ function CreatePromotion() {
               setTypePromo={setTypePromo}
               statusPromo={statusPromo}
               setInfoPromo={setInfoPromo}
+              switchTypeEvent={switchTypeEvent}
               setSwitchTypeEvent={setSwitchTypeEvent}
             />
             <div>
@@ -192,6 +193,7 @@ function CreatePromotion() {
               <InputRewardByMoney
                 listItems={listItems}
                 indexPromo={indexPromo}
+                setIndexPromo={setIndexPromo}
                 indexEventByMoney={indexEventByMoney}
                 setIndexEventByMoney={setIndexEventByMoney}
                 getItemsForEventTypeMoney={getItemsForEventTypeMoney}

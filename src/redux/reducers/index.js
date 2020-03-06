@@ -13,7 +13,8 @@ const initialState = {
   // list game
   listPartner: [],
   // detail promo
-  detailPromo: []
+  detailPromo: [],
+  isCreatePromo:true
 };
 export default (state = initialState, action) => {
   switch (action.type) {
@@ -60,6 +61,11 @@ export default (state = initialState, action) => {
       return {
         ...state,
         detailPromo:action.value
+      }
+      case actions.SWITCH_CREATE_PROMO:
+      return {
+        ...state,
+        isCreatePromo:action.value
       }
     default:
       return state;
