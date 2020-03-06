@@ -93,10 +93,19 @@ const getListPartnerProducts = partnerId => {
   }
 `;
 };
+const getListPartnerProducts2 = gql`
+  query listPartnerProducts($partnerId: String) {
+    listPartnerProducts(partnerId:$partnerId){
+      productName
+      partnerProductId
+    }
+  }
+`;
 export {
   queryGetListPartnerProducts,
   queryGetListPartnerCharges,
   queryGetPartnerProductById,
   queryGetRefPartnerProducts,
-  getListPartnerProducts
+  getListPartnerProducts,
+  getListPartnerProducts2
 };

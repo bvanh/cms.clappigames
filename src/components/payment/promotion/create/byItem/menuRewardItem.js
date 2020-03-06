@@ -22,29 +22,36 @@ function MenuRewardByItem(props) {
     </Option>
   ));
   return (
-    <div>
-      <p className="promotion-title-field">Chọn game</p>
-      <Select
-        style={{ width: 120 }}
-        onChange={props.handleChangePlatform}
-        placeholder="-Chọn game-"
-      >
-        {printPlatform}
-      </Select>{" "}
-      <span>Hình thức</span>
-      <Select style={{ width: 120 }} onChange={props.handleChangeTypePromo}>
+    <div className='promo-section2'>
+      <div className='promo-choose-platform'>
+        <div className='promo-choose-platform-name'>
+          <h3>Chọn game:</h3>
+          <Select
+            style={{ width: '65%' }}
+            onChange={props.handleChangePlatform}
+            placeholder="-Chọn game-"
+          >
+            {printPlatform}
+          </Select>{" "}
+        </div>
+        <div className='promo-choose-platform-server'>
+          <h3>Server:</h3>
+          <Select
+            placeholder="-Chọn server-"
+            style={{ width: '65%' }}
+            onChange={props.handleChangeServer}
+            name="server"
+          >
+            {printListServer}
+          </Select>{" "}
+        </div>
+      </div>
+      <div className='promo-choose-platform-name'>
+      <h3 style={{marginRight:"1.5rem"}}>Hình thức:</h3>
+      <Select style={{ width: '65%' }} onChange={props.handleChangeTypePromo} placeholder="-Tặng quà-">
         {printPromoType}
       </Select>{" "}
-      <span>Server</span>
-      <Select
-        placeholder="-Chọn server-"
-        style={{ width: 120 }}
-        onChange={props.handleChangeServer}
-        name="server"
-        value={server}
-      >
-        {printListServer}
-      </Select>{" "}
+      </div>
     </div>
   );
 }

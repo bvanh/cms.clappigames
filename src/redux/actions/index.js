@@ -86,7 +86,7 @@ function dispatchNameEventByMoney(value) {
 function dispatchListPartner(value) {
   store.dispatch(setListPartner(value));
 }
-function dispatchDetailPromo(value) {
+function dispatchDetailPromoAndEvent(value) {
   store.dispatch(getDetailPromo(value));
 }
 function dispatchSwitchCreatePromo(value) {
@@ -101,6 +101,6 @@ export {
   dispatchTypeEventByMoney,
   dispatchNameEventByMoney,
   dispatchListPartner,
-  dispatchDetailPromo,
+  dispatchDetailPromoAndEvent,
   dispatchSwitchCreatePromo
 };

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Row, Col, DatePicker, Select } from "antd";
+import { Row, Col, DatePicker, Select,Icon } from "antd";
 import { useLazyQuery, useMutation, useQuery } from "@apollo/react-hooks";
 import "../../../../static/style/promotion.css";
 import EventByItems from "./byItem/inputRewardItem";
@@ -21,7 +21,7 @@ function CreatePromotion() {
     eventPaymentType: [],
     namePromo: null,
     platformPromoId: "",
-    server: "-Chọn server-",
+    server: "",
     statusPromo: "COMPLETE",
     promoType: "",
     timeTotalPromo: ["", ""],
@@ -48,7 +48,7 @@ function CreatePromotion() {
     ]
   });
   const [alertInfoPromo, setAlertInfoPromo] = useState({
-    dailyAlert: ["moday,d"],
+    dailyAlert: [],
     datesAlert: [],
     timeTotalAlert: []
   });
@@ -101,11 +101,10 @@ function CreatePromotion() {
     getPlatform();
   }, []);
   const handleChangePlatform = e => {
-    console.log(e);
     setIndexPromo({
       ...indexPromo,
       platformPromoId: e,
-      server: "-Chọn server-"
+      server: ""
     });
   };
   const setInfoPromo = e => {
@@ -138,10 +137,15 @@ function CreatePromotion() {
   return (
     <Router>
       <Row className="container-promotion">
-        <div className="title">
+        <div className>
           <div>
-            <span>quay lai</span>
-            <h3>Thêm mới khuyến mãi</h3>
+            <Link to="/payment/promotion">
+              <span>
+                <Icon type="arrow-left" style={{ paddingRight: ".2rem" }} />
+                Quay lại
+            </span>
+            </Link>
+            <h2>Thêm mới khuyến mãi</h2>
           </div>
         </div>
         <Col md={12} className="section1-promotion">
@@ -154,7 +158,6 @@ function CreatePromotion() {
               switchTypeEvent={switchTypeEvent}
               setSwitchTypeEvent={setSwitchTypeEvent}
             />
-            <div>
               {/*router chọn game,server */}
               {switchTypeEvent ? (
                 <MenuRewardByItem
@@ -175,7 +178,6 @@ function CreatePromotion() {
                     handleChangeServer={handleChangeServer}
                   />
                 )}
-            </div>
           </div>
         </Col>
         <InputTimeArea

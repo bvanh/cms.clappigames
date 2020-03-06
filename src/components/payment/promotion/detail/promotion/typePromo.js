@@ -2,12 +2,12 @@ import React, { useState, useEffect, useMemo } from "react";
 import { Button, Row, Col, Icon, Radio, Tabs, Select, Input } from "antd";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
-import { getDetailPromotion } from "../../../../utils/query/promotion";
-import { getListPartnerProducts } from "../../../../utils/queryPartnerProducts";
+import { getDetailPromotion } from "../../../../../utils/query/promotion";
+import { getListPartnerProducts } from "../../../../../utils/queryPartnerProducts";
 import {
   dispatchDeatilPromo,
   dispatchDetailPromo
-} from "../../../../redux/actions/index";
+} from "../../../../../redux/actions/index";
 import { useQuery, useLazyQuery } from "react-apollo";
 const { Option } = Select;
 function TypePromotion(props) {
@@ -31,10 +31,10 @@ function TypePromotion(props) {
     const indexShop = JSON.parse(shop);
     console.log(indexShop);
     const printItem = indexShop.map(function(val, index1) {
-      const printReward = val.reward.map((valReward, index2) => (
+      const printReward = val.rewards.map((valReward, index2) => (
         <div key={index2}>
           <Input
-            value={indexShop[index1].reward[index2].numb}
+            value={indexShop[index1].rewards[index2].numb}
             type="number"
             max="10"
             name="pucharseTimes"
@@ -43,7 +43,7 @@ function TypePromotion(props) {
           <Select
             mode="multiple"
             style={{ width: "60%" }}
-            value={indexShop[index1].reward[index2].itemId}
+            value={indexShop[index1].rewards[index2].itemId}
           >
             {printListItems}
           </Select>{" "}

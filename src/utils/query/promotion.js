@@ -91,10 +91,24 @@ query {
   }
 }
 `}
+const getDetailEvent = (eventId) => {
+  return gql`
+query {
+  listEvents(id:${eventId}){
+    name
+    id
+    eventTime
+    paymentType
+    config
+    status
+  }
+}
+`}
 export {
   getListServer,
   getListItemsForEvent,
   getListPromotionByType,
   getListEventsByType,
-  getDetailPromotion
+  getDetailPromotion,
+  getDetailEvent
 };

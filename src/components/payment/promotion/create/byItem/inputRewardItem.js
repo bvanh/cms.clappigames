@@ -60,7 +60,6 @@ function EventByItems(props) {
   const submitCreatePromo = async () => {
     await createPromo();
     alert("tao thanh cong");
-    
   };
   const addItem = () => {
     const newItem = {
@@ -173,17 +172,17 @@ function EventByItems(props) {
     );
   });
   return (
-    <>
-      <Row>
-        <Col md={12}>
-          <span>Số lần</span>
-          <span>Item mua</span>
-        </Col>
-        <Col md={12}>
-          <span>Số lượng</span>
-          <span>Tặng quà</span>
-        </Col>
-      </Row>
+    <div className="section4-promotion">
+      <div style={{ width: "100%" }} className="section4-promotion-title">
+        <div style={{ width: "50%", display: "flex" }}>
+          <div style={{ width: "20%" }}>Số lần</div>
+          <div style={{ width: "80%" }}>Item mua</div>
+        </div>
+        <div style={{ width: "50%", display: "flex" }}>
+          <div style={{ width: "20%" }}>Số lượng</div>
+          <div style={{ width: "80%" }}>Tặng quà</div>
+        </div>
+      </div>
       <div className="btn-create-promo">
         <Button>Hủy</Button>
         <Button onClick={submitCreatePromo}>Tạo khuyến mãi</Button>
@@ -192,7 +191,7 @@ function EventByItems(props) {
         {printItem}
         <Button onClick={() => addItem()}>Thêm điều kiện</Button>
       </Row>
-    </>
+    </div>
   );
 }
 

@@ -1,24 +1,43 @@
 import React, { useState, useEffect } from "react";
-import { Button, Row, Col, Icon, Radio, Tabs } from "antd";
+import { Button, Row, Col, Icon, Radio, Tabs, Modal } from "antd";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
-import { getDetailPromotion } from "../../../../utils/query/promotion";
+import { getDetailPromotion } from "../../../../../utils/query/promotion";
 import TypePromo from "./typePromo";
-import TimePromo from "./timePromo";
+import TimePromo from "../timePromo";
 import {
-  dispatchDeatilPromo,
-  dispatchDetailPromo
-} from "../../../../redux/actions/index";
+  dispatchDetailPromoAndEvent
+} from "../../../../../redux/actions/index";
 import { useQuery } from "react-apollo";
 
 const { TabPane } = Tabs;
+const { confirm } = Modal;
+const ReachableContext = React.createContext();
+function showConfirm() {
+  confirm({
+    title: 'Chỉnh sửa khuyến mãi',
+    content: (<div>
+      <ReachableContext.Consumer>- Hệ thống chỉ cho phép cập nhật khuyến mãi khi chưa phát sinh giao dịch có khuyến mãi</ReachableContext.Consumer>
+      <br/>
+      <span>- Nếu chương trình khuyến mãi chưa phát sinh giao dịch nào có thể sửa được toàn bộ</span>
+      <span>- Nếu chương trình khuyến mãi đã phát sinh giao dịch thì có thể sửa 1 số thông tin nhưng không thay đổi được hình thưc khuyến mãi</span>
+           +) Các tt có thể sửa: Tên chương trình, trạng thái, thời gian áp dụng
+         </div>),
+    onOk() {
+      console.log('OK');
+    },
+    onCancel() {
+      console.log('Cancel');
+    },
+  });
+}
 function DetailPromotion(props) {
   const query = new URLSearchParams(window.location.search);
-  const [isShowPromo,setIsShowPromo]=useState('1')
+  const [isShowPromo, setIsShowPromo] = useState('1')
   const promoId = query.get("id");
   useQuery(getDetailPromotion(promoId), {
     onCompleted: data => {
-      dispatchDetailPromo(data.listPromotions[0]);
+      dispatchDetailPromoAndEvent(data.listPromotions[0]);
     }
   });
   const { name, status, eventTime, type, shop } = props.detailPromo;
@@ -31,7 +50,10 @@ function DetailPromotion(props) {
         </span>
       </Link>
       <div className="promo-title">
-        <h2>{name}</h2>
+        <div className='promo-title-name'>
+          <h2>{name}</h2>
+          <Button onClick={showConfirm}>Edit</Button>
+        </div>
         <div>
           <h3 style={{ margin: "0 1rem 0 0" }}>Trạng thái</h3>
           <Radio.Group value={status}>
@@ -40,7 +62,7 @@ function DetailPromotion(props) {
           </Radio.Group>
         </div>
       </div>
-      <Tabs activeKey={isShowPromo} onChange={(key)=>setIsShowPromo(key)}>
+      <Tabs activeKey={isShowPromo} onChange={(key) => setIsShowPromo(key)}>
         <TabPane tab="Hình thức khuyến mãi" key="1">
           <TypePromo />
         </TabPane>
@@ -59,3 +81,5 @@ function mapStateToProps(state) {
   };
 }
 export default connect(mapStateToProps, null)(DetailPromotion);
+
+

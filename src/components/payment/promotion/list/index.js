@@ -10,10 +10,10 @@ import {dispatchSwitchCreatePromo} from '../../../../redux/actions/index'
 import "../../../../static/style/listUsers.css";
 
 function ListPromoAndEvent(props) {
-  const [isTypePromo, setisTypePromo] = useState("promo");
+  const [isTypePromo,setIsTypePromo] = useState("promo");
   // const [isCreatePromo, setIsCreatePromo] = useState(false);
   const switchPromoAndEvent = e => {
-    setisTypePromo(e.target.value);
+   setIsTypePromo(e.target.value);
   };
   // const [getPlatform] = useLazyQuery(queryGetPlatform, {
   //   onCompleted: data => {

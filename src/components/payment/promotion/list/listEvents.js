@@ -83,7 +83,7 @@ function ListEvents() {
       key: "action",
       render: (text, record) => (
         <span>
-          <Link to={`/payment/promotion/detail?eventId=${record.id}`}>
+          <Link to={`/payment/promotion/detail/event?id=${record.id}`}>
             Detail
           </Link>
         </span>

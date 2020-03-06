@@ -14,7 +14,7 @@ const initialState = {
   listPartner: [],
   // detail promo
   detailPromo: [],
-  isCreatePromo:true
+  isCreatePromo:false
 };
 export default (state = initialState, action) => {
   switch (action.type) {

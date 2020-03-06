@@ -217,7 +217,6 @@ function InputrewardForShowByMoney(props) {
       </Col>
     )
   );
-  console.log(props.typeEventByMoney);
   const printItem = indexShop.map(function (val, index1) {
     return (
       <div key={index1}>

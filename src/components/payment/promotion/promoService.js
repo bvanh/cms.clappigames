@@ -1,6 +1,6 @@
 import React from "react";
 const printAlertDailyPromo = arr => {
-  return arr.map(function(val, index) {
+  return arr.map(function (val, index) {
     switch (val) {
       case 0:
         return <span key={index}>Monday</span>;
@@ -30,5 +30,17 @@ const daily0 = [
   "Saturday",
   "Sunday"
 ];
-
-export {printAlertDailyPromo,daily0}
+const isTypeEvent = (val) => {
+  switch (val) {
+    case 'INKIND':
+      return 'Tặng vật phẩm out game'
+      break;
+    case 'COIN':
+      return 'Tặng C.COIN'
+      break;
+    default:
+      return 'Tặng Item in Game'
+      break;
+  }
+}
+export { printAlertDailyPromo, daily0, isTypeEvent }

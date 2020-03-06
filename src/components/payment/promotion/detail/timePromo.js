@@ -31,6 +31,7 @@ function TimePromo(props) {
         {val}
       </Option>
     ));
+    console.log(endTime)
     return (
       <Col md={12} className="section2-promotion">
         <div>
@@ -39,8 +40,8 @@ function TimePromo(props) {
             Thời gian:{" "}
             <RangePicker
               showTime={{ format: "HH:mm" }}
-              format="HH:mm DD-MM-YYYY"
-              value={[moment(startTime), moment(endTime)]}
+              format="DD-MM-YYYY HH:mm"
+              value={[moment(startTime,"DD-MM-YYYY HH:mm"), moment(endTime,"DD-MM-YYYY HH:mm")]}
             />
           </div>
           <div>
