@@ -1,21 +1,11 @@
 import React, { useState, useEffect } from "react";
-import {
-  Table,
-  Button,
-  Pagination,
-  Input,
-  Row,
-  Col,
-  Radio,
-  DatePicker,
-  Select,
-  TimePicker
-} from "antd";
+import { Input, Row, Col, Radio, DatePicker, Select, TimePicker } from "antd";
+import moment from "moment";
 import { useLazyQuery, useMutation, useQuery } from "@apollo/react-hooks";
 import "../../../../static/style/promotion.css";
-import EventByItems from "./byItem/inputRewardItem";
-import InputRewardByMoney from "./byMoney/inputReward";
-import MenuRewardEventByMoney from "./byMoney/menuReward";
+import EventByItems from "./promotion/inputRewardItem";
+import InputRewardByMoney from "./event/inputReward";
+import MenuRewardEventByMoney from "./event/menuReward";
 import {
   getPromotionType,
   getEventPaymentType
@@ -28,7 +18,15 @@ import { printAlertDailyPromo, daily0 } from "../promoService";
 const { Option } = Select;
 const { RangePicker } = DatePicker;
 function InputNameAndTypeArea(props) {
-  const { statusPromo, switchTypeEvent } = props;
+  const { switchTypeEvent } = props;
+  const {
+    eventPaymentType,
+    namePromo,
+    platformPromoId,
+    serverGame,
+    statusPromo,
+    promoType
+  } = props.indexPromo;
   return (
     <div>
       <h3 className="promotion-title-field">Tên chương trình khuyến mãi</h3>
@@ -36,6 +34,7 @@ function InputNameAndTypeArea(props) {
         placeholder="Vd: Chương trìn khuyến mãi mở server"
         onChange={props.setInfoPromo}
         name="namePromo"
+        value={namePromo}
       ></Input>
       <div className="promotion-title-status">
         <h3>Trạng thái</h3>
@@ -53,10 +52,10 @@ function InputNameAndTypeArea(props) {
         value={switchTypeEvent}
         buttonStyle="solid"
         onChange={e => props.setSwitchTypeEvent(e.target.value)}
-        className='promotion-choose-typeEvent'
+        className="promotion-choose-typeEvent"
       >
-        <Radio.Button value={false} >Khuyến mãi theo hóa đơn</Radio.Button>
-        <Radio.Button value={true} >Khuyến mãi theo Item</Radio.Button>
+        <Radio.Button value={false}>Khuyến mãi theo hóa đơn</Radio.Button>
+        <Radio.Button value={true}>Khuyến mãi theo Item</Radio.Button>
       </Radio.Group>
     </div>
   );
@@ -68,7 +67,6 @@ function InputTimeArea(props) {
     statusPromo,
     datesPromo,
     dailyPromo,
-    hourPromo,
     server,
     startTime,
     endTime,
@@ -93,7 +91,7 @@ function InputTimeArea(props) {
     <Col md={12} className="section2-promotion">
       <div>
         <h3 className="promotion-title-field">Thời gian áp dụng </h3>
-        <div className='section2-promotion-pickTime'>
+        <div className="section2-promotion-pickTime">
           <h3>Thời gian: </h3>
           <RangePicker
             showTime={{ format: "HH:mm" }}
@@ -101,9 +99,13 @@ function InputTimeArea(props) {
             format=" DD-MM-YYYY HH:mm"
             placeholder={["-Thời gian bắt đầu", "- Thời gian kết thúc"]}
             onChange={props.onChangeDatePicker}
+            value={[
+              moment(timeTotalPromo[0], " DD-MM-YYYY HH:mm"),
+              moment(timeTotalPromo[1], " DD-MM-YYYY HH:mm")
+            ]}
           />
         </div>
-        <div className='section2-promotion-pickTime'>
+        <div className="section2-promotion-pickTime">
           <h3>Theo ngày: </h3>
           <Select
             mode="multiple"
@@ -111,11 +113,12 @@ function InputTimeArea(props) {
             placeholder="- Chọn ngày trong tháng diễn ra khuyến mãi"
             onChange={props.handleChangeDates}
             disabled={dailyPromo.length !== 0 ? true : false}
+            value={datesPromo}
           >
             {childrenDates}
           </Select>
         </div>
-        <div className='section2-promotion-pickTime'>
+        <div className="section2-promotion-pickTime">
           <h3>Theo thứ:</h3>
           <Select
             mode="multiple"
@@ -123,13 +126,14 @@ function InputTimeArea(props) {
             placeholder="- Chọn thứ trong tuần diễn ra khuyến mãi"
             onChange={props.handleChangeDaily}
             disabled={datesPromo.length !== 0 ? true : false}
+            value={dailyPromo}
           >
             {childrenDaily}
           </Select>
         </div>
-        <div className='section2-promotion-pickTime'>
+        <div className="section2-promotion-pickTime">
           <h3>Theo giờ:</h3>
-          <div style={{width:'80%'}}>
+          <div style={{ width: "80%" }}>
             <TimePicker
               minuteStep={10}
               format={"HH:mm"}
@@ -137,21 +141,23 @@ function InputTimeArea(props) {
               onChange={(time, timeString) =>
                 props.setTimePromo(timeString, "startTime")
               }
-              style={{width:'50%'}}
+              value={moment(startTime, "HH:mm")}
+              style={{ width: "50%" }}
             />
             <TimePicker
               minuteStep={10}
-              style={{width:'50%'}}
+              value={moment(endTime, "HH:mm")}
+              style={{ width: "50%" }}
               format={"HH:mm"}
               placeholder="- Giờ kết thúc"
-              onChange={(time, timeString) =>
-                props.setTimePromo(timeString, "endTime")
-              }
+              onChange={(time, timeString) => {
+                props.setTimePromo(timeString, "endTime");
+              }}
             />
           </div>
         </div>
       </div>
-      <div className='section2-promotion-footer'>
+      <div className="section2-promotion-footer">
         Khuyến mãi diễn ra vào {startTime} {endTime} {alertDailyPromo}{" "}
         {printAlertDatesPromo} từ {timeTotalPromo[0]} đến {timeTotalPromo[1]}
       </div>

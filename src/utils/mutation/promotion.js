@@ -17,11 +17,37 @@ const createItemEvent = gql`
   }
 `;
 const createEvent = gql`
-mutation createEvent($req: EventRequest!) {
-  createEvent(req: $req) {
-    name
-    paymentType
+  mutation createEvent($req: EventRequest!) {
+    createEvent(req: $req) {
+      name
+      paymentType
+    }
   }
-}
-`
-export { createPromotion, createItemEvent, createEvent };
+`;
+const updatePromotion = gql`
+  mutation updatePromotion($id: Int!, $req: PromotionRequest!) {
+    updatePromotion(id: $id, req: $req) {
+      name
+      status
+      shop
+      eventTime
+    }
+  }
+`;
+const updateEvent = gql`
+  mutation updateEvent($id: Int!, $req: EventRequest!) {
+    updateEvent(id: $id, req: $req) {
+      name
+      status
+      config
+      eventTime
+    }
+  }
+`;
+export {
+  createPromotion,
+  createItemEvent,
+  createEvent,
+  updateEvent,
+  updatePromotion
+};

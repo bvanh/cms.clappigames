@@ -5,34 +5,49 @@ import "../../../../static/style/promotion.css";
 import EventByItems from "./promotion/inputRewardItem";
 import InputRewardByMoney from "./event/inputReward";
 import MenuRewardEventByMoney from "./event/menuReward";
-import { InputNameAndTypeArea, InputTimeArea } from "./nameAndTimePromo";
+import {
+  InputNameAndTypeArea,
+  InputTimeArea
+} from "../create/nameAndTimePromo";
 import MenuRewardByItem from "./promotion/menuRewardItem";
 import { getPromotionType } from "../../../../utils/queryPaymentAndPromoType";
 import { queryGetPlatform } from "../../../../utils/queryPlatform";
 import { getListPartnerProducts } from "../../../../utils/queryPartnerProducts";
-import moment from 'moment'
 import {
   getListServer,
   getListItemsForEvent
 } from "../../../../utils/query/promotion";
+import { connect } from "react-redux";
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
-function CreatePromotion() {
-  const [switchTypeEvent, setSwitchTypeEvent] = useState(true);
+function UpdatePromotionAndEvent(props) {
+  const {
+    name,
+    game,
+    status,
+    eventTime,
+    server,
+    shop,
+    type,
+    config
+  } = props.detailPromo;
+
+  const { startTime, endTime, dates, daily, hour } = JSON.parse(eventTime);
+  const [switchTypeEvent, setSwitchTypeEvent] = useState(shop ? true : false);
   const [indexPromo, setIndexPromo] = useState({
     eventPaymentType: [],
-    namePromo: null,
-    platformPromoId: "",
-    server: "",
-    statusPromo: "COMPLETE",
-    promoType: "",
-    timeTotalPromo: [moment().format(" DD-MM-YYYY HH:mm"), moment().format(" DD-MM-YYYY HH:mm")],
-    datesPromo: [],
-    dailyPromo: [],
-    startTime: "00:00",
-    endTime: "00:00"
+    namePromo: name,
+    platformPromoId: game,
+    serverGame: server,
+    statusPromo: status,
+    typePromo: type,
+    timeTotalPromo: [startTime, endTime],
+    datesPromo: dates,
+    dailyPromo: daily,
+    startTime: hour[0],
+    endTime: hour[1]
   });
   const [typePromo, setTypePromo] = useState({
-    type: [{ name: "", description: "" }],
+    listType: [{ name: "", description: "" }],
     eventPaymentType: [],
     listGame: [{}],
     listServer: [
@@ -58,14 +73,14 @@ function CreatePromotion() {
     isPaymentTypeByCoin: false,
     itemsForEventByMoney: [{ productName: "", productId: "" }]
   });
-  const { platformPromoId, statusPromo, server } = indexPromo;
-  const { type, listGame, listItems, listServer } = typePromo;
+  const { platformPromoId, statusPromo, serverGame } = indexPromo;
+  const { listType, listGame, listItems, listServer } = typePromo;
   const [getPromoType] = useLazyQuery(getPromotionType, {
     onCompleted: data => {
-      setTypePromo({ ...typePromo, type: data.__type.enumValues });
+      setTypePromo({ ...typePromo, listType: data.__type.enumValues });
     }
   });
-  const [getPlatform] = useLazyQuery(queryGetPlatform, {
+  useQuery(queryGetPlatform, {
     onCompleted: data => {
       setTypePromo({ ...typePromo, listGame: data.listPartners });
     }
@@ -89,7 +104,7 @@ function CreatePromotion() {
       });
     }
   });
-  const [getItemsForEventTypeMoney] = useLazyQuery(getListItemsForEvent, {
+  useQuery(getListItemsForEvent, {
     onCompleted: data => {
       setIndexEventByMoney({
         ...indexEventByMoney,
@@ -99,7 +114,6 @@ function CreatePromotion() {
   });
   useEffect(() => {
     getPromoType();
-    getPlatform();
   }, []);
   const handleChangePlatform = e => {
     setIndexPromo({
@@ -112,13 +126,13 @@ function CreatePromotion() {
     setIndexPromo({ ...indexPromo, [e.target.name]: e.target.value });
   };
   const handleChangeServer = e => {
-    setIndexPromo({ ...indexPromo, server: e });
+    setIndexPromo({ ...indexPromo, serverGame: e });
   };
   const onChangeDatePicker = (value, dateString) => {
+    console.log("Selected Time: ", value);
     setIndexPromo({ ...indexPromo, timeTotalPromo: dateString });
   };
   const setTimePromo = (timeString, val) => {
-    console.log(timeString)
     if (val === "startTime") {
       setIndexPromo({ ...indexPromo, startTime: timeString });
     } else {
@@ -136,76 +150,79 @@ function CreatePromotion() {
     setIndexPromo({ ...indexPromo, promoType: val });
   };
   return (
-    <Router>
-      <Row className="container-promotion">
-        <div className>
-          <div>
-            <Link to="/payment/promotion">
-              <span>
-                <Icon type="arrow-left" style={{ paddingRight: ".2rem" }} />
-                Quay lại
-              </span>
-            </Link>
-            <h2>Thêm mới khuyến mãi</h2>
-          </div>
+    <Row className="container-promotion">
+      <div>
+        <div>
+          <Link to="/payment/promotion">
+            <span>
+              <Icon type="arrow-left" style={{ paddingRight: ".2rem" }} />
+              Quay lại
+            </span>
+          </Link>
+          <h2>Thêm mới khuyến mãi</h2>
         </div>
-        <Col md={12} className="section1-promotion">
-          <div>
-            <InputNameAndTypeArea
-              typePromo={typePromo}
-              indexPromo={indexPromo}
-              setTypePromo={setTypePromo}
-              statusPromo={statusPromo}
-              setInfoPromo={setInfoPromo}
-              switchTypeEvent={switchTypeEvent}
-              setSwitchTypeEvent={setSwitchTypeEvent}
-            />
-            {/*router chọn game,server */}
-            {switchTypeEvent ? (
-              <MenuRewardByItem
-                server={server}
-                typePromo={typePromo}
-                handleChangePlatform={handleChangePlatform}
-                handleChangeTypePromo={handleChangeTypePromo}
-                handleChangeServer={handleChangeServer}
-              />
-            ) : (
-              <MenuRewardEventByMoney
-                indexEventByMoney={indexEventByMoney}
-                setIndexEventByMoney={setIndexEventByMoney}
-                getItemsForEventTypeMoney={getItemsForEventTypeMoney}
-                server={server}
-                typePromo={typePromo}
-                handleChangePlatform={handleChangePlatform}
-                handleChangeServer={handleChangeServer}
-              />
-            )}
-          </div>
-        </Col>
-        <InputTimeArea
-          indexPromo={indexPromo}
-          alertInfoPromo={alertInfoPromo}
-          onChangeDatePicker={onChangeDatePicker}
-          handleChangeDaily={handleChangeDaily}
-          handleChangeDates={handleChangeDates}
-          setTimePromo={setTimePromo}
-        />
-        <Col md={24}>
+      </div>
+      <Col md={12} className="section1-promotion">
+        <div>
+          <InputNameAndTypeArea
+            indexPromo={indexPromo}
+            typePromo={typePromo}
+            setTypePromo={setTypePromo}
+            setInfoPromo={setInfoPromo}
+            switchTypeEvent={switchTypeEvent}
+            setSwitchTypeEvent={setSwitchTypeEvent}
+          />
+          {/*router chọn game,server */}
           {switchTypeEvent ? (
-            <EventByItems listItems={listItems} indexPromo={indexPromo} />
-          ) : (
-            <InputRewardByMoney
-              listItems={listItems}
+            <MenuRewardByItem
               indexPromo={indexPromo}
-              setIndexPromo={setIndexPromo}
+              typePromo={typePromo}
+              handleChangePlatform={handleChangePlatform}
+              handleChangeTypePromo={handleChangeTypePromo}
+              handleChangeServer={handleChangeServer}
+            />
+          ) : (
+            <MenuRewardEventByMoney
               indexEventByMoney={indexEventByMoney}
               setIndexEventByMoney={setIndexEventByMoney}
-              getItemsForEventTypeMoney={getItemsForEventTypeMoney}
+              // getItemsForEventTypeMoney={getItemsForEventTypeMoney}
+              server={serverGame}
+              typePromo={typePromo}
+              handleChangePlatform={handleChangePlatform}
+              handleChangeServer={handleChangeServer}
             />
           )}
-        </Col>
-      </Row>
-    </Router>
+        </div>
+      </Col>
+      <InputTimeArea
+        indexPromo={indexPromo}
+        alertInfoPromo={alertInfoPromo}
+        onChangeDatePicker={onChangeDatePicker}
+        handleChangeDaily={handleChangeDaily}
+        handleChangeDates={handleChangeDates}
+        setTimePromo={setTimePromo}
+      />
+      <Col md={24}>
+        {switchTypeEvent ? (
+          <EventByItems listItems={listItems} indexPromo={indexPromo} />
+        ) : (
+          <InputRewardByMoney
+            typePromo={typePromo}
+            listItems={listItems}
+            indexPromo={indexPromo}
+            setIndexPromo={setIndexPromo}
+            indexEventByMoney={indexEventByMoney}
+            setIndexEventByMoney={setIndexEventByMoney}
+            // getItemsForEventTypeMoney={getItemsForEventTypeMoney}
+          />
+        )}
+      </Col>
+    </Row>
   );
 }
-export default CreatePromotion;
+function mapStateToProps(state) {
+  return {
+    detailPromo: state.detailPromo
+  };
+}
+export default connect(mapStateToProps, null)(UpdatePromotionAndEvent);

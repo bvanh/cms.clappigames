@@ -81,6 +81,7 @@ const getDetailPromotion = (promoId) => {
   return gql`
 query {
   listPromotions(id:${promoId}){
+    id
     name
     game
     status
