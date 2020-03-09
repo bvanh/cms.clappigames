@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { DatePicker, Select, TimePicker } from "antd";
 import { useLazyQuery, useMutation, useQuery } from "@apollo/react-hooks";
 import "../../../../../static/style/promotion.css";
+import { queryGetPlatform } from "../../../../../utils/queryPlatform";
 import {
   getPromotionType,
   getEventPaymentType
@@ -32,19 +33,23 @@ const eventCointype = [
 ];
 const MenuRewardEventByMoney = props => {
   const { paymentType, config } = props.detailPromo;
-  const { game, server } = JSON.parse(config);
-  const { type, listGame, listServer } = props.typePromo;
+  const { game, server, type } = JSON.parse(config);
+  const { listServer } = props.typePromo;
+  const { platformPromoId, serverGame } = props.indexPromo
   const [eventByMoneyIndex, setEventByMoneyIndex] = useState({
     eventType: [],
     eventPaymentType: [],
-    value: JSON.parse(config).type
+    value: type,
+  });
+  const [listGame, setListGame] = useState([{}])
+  useQuery(queryGetPlatform, {
+    onCompleted: data => {
+      setListGame(data.listPartners);
+    }
   });
   useEffect(() => {
+    props.setIndexPromo({ ...props.indexPromo, platformPromoId: game, serverGame: server })
     if (paymentType === "COIN") {
-      //   props.setIndexEventByMoney({
-      //     ...props.indexEventByMoney,
-      //     isPaymentTypeByCoin: false
-      //   });
       dispatchNameEventByMoney(paymentType);
       setEventByMoneyIndex({
         ...eventByMoneyIndex,
@@ -52,6 +57,14 @@ const MenuRewardEventByMoney = props => {
         value: "ITEM"
       });
       dispatchTypeEventByMoney("ITEM");
+    } else if (paymentType === 'MONEY') {
+      dispatchNameEventByMoney(paymentType);
+      setEventByMoneyIndex({
+        ...eventByMoneyIndex,
+        eventPaymentType: eventMoneyType,
+        value: type
+      });
+      dispatchTypeEventByMoney(type);
     }
   }, []);
   const { eventType, eventPaymentType, value } = eventByMoneyIndex;
@@ -73,20 +86,20 @@ const MenuRewardEventByMoney = props => {
       dispatchTypeEventByMoney("INKIND");
       props.setIndexEventByMoney({
         ...props.indexEventByMoney,
-        isPaymentTypeByCoin: true
+        isPaymentTypeByCoin: false
       });
     } else if (val === "COIN") {
       dispatchNameEventByMoney(val);
+      props.setIndexEventByMoney({
+        ...props.indexEventByMoney,
+        isPaymentTypeByCoin: true
+      });
       setEventByMoneyIndex({
         ...eventByMoneyIndex,
         eventPaymentType: eventCointype,
         value: "ITEM"
       });
       dispatchTypeEventByMoney("ITEM");
-      props.setIndexEventByMoney({
-        ...props.indexEventByMoney,
-        isPaymentTypeByCoin: false
-      });
     }
   };
   const handleChanePaymentTypeByMoney = async val => {
@@ -106,8 +119,8 @@ const MenuRewardEventByMoney = props => {
       {val.name}
     </Option>
   ));
-  const printPlatform = listGame.map((val, i) => (
-    <Option value={val.partnerId} key={i}>
+  const printPlatform = listGame.map((val, index) => (
+    <Option value={val.partnerId} key={index}>
       {val.partnerName}
     </Option>
   ));
@@ -135,29 +148,28 @@ const MenuRewardEventByMoney = props => {
       >
         {printEventMoneyType}
       </Select>
-      {props.indexEventByMoney.isPaymentTypeByCoin ||
-        (game && (
-          <div>
-            <p className="promotion-title-field">Chọn game</p>
-            <Select
-              style={{ width: 120 }}
-              onChange={props.handleChangePlatform}
-              value={game}
-            >
-              {printPlatform}
-            </Select>{" "}
-            <span>Server</span>
-            <Select
-              placeholder="-Chọn server-"
-              style={{ width: 120 }}
-              onChange={props.handleChangeServer}
-              name="server"
-              value={server}
-            >
-              {printListServer}
-            </Select>{" "}
-          </div>
-        ))}
+      {props.indexEventByMoney.isPaymentTypeByCoin &&
+        <div>
+          <p className="promotion-title-field">Chọn game</p>
+          <Select
+            style={{ width: 120 }}
+            onChange={props.handleChangePlatform}
+            value={platformPromoId}
+          >
+            {printPlatform}
+          </Select>{" "}
+          <span>Server</span>
+          <Select
+            placeholder="-Chọn server-"
+            style={{ width: 120 }}
+            onChange={props.handleChangeServer}
+            name="server"
+            value={serverGame}
+          >
+            {printListServer}
+          </Select>{" "}
+        </div>
+      }
     </div>
   );
 };

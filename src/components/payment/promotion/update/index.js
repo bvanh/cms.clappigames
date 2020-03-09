@@ -3,7 +3,7 @@ import { Row, Col, DatePicker, Select, Icon } from "antd";
 import { useLazyQuery, useMutation, useQuery } from "@apollo/react-hooks";
 import "../../../../static/style/promotion.css";
 import EventByItems from "./promotion/inputRewardItem";
-import InputRewardByMoney from "./event/inputReward";
+import InputRewardForShowByMoney from "./event/inputReward";
 import MenuRewardEventByMoney from "./event/menuReward";
 import {
   InputNameAndTypeArea,
@@ -28,7 +28,8 @@ function UpdatePromotionAndEvent(props) {
     server,
     shop,
     type,
-    config
+    config,
+    paymentType
   } = props.detailPromo;
 
   const { startTime, endTime, dates, daily, hour } = JSON.parse(eventTime);
@@ -70,7 +71,7 @@ function UpdatePromotionAndEvent(props) {
   });
   const [indexEventByMoney, setIndexEventByMoney] = useState({
     paymentTypeByMoney: "",
-    isPaymentTypeByCoin: false,
+    isPaymentTypeByCoin: paymentType === 'COIN' ? true : false,
     itemsForEventByMoney: [{ productName: "", productId: "" }]
   });
   const { platformPromoId, statusPromo, serverGame } = indexPromo;
@@ -78,11 +79,6 @@ function UpdatePromotionAndEvent(props) {
   const [getPromoType] = useLazyQuery(getPromotionType, {
     onCompleted: data => {
       setTypePromo({ ...typePromo, listType: data.__type.enumValues });
-    }
-  });
-  useQuery(queryGetPlatform, {
-    onCompleted: data => {
-      setTypePromo({ ...typePromo, listGame: data.listPartners });
     }
   });
   const { data } = useQuery(getListPartnerProducts(platformPromoId), {
@@ -104,7 +100,7 @@ function UpdatePromotionAndEvent(props) {
       });
     }
   });
-  useQuery(getListItemsForEvent, {
+  const { refetch } = useQuery(getListItemsForEvent, {
     onCompleted: data => {
       setIndexEventByMoney({
         ...indexEventByMoney,
@@ -116,6 +112,7 @@ function UpdatePromotionAndEvent(props) {
     getPromoType();
   }, []);
   const handleChangePlatform = e => {
+    console.log(e)
     setIndexPromo({
       ...indexPromo,
       platformPromoId: e,
@@ -182,16 +179,18 @@ function UpdatePromotionAndEvent(props) {
               handleChangeServer={handleChangeServer}
             />
           ) : (
-            <MenuRewardEventByMoney
-              indexEventByMoney={indexEventByMoney}
-              setIndexEventByMoney={setIndexEventByMoney}
-              // getItemsForEventTypeMoney={getItemsForEventTypeMoney}
-              server={serverGame}
-              typePromo={typePromo}
-              handleChangePlatform={handleChangePlatform}
-              handleChangeServer={handleChangeServer}
-            />
-          )}
+              <MenuRewardEventByMoney
+                indexPromo={indexPromo}
+                setIndexPromo={setIndexPromo}
+                indexEventByMoney={indexEventByMoney}
+                setIndexEventByMoney={setIndexEventByMoney}
+                // getItemsForEventTypeMoney={getItemsForEventTypeMoney}
+                server={serverGame}
+                typePromo={typePromo}
+                handleChangePlatform={handleChangePlatform}
+                handleChangeServer={handleChangeServer}
+              />
+            )}
         </div>
       </Col>
       <InputTimeArea
@@ -206,16 +205,16 @@ function UpdatePromotionAndEvent(props) {
         {switchTypeEvent ? (
           <EventByItems listItems={listItems} indexPromo={indexPromo} />
         ) : (
-          <InputRewardByMoney
-            typePromo={typePromo}
-            listItems={listItems}
-            indexPromo={indexPromo}
-            setIndexPromo={setIndexPromo}
-            indexEventByMoney={indexEventByMoney}
-            setIndexEventByMoney={setIndexEventByMoney}
+            <InputRewardForShowByMoney         
+              typePromo={typePromo}
+              listItems={listItems}
+              indexPromo={indexPromo}
+              setIndexPromo={setIndexPromo}
+              indexEventByMoney={indexEventByMoney}
+              setIndexEventByMoney={setIndexEventByMoney}
             // getItemsForEventTypeMoney={getItemsForEventTypeMoney}
-          />
-        )}
+            />
+          )}
       </Col>
     </Row>
   );

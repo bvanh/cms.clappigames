@@ -1,4 +1,11 @@
 import { actions } from "../action_types/index";
+const rootConfig = [
+  {
+    point: 1,
+    rewards: [],
+    itemsInkind: ""
+  }
+];
 const initialState = {
   isLogin: true,
   dataNews: [],
@@ -14,7 +21,13 @@ const initialState = {
   listPartner: [],
   // detail promo
   detailPromo: [],
-  isCreatePromo:true
+  isCreatePromo: true,
+  // 
+  indexShop: {
+    item: rootConfig,
+    coin: rootConfig,
+    inkind: rootConfig
+  }
 };
 export default (state = initialState, action) => {
   switch (action.type) {
@@ -60,13 +73,36 @@ export default (state = initialState, action) => {
     case actions.GET_DETAIL_PROMO:
       return {
         ...state,
-        detailPromo:action.value
+        detailPromo: action.value
       }
-      case actions.SWITCH_CREATE_PROMO:
+    case actions.SWITCH_CREATE_PROMO:
       return {
         ...state,
-        isCreatePromo:action.value
+        isCreatePromo: action.value
       }
+    case actions.SET_DATA_TYPEPROMO:
+      const newIndexShop = { ...state.indexShop };
+      // if (action.value.type === 'item') {
+      newIndexShop[action.isType] = action.data
+      console.log(newIndexShop)
+      return {
+        ...state,
+        indexShop: newIndexShop
+      }
+      
+    // } else if (action.value.type === 'coin') {
+    //   newIndexShop.coin = action.value.data
+    //   return {
+    //     ...state,
+    //     indexShop: newIndexShop
+    //   }
+    // } else {
+    //   newIndexShop.inkind = action.value.data
+    //   return {
+    //     ...state,
+    //     indexShop: newIndexShop
+    //   }
+    // }
     default:
       return state;
   }
