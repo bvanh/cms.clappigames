@@ -10,6 +10,7 @@ import {
   InputTimeArea
 } from "../create/nameAndTimePromo";
 import MenuRewardByItem from "./promotion/menuRewardItem";
+import {dispatchResetItemRewards} from '../../../../redux/actions/index'
 import { getPromotionType } from "../../../../utils/queryPaymentAndPromoType";
 import { queryGetPlatform } from "../../../../utils/queryPlatform";
 import { getListPartnerProducts } from "../../../../utils/queryPartnerProducts";
@@ -112,7 +113,7 @@ function UpdatePromotionAndEvent(props) {
     getPromoType();
   }, []);
   const handleChangePlatform = e => {
-    console.log(e)
+    dispatchResetItemRewards();
     setIndexPromo({
       ...indexPromo,
       platformPromoId: e,
