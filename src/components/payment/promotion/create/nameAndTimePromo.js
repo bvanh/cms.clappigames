@@ -72,7 +72,6 @@ function InputTimeArea(props) {
     endTime,
     timeTotalPromo
   } = props.indexPromo;
-  const { dailyAlert, datesAlert, timeTotalAlert } = props.alertInfoPromo;
   const alertDailyPromo = printAlertDailyPromo(dailyPromo);
   const printAlertDatesPromo = datesPromo.map((val, i) => (
     <>ngày mùng {val}, </>
@@ -96,12 +95,12 @@ function InputTimeArea(props) {
           <RangePicker
             showTime={{ format: "HH:mm" }}
             style={{ width: "80%" }}
-            format="DD-MM-YYYY HH:mm"
+            format="YYYY-MM-DD HH:mm"
             placeholder={["-Thời gian bắt đầu", "- Thời gian kết thúc"]}
             onChange={props.onChangeDatePicker}
             value={[
-              moment(timeTotalPromo[0], "DD-MM-YYYY HH:mm"),
-              moment(timeTotalPromo[1], "DD-MM-YYYY HH:mm")
+              moment(timeTotalPromo[0], "YYYY-MM-DD HH:mm"),
+              moment(timeTotalPromo[1], "YYYY-MM-DD HH:mm")
             ]}
           />
         </div>
@@ -158,7 +157,7 @@ function InputTimeArea(props) {
         </div>
       </div>
       <div className="section2-promotion-footer">
-        Khuyến mãi diễn ra vào {startTime} {endTime} {alertDailyPromo}{" "}
+        Khuyến mãi diễn ra vào {startTime} đến {endTime} {alertDailyPromo}
         {printAlertDatesPromo} từ {timeTotalPromo[0]} đến {timeTotalPromo[1]}
       </div>
     </Col>

@@ -15,7 +15,7 @@ const getPromotionType = gql`
   query {
     __type(name: "promotionType") {
       enumValues {
-        name,
+        name
         description
       }
     }

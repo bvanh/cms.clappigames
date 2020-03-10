@@ -1,12 +1,22 @@
-import React, { Component } from "react";
+import React, { Component,useState } from "react";
 import { Select } from "antd";
+import { getPromotionType } from "../../../../../utils/queryPaymentAndPromoType";
+import { useQuery } from "@apollo/react-hooks";
 const { Option } = Select;
 
 function MenuRewardByItem(props) {
   const { server } = props;
 
-  const { type, listGame, listServer } = props.typePromo;
-  const printPromoType = type.map((val, index) => (
+  const { listGame, listServer } = props.typePromo;
+  const [listTypePromo, setListTypePromo] = useState([
+    { name: "", description: "" }
+  ]);
+  useQuery(getPromotionType, {
+    onCompleted: data => {
+      setListTypePromo(data.__type.enumValues);
+    }
+  });
+  const printPromoType = listTypePromo.map((val, index) => (
     <Option value={val.name} key={index}>
       {val.description}
     </Option>
@@ -22,23 +32,23 @@ function MenuRewardByItem(props) {
     </Option>
   ));
   return (
-    <div className='promo-section2'>
-      <div className='promo-choose-platform'>
-        <div className='promo-choose-platform-name'>
+    <div className="promo-section2">
+      <div className="promo-choose-platform">
+        <div className="promo-choose-platform-name">
           <h3>Chọn game:</h3>
           <Select
-            style={{ width: '65%' }}
+            style={{ width: "65%" }}
             onChange={props.handleChangePlatform}
             placeholder="-Chọn game-"
           >
             {printPlatform}
           </Select>{" "}
         </div>
-        <div className='promo-choose-platform-server'>
+        <div className="promo-choose-platform-server">
           <h3>Server:</h3>
           <Select
             placeholder="-Chọn server-"
-            style={{ width: '65%' }}
+            style={{ width: "65%" }}
             onChange={props.handleChangeServer}
             name="server"
           >
@@ -46,11 +56,15 @@ function MenuRewardByItem(props) {
           </Select>{" "}
         </div>
       </div>
-      <div className='promo-choose-platform-name'>
-      <h3 style={{marginRight:"1.5rem"}}>Hình thức:</h3>
-      <Select style={{ width: '65%' }} onChange={props.handleChangeTypePromo} placeholder="-Tặng quà-">
-        {printPromoType}
-      </Select>{" "}
+      <div className="promo-choose-platform-name">
+        <h3 style={{ marginRight: "1.5rem" }}>Hình thức:</h3>
+        <Select
+          style={{ width: "65%" }}
+          onChange={props.handleChangeTypePromo}
+          placeholder="-Tặng quà-"
+        >
+          {printPromoType}
+        </Select>{" "}
       </div>
     </div>
   );

@@ -78,7 +78,7 @@ function UpdatePromotionAndEvent(props) {
     itemsForEventByMoney: [{ productName: "", productId: "" }]
   });
   const { platformPromoId, statusPromo, serverGame } = indexPromo;
-  const { listType, listGame, listItems, listServer } = typePromo;
+  const {listGame, listItems, listServer } = typePromo;
   const [getListPartnerByPlatform] = useLazyQuery(getListPartnerProducts2, {
     onCompleted: data => {
       setTypePromo({ ...typePromo, listItems: data.listPartnerProducts });

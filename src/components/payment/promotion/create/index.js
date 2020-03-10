@@ -1,21 +1,39 @@
 import React, { useState, useEffect } from "react";
-import { Row, Col, DatePicker, Select, Icon } from "antd";
+import { Row, Col, Modal, Icon } from "antd";
 import { useLazyQuery, useMutation, useQuery } from "@apollo/react-hooks";
 import "../../../../static/style/promotion.css";
 import EventByItems from "./promotion/inputRewardItem";
 import InputRewardByMoney from "./event/inputReward";
 import MenuRewardEventByMoney from "./event/menuReward";
 import { InputNameAndTypeArea, InputTimeArea } from "./nameAndTimePromo";
+import { dispatchSwitchCreatePromo } from "../../../../redux/actions/index";
 import MenuRewardByItem from "./promotion/menuRewardItem";
-import { getPromotionType } from "../../../../utils/queryPaymentAndPromoType";
 import { queryGetPlatform } from "../../../../utils/queryPlatform";
 import { getListPartnerProducts } from "../../../../utils/queryPartnerProducts";
-import moment from 'moment'
+import moment from "moment";
+import {
+  initialIndexEventByMoney,
+  initialIndexPromo,
+  initialTypePromo
+} from "../promoService";
 import {
   getListServer,
   getListItemsForEvent
 } from "../../../../utils/query/promotion";
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
+
+const initialIndexShop = [
+  {
+    purchaseTimes: 1,
+    purchaseItemId: [],
+    rewards: [
+      {
+        numb: 1,
+        itemId: []
+      }
+    ]
+  }
+];
 function CreatePromotion() {
   const [switchTypeEvent, setSwitchTypeEvent] = useState(true);
   const [indexPromo, setIndexPromo] = useState({
@@ -25,14 +43,16 @@ function CreatePromotion() {
     server: "",
     statusPromo: "COMPLETE",
     promoType: "",
-    timeTotalPromo: [moment().format(" DD-MM-YYYY HH:mm"), moment().format(" DD-MM-YYYY HH:mm")],
+    timeTotalPromo: [
+      moment().format("YYYY-MM-DD HH:mm"),
+      moment().format("YYYY-MM-DD HH:mm")
+    ],
     datesPromo: [],
     dailyPromo: [],
-    startTime: "00:00",
-    endTime: "00:00"
+    startTime: "00:00:00",
+    endTime: "00:00:00"
   });
   const [typePromo, setTypePromo] = useState({
-    type: [{ name: "", description: "" }],
     eventPaymentType: [],
     listGame: [{}],
     listServer: [
@@ -48,24 +68,15 @@ function CreatePromotion() {
       }
     ]
   });
-  const [alertInfoPromo, setAlertInfoPromo] = useState({
-    dailyAlert: [],
-    datesAlert: [],
-    timeTotalAlert: []
-  });
   const [indexEventByMoney, setIndexEventByMoney] = useState({
     paymentTypeByMoney: "",
     isPaymentTypeByCoin: false,
     itemsForEventByMoney: [{ productName: "", productId: "" }]
   });
+  const [indexShop, setIndexShop] = useState(initialIndexShop);
   const { platformPromoId, statusPromo, server } = indexPromo;
-  const { type, listGame, listItems, listServer } = typePromo;
-  const [getPromoType] = useLazyQuery(getPromotionType, {
-    onCompleted: data => {
-      setTypePromo({ ...typePromo, type: data.__type.enumValues });
-    }
-  });
-  const [getPlatform] = useLazyQuery(queryGetPlatform, {
+  const { listGame, listItems, listServer } = typePromo;
+  useQuery(queryGetPlatform, {
     onCompleted: data => {
       setTypePromo({ ...typePromo, listGame: data.listPartners });
     }
@@ -97,11 +108,19 @@ function CreatePromotion() {
       });
     }
   });
-  useEffect(() => {
-    getPromoType();
-    getPlatform();
-  }, []);
   const handleChangePlatform = e => {
+    setIndexShop([
+      {
+        purchaseTimes: 1,
+        purchaseItemId: [],
+        rewards: [
+          {
+            numb: 1,
+            itemId: []
+          }
+        ]
+      }
+    ]);
     setIndexPromo({
       ...indexPromo,
       platformPromoId: e,
@@ -118,7 +137,7 @@ function CreatePromotion() {
     setIndexPromo({ ...indexPromo, timeTotalPromo: dateString });
   };
   const setTimePromo = (timeString, val) => {
-    console.log(timeString)
+    console.log(timeString);
     if (val === "startTime") {
       setIndexPromo({ ...indexPromo, startTime: timeString });
     } else {
@@ -132,15 +151,30 @@ function CreatePromotion() {
     setIndexPromo({ ...indexPromo, datesPromo: value });
   };
   const handleChangeTypePromo = val => {
-    console.log(val);
     setIndexPromo({ ...indexPromo, promoType: val });
+  };
+  const successAlert = () => {
+    Modal.confirm({
+      title: "Tạo khuyến mãi thành công",
+      okText: "Xem danh sách",
+      cancelText: "Tiếp tục",
+      onOk() {
+        dispatchSwitchCreatePromo(true);
+      },
+      onCancel() {
+        setSwitchTypeEvent(!switchTypeEvent)
+      }
+    });
   };
   return (
     <Router>
       <Row className="container-promotion">
-        <div className>
+        <div>
           <div>
-            <Link to="/payment/promotion">
+            <Link
+              to="/payment/promotion"
+              onClick={() => dispatchSwitchCreatePromo(true)}
+            >
               <span>
                 <Icon type="arrow-left" style={{ paddingRight: ".2rem" }} />
                 Quay lại
@@ -184,7 +218,6 @@ function CreatePromotion() {
         </Col>
         <InputTimeArea
           indexPromo={indexPromo}
-          alertInfoPromo={alertInfoPromo}
           onChangeDatePicker={onChangeDatePicker}
           handleChangeDaily={handleChangeDaily}
           handleChangeDates={handleChangeDates}
@@ -192,11 +225,21 @@ function CreatePromotion() {
         />
         <Col md={24}>
           {switchTypeEvent ? (
-            <EventByItems listItems={listItems} indexPromo={indexPromo} />
+            <EventByItems
+              successAlert={successAlert}
+              listItems={listItems}
+              indexPromo={indexPromo}
+              indexShop={indexShop}
+              setIndexShop={setIndexShop}
+            />
           ) : (
             <InputRewardByMoney
               listItems={listItems}
+              successAlert={successAlert}
+              indexShop={indexShop}
+              setIndexShop={setIndexShop}
               indexPromo={indexPromo}
+              typePromo={typePromo}
               setIndexPromo={setIndexPromo}
               indexEventByMoney={indexEventByMoney}
               setIndexEventByMoney={setIndexEventByMoney}
