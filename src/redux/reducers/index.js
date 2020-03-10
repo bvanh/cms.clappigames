@@ -82,27 +82,11 @@ export default (state = initialState, action) => {
       }
     case actions.SET_DATA_TYPEPROMO:
       const newIndexShop = { ...state.indexShop };
-      // if (action.value.type === 'item') {
       newIndexShop[action.isType] = action.data
-      console.log(newIndexShop)
       return {
         ...state,
         indexShop: newIndexShop
       }
-      
-    // } else if (action.value.type === 'coin') {
-    //   newIndexShop.coin = action.value.data
-    //   return {
-    //     ...state,
-    //     indexShop: newIndexShop
-    //   }
-    // } else {
-    //   newIndexShop.inkind = action.value.data
-    //   return {
-    //     ...state,
-    //     indexShop: newIndexShop
-    //   }
-    // }
     default:
       return state;
   }
