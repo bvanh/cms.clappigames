@@ -63,7 +63,7 @@ function EventByItems(props) {
   };
   const addItem = () => {
     const newItem = {
-      purchaseTimes: 1,
+      purchaseTimes: indexShop[indexShop.length - 1].purchaseTimes,
       purchaseItemId: null,
       rewards: [
         {
@@ -122,7 +122,7 @@ function EventByItems(props) {
       {val.productName}
     </Option>
   ));
-  const printItem = indexShop.map(function(val, index1) {
+  const printItem = indexShop.map(function (val, index1) {
     const printReward = val.rewards.map((valReward, index2) => (
       <div key={index2}>
         <Input
@@ -150,7 +150,7 @@ function EventByItems(props) {
           <Input
             value={indexShop[index1].purchaseTimes}
             type="number"
-            max="10"
+            min={indexShop[index1 > 0 ? index1 - 1 : index1].purchaseTimes}
             name="pucharseTimes"
             onChange={e => handleChooseNumbItem(index1, e)}
             style={{ width: "10%" }}

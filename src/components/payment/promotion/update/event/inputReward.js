@@ -231,7 +231,7 @@ function InputRewardForShowByMoney(props) {
           ></Input>
           ...
           <Input
-            value={val.itemsInkind}
+            value={val.rewards[0]}
             placeholder="-Điền quà out game-"
             name="pucharseTimes"
             onChange={e => handleChooseInKind(index1, e)}

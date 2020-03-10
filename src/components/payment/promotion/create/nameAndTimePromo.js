@@ -80,7 +80,7 @@ function InputTimeArea(props) {
   // const printAlertTimeTotalPromo = timeTotalAlert.map((val, i) => <>{val}</>);
   const childrenDates = [];
   for (let i = 1; i <= 31; i++) {
-    childrenDates.push(<Option key={i}>{i < 10 ? "0" + i : i}</Option>);
+    childrenDates.push(<Option key={i} value={i}>{i < 10 ? "0" + i : i}</Option>);
   }
   const childrenDaily = daily0.map((val, index) => (
     <Option key={index} value={index}>
@@ -96,12 +96,12 @@ function InputTimeArea(props) {
           <RangePicker
             showTime={{ format: "HH:mm" }}
             style={{ width: "80%" }}
-            format=" DD-MM-YYYY HH:mm"
+            format="DD-MM-YYYY HH:mm"
             placeholder={["-Thời gian bắt đầu", "- Thời gian kết thúc"]}
             onChange={props.onChangeDatePicker}
             value={[
-              moment(timeTotalPromo[0], " DD-MM-YYYY HH:mm"),
-              moment(timeTotalPromo[1], " DD-MM-YYYY HH:mm")
+              moment(timeTotalPromo[0], "DD-MM-YYYY HH:mm"),
+              moment(timeTotalPromo[1], "DD-MM-YYYY HH:mm")
             ]}
           />
         </div>
@@ -136,19 +136,19 @@ function InputTimeArea(props) {
           <div style={{ width: "80%" }}>
             <TimePicker
               minuteStep={10}
-              format={"HH:mm"}
+              format={"HH:mm:ss"}
               placeholder="- Giờ bắt đầu"
               onChange={(time, timeString) =>
                 props.setTimePromo(timeString, "startTime")
               }
-              value={moment(startTime, "HH:mm")}
+              value={moment(startTime, "HH:mm:ss")}
               style={{ width: "50%" }}
             />
             <TimePicker
               minuteStep={10}
-              value={moment(endTime, "HH:mm")}
+              value={moment(endTime, "HH:mm:ss")}
               style={{ width: "50%" }}
-              format={"HH:mm"}
+              format={"HH:mm:ss"}
               placeholder="- Giờ kết thúc"
               onChange={(time, timeString) => {
                 props.setTimePromo(timeString, "endTime");

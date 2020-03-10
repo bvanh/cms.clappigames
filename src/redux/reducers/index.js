@@ -4,7 +4,7 @@ import { act } from "react-dom/test-utils";
 const newItem = [
   {
     point: 1,
-    rewards: []
+    rewards: [],
   }
 ];
 const initialState = {
@@ -27,12 +27,7 @@ const initialState = {
   indexConfig: {
     item: newItem,
     coin: newItem,
-    inkind: [
-      {
-        point: 1,
-        itemsInkind: ""
-      }
-    ]
+    inkind: newItem
   }
 };
 export default (state = initialState, action) => {
@@ -41,12 +36,7 @@ export default (state = initialState, action) => {
     {
       point: 1,
       rewards: [],
-    }
-  ];
-  const initialInkind = [
-    {
-      point: 1,
-      itemsInkind: "",
+      itemsInkind: ""
     }
   ];
   switch (action.type) {
@@ -109,25 +99,13 @@ export default (state = initialState, action) => {
       const newItem1 = [
         {
           point: 1,
-          rewards: []
+          rewards: [],
         }
       ];
       newIndexConfig[action.isType] = [
         ...state.indexConfig[action.isType],
         ...newItem1
       ];
-      return {
-        ...state,
-        indexConfig: newIndexConfig
-      };
-    case actions.ADD_INKIND_EVENT:
-      const newItem2 = [
-        {
-          point: 1,
-          itemsInkind: ""
-        }
-      ];
-      newIndexConfig.inkind = [...state.indexConfig.inkind, ...newItem2];
       return {
         ...state,
         indexConfig: newIndexConfig
@@ -155,7 +133,7 @@ export default (state = initialState, action) => {
         indexConfig: newIndexConfig
       };
     case actions.SELECT_ITEM_INKIND:
-      newIndexConfig.inkind[action.positionItem].itemsInkind = action.value;
+      newIndexConfig.inkind[action.positionItem].rewards = [action.value];
       return {
         ...state,
         indexConfig: newIndexConfig
@@ -171,17 +149,18 @@ export default (state = initialState, action) => {
         {
           point: 1,
           rewards: [],
+          itemsInkind: ""
         }
       ];
       return {
         ...state,
         indexConfig: newIndexConfig
       };
-    case actions.SET_INITIAL_INDEXCONFIG:
+    case actions.SET_INITIAL_indexConfig:
       const newInitalIndexConfig = {
         item: initialItem,
         coin: initialItem,
-        inkind: initialInkind
+        inkind: initialItem
       };
       return {
         ...state,
