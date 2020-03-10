@@ -1,9 +1,10 @@
 import { actions } from "../action_types/index";
-const rootConfig = [
+import { stateToHTML } from "draft-js-export-html";
+import { act } from "react-dom/test-utils";
+const newItem = [
   {
     point: 1,
-    rewards: [],
-    itemsInkind: ""
+    rewards: []
   }
 ];
 const initialState = {
@@ -22,14 +23,32 @@ const initialState = {
   // detail promo
   detailPromo: [],
   isCreatePromo: true,
-  // 
-  indexShop: {
-    item: rootConfig,
-    coin: rootConfig,
-    inkind: rootConfig
+  //
+  indexConfig: {
+    item: newItem,
+    coin: newItem,
+    inkind: [
+      {
+        point: 1,
+        itemsInkind: ""
+      }
+    ]
   }
 };
 export default (state = initialState, action) => {
+  const newIndexConfig = { ...state.indexConfig };
+  const initialItem = [
+    {
+      point: 1,
+      rewards: [],
+    }
+  ];
+  const initialInkind = [
+    {
+      point: 1,
+      itemsInkind: "",
+    }
+  ];
   switch (action.type) {
     case actions.SET_TOKEN:
       return {
@@ -69,24 +88,105 @@ export default (state = initialState, action) => {
       return {
         ...state,
         listPartner: action.value
-      }
+      };
     case actions.GET_DETAIL_PROMO:
       return {
         ...state,
         detailPromo: action.value
-      }
+      };
     case actions.SWITCH_CREATE_PROMO:
       return {
         ...state,
         isCreatePromo: action.value
-      }
+      };
     case actions.SET_DATA_TYPEPROMO:
-      const newIndexShop = { ...state.indexShop };
-      newIndexShop[action.isType] = action.data
+      newIndexConfig[action.isType] = action.data;
       return {
         ...state,
-        indexShop: newIndexShop
-      }
+        indexConfig: newIndexConfig
+      };
+    case actions.ADD_ITEM_PROMO:
+      const newItem1 = [
+        {
+          point: 1,
+          rewards: []
+        }
+      ];
+      newIndexConfig[action.isType] = [
+        ...state.indexConfig[action.isType],
+        ...newItem1
+      ];
+      return {
+        ...state,
+        indexConfig: newIndexConfig
+      };
+    case actions.ADD_INKIND_EVENT:
+      const newItem2 = [
+        {
+          point: 1,
+          itemsInkind: ""
+        }
+      ];
+      newIndexConfig.inkind = [...state.indexConfig.inkind, ...newItem2];
+      return {
+        ...state,
+        indexConfig: newIndexConfig
+      };
+    case actions.REDUCE_ITEM_PROMO:
+      const newItem = newIndexConfig[action.isType].filter(
+        (value, index) => index !== action.val
+      );
+      newIndexConfig[action.isType] = newItem;
+      return {
+        ...state,
+        indexConfig: newIndexConfig
+      };
+    case actions.SELECT_ITEM_PARNER:
+      newIndexConfig["item"][action.positionItem].rewards = action.value;
+      return {
+        ...state,
+        indexConfig: newIndexConfig
+      };
+    case actions.SELECT_NUMB_ITEM_PROMO:
+      const { isType, positionItem, value } = action;
+      newIndexConfig[isType][positionItem].point = value;
+      return {
+        ...state,
+        indexConfig: newIndexConfig
+      };
+    case actions.SELECT_ITEM_INKIND:
+      newIndexConfig.inkind[action.positionItem].itemsInkind = action.value;
+      return {
+        ...state,
+        indexConfig: newIndexConfig
+      };
+    case actions.SELECT_COIN_EVENT:
+      newIndexConfig.coin[action.positionItem].rewards = [action.value];
+      return {
+        ...state,
+        indexConfig: newIndexConfig
+      };
+    case actions.RESET_ITEM_PARTNER:
+      newIndexConfig.item = [
+        {
+          point: 1,
+          rewards: [],
+        }
+      ];
+      return {
+        ...state,
+        indexConfig: newIndexConfig
+      };
+    case actions.SET_INITIAL_INDEXCONFIG:
+      const newInitalIndexConfig = {
+        item: initialItem,
+        coin: initialItem,
+        inkind: initialInkind
+      };
+      return {
+        ...state,
+        indexConfig: newInitalIndexConfig
+      };
     default:
       return state;
   }

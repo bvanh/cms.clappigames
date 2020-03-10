@@ -34,7 +34,6 @@ function TypeEvent(props) {
   useQuery(getListItemsForEvent, {
     onCompleted: data => {
       setItemsEvent(data.listProducts)
-      console.log(data)
     }
   })
   // useMemo(() => getPartnerProducts(), [game]);

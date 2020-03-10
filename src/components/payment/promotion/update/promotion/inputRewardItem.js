@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { Button, Input, Row, Col, Select } from "antd";
 import { updatePromotion } from "../../../../../utils/mutation/promotion";
 import { useLazyQuery, useMutation, useQuery } from "@apollo/react-hooks";
@@ -22,7 +22,7 @@ function EventByItems(props) {
     startTime,
     endTime
   } = props.indexPromo;
-  const [indexShop, setIndexShop] = useState(JSON.parse(shop));
+  const { indexShop } = props
   const { data } = useQuery(getListPartnerProducts(platformPromoId), {
     onCompleted: data => {
       setItemForEventTypeItem(data.listPartnerProducts);
@@ -49,27 +49,27 @@ function EventByItems(props) {
     },
     onCompleted: data => console.log(data)
   });
-  const submitCreatePromo = async () => {
+  const submitUpdatePromo = async () => {
     await updatePromo();
     alert("update thanh cong");
   };
   const addItem = () => {
     const newItem = {
       purchaseTimes: 1,
-      purchaseItemId: null,
+      purchaseItemId: [],
       rewards: [
         {
           numb: 1,
-          itemId: null
+          itemId: []
         }
       ]
     };
-    setIndexShop([...indexShop, newItem]);
+    props.setIndexShop([...indexShop, newItem]);
   };
   const reduceItem = async val => {
     if (val !== 0) {
       const newItem = await indexShop.filter((value, index) => index !== val);
-      setIndexShop(newItem);
+      props.setIndexShop(newItem);
     }
   };
   const addReward = async i => {
@@ -79,7 +79,7 @@ function EventByItems(props) {
     };
     const newShop = [...indexShop];
     newShop[i].rewards = [...newShop[i].rewards, newReward];
-    setIndexShop(newShop);
+    props.setIndexShop(newShop);
   };
   const reduceReward = async (numberItem, indexReward) => {
     const newShop = [...indexShop];
@@ -87,34 +87,34 @@ function EventByItems(props) {
       (value, i) => indexReward !== i
     );
     newShop[numberItem].rewards = newReward;
-    setIndexShop(newShop);
+    props.setIndexShop(newShop);
   };
   const handleChooseReward = (positionItem, positionReward, val) => {
     const newItem = [...indexShop];
     newItem[positionItem].rewards[positionReward].itemId = val;
-    setIndexShop(newItem);
+    props.setIndexShop(newItem);
   };
   const handleChooseNumbReward = (positionItem, positionReward, e) => {
     const newItem = [...indexShop];
-    newItem[positionItem].rewards[positionReward].numb = e.target.value;
-    setIndexShop(newItem);
+    newItem[positionItem].rewards[positionReward].numb = Number(e.target.value);
+    props.setIndexShop(newItem);
   };
   const handleChooseItem = (positionItem, value) => {
     const newItem = [...indexShop];
     newItem[positionItem].purchaseItemId = value;
-    setIndexShop(newItem);
+    props.setIndexShop(newItem);
   };
   const handleChooseNumbItem = (positionItem, e) => {
     const newItem = [...indexShop];
-    newItem[positionItem].purchaseTimes = e.target.value;
-    setIndexShop(newItem);
+    newItem[positionItem].purchaseTimes = Number(e.target.value);
+    props.setIndexShop(newItem);
   };
   const printListItems = itemsForEventTypeItem.map((val, index) => (
     <Option value={val.partnerProductId} key={index}>
       {val.productName}
     </Option>
   ));
-  const printItem = indexShop.map(function(val, index1) {
+  const printItem = indexShop.map(function (val, index1) {
     const printReward = val.rewards.map((valReward, index2) => (
       <div key={index2}>
         <Input
@@ -177,7 +177,7 @@ function EventByItems(props) {
       </div>
       <div className="btn-create-promo">
         <Button>Hủy</Button>
-        <Button onClick={submitCreatePromo}>Tạo khuyến mãi</Button>
+        <Button onClick={submitUpdatePromo}>Cập nhật khuyến mãi</Button>
       </div>
       <Row>
         {printItem}

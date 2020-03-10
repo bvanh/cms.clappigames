@@ -10,7 +10,8 @@ import {
 import { connect } from "react-redux";
 import {
   dispatchTypeEventByMoney,
-  dispatchNameEventByMoney
+  dispatchNameEventByMoney,
+  dispatchResetItemRewards
 } from "../../../../../redux/actions";
 const { Option } = Select;
 const { RangePicker } = DatePicker;
@@ -62,7 +63,6 @@ const MenuRewardEventByMoney = props => {
       setEventByMoneyIndex({
         ...eventByMoneyIndex,
         eventPaymentType: eventMoneyType,
-        value: type
       });
       dispatchTypeEventByMoney(type);
     }
