@@ -3,6 +3,11 @@ import { Button, Input, Row, Col, Select } from "antd";
 import { createPromotion } from "../../../../../utils/mutation/promotion";
 import { useLazyQuery, useMutation, useQuery } from "@apollo/react-hooks";
 import { getListPartnerProducts } from "../../../../../utils/queryPartnerProducts";
+import {
+  checkMainInfoPromoAndEvent,
+  checkItemIsEmtry,
+  checkPurchaseItemIsEmtry
+} from "../../promoService";
 const { Option } = Select;
 function EventByItems(props) {
   const [itemsForEventTypeItem, setItemForEventTypeItem] = useState([
@@ -20,18 +25,7 @@ function EventByItems(props) {
     startTime,
     endTime
   } = props.indexPromo;
-  const [indexShop, setIndexShop] = useState([
-    {
-      purchaseTimes: 1,
-      purchaseItemId: "",
-      rewards: [
-        {
-          numb: 1,
-          itemId: ""
-        }
-      ]
-    }
-  ]);
+  const { indexShop } = props;
   const { data } = useQuery(getListPartnerProducts(platformPromoId), {
     onCompleted: data => {
       setItemForEventTypeItem(data.listPartnerProducts);
@@ -58,71 +52,88 @@ function EventByItems(props) {
     onCompleted: data => console.log(data)
   });
   const submitCreatePromo = async () => {
-    await createPromo();
-    alert("tao thanh cong");
+    if (
+      checkMainInfoPromoAndEvent(
+        namePromo,
+        platformPromoId,
+        promoType,
+        server,
+        datesPromo,
+        dailyPromo
+      ) &&
+      checkPurchaseItemIsEmtry(indexShop) &&
+      checkItemIsEmtry(indexShop)
+    ) {
+      await createPromo();
+      props.successAlert();
+    } else {
+      alert("kiểm tra và điền đầy đủ thông tin");
+    }
   };
   const addItem = () => {
     const newItem = {
       purchaseTimes: indexShop[indexShop.length - 1].purchaseTimes,
-      purchaseItemId: null,
+      purchaseItemId: [],
       rewards: [
         {
           numb: 1,
-          itemId: null
+          itemId: []
         }
       ]
     };
-    setIndexShop([...indexShop, newItem]);
+    props.setIndexShop([...indexShop, newItem]);
   };
   const reduceItem = async val => {
     if (val !== 0) {
       const newItem = await indexShop.filter((value, index) => index !== val);
-      setIndexShop(newItem);
+      props.setIndexShop(newItem);
     }
   };
   const addReward = async i => {
     const newReward = {
       numb: 1,
-      itemId: null
+      itemId: []
     };
     const newShop = [...indexShop];
     newShop[i].rewards = [...newShop[i].rewards, newReward];
-    setIndexShop(newShop);
+    props.setIndexShop(newShop);
   };
   const reduceReward = async (numberItem, indexReward) => {
     const newShop = [...indexShop];
-    const newReward = await indexShop[numberItem].rewards.filter(
-      (value, i) => indexReward !== i
-    );
-    newShop[numberItem].rewards = newReward;
-    setIndexShop(newShop);
+    if (indexShop[numberItem].rewards.length > 1) {
+      const newReward = await indexShop[numberItem].rewards.filter(
+        (value, i) => indexReward !== i
+      );
+      newShop[numberItem].rewards = newReward;
+      props.setIndexShop(newShop);
+    }
   };
   const handleChooseReward = (positionItem, positionReward, val) => {
     const newItem = [...indexShop];
     newItem[positionItem].rewards[positionReward].itemId = val;
-    setIndexShop(newItem);
+    props.setIndexShop(newItem);
   };
   const handleChooseNumbReward = (positionItem, positionReward, e) => {
     const newItem = [...indexShop];
-    newItem[positionItem].rewards[positionReward].numb = e.target.value;
-    setIndexShop(newItem);
+    newItem[positionItem].rewards[positionReward].numb = Number(e.target.value);
+    props.setIndexShop(newItem);
   };
   const handleChooseItem = (positionItem, value) => {
     const newItem = [...indexShop];
     newItem[positionItem].purchaseItemId = value;
-    setIndexShop(newItem);
+    props.setIndexShop(newItem);
   };
   const handleChooseNumbItem = (positionItem, e) => {
     const newItem = [...indexShop];
-    newItem[positionItem].purchaseTimes = e.target.value;
-    setIndexShop(newItem);
+    newItem[positionItem].purchaseTimes = Number(e.target.value);
+    props.setIndexShop(newItem);
   };
   const printListItems = itemsForEventTypeItem.map((val, index) => (
     <Option value={val.partnerProductId} key={index}>
       {val.productName}
     </Option>
   ));
-  const printItem = indexShop.map(function (val, index1) {
+  const printItem = indexShop.map(function(val, index1) {
     const printReward = val.rewards.map((valReward, index2) => (
       <div key={index2}>
         <Input
@@ -135,7 +146,7 @@ function EventByItems(props) {
         ></Input>
         <Select
           mode="multiple"
-          // value={indexShop[index1].reward[index2].itemId}
+          value={indexShop[index1].rewards[index2].itemId}
           style={{ width: "60%" }}
           onChange={value => handleChooseReward(index1, index2, value)}
         >
@@ -150,7 +161,7 @@ function EventByItems(props) {
           <Input
             value={indexShop[index1].purchaseTimes}
             type="number"
-            min={indexShop[index1 > 0 ? index1 - 1 : index1].purchaseTimes}
+            min={index1 > 0 ? indexShop[index1 - 1].purchaseTimes : ""}
             name="pucharseTimes"
             onChange={e => handleChooseNumbItem(index1, e)}
             style={{ width: "10%" }}

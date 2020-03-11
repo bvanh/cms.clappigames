@@ -1,5 +1,5 @@
-import React, { Component,useState } from "react";
-import {useQuery } from "@apollo/react-hooks";
+import React, { Component, useState } from "react";
+import { useQuery } from "@apollo/react-hooks";
 import "../../../../../static/style/promotion.css";
 import { queryGetPlatform } from "../../../../../utils/queryPlatform";
 import { getPromotionType } from "../../../../../utils/queryPaymentAndPromoType";
@@ -8,9 +8,9 @@ const { Option } = Select;
 
 function MenuRewardByItem(props) {
   const { serverGame, platformPromoId, typePromo } = props.indexPromo;
-  const {listServer}=props.typePromo
-  const [ listType,setListtype] = useState([{ name: "", description: "" }]);
-  const [listGame, setListGame] = useState([{}])
+  const { listServer } = props.typePromo;
+  const [listType, setListType] = useState([{ name: "", description: "" }]);
+  const [listGame, setListGame] = useState([{}]);
   useQuery(queryGetPlatform, {
     onCompleted: data => {
       setListGame(data.listPartners);
@@ -18,7 +18,7 @@ function MenuRewardByItem(props) {
   });
   useQuery(getPromotionType, {
     onCompleted: data => {
-      setListtype(data.__type.enumValues);
+      setListType(data.__type.enumValues);
     }
   });
   const printPromoType = listType.map((val, index) => (
