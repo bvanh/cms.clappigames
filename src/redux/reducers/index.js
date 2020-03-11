@@ -36,7 +36,6 @@ export default (state = initialState, action) => {
     {
       point: 1,
       rewards: [],
-      itemsInkind: ""
     }
   ];
   switch (action.type) {
@@ -98,7 +97,7 @@ export default (state = initialState, action) => {
     case actions.ADD_ITEM_PROMO:
       const newItem1 = [
         {
-          point: 1,
+          point: newIndexConfig[action.isType][newIndexConfig[action.isType].length - 1].point,
           rewards: [],
         }
       ];
@@ -149,7 +148,6 @@ export default (state = initialState, action) => {
         {
           point: 1,
           rewards: [],
-          itemsInkind: ""
         }
       ];
       return {

@@ -8,6 +8,7 @@ import {
 import { getListItemsForEvent } from "../../../../../utils/query/promotion";
 import { useLazyQuery, useMutation, useQuery } from "@apollo/react-hooks";
 import { connect } from "react-redux";
+import { checkPoint } from '../../promoService'
 import { getListPartnerProducts } from "../../../../../utils/queryPartnerProducts";
 import {
   dispatchNameEventByMoney,
@@ -66,7 +67,8 @@ function InputRewardForShowByMoney(props) {
         type: "EVENT",
         status: "COMPLETE",
         sort: 0,
-        price: itemNumb * 1000
+        price: itemNumb * 1000,
+        basecoin: itemNumb
       }
     },
     onCompleted: async data => {
@@ -164,7 +166,7 @@ function InputRewardForShowByMoney(props) {
     dispatchSeclectNumbItem({
       isType: isType,
       positionItem: positionItem,
-      value: Number(e.target.value)
+      value: e.target.value !== '' ? Number(e.target.value) : ''
     });
   };
   const handleChooseInKind = (positionItem, e) => {
@@ -192,6 +194,14 @@ function InputRewardForShowByMoney(props) {
     setRowItems(val);
     setItemNumb(null);
   };
+  const checkPoint1 = () => {
+    const demo = item.map((val, i) => {
+      if (i > 0) {
+        return val.point > item[i - 1].point
+      }
+    })
+    console.log(demo.every((val, i) => val === true || val === undefined))
+  }
   const printListItems = props.listItems.map((val, index) => (
     <Option value={val.partnerProductId} key={index}>
       {val.productName}
@@ -216,14 +226,14 @@ function InputRewardForShowByMoney(props) {
       </Col>
     )
   );
-  const printItemInkind = inkind.map(function(val, index1) {
+  const printItemInkind = inkind.map(function (val, index1) {
     return (
       <div key={index1}>
         <Col md={24}>
           TỪ
           <Input
             value={val.point}
-            min={val.point}
+            min={index1 > 0 ? inkind[index1 - 1].point : 0}
             type="number"
             name="pucharseTimes"
             onChange={e => handleChooseNumbItem("inkind", index1, e)}
@@ -247,7 +257,7 @@ function InputRewardForShowByMoney(props) {
       TỪ
       <Input
         value={val.point}
-        min={val.point}
+        min={index1 > 0 ? coin[index1 - 1].point : 0}
         type="number"
         name="pucharseTimes"
         onChange={e => handleChooseNumbItem("coin", index1, e)}
@@ -258,7 +268,7 @@ function InputRewardForShowByMoney(props) {
         mode="multiple"
         value={val.rewards}
         style={{ width: "90%" }}
-        // onChange={value => handleChooseItem(index1, value)}
+      // onChange={value => handleChooseItem(index1, value)}
       >
         {printItemsEvent}
       </Select>{" "}
@@ -271,6 +281,7 @@ function InputRewardForShowByMoney(props) {
       TỪ
       <Input
         value={val.point}
+        min={index1 > 0 ? item[index1 - 1].point : 0}
         type="number"
         name="pucharseTimes"
         onChange={e => handleChooseNumbItem("item", index1, e)}
@@ -290,6 +301,7 @@ function InputRewardForShowByMoney(props) {
   ));
   return (
     <>
+      <button onClick={checkPoint1}>checkPoint</button>
       <Row>
         <Col md={12}>
           <span>Tổng hóa đơn</span>
@@ -298,7 +310,7 @@ function InputRewardForShowByMoney(props) {
       </Row>
       <div className="btn-create-promo">
         <Button>Hủy</Button>
-        <Button onClick={()=>submitUpdateEvent()}>Cập nhật khuyến mãi</Button>
+        <Button onClick={() => submitUpdateEvent()}>Cập nhật khuyến mãi</Button>
       </div>
       <Row>
         {props.typeEventByMoney === "COIN" && (

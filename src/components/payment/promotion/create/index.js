@@ -127,7 +127,7 @@ function CreatePromotion() {
       server: ""
     });
   };
-  
+
   const resetGameAndServer = () => {
     setTypePromo({
       ...typePromo,
@@ -138,7 +138,7 @@ function CreatePromotion() {
         }
       ],
     })
-    setIndexPromo({...indexPromo,platformPromoId:"",server:""})
+    setIndexPromo({ ...indexPromo, platformPromoId: "", server: "" })
   }
   const setInfoPromo = e => {
     setIndexPromo({ ...indexPromo, [e.target.name]: e.target.value });
@@ -149,12 +149,11 @@ function CreatePromotion() {
   const onChangeDatePicker = (value, dateString) => {
     setIndexPromo({ ...indexPromo, timeTotalPromo: dateString });
   };
-  const setTimePromo = (timeString, val) => {
-    console.log(timeString);
+  const setTimePromo = (time, timeString, val) => {
     if (val === "startTime") {
-      setIndexPromo({ ...indexPromo, startTime: timeString });
+      setIndexPromo({ ...indexPromo, startTime: timeString + ":00" });
     } else {
-      setIndexPromo({ ...indexPromo, endTime: timeString });
+      setIndexPromo({ ...indexPromo, endTime: timeString + ":59" });
     }
   };
   const handleChangeDaily = value => {

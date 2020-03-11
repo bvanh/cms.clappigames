@@ -79,7 +79,8 @@ function InputrewardForShowByMoney(props) {
         type: "EVENT",
         status: "COMPLETE",
         sort: 0,
-        price: itemNumb * 1000
+        price: itemNumb * 1000,
+        basecoin:itemNumb
       }
     },
     onCompleted: async data => {
@@ -193,7 +194,7 @@ function InputrewardForShowByMoney(props) {
   };
   const handleChooseNumbItem = (positionItem, e) => {
     const newItem = [...indexShop];
-    newItem[positionItem].point = Number(e.target.value);
+    newItem[positionItem].point = e.target.value !== '' ? Number(e.target.value) : '';
     setIndexShop(newItem);
   };
   const handleChooseIsKind = (positionItem, e) => {

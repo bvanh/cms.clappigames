@@ -115,7 +115,7 @@ function EventByItems(props) {
   };
   const handleChooseNumbReward = (positionItem, positionReward, e) => {
     const newItem = [...indexShop];
-    newItem[positionItem].rewards[positionReward].numb = Number(e.target.value);
+    newItem[positionItem].rewards[positionReward].numb = e.target.value !== '' ? Number(e.target.value) : '';
     props.setIndexShop(newItem);
   };
   const handleChooseItem = (positionItem, value) => {
@@ -125,7 +125,7 @@ function EventByItems(props) {
   };
   const handleChooseNumbItem = (positionItem, e) => {
     const newItem = [...indexShop];
-    newItem[positionItem].purchaseTimes = Number(e.target.value);
+    newItem[positionItem].purchaseTimes = e.target.value !== '' ? Number(e.target.value) : '';
     props.setIndexShop(newItem);
   };
   const printListItems = itemsForEventTypeItem.map((val, index) => (
@@ -133,7 +133,7 @@ function EventByItems(props) {
       {val.productName}
     </Option>
   ));
-  const printItem = indexShop.map(function(val, index1) {
+  const printItem = indexShop.map(function (val, index1) {
     const printReward = val.rewards.map((valReward, index2) => (
       <div key={index2}>
         <Input

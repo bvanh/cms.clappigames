@@ -1,7 +1,7 @@
 import React from "react";
 import moment from "moment";
 const printAlertDailyPromo = arr => {
-  return arr.map(function(val, index) {
+  return arr.map(function (val, index) {
     switch (val) {
       case 0:
         return <span key={index}>Thứ 2,</span>;
@@ -130,6 +130,11 @@ const checkItemIsEmtry = indexShop => {
   });
   return result1.every((val, i) => val != false);
 };
+const checkPoint = indexShop => {
+  if (indexShop > 0) {
+    return indexShop.every((val, i) => indexShop[i].point < indexShop[i - 1].point);
+  }
+};
 export {
   printAlertDailyPromo,
   daily0,
@@ -140,5 +145,6 @@ export {
   checkMainInfoPromoAndEvent,
   checkRewardsIsEmtry,
   checkItemIsEmtry,
-  checkPurchaseItemIsEmtry
+  checkPurchaseItemIsEmtry,
+  checkPoint
 };

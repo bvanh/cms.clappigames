@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Row, Col, DatePicker, Select, Icon } from "antd";
 import { useLazyQuery, useMutation, useQuery } from "@apollo/react-hooks";
+import moment from 'moment'
 import "../../../../static/style/promotion.css";
 import EventByItems from "./promotion/inputRewardItem";
 import InputRewardForShowByMoney from "./event/inputReward";
@@ -22,7 +23,6 @@ import {
 } from "../../../../utils/query/promotion";
 import { connect } from "react-redux";
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
-import { useMemo } from "react";
 function UpdatePromotionAndEvent(props) {
   const {
     name,
@@ -78,7 +78,7 @@ function UpdatePromotionAndEvent(props) {
     itemsForEventByMoney: [{ productName: "", productId: "" }]
   });
   const { platformPromoId, statusPromo, serverGame } = indexPromo;
-  const {listGame, listItems, listServer } = typePromo;
+  const { listGame, listItems, listServer } = typePromo;
   const [getListPartnerByPlatform] = useLazyQuery(getListPartnerProducts2, {
     onCompleted: data => {
       setTypePromo({ ...typePromo, listItems: data.listPartnerProducts });
@@ -130,7 +130,7 @@ function UpdatePromotionAndEvent(props) {
     await setIndexPromo({
       ...indexPromo,
       platformPromoId: e,
-      server: ""
+      serverGame: 0
     });
     await getListPartnerByPlatform({
       variables: {
@@ -149,9 +149,9 @@ function UpdatePromotionAndEvent(props) {
   };
   const setTimePromo = (timeString, val) => {
     if (val === "startTime") {
-      setIndexPromo({ ...indexPromo, startTime: timeString });
+      setIndexPromo({ ...indexPromo, startTime: timeString + ":00" });
     } else {
-      setIndexPromo({ ...indexPromo, endTime: timeString });
+      setIndexPromo({ ...indexPromo, endTime: timeString + ":59" });
     }
   };
   const handleChangeDaily = value => {

@@ -71,7 +71,7 @@ function TypeEvent(props) {
             ...
             {indexShop.type === "INKIND" && (
               <Input
-                value={val.itemsInkind}
+                value={val.rewards[0]}
                 placeholder="-Điền quà out game-"
                 name="pucharseTimes"
 
