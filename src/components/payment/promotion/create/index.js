@@ -138,7 +138,7 @@ function CreatePromotion() {
   return (
     <Router>
       <Row className="container-promotion">
-        <div className>
+        <div>
           <div>
             <Link to="/payment/promotion">
               <span>
