@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Row, Col, Modal, Icon } from "antd";
 import { useLazyQuery, useMutation, useQuery } from "@apollo/react-hooks";
 import "../../../../static/style/promotion.css";
@@ -38,7 +38,7 @@ function CreatePromotion() {
   const [switchTypeEvent, setSwitchTypeEvent] = useState(true);
   const [indexPromo, setIndexPromo] = useState({
     eventPaymentType: [],
-    namePromo: null,
+    namePromo: '',
     platformPromoId: "",
     server: "",
     statusPromo: "COMPLETE",
@@ -76,16 +76,16 @@ function CreatePromotion() {
   const [indexShop, setIndexShop] = useState(initialIndexShop);
   const { platformPromoId, statusPromo, server } = indexPromo;
   const { listGame, listItems, listServer } = typePromo;
-  useQuery(queryGetPlatform, {
-    onCompleted: data => {
-      setTypePromo({ ...typePromo, listGame: data.listPartners });
-    }
-  });
   const { data } = useQuery(getListPartnerProducts(platformPromoId), {
     onCompleted: data => {
       setTypePromo({ ...typePromo, listItems: data.listPartnerProducts });
     }
   });
+  useQuery(queryGetPlatform, {
+    onCompleted: data => {
+      setTypePromo({ ...typePromo, listGame: data.listPartners });
+    }
+  })
   const { data2 } = useQuery(getListServer(platformPromoId), {
     onCompleted: data => {
       setTypePromo({
@@ -127,6 +127,19 @@ function CreatePromotion() {
       server: ""
     });
   };
+  
+  const resetGameAndServer = () => {
+    setTypePromo({
+      ...typePromo,
+      listServer: [
+        {
+          server: 0,
+          serverName: "All server"
+        }
+      ],
+    })
+    setIndexPromo({...indexPromo,platformPromoId:"",server:""})
+  }
   const setInfoPromo = e => {
     setIndexPromo({ ...indexPromo, [e.target.name]: e.target.value });
   };
@@ -191,6 +204,7 @@ function CreatePromotion() {
               setTypePromo={setTypePromo}
               statusPromo={statusPromo}
               setInfoPromo={setInfoPromo}
+              resetGameAndServer={resetGameAndServer}
               switchTypeEvent={switchTypeEvent}
               setSwitchTypeEvent={setSwitchTypeEvent}
             />
@@ -204,16 +218,17 @@ function CreatePromotion() {
                 handleChangeServer={handleChangeServer}
               />
             ) : (
-              <MenuRewardEventByMoney
-                indexEventByMoney={indexEventByMoney}
-                setIndexEventByMoney={setIndexEventByMoney}
-                getItemsForEventTypeMoney={getItemsForEventTypeMoney}
-                server={server}
-                typePromo={typePromo}
-                handleChangePlatform={handleChangePlatform}
-                handleChangeServer={handleChangeServer}
-              />
-            )}
+                <MenuRewardEventByMoney
+                  switchTypeEvent={switchTypeEvent}
+                  indexEventByMoney={indexEventByMoney}
+                  setIndexEventByMoney={setIndexEventByMoney}
+                  getItemsForEventTypeMoney={getItemsForEventTypeMoney}
+                  server={server}
+                  typePromo={typePromo}
+                  handleChangePlatform={handleChangePlatform}
+                  handleChangeServer={handleChangeServer}
+                />
+              )}
           </div>
         </Col>
         <InputTimeArea
@@ -233,19 +248,19 @@ function CreatePromotion() {
               setIndexShop={setIndexShop}
             />
           ) : (
-            <InputRewardByMoney
-              listItems={listItems}
-              successAlert={successAlert}
-              indexShop={indexShop}
-              setIndexShop={setIndexShop}
-              indexPromo={indexPromo}
-              typePromo={typePromo}
-              setIndexPromo={setIndexPromo}
-              indexEventByMoney={indexEventByMoney}
-              setIndexEventByMoney={setIndexEventByMoney}
-              getItemsForEventTypeMoney={getItemsForEventTypeMoney}
-            />
-          )}
+              <InputRewardByMoney
+                listItems={listItems}
+                successAlert={successAlert}
+                indexShop={indexShop}
+                setIndexShop={setIndexShop}
+                indexPromo={indexPromo}
+                typePromo={typePromo}
+                setIndexPromo={setIndexPromo}
+                indexEventByMoney={indexEventByMoney}
+                setIndexEventByMoney={setIndexEventByMoney}
+                getItemsForEventTypeMoney={getItemsForEventTypeMoney}
+              />
+            )}
         </Col>
       </Row>
     </Router>

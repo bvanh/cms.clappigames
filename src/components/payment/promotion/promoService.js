@@ -83,16 +83,12 @@ const initialIndexEventByMoney = {
 };
 const checkMainInfoPromoAndEvent = (
   namePromo,
-  platformPromoId,
-  server,
   promoType,
   datesPromo,
   dailyPromo
 ) => {
   if (
     namePromo != "" &&
-    platformPromoId != "" &&
-    server != "" &&
     promoType != "" &&
     (datesPromo.length > 0 || dailyPromo.length > 0)
   ) {

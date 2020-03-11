@@ -161,7 +161,7 @@ function EventByItems(props) {
           <Input
             value={indexShop[index1].purchaseTimes}
             type="number"
-            min={index1 > 0 ? indexShop[index1 - 1].purchaseTimes : ""}
+            min={index1 > 0 ? indexShop[index1 - 1].purchaseTimes : 0}
             name="pucharseTimes"
             onChange={e => handleChooseNumbItem(index1, e)}
             style={{ width: "10%" }}

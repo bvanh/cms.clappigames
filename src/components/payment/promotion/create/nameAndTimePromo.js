@@ -20,12 +20,8 @@ const { RangePicker } = DatePicker;
 function InputNameAndTypeArea(props) {
   const { switchTypeEvent } = props;
   const {
-    eventPaymentType,
     namePromo,
-    platformPromoId,
-    serverGame,
     statusPromo,
-    promoType
   } = props.indexPromo;
   return (
     <div>
@@ -51,7 +47,10 @@ function InputNameAndTypeArea(props) {
       <Radio.Group
         value={switchTypeEvent}
         buttonStyle="solid"
-        onChange={e => props.setSwitchTypeEvent(e.target.value)}
+        onChange={e => {
+          props.setSwitchTypeEvent(e.target.value);
+          props.resetGameAndServer();
+        }}
         className="promotion-choose-typeEvent"
       >
         <Radio.Button value={false}>Khuyến mãi theo hóa đơn</Radio.Button>
