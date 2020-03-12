@@ -4,7 +4,7 @@ import { act } from "react-dom/test-utils";
 const newItem = [
   {
     point: 1,
-    rewards: [],
+    rewards: []
   }
 ];
 const initialState = {
@@ -28,14 +28,15 @@ const initialState = {
     item: newItem,
     coin: newItem,
     inkind: newItem
-  }
+  },
+  idPromoAndEventCreateInUpdate:null
 };
 export default (state = initialState, action) => {
   const newIndexConfig = { ...state.indexConfig };
   const initialItem = [
     {
       point: 1,
-      rewards: [],
+      rewards: []
     }
   ];
   switch (action.type) {
@@ -97,8 +98,11 @@ export default (state = initialState, action) => {
     case actions.ADD_ITEM_PROMO:
       const newItem1 = [
         {
-          point: newIndexConfig[action.isType][newIndexConfig[action.isType].length - 1].point,
-          rewards: [],
+          point:
+            newIndexConfig[action.isType][
+              newIndexConfig[action.isType].length - 1
+            ].point,
+          rewards: []
         }
       ];
       newIndexConfig[action.isType] = [
@@ -147,7 +151,7 @@ export default (state = initialState, action) => {
       newIndexConfig.item = [
         {
           point: 1,
-          rewards: [],
+          rewards: []
         }
       ];
       return {
@@ -163,6 +167,11 @@ export default (state = initialState, action) => {
       return {
         ...state,
         indexConfig: newInitalIndexConfig
+      };
+    case actions.SAVE_ID_IN_UPDATE:
+      return {
+        ...state,
+        idPromoAndEventCreateInUpdate: action.value
       };
     default:
       return state;

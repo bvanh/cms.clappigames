@@ -244,6 +244,7 @@ function UpdatePromotion(props) {
               setIndexPromo={setIndexPromo}
               indexEventByMoney={indexEventByMoney}
               setIndexEventByMoney={setIndexEventByMoney}
+              isUpdate={props.isUpdate}
             />
           )}
       </Col>

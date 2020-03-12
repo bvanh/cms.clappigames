@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { Button, Input, Row, Col, Select } from "antd";
 import { createPromotion } from "../../../../../utils/mutation/promotion";
-import moment from 'moment'
+import { dispatchSaveIdCreateInUpdate } from "../../../../../redux/actions/index";
+import moment from "moment";
 import { useLazyQuery, useMutation, useQuery } from "@apollo/react-hooks";
 import { getListPartnerProducts } from "../../../../../utils/queryPartnerProducts";
 import {
@@ -27,7 +28,7 @@ function EventByItems(props) {
     startTime,
     endTime
   } = props.indexPromo;
-  const { indexShop } = props;
+  const { indexShop, isUpdate } = props;
   const { data } = useQuery(getListPartnerProducts(platformPromoId), {
     onCompleted: data => {
       setItemForEventTypeItem(data.listPartnerProducts);
@@ -43,15 +44,17 @@ function EventByItems(props) {
         server: serverGame,
         shop: JSON.stringify(indexShop),
         eventTime: JSON.stringify({
-          startTime: moment(timeTotalPromo[0]).format('YYYY-MM-DD hh:mm'),
-          endTime: moment(timeTotalPromo[1]).format('YYYY-MM-DD hh:mm'),
+          startTime: moment(timeTotalPromo[0]).format("YYYY-MM-DD hh:mm"),
+          endTime: moment(timeTotalPromo[1]).format("YYYY-MM-DD hh:mm"),
           dates: datesPromo,
           daily: dailyPromo,
           hour: [startTime, endTime]
         })
       }
     },
-    onCompleted: data => console.log(data)
+    onCompleted: data => {
+      isUpdate ? dispatchSaveIdCreateInUpdate(data.id) : console.log(data);
+    }
   });
   const submitCreatePromo = async () => {
     if (
@@ -63,13 +66,14 @@ function EventByItems(props) {
         endTime,
         datesPromo,
         dailyPromo
-      )
-      &&
+      ) &&
       checkPurchaseItemIsEmtry(indexShop) &&
-      checkItemIsEmtry(indexShop) && serverGame !== "" && platformPromoId !== ""
+      checkItemIsEmtry(indexShop) &&
+      serverGame !== "" &&
+      platformPromoId !== ""
     ) {
       await createPromo();
-      props.successAlert();
+      props.successAlert(true);
     } else {
       alert("kiểm tra và điền đầy đủ thông tin");
     }
@@ -119,7 +123,8 @@ function EventByItems(props) {
   };
   const handleChooseNumbReward = (positionItem, positionReward, e) => {
     const newItem = [...indexShop];
-    newItem[positionItem].rewards[positionReward].numb = e.target.value !== '' ? Number(e.target.value) : '';
+    newItem[positionItem].rewards[positionReward].numb =
+      e.target.value !== "" ? Number(e.target.value) : "";
     props.setIndexShop(newItem);
   };
   const handleChooseItem = (positionItem, value) => {
@@ -129,7 +134,8 @@ function EventByItems(props) {
   };
   const handleChooseNumbItem = (positionItem, e) => {
     const newItem = [...indexShop];
-    newItem[positionItem].purchaseTimes = e.target.value !== '' ? Number(e.target.value) : '';
+    newItem[positionItem].purchaseTimes =
+      e.target.value !== "" ? Number(e.target.value) : "";
     props.setIndexShop(newItem);
   };
   const printListItems = itemsForEventTypeItem.map((val, index) => (
@@ -137,7 +143,7 @@ function EventByItems(props) {
       {val.productName}
     </Option>
   ));
-  const printItem = indexShop.map(function (val, index1) {
+  const printItem = indexShop.map(function(val, index1) {
     const printReward = val.rewards.map((valReward, index2) => (
       <div key={index2}>
         <Input

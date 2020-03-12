@@ -15,7 +15,7 @@ import {
   dispatchResetItemRewards,
   dispatchInititalIndexConfig
 } from "../../../../../redux/actions/index";
-import { initialIndexShop } from '../../promoService'
+import { initialIndexShop } from "../../promoService";
 import { getListPartnerProducts2 } from "../../../../../utils/queryPartnerProducts";
 import {
   getListServer,
@@ -39,6 +39,7 @@ function UpdateEvent(props) {
   const [alertUpdateSuccess, setAlertUpdateSuccess] = useState(false);
   const [switchTypeEvent, setSwitchTypeEvent] = useState(config ? false : true);
   const [indexShop, setIndexShop] = useState(initialIndexShop);
+  const [isCreatePromo, setIsCreatePromo] = useState(false);
   const [indexPromo, setIndexPromo] = useState({
     eventPaymentType: [],
     namePromo: name,
@@ -85,7 +86,7 @@ function UpdateEvent(props) {
       setTypePromo({ ...typePromo, listItems: data.listPartnerProducts });
     }
   });
-  const { data2, refetch } = useQuery(getListServer(platformPromoId), {
+  useQuery(getListServer(platformPromoId), {
     onCompleted: data => {
       setTypePromo({
         ...typePromo,
@@ -99,7 +100,7 @@ function UpdateEvent(props) {
       });
     }
   });
-  const { data3 } = useQuery(getListItemsForEvent, {
+  useQuery(getListItemsForEvent, {
     onCompleted: data => {
       setIndexEventByMoney({
         ...indexEventByMoney,
@@ -149,10 +150,10 @@ function UpdateEvent(props) {
           server: 0,
           serverName: "All server"
         }
-      ],
-    })
-    setIndexPromo({ ...indexPromo, platformPromoId: "", server: "" })
-  }
+      ]
+    });
+    setIndexPromo({ ...indexPromo, platformPromoId: "", server: "" });
+  };
   const setInfoPromo = e => {
     setIndexPromo({ ...indexPromo, [e.target.name]: e.target.value });
   };
@@ -160,15 +161,20 @@ function UpdateEvent(props) {
     setIndexPromo({ ...indexPromo, serverGame: e });
   };
   const onChangeDatePicker = (value, dateString) => {
-    console.log(dateString)
+    console.log(dateString);
     setIndexPromo({ ...indexPromo, timeTotalPromo: dateString });
   };
   const setTimePromo = (timeString, val) => {
-
     if (val === "startTime") {
-      setIndexPromo({ ...indexPromo, startTime: timeString !== "" ? timeString + ":00" : '' });
+      setIndexPromo({
+        ...indexPromo,
+        startTime: timeString !== "" ? timeString + ":00" : ""
+      });
     } else {
-      setIndexPromo({ ...indexPromo, endTime: timeString !== "" ? timeString + ":59" : '' });
+      setIndexPromo({
+        ...indexPromo,
+        endTime: timeString !== "" ? timeString + ":59" : ""
+      });
     }
   };
   const handleChangeDaily = value => {
@@ -179,6 +185,10 @@ function UpdateEvent(props) {
   };
   const handleChangeTypePromo = val => {
     setIndexPromo({ ...indexPromo, typePromo: val });
+  };
+  const successAlert = value => {
+    setIsCreatePromo(value);
+    setAlertUpdateSuccess(true);
   };
   return (
     <Row className="container-promotion">
@@ -219,17 +229,17 @@ function UpdateEvent(props) {
               handleChangeServer={handleChangeServer}
             />
           ) : (
-              <MenuRewardEventByMoney
-                indexPromo={indexPromo}
-                setIndexPromo={setIndexPromo}
-                indexEventByMoney={indexEventByMoney}
-                setIndexEventByMoney={setIndexEventByMoney}
-                server={serverGame}
-                typePromo={typePromo}
-                handleChangePlatform={handleChangePlatform}
-                handleChangeServer={handleChangeServer}
-              />
-            )}
+            <MenuRewardEventByMoney
+              indexPromo={indexPromo}
+              setIndexPromo={setIndexPromo}
+              indexEventByMoney={indexEventByMoney}
+              setIndexEventByMoney={setIndexEventByMoney}
+              server={serverGame}
+              typePromo={typePromo}
+              handleChangePlatform={handleChangePlatform}
+              handleChangeServer={handleChangeServer}
+            />
+          )}
         </div>
       </Col>
       <InputTimeArea
@@ -247,23 +257,28 @@ function UpdateEvent(props) {
             indexPromo={indexPromo}
             indexShop={indexShop}
             setIndexShop={setIndexShop}
+            isUpdate={props.isUpdate}
+            successAlert={successAlert}
           />
         ) : (
-            <InputRewardForShowByMoney
-              setAlertUpdateSuccess={setAlertUpdateSuccess}
-              typePromo={typePromo}
-              listItems={listItems}
-              indexPromo={indexPromo}
-              setIndexPromo={setIndexPromo}
-              indexEventByMoney={indexEventByMoney}
-              setIndexEventByMoney={setIndexEventByMoney}
-            />
-          )}
+          <InputRewardForShowByMoney
+            setAlertUpdateSuccess={successAlert}
+            typePromo={typePromo}
+            listItems={listItems}
+            indexPromo={indexPromo}
+            setIndexPromo={setIndexPromo}
+            indexEventByMoney={indexEventByMoney}
+            setIndexEventByMoney={setIndexEventByMoney}
+          />
+        )}
       </Col>
       <Modal
         title={<Icon type="check-circle" />}
         visible={alertUpdateSuccess}
         onCancel={() => setAlertUpdateSuccess(false)}
+        onOk={() => {
+          isCreatePromo ? deleteEvent() : deletePromo();
+        }}
         okText={<Link to="/payment/promotion">Xem danh sách</Link>}
         cancelText="Hủy bỏ"
       ></Modal>

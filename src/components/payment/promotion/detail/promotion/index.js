@@ -54,7 +54,7 @@ function DetailPromotion(props) {
   return (
     <>
       {isUpdate ? (
-        <UpdatePromotion />
+        <UpdatePromotion isUpdate={isUpdate} />
       ) : (
         <Row>
           <Link to="/payment/promotion">

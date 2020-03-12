@@ -120,6 +120,12 @@ const setInitialIndexConfig = () => {
     type: actions.SET_INITIAL_INDEXCONFIG
   }
 }
+const saveIdPromoAndEventInUpdate=value=>{
+  return {
+    type:actions.SAVE_ID_IN_UPDATE,
+    value
+  }
+}
 function dispatchSwitchLogin(data) {
   store.dispatch(switchLogin(data));
 }
@@ -180,6 +186,9 @@ function dispatchResetItemRewards() {
 function dispatchInititalIndexConfig() {
   store.dispatch(setInitialIndexConfig());
 }
+function dispatchSaveIdCreateInUpdate(value){
+  store.dispatch(saveIdPromoAndEventInUpdate(value))
+}
 export {
   dispatchSwitchLogin,
   dispatchSetAccessToken,
@@ -200,5 +209,6 @@ export {
   dispatchSelectItemInkind,
   dispatchSelectCoinEvent,
   dispatchResetItemRewards,
-  dispatchInititalIndexConfig
+  dispatchInititalIndexConfig,
+  dispatchSaveIdCreateInUpdate
 };

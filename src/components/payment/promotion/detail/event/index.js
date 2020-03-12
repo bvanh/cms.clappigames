@@ -55,7 +55,7 @@ function DetailEvent(props) {
   return (
     <>
       {isUpdate ? (
-        <UpdateEvent />
+        <UpdateEvent isUpdate={isUpdate}/>
       ) : (
           <Row>
             <Link to="/payment/promotion">

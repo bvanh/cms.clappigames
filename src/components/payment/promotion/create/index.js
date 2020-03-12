@@ -165,7 +165,7 @@ function CreatePromotion() {
   const handleChangeTypePromo = val => {
     setIndexPromo({ ...indexPromo, typePromo: val });
   };
-  const successAlert = () => {
+  const successAlert = (val) => {
     Modal.confirm({
       title: "Tạo khuyến mãi thành công",
       okText: "Xem danh sách",

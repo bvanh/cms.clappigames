@@ -3,6 +3,7 @@ import { gql } from "apollo-boost";
 const createPromotion = gql`
   mutation createPromotion($req: PromotionRequest!) {
     createPromotion(req: $req) {
+      id
       shop
       name
     }
@@ -19,6 +20,7 @@ const createItemEvent = gql`
 const createEvent = gql`
   mutation createEvent($req: EventRequest!) {
     createEvent(req: $req) {
+      id
       name
       paymentType
     }
@@ -44,6 +46,9 @@ const updateEvent = gql`
     }
   }
 `;
+const deletePromotion=arrId=>{
+  
+}
 export {
   createPromotion,
   createItemEvent,
