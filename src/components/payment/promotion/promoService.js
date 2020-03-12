@@ -1,5 +1,7 @@
 import React from "react";
 import moment from "moment";
+import { Modal, Icon } from "antd";
+import { Link } from "react-router-dom";
 const printAlertDailyPromo = arr => {
   return arr.map(function(val, index) {
     switch (val) {
@@ -44,6 +46,18 @@ const isTypeEvent = val => {
       break;
   }
 };
+const initialIndexShop = [
+  {
+    purchaseTimes: 1,
+    purchaseItemId: [],
+    rewards: [
+      {
+        numb: 1,
+        itemId: []
+      }
+    ]
+  }
+];
 const initialIndexPromo = {
   eventPaymentType: [],
   namePromo: "",
@@ -83,18 +97,20 @@ const initialIndexEventByMoney = {
 };
 const checkMainInfoPromoAndEvent = (
   namePromo,
-  platformPromoId,
-  server,
   promoType,
+  timeTotalPromo,
+  startTime,
+  endTime,
   datesPromo,
   dailyPromo
 ) => {
   if (
     namePromo != "" &&
-    platformPromoId != "" &&
-    server != "" &&
     promoType != "" &&
-    (datesPromo.length > 0 || dailyPromo.length > 0)
+    (datesPromo.length > 0 || dailyPromo.length > 0) &&
+    startTime !== "" &&
+    endTime !== "" &&
+    timeTotalPromo !== ""
   ) {
     return true;
   } else {
@@ -134,15 +150,38 @@ const checkItemIsEmtry = indexShop => {
   });
   return result1.every((val, i) => val != false);
 };
+const checkPoint = indexShop => {
+  const demo = indexShop.map((val, i) => {
+    if (i > 0) {
+      return val.point > indexShop[i - 1].point;
+    }
+  });
+  return demo.every((val, i) => val === true || val === undefined);
+};
+
+const alertError = () => {
+  Modal.error({
+    title: "Chú ý !!!",
+    content: (
+      <div>
+        <p>+ Điền đẩy đủ thông tin.</p>
+        <p>+ Giá trị các mốc khuyến mãi tăng dần.</p>
+      </div>
+    )
+  });
+};
 export {
   printAlertDailyPromo,
   daily0,
   isTypeEvent,
+  initialIndexShop,
   initialIndexEventByMoney,
   initialIndexPromo,
   initialTypePromo,
   checkMainInfoPromoAndEvent,
   checkRewardsIsEmtry,
   checkItemIsEmtry,
-  checkPurchaseItemIsEmtry
+  checkPurchaseItemIsEmtry,
+  checkPoint,
+  alertError
 };

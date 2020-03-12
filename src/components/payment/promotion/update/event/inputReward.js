@@ -1,16 +1,20 @@
 import React, { useState, useMemo, useEffect, useCallback } from "react";
 import { Button, Input, Row, Col, Select, Modal, Radio } from "antd";
 import {
-  createPromotion,
   createItemEvent,
   updateEvent
 } from "../../../../../utils/mutation/promotion";
-import { getListItemsForEvent } from "../../../../../utils/query/promotion";
+import moment from "moment";
 import { useLazyQuery, useMutation, useQuery } from "@apollo/react-hooks";
 import { connect } from "react-redux";
+import {
+  checkPoint,
+  checkMainInfoPromoAndEvent,
+  checkRewardsIsEmtry,
+  alertError
+} from "../../promoService";
 import { getListPartnerProducts } from "../../../../../utils/queryPartnerProducts";
 import {
-  dispatchNameEventByMoney,
   dispatchTypeEventByMoney,
   dispatchSetDataTypePromo,
   dispatchAddItemPromo,
@@ -41,7 +45,7 @@ function InputRewardForShowByMoney(props) {
   const {
     namePromo,
     platformPromoId,
-    server,
+    serverGame,
     statusPromo,
     promoType,
     timeTotalPromo,
@@ -58,7 +62,6 @@ function InputRewardForShowByMoney(props) {
       });
     }
   });
-
   const [createNewItemEvent] = useMutation(createItemEvent, {
     variables: {
       req: {
@@ -66,7 +69,8 @@ function InputRewardForShowByMoney(props) {
         type: "EVENT",
         status: "COMPLETE",
         sort: 0,
-        price: itemNumb * 1000
+        price: itemNumb * 1000,
+        basecoin: itemNumb
       }
     },
     onCompleted: async data => {
@@ -87,8 +91,8 @@ function InputRewardForShowByMoney(props) {
     status: statusPromo,
     paymentType: props.nameEventByMoney,
     eventTime: JSON.stringify({
-      startTime: timeTotalPromo[0],
-      endTime: timeTotalPromo[1],
+      startTime: moment(timeTotalPromo[0], 'DD-MM-YYYY').format("YYYY-MM-DD hh:mm"),
+      endTime: moment(timeTotalPromo[1], 'DD-MM-YYYY').format("YYYY-MM-DD hh:mm"),
       dates: datesPromo,
       daily: dailyPromo,
       hour: [startTime, endTime]
@@ -127,7 +131,7 @@ function InputRewardForShowByMoney(props) {
         ...mainInfo,
         config: JSON.stringify({
           game: platformPromoId,
-          server: server,
+          server: serverGame,
           type: props.typeEventByMoney,
           data: item
         })
@@ -136,14 +140,35 @@ function InputRewardForShowByMoney(props) {
     onCompleted: data => console.log(data)
   });
   const submitUpdateEvent = async () => {
-    if (props.nameEventByMoney === "MONEY") {
-      if (props.typeEventByMoney === "INKIND") {
-        updateEventByInkind();
-      } else {
-        updateEventByCoin();
+    if (
+      checkMainInfoPromoAndEvent(
+        namePromo,
+        props.nameEventByMoney,
+        timeTotalPromo[0],
+        startTime,
+        endTime,
+        datesPromo,
+        dailyPromo
+      )
+    ) {
+      if (props.nameEventByMoney === "MONEY") {
+        if (
+          props.typeEventByMoney === "INKIND" &&
+          checkPoint(inkind) &&
+          checkRewardsIsEmtry(inkind)
+        ) {
+          await updateEventByInkind();
+          props.setAlertUpdateSuccess(true);
+        } else if (checkPoint(coin) && checkRewardsIsEmtry(coin)) {
+          await updateEventByCoin();
+          props.setAlertUpdateSuccess(true);
+        }
+      } else if (props.nameEventByMoney === "COIN" && checkPoint(item) && checkRewardsIsEmtry(item) && platformPromoId !== '' && serverGame !== '') {
+        await updateEventByItem();
+        props.setAlertUpdateSuccess(true);
       }
-    } else if (props.nameEventByMoney === "COIN") {
-      updateEventByItem();
+    }else{
+      alertError()
     }
   };
   const addItem = val => {
@@ -164,7 +189,7 @@ function InputRewardForShowByMoney(props) {
     dispatchSeclectNumbItem({
       isType: isType,
       positionItem: positionItem,
-      value: Number(e.target.value)
+      value: e.target.value !== "" ? Number(e.target.value) : ""
     });
   };
   const handleChooseInKind = (positionItem, e) => {
@@ -216,20 +241,20 @@ function InputRewardForShowByMoney(props) {
       </Col>
     )
   );
-  const printItemInkind = inkind.map(function(val, index1) {
+  const printItemInkind = inkind.map(function (val, index1) {
     return (
       <div key={index1}>
         <Col md={24}>
           TỪ
           <Input
             value={val.point}
-            min={val.point}
+            min={index1 > 0 ? inkind[index1 - 1].point : 0}
             type="number"
             name="pucharseTimes"
             onChange={e => handleChooseNumbItem("inkind", index1, e)}
             style={{ width: "10%" }}
           ></Input>
-          ...
+          VNĐ
           <Input
             value={val.rewards[0]}
             placeholder="-Điền quà out game-"
@@ -247,7 +272,7 @@ function InputRewardForShowByMoney(props) {
       TỪ
       <Input
         value={val.point}
-        min={val.point}
+        min={index1 > 0 ? coin[index1 - 1].point : 0}
         type="number"
         name="pucharseTimes"
         onChange={e => handleChooseNumbItem("coin", index1, e)}
@@ -258,7 +283,7 @@ function InputRewardForShowByMoney(props) {
         mode="multiple"
         value={val.rewards}
         style={{ width: "90%" }}
-        // onChange={value => handleChooseItem(index1, value)}
+      // onChange={value => handleChooseItem(index1, value)}
       >
         {printItemsEvent}
       </Select>{" "}
@@ -271,6 +296,7 @@ function InputRewardForShowByMoney(props) {
       TỪ
       <Input
         value={val.point}
+        min={index1 > 0 ? item[index1 - 1].point : 0}
         type="number"
         name="pucharseTimes"
         onChange={e => handleChooseNumbItem("item", index1, e)}
@@ -298,7 +324,7 @@ function InputRewardForShowByMoney(props) {
       </Row>
       <div className="btn-create-promo">
         <Button>Hủy</Button>
-        <Button onClick={()=>submitUpdateEvent()}>Cập nhật khuyến mãi</Button>
+        <Button onClick={() => submitUpdateEvent()}>Cập nhật khuyến mãi</Button>
       </div>
       <Row>
         {props.typeEventByMoney === "COIN" && (
@@ -310,7 +336,7 @@ function InputRewardForShowByMoney(props) {
         {props.typeEventByMoney === "INKIND" && (
           <>
             {printItemInkind}
-            <Button onClick={() => dispatchAddInkindPromo()}>
+            <Button onClick={() => addItem('inkind')}>
               Thêm điều kiện
             </Button>
           </>

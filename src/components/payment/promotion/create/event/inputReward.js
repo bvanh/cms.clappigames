@@ -1,5 +1,6 @@
 import React, { useState, useMemo, isValidElement } from "react";
 import { Button, Input, Row, Col, Select, Modal, Radio } from "antd";
+import moment from 'moment'
 import {
   createPromotion,
   createItemEvent,
@@ -11,15 +12,16 @@ import {
 } from "../../promoService";
 import { useLazyQuery, useMutation, useQuery } from "@apollo/react-hooks";
 import { connect } from "react-redux";
+import { getListItemsForEvent } from "../../../../../utils/query/promotion";
 import { getListPartnerProducts } from "../../../../../utils/queryPartnerProducts";
 const { Option } = Select;
 function InputrewardForShowByMoney(props) {
   const { indexEventByMoney } = props;
   const [listItemForEvent, setListItemForEvent] = useState({
     isShow: false,
-    itemsForEventTypeMoney: [{ productName: "", partnerProductId: "" }]
+    itemsForEventTypeMoney: [{ productName: "", partnerProductId: "" }],
+    coinEvent: [{ productId: "", productName: "" }]
   });
-  const { isShow, itemsForEventTypeMoney } = listItemForEvent;
   const {
     namePromo,
     platformPromoId,
@@ -40,17 +42,24 @@ function InputrewardForShowByMoney(props) {
       rewards: []
     }
   ]);
-  const resetInput = useMemo(
-    () =>
-      setIndexShop([
-        {
-          point: 1,
-          rewards: []
-        }
-      ]),
-    [props.typeEventByMoney]
-  );
-  const { data } = useQuery(getListPartnerProducts(platformPromoId), {
+  useQuery(getListItemsForEvent, {
+    onCompleted: data => {
+      setListItemForEvent({
+        ...listItemForEvent,
+        coinEvent: data.listProducts
+      });
+    }
+  });
+  const { isShow, itemsForEventTypeMoney, coinEvent } = listItemForEvent;
+  const resetInput = useMemo(() => {
+    setIndexShop([
+      {
+        point: 1,
+        rewards: []
+      }
+    ]);
+  }, [props.typeEventByMoney]);
+  useQuery(getListPartnerProducts(platformPromoId), {
     onCompleted: data => {
       setListItemForEvent({
         ...listItemForEvent,
@@ -64,7 +73,6 @@ function InputrewardForShowByMoney(props) {
       ]);
     }
   });
-
   const [createNewItemEvent] = useMutation(createItemEvent, {
     variables: {
       req: {
@@ -72,15 +80,20 @@ function InputrewardForShowByMoney(props) {
         type: "EVENT",
         status: "COMPLETE",
         sort: 0,
-        price: itemNumb * 1000
+        price: itemNumb * 1000,
+        basecoin: itemNumb
       }
     },
-    onCompleted: data => {
+    onCompleted: async data => {
+      const demo = {
+        productName: data.createProduct.productName,
+        productId: data.createProduct.productId
+      };
+      const newCoinEvent = [...listItemForEvent.coinEvent, demo];
+      setListItemForEvent({ ...listItemForEvent, coinEvent: newCoinEvent });
       const newItem = [...indexShop];
-      newItem[rowItems].rewardForShow = [data.createProduct.productName];
-      newItem[rowItems].rewardForSend = data.createProduct.productId;
+      newItem[rowItems].rewards[0] = data.createProduct.productId;
       setIndexShop(newItem);
-      props.getItemsForEventTypeMoney();
     }
   });
   const [createEventByMoney] = useMutation(createEvent, {
@@ -90,8 +103,8 @@ function InputrewardForShowByMoney(props) {
         status: statusPromo,
         paymentType: props.nameEventByMoney,
         eventTime: JSON.stringify({
-          startTime: timeTotalPromo[0],
-          endTime: timeTotalPromo[1],
+          startTime: moment(timeTotalPromo[0]).format('YYYY-MM-DD hh:mm'),
+          endTime: moment(timeTotalPromo[1]).format('YYYY-MM-DD hh:mm'),
           dates: datesPromo,
           daily: dailyPromo,
           hour: [startTime, endTime]
@@ -130,29 +143,37 @@ function InputrewardForShowByMoney(props) {
   const submitCreateEvent = async () => {
     if (props.nameEventByMoney === "MONEY") {
       if (
-        checkMainInfoPromoAndEvent(namePromo, datesPromo, dailyPromo) &&
+        checkMainInfoPromoAndEvent(
+          namePromo,
+          props.nameEventByMoney,
+          datesPromo,
+          dailyPromo
+        ) &&
         checkRewardsIsEmtry(indexShop)
       ) {
         await createEventByMoney();
         props.successAlert();
       } else {
+        console.log("money");
         alert("kiểm tra và điền đầy đủ thông tin");
       }
     } else if (props.nameEventByMoney === "COIN") {
       if (
         checkMainInfoPromoAndEvent(
           namePromo,
-          platformPromoId,
-          promoType,
-          server,
+          props.nameEventByMoney,
+          timeTotalPromo[0],
+          startTime,
+          endTime,
           datesPromo,
           dailyPromo
         ) &&
-        checkRewardsIsEmtry(indexShop)
+        checkRewardsIsEmtry(indexShop) && platformPromoId !== '' && server !== ''
       ) {
         await createEventByMoneyForItem();
         props.successAlert();
       } else {
+        console.log("coin");
         alert("kiểm tra và điền đầy đủ thông tin");
       }
     }
@@ -177,7 +198,7 @@ function InputrewardForShowByMoney(props) {
   };
   const handleChooseNumbItem = (positionItem, e) => {
     const newItem = [...indexShop];
-    newItem[positionItem].point = Number(e.target.value);
+    newItem[positionItem].point = e.target.value !== '' ? Number(e.target.value) : '';
     setIndexShop(newItem);
   };
   const handleChooseIsKind = (positionItem, e) => {
@@ -191,7 +212,7 @@ function InputrewardForShowByMoney(props) {
     setIndexShop(newItem);
     setItemNumb(null);
   };
-  const submitCreateItem = () => {
+  const submitCreateItem = async () => {
     if (itemNumb !== null) {
       createNewItemEvent();
       setListItemForEvent({ ...listItemForEvent, isShow: false });
@@ -207,26 +228,22 @@ function InputrewardForShowByMoney(props) {
       {val.productName}
     </Option>
   ));
-  const printListItemsEvent = indexEventByMoney.itemsForEventByMoney.map(
-    (val, index) => (
-      <Option value={val.productId} key={index}>
+  const printListItemsEvent = coinEvent.map((val, index) => (
+    <Option value={val.productId} key={index}>
+      {val.productName}
+    </Option>
+  ));
+  const printItemsForEventTypeMoney = coinEvent.map((val, i) => (
+    <Col span={24} key={i}>
+      <Radio
+        style={{ display: "block", height: "30px", lineHeight: "30px" }}
+        value={val.productId}
+      >
         {val.productName}
-      </Option>
-    )
-  );
-  const printItemsForEventTypeMoney = indexEventByMoney.itemsForEventByMoney.map(
-    (val, i) => (
-      <Col span={24} key={i}>
-        <Radio
-          style={{ display: "block", height: "30px", lineHeight: "30px" }}
-          value={val.productId}
-        >
-          {val.productName}
-        </Radio>
-      </Col>
-    )
-  );
-  const printItem = indexShop.map(function(val, index1) {
+      </Radio>
+    </Col>
+  ));
+  const printItem = indexShop.map(function (val, index1) {
     return (
       <div key={index1}>
         <Col md={24}>

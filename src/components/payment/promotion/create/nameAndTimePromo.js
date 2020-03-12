@@ -19,14 +19,7 @@ const { Option } = Select;
 const { RangePicker } = DatePicker;
 function InputNameAndTypeArea(props) {
   const { switchTypeEvent } = props;
-  const {
-    eventPaymentType,
-    namePromo,
-    platformPromoId,
-    serverGame,
-    statusPromo,
-    promoType
-  } = props.indexPromo;
+  const { namePromo, statusPromo } = props.indexPromo;
   return (
     <div>
       <h3 className="promotion-title-field">Tên chương trình khuyến mãi</h3>
@@ -51,7 +44,10 @@ function InputNameAndTypeArea(props) {
       <Radio.Group
         value={switchTypeEvent}
         buttonStyle="solid"
-        onChange={e => props.setSwitchTypeEvent(e.target.value)}
+        onChange={e => {
+          props.setSwitchTypeEvent(e.target.value);
+          props.resetGameAndServer();
+        }}
         className="promotion-choose-typeEvent"
       >
         <Radio.Button value={false}>Khuyến mãi theo hóa đơn</Radio.Button>
@@ -79,7 +75,11 @@ function InputTimeArea(props) {
   // const printAlertTimeTotalPromo = timeTotalAlert.map((val, i) => <>{val}</>);
   const childrenDates = [];
   for (let i = 1; i <= 31; i++) {
-    childrenDates.push(<Option key={i} value={i}>{i < 10 ? "0" + i : i}</Option>);
+    childrenDates.push(
+      <Option key={i} value={i}>
+        {i < 10 ? "0" + i : i}
+      </Option>
+    );
   }
   const childrenDaily = daily0.map((val, index) => (
     <Option key={index} value={index}>
@@ -93,15 +93,19 @@ function InputTimeArea(props) {
         <div className="section2-promotion-pickTime">
           <h3>Thời gian: </h3>
           <RangePicker
-            showTime={{ format: "HH:mm" }}
+            showTime={{ format: "hh:mm" }}
             style={{ width: "80%" }}
-            format="YYYY-MM-DD HH:mm"
+            format="DD-MM-YYYY hh:mm"
             placeholder={["-Thời gian bắt đầu", "- Thời gian kết thúc"]}
             onChange={props.onChangeDatePicker}
-            value={[
-              moment(timeTotalPromo[0], "YYYY-MM-DD HH:mm"),
-              moment(timeTotalPromo[1], "YYYY-MM-DD HH:mm")
-            ]}
+            value={
+              timeTotalPromo[0] === ""
+                ? [null, null]
+                : [
+                  moment(timeTotalPromo[0], "DD-MM-YYYY hh:mm"),
+                  moment(timeTotalPromo[1], "DD-MM-YYYY hh:mm")
+                ]
+            }
           />
         </div>
         <div className="section2-promotion-pickTime">
@@ -135,19 +139,21 @@ function InputTimeArea(props) {
           <div style={{ width: "80%" }}>
             <TimePicker
               minuteStep={10}
-              format={"HH:mm:ss"}
+              format={"HH:mm"}
               placeholder="- Giờ bắt đầu"
               onChange={(time, timeString) =>
                 props.setTimePromo(timeString, "startTime")
               }
-              value={moment(startTime, "HH:mm:ss")}
+              value={startTime === ""
+                ? null : moment(startTime, "HH:mm")}
               style={{ width: "50%" }}
             />
             <TimePicker
               minuteStep={10}
-              value={moment(endTime, "HH:mm:ss")}
+              value={endTime === ""
+                ? null : moment(endTime, "HH:mm")}
               style={{ width: "50%" }}
-              format={"HH:mm:ss"}
+              format={"HH:mm"}
               placeholder="- Giờ kết thúc"
               onChange={(time, timeString) => {
                 props.setTimePromo(timeString, "endTime");

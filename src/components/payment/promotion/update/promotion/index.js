@@ -1,29 +1,29 @@
-import React, { useState, useEffect } from "react";
-import { Row, Col, DatePicker, Select, Icon } from "antd";
+import React, { useState, useEffect, useMemo } from "react";
+import { Row, Col, DatePicker, Select, Icon, Modal } from "antd";
 import { useLazyQuery, useMutation, useQuery } from "@apollo/react-hooks";
-import "../../../../static/style/promotion.css";
-import EventByItems from "./promotion/inputRewardItem";
-import InputRewardForShowByMoney from "./event/inputReward";
-import MenuRewardEventByMoney from "./event/menuReward";
+import moment from "moment";
+import "../../../../../static/style/promotion.css";
+import EventByItems from "./inputRewardItem";
+import MenuRewardByItem from "./menuRewardItem";
+import InputRewardForShowByMoney from "../../create/event/inputReward";
+import MenuRewardEventByMoney from "../../create/event/menuReward";
 import {
   InputNameAndTypeArea,
   InputTimeArea
-} from "../create/nameAndTimePromo";
-import MenuRewardByItem from "./promotion/menuRewardItem";
+} from "../../create/nameAndTimePromo";
 import {
   dispatchResetItemRewards,
   dispatchInititalIndexConfig
-} from "../../../../redux/actions/index";
-import { queryGetPlatform } from "../../../../utils/queryPlatform";
-import { getListPartnerProducts2 } from "../../../../utils/queryPartnerProducts";
+} from "../../../../../redux/actions/index";
+import { queryGetPlatform } from "../../../../../utils/queryPlatform";
+import { getListPartnerProducts2 } from "../../../../../utils/queryPartnerProducts";
 import {
   getListServer,
   getListItemsForEvent
-} from "../../../../utils/query/promotion";
+} from "../../../../../utils/query/promotion";
 import { connect } from "react-redux";
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
-import { useMemo } from "react";
-function UpdatePromotionAndEvent(props) {
+function UpdatePromotion(props) {
   const {
     name,
     game,
@@ -36,6 +36,7 @@ function UpdatePromotionAndEvent(props) {
     paymentType
   } = props.detailPromo;
   const { startTime, endTime, dates, daily, hour } = JSON.parse(eventTime);
+  const [alertUpdateSuccess, setAlertUpdateSuccess] = useState(false);
   const [switchTypeEvent, setSwitchTypeEvent] = useState(shop ? true : false);
   const [indexShop, setIndexShop] = useState(shop ? JSON.parse(shop) : "");
   const [indexPromo, setIndexPromo] = useState({
@@ -78,7 +79,7 @@ function UpdatePromotionAndEvent(props) {
     itemsForEventByMoney: [{ productName: "", productId: "" }]
   });
   const { platformPromoId, statusPromo, serverGame } = indexPromo;
-  const {listGame, listItems, listServer } = typePromo;
+  const { listGame, listItems, listServer } = typePromo;
   const [getListPartnerByPlatform] = useLazyQuery(getListPartnerProducts2, {
     onCompleted: data => {
       setTypePromo({ ...typePromo, listItems: data.listPartnerProducts });
@@ -117,20 +118,22 @@ function UpdatePromotionAndEvent(props) {
   );
   const handleChangePlatform = async e => {
     dispatchResetItemRewards();
-    setIndexShop([{
-      purchaseTimes: 1,
-      purchaseItemId: [],
-      rewards: [
-        {
-          numb: 1,
-          itemId: []
-        }
-      ]
-    }])
+    setIndexShop([
+      {
+        purchaseTimes: 1,
+        purchaseItemId: [],
+        rewards: [
+          {
+            numb: 1,
+            itemId: []
+          }
+        ]
+      }
+    ]);
     await setIndexPromo({
       ...indexPromo,
       platformPromoId: e,
-      server: ""
+      serverGame: 0
     });
     await getListPartnerByPlatform({
       variables: {
@@ -145,20 +148,22 @@ function UpdatePromotionAndEvent(props) {
     setIndexPromo({ ...indexPromo, serverGame: e });
   };
   const onChangeDatePicker = (value, dateString) => {
+    console.log(dateString)
     setIndexPromo({ ...indexPromo, timeTotalPromo: dateString });
   };
   const setTimePromo = (timeString, val) => {
+
     if (val === "startTime") {
-      setIndexPromo({ ...indexPromo, startTime: timeString });
+      setIndexPromo({ ...indexPromo, startTime: timeString !== "" ? timeString + ":00" : '' });
     } else {
-      setIndexPromo({ ...indexPromo, endTime: timeString });
+      setIndexPromo({ ...indexPromo, endTime: timeString !== "" ? timeString + ":59" : '' });
     }
   };
   const handleChangeDaily = value => {
-    setIndexPromo({ ...indexPromo, dailyPromo: value });
+    setIndexPromo({ ...indexPromo, dailyPromo: value.sort((a, b) => a - b) });
   };
   const handleChangeDates = value => {
-    setIndexPromo({ ...indexPromo, datesPromo: value });
+    setIndexPromo({ ...indexPromo, datesPromo: value.sort((a, b) => a - b) });
   };
   const handleChangeTypePromo = val => {
     setIndexPromo({ ...indexPromo, promoType: val });
@@ -182,6 +187,7 @@ function UpdatePromotionAndEvent(props) {
       <Col md={12} className="section1-promotion">
         <div>
           <InputNameAndTypeArea
+            alertUpdateSuccess={alertUpdateSuccess}
             indexPromo={indexPromo}
             typePromo={typePromo}
             setTypePromo={setTypePromo}
@@ -231,6 +237,7 @@ function UpdatePromotionAndEvent(props) {
           />
         ) : (
             <InputRewardForShowByMoney
+              setAlertUpdateSuccess={setAlertUpdateSuccess}
               typePromo={typePromo}
               listItems={listItems}
               indexPromo={indexPromo}
@@ -240,6 +247,13 @@ function UpdatePromotionAndEvent(props) {
             />
           )}
       </Col>
+      <Modal
+        title={<Icon type="check-circle" />}
+        visible={alertUpdateSuccess}
+        onCancel={() => setAlertUpdateSuccess(false)}
+        okText={<Link to="/payment/promotion">Xem danh sách</Link>}
+        cancelText="Hủy bỏ"
+      ></Modal>
     </Row>
   );
 }
@@ -248,4 +262,4 @@ function mapStateToProps(state) {
     detailPromo: state.detailPromo
   };
 }
-export default connect(mapStateToProps, null)(UpdatePromotionAndEvent);
+export default connect(mapStateToProps, null)(UpdatePromotion);

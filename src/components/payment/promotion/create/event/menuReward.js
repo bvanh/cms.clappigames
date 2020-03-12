@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   Table,
   Button,
@@ -20,6 +20,7 @@ import {
 import { queryGetPlatform } from "../../../../../utils/queryPlatform";
 import { getListPartnerProducts } from "../../../../../utils/queryPartnerProducts";
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
+import {connect} from 'react-redux'
 import {
   dispatchTypeEventByMoney,
   dispatchNameEventByMoney
@@ -53,7 +54,7 @@ const MenuRewardEventByMoney = props => {
   });
   const { eventType, eventPaymentType, value } = eventByMoneyIndex;
 
-  useEffect(() => {
+  useMemo(() => {
     dispatchNameEventByMoney("MONEY");
     setEventByMoneyIndex({
       ...eventByMoneyIndex,
@@ -65,7 +66,7 @@ const MenuRewardEventByMoney = props => {
       ...props.indexEventByMoney,
       isPaymentTypeByCoin: false
     });
-  }, []);
+  }, [props.switchTypeEvent]);
   useQuery(getEventPaymentType, {
     onCompleted: data =>
       setEventByMoneyIndex({
@@ -134,6 +135,7 @@ const MenuRewardEventByMoney = props => {
         style={{ width: 120 }}
         onChange={handleChangePaymentType}
         placeholder="-Chọn game-"
+        value={props.nameEventByMoney}
       >
         {printEventType}
       </Select>{" "}
@@ -170,4 +172,10 @@ const MenuRewardEventByMoney = props => {
     </div>
   );
 };
-export default MenuRewardEventByMoney;
+function mapStateToProps(state) {
+  return {
+    typeEventByMoney: state.typeEventByMoney,
+    nameEventByMoney: state.nameEventByMoney
+  };
+}
+export default connect(mapStateToProps, null)(MenuRewardEventByMoney);
