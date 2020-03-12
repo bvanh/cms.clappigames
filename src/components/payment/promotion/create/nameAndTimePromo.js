@@ -93,18 +93,18 @@ function InputTimeArea(props) {
         <div className="section2-promotion-pickTime">
           <h3>Thời gian: </h3>
           <RangePicker
-            showTime={{ format: "HH:mm" }}
+            showTime={{ format: "hh:mm" }}
             style={{ width: "80%" }}
-            format="DD-MM-YYYY HH:mm"
+            format="DD-MM-YYYY hh:mm"
             placeholder={["-Thời gian bắt đầu", "- Thời gian kết thúc"]}
             onChange={props.onChangeDatePicker}
             value={
               timeTotalPromo[0] === ""
                 ? [null, null]
                 : [
-                    moment(timeTotalPromo[0], "DD-MM-YYYY HH:mm"),
-                    moment(timeTotalPromo[1], "DD-MM-YYYY HH:mm")
-                  ]
+                  moment(timeTotalPromo[0], "DD-MM-YYYY hh:mm"),
+                  moment(timeTotalPromo[1], "DD-MM-YYYY hh:mm")
+                ]
             }
           />
         </div>
@@ -144,12 +144,14 @@ function InputTimeArea(props) {
               onChange={(time, timeString) =>
                 props.setTimePromo(timeString, "startTime")
               }
-              value={moment(startTime, "HH:mm")}
+              value={startTime === ""
+                ? null : moment(startTime, "HH:mm")}
               style={{ width: "50%" }}
             />
             <TimePicker
               minuteStep={10}
-              value={moment(endTime, "HH:mm")}
+              value={endTime === ""
+                ? null : moment(endTime, "HH:mm")}
               style={{ width: "50%" }}
               format={"HH:mm"}
               placeholder="- Giờ kết thúc"

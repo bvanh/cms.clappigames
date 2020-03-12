@@ -1,19 +1,26 @@
-import React, { Component,useState } from "react";
+import React, { Component, useState } from "react";
 import { Select } from "antd";
 import { getPromotionType } from "../../../../../utils/queryPaymentAndPromoType";
+import { queryGetPlatform } from "../../../../../utils/queryPlatform";
 import { useQuery } from "@apollo/react-hooks";
 const { Option } = Select;
 
 function MenuRewardByItem(props) {
   const { server } = props;
 
-  const { listGame, listServer } = props.typePromo;
+  const { listServer } = props.typePromo;
+  const [listGame, setListGame] = useState([{}])
   const [listTypePromo, setListTypePromo] = useState([
     { name: "", description: "" }
   ]);
   useQuery(getPromotionType, {
     onCompleted: data => {
       setListTypePromo(data.__type.enumValues);
+    }
+  });
+  useQuery(queryGetPlatform, {
+    onCompleted: data => {
+      setListGame(data.listPartners);
     }
   });
   const printPromoType = listTypePromo.map((val, index) => (

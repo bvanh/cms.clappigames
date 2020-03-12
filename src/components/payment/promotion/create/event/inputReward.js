@@ -1,5 +1,6 @@
 import React, { useState, useMemo, isValidElement } from "react";
 import { Button, Input, Row, Col, Select, Modal, Radio } from "antd";
+import moment from 'moment'
 import {
   createPromotion,
   createItemEvent,
@@ -80,7 +81,7 @@ function InputrewardForShowByMoney(props) {
         status: "COMPLETE",
         sort: 0,
         price: itemNumb * 1000,
-        basecoin:itemNumb
+        basecoin: itemNumb
       }
     },
     onCompleted: async data => {
@@ -102,8 +103,8 @@ function InputrewardForShowByMoney(props) {
         status: statusPromo,
         paymentType: props.nameEventByMoney,
         eventTime: JSON.stringify({
-          startTime: timeTotalPromo[0],
-          endTime: timeTotalPromo[1],
+          startTime: moment(timeTotalPromo[0]).format('YYYY-MM-DD hh:mm'),
+          endTime: moment(timeTotalPromo[1]).format('YYYY-MM-DD hh:mm'),
           dates: datesPromo,
           daily: dailyPromo,
           hour: [startTime, endTime]
@@ -161,6 +162,9 @@ function InputrewardForShowByMoney(props) {
         checkMainInfoPromoAndEvent(
           namePromo,
           props.nameEventByMoney,
+          timeTotalPromo[0],
+          startTime,
+          endTime,
           datesPromo,
           dailyPromo
         ) &&

@@ -40,9 +40,9 @@ function CreatePromotion() {
     eventPaymentType: [],
     namePromo: '',
     platformPromoId: "",
-    server: "",
+    serverGame: "",
     statusPromo: "COMPLETE",
-    promoType: "",
+    typePromo: "",
     timeTotalPromo: [
       moment().format("YYYY-MM-DD HH:mm"),
       moment().format("YYYY-MM-DD HH:mm")
@@ -157,13 +157,13 @@ function CreatePromotion() {
     }
   };
   const handleChangeDaily = value => {
-    setIndexPromo({ ...indexPromo, dailyPromo: value });
+    setIndexPromo({ ...indexPromo, dailyPromo: value.sort((a, b) => a - b) });
   };
   const handleChangeDates = value => {
-    setIndexPromo({ ...indexPromo, datesPromo: value });
+    setIndexPromo({ ...indexPromo, datesPromo: value.sort((a, b) => a - b) });
   };
   const handleChangeTypePromo = val => {
-    setIndexPromo({ ...indexPromo, promoType: val });
+    setIndexPromo({ ...indexPromo, typePromo: val });
   };
   const successAlert = () => {
     Modal.confirm({

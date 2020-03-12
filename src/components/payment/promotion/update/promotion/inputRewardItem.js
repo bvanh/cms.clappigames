@@ -1,8 +1,8 @@
 import React, { useState, useCallback } from "react";
 import { Button, Input, Row, Col, Select } from "antd";
 import { updatePromotion } from "../../../../../utils/mutation/promotion";
-import { useLazyQuery, useMutation, useQuery } from "@apollo/react-hooks";
 import moment from 'moment'
+import { useLazyQuery, useMutation, useQuery } from "@apollo/react-hooks";
 import { getListPartnerProducts } from "../../../../../utils/queryPartnerProducts";
 import { connect } from "react-redux";
 const { Option } = Select;
@@ -40,8 +40,8 @@ function EventByItems(props) {
         server: serverGame,
         shop: JSON.stringify(indexShop),
         eventTime: JSON.stringify({
-          startTime: moment(timeTotalPromo[0]).format('YYYY-MM-DD hh:mm'),
-          endTime: moment(timeTotalPromo[1]).format('YYYY-MM-DD hh:mm'),
+          startTime: moment(timeTotalPromo[0],'DD-MM-YYYY').format('YYYY-MM-DD hh:mm'),
+          endTime: moment(timeTotalPromo[1],'DD-MM-YYYY').format('YYYY-MM-DD hh:mm'),
           dates: datesPromo,
           daily: dailyPromo,
           hour: [startTime, endTime]

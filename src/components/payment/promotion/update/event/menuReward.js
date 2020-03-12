@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect,useMemo } from "react";
 import { DatePicker, Select, TimePicker } from "antd";
 import { useLazyQuery, useMutation, useQuery } from "@apollo/react-hooks";
 import "../../../../../static/style/promotion.css";

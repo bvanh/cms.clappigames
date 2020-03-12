@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 import { Button, Input, Row, Col, Select } from "antd";
 import { createPromotion } from "../../../../../utils/mutation/promotion";
+import moment from 'moment'
 import { useLazyQuery, useMutation, useQuery } from "@apollo/react-hooks";
 import { getListPartnerProducts } from "../../../../../utils/queryPartnerProducts";
 import {
   checkMainInfoPromoAndEvent,
   checkItemIsEmtry,
-  checkPurchaseItemIsEmtry
+  checkPurchaseItemIsEmtry,
+  checkPoint
 } from "../../promoService";
 const { Option } = Select;
 function EventByItems(props) {
@@ -16,9 +18,9 @@ function EventByItems(props) {
   const {
     namePromo,
     platformPromoId,
-    server,
+    serverGame,
     statusPromo,
-    promoType,
+    typePromo,
     timeTotalPromo,
     datesPromo,
     dailyPromo,
@@ -35,14 +37,14 @@ function EventByItems(props) {
     variables: {
       req: {
         name: namePromo,
-        type: promoType,
+        type: typePromo,
         status: statusPromo,
         game: platformPromoId,
-        server: server,
+        server: serverGame,
         shop: JSON.stringify(indexShop),
         eventTime: JSON.stringify({
-          startTime: timeTotalPromo[0],
-          endTime: timeTotalPromo[1],
+          startTime: moment(timeTotalPromo[0]).format('YYYY-MM-DD hh:mm'),
+          endTime: moment(timeTotalPromo[1]).format('YYYY-MM-DD hh:mm'),
           dates: datesPromo,
           daily: dailyPromo,
           hour: [startTime, endTime]
@@ -55,14 +57,16 @@ function EventByItems(props) {
     if (
       checkMainInfoPromoAndEvent(
         namePromo,
-        platformPromoId,
-        promoType,
-        server,
+        typePromo,
+        timeTotalPromo[0],
+        startTime,
+        endTime,
         datesPromo,
         dailyPromo
-      ) &&
+      )
+      &&
       checkPurchaseItemIsEmtry(indexShop) &&
-      checkItemIsEmtry(indexShop)
+      checkItemIsEmtry(indexShop) && serverGame !== "" && platformPromoId !== ""
     ) {
       await createPromo();
       props.successAlert();

@@ -5,7 +5,7 @@ import { connect } from "react-redux";
 import { getDetailPromotion } from "../../../../../utils/query/promotion";
 import TypePromo from "./typePromo";
 import TimePromo from "../timePromo";
-import UpdatePromotionAndEvent from "../../update/index";
+import UpdatePromotion from "../../update/promotion/index";
 import { dispatchDetailPromoAndEvent } from "../../../../../redux/actions/index";
 import { useQuery } from "react-apollo";
 
@@ -54,7 +54,7 @@ function DetailPromotion(props) {
   return (
     <>
       {isUpdate ? (
-        <UpdatePromotionAndEvent />
+        <UpdatePromotion />
       ) : (
         <Row>
           <Link to="/payment/promotion">
