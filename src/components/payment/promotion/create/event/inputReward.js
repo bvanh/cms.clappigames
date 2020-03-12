@@ -233,7 +233,7 @@ function InputrewardForShowByMoney(props) {
           TỪ
           <Input
             value={indexShop[index1].point}
-            min={index1 > 0 ? indexShop[index1 - 1].point : ""}
+            min={index1 > 0 ? indexShop[index1 - 1].point : 0}
             type="number"
             name="pucharseTimes"
             onChange={e => handleChooseNumbItem(index1, e)}
