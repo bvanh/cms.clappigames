@@ -45,7 +45,7 @@ function MenuRewardByItem(props) {
           <h3>Chọn game:</h3>
           <Select
             style={{ width: "65%" }}
-            onChange={props.handleChangePlatform}
+            onChange={props.handleChangePlatformPromo}
             placeholder="-Chọn game-"
           >
             {printPlatform}
@@ -56,7 +56,7 @@ function MenuRewardByItem(props) {
           <Select
             placeholder="-Chọn server-"
             style={{ width: "65%" }}
-            onChange={props.handleChangeServer}
+            onChange={props.handleChangeServerPromo}
             name="server"
           >
             {printListServer}

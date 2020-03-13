@@ -1,6 +1,6 @@
 import React, { useState, useMemo, isValidElement } from "react";
 import { Button, Input, Row, Col, Select, Modal, Radio } from "antd";
-import moment from 'moment'
+import moment from "moment";
 import {
   createPromotion,
   createItemEvent,
@@ -10,30 +10,31 @@ import {
   checkMainInfoPromoAndEvent,
   checkRewardsIsEmtry
 } from "../../promoService";
+import { dispatchSaveIdCreateInUpdate } from "../../../../../redux/actions/index";
 import { useLazyQuery, useMutation, useQuery } from "@apollo/react-hooks";
 import { connect } from "react-redux";
 import { getListItemsForEvent } from "../../../../../utils/query/promotion";
 import { getListPartnerProducts } from "../../../../../utils/queryPartnerProducts";
 const { Option } = Select;
 function InputrewardForShowByMoney(props) {
-  const { indexEventByMoney } = props;
+  const { isUpdate } = props;
   const [listItemForEvent, setListItemForEvent] = useState({
     isShow: false,
     itemsForEventTypeMoney: [{ productName: "", partnerProductId: "" }],
-    coinEvent: [{ productId: "", productName: "" }]
   });
+  const [coinEvent, setCoinEvent] = useState([{ productId: "", productName: "" }])
   const {
-    namePromo,
-    platformPromoId,
+    name,
+    platformId,
     server,
-    statusPromo,
+    status,
     promoType,
-    timeTotalPromo,
-    datesPromo,
-    dailyPromo,
+    timeTotal,
+    dates,
+    daily,
     startTime,
     endTime
-  } = props.indexPromo;
+  } = props.indexPromoAndEvent;
   const [rowItems, setRowItems] = useState(0);
   const [itemNumb, setItemNumb] = useState(null);
   const [indexShop, setIndexShop] = useState([
@@ -44,13 +45,10 @@ function InputrewardForShowByMoney(props) {
   ]);
   useQuery(getListItemsForEvent, {
     onCompleted: data => {
-      setListItemForEvent({
-        ...listItemForEvent,
-        coinEvent: data.listProducts
-      });
+      setCoinEvent(data.listProducts);
     }
   });
-  const { isShow, itemsForEventTypeMoney, coinEvent } = listItemForEvent;
+  const { isShow, itemsForEventTypeMoney } = listItemForEvent;
   const resetInput = useMemo(() => {
     setIndexShop([
       {
@@ -59,7 +57,7 @@ function InputrewardForShowByMoney(props) {
       }
     ]);
   }, [props.typeEventByMoney]);
-  useQuery(getListPartnerProducts(platformPromoId), {
+  useQuery(getListPartnerProducts(platformId), {
     onCompleted: data => {
       setListItemForEvent({
         ...listItemForEvent,
@@ -81,7 +79,7 @@ function InputrewardForShowByMoney(props) {
         status: "COMPLETE",
         sort: 0,
         price: itemNumb * 1000,
-        basecoin: itemNumb
+        baseCoin: Number(itemNumb)
       }
     },
     onCompleted: async data => {
@@ -99,14 +97,14 @@ function InputrewardForShowByMoney(props) {
   const [createEventByMoney] = useMutation(createEvent, {
     variables: {
       req: {
-        name: namePromo,
-        status: statusPromo,
+        name: name,
+        status: status,
         paymentType: props.nameEventByMoney,
         eventTime: JSON.stringify({
-          startTime: moment(timeTotalPromo[0]).format('YYYY-MM-DD hh:mm'),
-          endTime: moment(timeTotalPromo[1]).format('YYYY-MM-DD hh:mm'),
-          dates: datesPromo,
-          daily: dailyPromo,
+          startTime: moment(timeTotal[0]).format("YYYY-MM-DD hh:mm"),
+          endTime: moment(timeTotal[1]).format("YYYY-MM-DD hh:mm"),
+          dates: dates,
+          daily: daily,
           hour: [startTime, endTime]
         }),
         config: JSON.stringify({
@@ -115,67 +113,70 @@ function InputrewardForShowByMoney(props) {
         })
       }
     },
-    onCompleted: data => console.log(data)
+    onCompleted: data => {
+      isUpdate ? dispatchSaveIdCreateInUpdate(data.createEvents.id) : console.log(data);
+    }
   });
   const [createEventByMoneyForItem] = useMutation(createEvent, {
     variables: {
       req: {
-        name: namePromo,
-        status: statusPromo,
+        name: name,
+        status: status,
         paymentType: props.nameEventByMoney,
         eventTime: JSON.stringify({
-          startTime: timeTotalPromo[0],
-          endTime: timeTotalPromo[1],
-          dates: datesPromo,
-          daily: dailyPromo,
+          startTime: timeTotal[0],
+          endTime: timeTotal[1],
+          dates: dates,
+          daily: daily,
           hour: [startTime, endTime]
         }),
         config: JSON.stringify({
-          game: platformPromoId,
+          game: platformId,
           server: server,
           type: props.typeEventByMoney,
           data: indexShop
         })
       }
     },
-    onCompleted: data => console.log(data)
+    onCompleted: data => {
+      isUpdate ? dispatchSaveIdCreateInUpdate(data.createEvents.id) : console.log(data);
+    }
   });
   const submitCreateEvent = async () => {
-    if (props.nameEventByMoney === "MONEY") {
-      if (
-        checkMainInfoPromoAndEvent(
-          namePromo,
-          props.nameEventByMoney,
-          datesPromo,
-          dailyPromo
-        ) &&
-        checkRewardsIsEmtry(indexShop)
-      ) {
-        await createEventByMoney();
-        props.successAlert();
-      } else {
-        console.log("money");
-        alert("kiểm tra và điền đầy đủ thông tin");
+    if (
+      checkMainInfoPromoAndEvent(
+        name,
+        props.nameEventByMoney,
+        timeTotal[0],
+        startTime,
+        endTime,
+        dates,
+        daily
+      )
+    ) {
+      if (props.nameEventByMoney === "MONEY") {
+        if (checkRewardsIsEmtry(indexShop)) {
+          await createEventByMoney();
+          props.successAlert();
+        } else {
+          console.log("money");
+          alert("kiểm tra và điền đầy đủ thông tin");
+        }
+      } else if (props.nameEventByMoney === "COIN") {
+        if (
+          checkRewardsIsEmtry(indexShop) &&
+          platformId !== "" &&
+          server !== ""
+        ) {
+          await createEventByMoneyForItem();
+          props.successAlert();
+        } else {
+          console.log("coin");
+          alert("kiểm tra và điền đầy đủ thông tin");
+        }
       }
-    } else if (props.nameEventByMoney === "COIN") {
-      if (
-        checkMainInfoPromoAndEvent(
-          namePromo,
-          props.nameEventByMoney,
-          timeTotalPromo[0],
-          startTime,
-          endTime,
-          datesPromo,
-          dailyPromo
-        ) &&
-        checkRewardsIsEmtry(indexShop) && platformPromoId !== '' && server !== ''
-      ) {
-        await createEventByMoneyForItem();
-        props.successAlert();
-      } else {
-        console.log("coin");
-        alert("kiểm tra và điền đầy đủ thông tin");
-      }
+    } else {
+      alert("kiểm tra và điền đầy đủ thông tin");
     }
   };
   const addItem = () => {
@@ -198,7 +199,8 @@ function InputrewardForShowByMoney(props) {
   };
   const handleChooseNumbItem = (positionItem, e) => {
     const newItem = [...indexShop];
-    newItem[positionItem].point = e.target.value !== '' ? Number(e.target.value) : '';
+    newItem[positionItem].point =
+      e.target.value !== "" ? Number(e.target.value) : "";
     setIndexShop(newItem);
   };
   const handleChooseIsKind = (positionItem, e) => {

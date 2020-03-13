@@ -40,20 +40,21 @@ function InputRewardForShowByMoney(props) {
   useEffect(() => {
     dispatchTypeEventByMoney(type);
     dispatchSetDataTypePromo({ isType: type.toLowerCase(), data: data });
+    props.setIsCreatePromo(false)
   }, []);
   const { isShow, itemsForEventTypeMoney } = listItemForEvent;
   const {
-    namePromo,
-    platformPromoId,
-    serverGame,
-    statusPromo,
+    name,
+    platformId,
+    server,
+    status,
     promoType,
-    timeTotalPromo,
-    datesPromo,
-    dailyPromo,
+    timeTotal,
+    dates,
+    daily,
     startTime,
     endTime
-  } = props.indexPromo;
+  } = props.indexPromoAndEvent;
   useQuery(getListPartnerProducts(game), {
     onCompleted: data => {
       setListItemForEvent({
@@ -87,14 +88,14 @@ function InputRewardForShowByMoney(props) {
     }
   });
   const mainInfo = {
-    name: namePromo,
-    status: statusPromo,
+    name: name,
+    status: status,
     paymentType: props.nameEventByMoney,
     eventTime: JSON.stringify({
-      startTime: moment(timeTotalPromo[0], 'DD-MM-YYYY').format("YYYY-MM-DD hh:mm"),
-      endTime: moment(timeTotalPromo[1], 'DD-MM-YYYY').format("YYYY-MM-DD hh:mm"),
-      dates: datesPromo,
-      daily: dailyPromo,
+      startTime: moment(timeTotal[0], 'DD-MM-YYYY').format("YYYY-MM-DD hh:mm"),
+      endTime: moment(timeTotal[1], 'DD-MM-YYYY').format("YYYY-MM-DD hh:mm"),
+      dates: dates,
+      daily: daily,
       hour: [startTime, endTime]
     })
   };
@@ -130,8 +131,8 @@ function InputRewardForShowByMoney(props) {
       req: {
         ...mainInfo,
         config: JSON.stringify({
-          game: platformPromoId,
-          server: serverGame,
+          game: platformId,
+          server: server,
           type: props.typeEventByMoney,
           data: item
         })
@@ -142,13 +143,13 @@ function InputRewardForShowByMoney(props) {
   const submitUpdateEvent = async () => {
     if (
       checkMainInfoPromoAndEvent(
-        namePromo,
+        name,
         props.nameEventByMoney,
-        timeTotalPromo[0],
+        timeTotal[0],
         startTime,
         endTime,
-        datesPromo,
-        dailyPromo
+        dates,
+        daily
       )
     ) {
       if (props.nameEventByMoney === "MONEY") {
@@ -158,14 +159,14 @@ function InputRewardForShowByMoney(props) {
           checkRewardsIsEmtry(inkind)
         ) {
           await updateEventByInkind();
-          props.setAlertUpdateSuccess(true);
+          props.alertUpdateSuccess(false);
         } else if (checkPoint(coin) && checkRewardsIsEmtry(coin)) {
           await updateEventByCoin();
-          props.setAlertUpdateSuccess(true);
+          props.alertUpdateSuccess(false);
         }
-      } else if (props.nameEventByMoney === "COIN" && checkPoint(item) && checkRewardsIsEmtry(item) && platformPromoId !== '' && serverGame !== '') {
+      } else if (props.nameEventByMoney === "COIN" && checkPoint(item) && checkRewardsIsEmtry(item) && platformId !== '' && server !== '') {
         await updateEventByItem();
-        props.setAlertUpdateSuccess(true);
+        props.alertUpdateSuccess(false);
       }
     }else{
       alertError()

@@ -19,7 +19,7 @@ const { Option } = Select;
 const { RangePicker } = DatePicker;
 function InputNameAndTypeArea(props) {
   const { switchTypeEvent } = props;
-  const { namePromo, statusPromo } = props.indexPromo;
+  const { name, status } = props.indexPromoAndEvent;
   return (
     <div>
       <h3 className="promotion-title-field">Tên chương trình khuyến mãi</h3>
@@ -27,13 +27,13 @@ function InputNameAndTypeArea(props) {
         placeholder="Vd: Chương trìn khuyến mãi mở server"
         onChange={props.setInfoPromo}
         name="namePromo"
-        value={namePromo}
+        value={name}
       ></Input>
       <div className="promotion-title-status">
         <h3>Trạng thái</h3>
         <Radio.Group
           onChange={props.setInfoPromo}
-          value={statusPromo}
+          value={status}
           name="statusPromo"
         >
           <Radio value="COMPLETE">Kích hoạt</Radio>
@@ -59,17 +59,15 @@ function InputNameAndTypeArea(props) {
 // /////
 function InputTimeArea(props) {
   const {
-    platformPromoId,
-    statusPromo,
-    datesPromo,
-    dailyPromo,
+    dates,
+    daily,
     server,
     startTime,
     endTime,
-    timeTotalPromo
-  } = props.indexPromo;
-  const alertDailyPromo = printAlertDailyPromo(dailyPromo);
-  const printAlertDatesPromo = datesPromo.map((val, i) => (
+    timeTotal
+  } = props.indexPromoAndEvent;
+  const alertDaily = printAlertDailyPromo(daily);
+  const printAlertDates = dates.map((val, i) => (
     <>ngày mùng {val}, </>
   ));
   // const printAlertTimeTotalPromo = timeTotalAlert.map((val, i) => <>{val}</>);
@@ -99,11 +97,11 @@ function InputTimeArea(props) {
             placeholder={["-Thời gian bắt đầu", "- Thời gian kết thúc"]}
             onChange={props.onChangeDatePicker}
             value={
-              timeTotalPromo[0] === ""
+              timeTotal[0] === ""
                 ? [null, null]
                 : [
-                  moment(timeTotalPromo[0], "DD-MM-YYYY hh:mm"),
-                  moment(timeTotalPromo[1], "DD-MM-YYYY hh:mm")
+                  moment(timeTotal[0], "DD-MM-YYYY hh:mm"),
+                  moment(timeTotal[1], "DD-MM-YYYY hh:mm")
                 ]
             }
           />
@@ -115,8 +113,8 @@ function InputTimeArea(props) {
             style={{ width: "80%" }}
             placeholder="- Chọn ngày trong tháng diễn ra khuyến mãi"
             onChange={props.handleChangeDates}
-            disabled={dailyPromo.length !== 0 ? true : false}
-            value={datesPromo}
+            disabled={daily.length !== 0 ? true : false}
+            value={dates}
           >
             {childrenDates}
           </Select>
@@ -128,8 +126,8 @@ function InputTimeArea(props) {
             style={{ width: "80%" }}
             placeholder="- Chọn thứ trong tuần diễn ra khuyến mãi"
             onChange={props.handleChangeDaily}
-            disabled={datesPromo.length !== 0 ? true : false}
-            value={dailyPromo}
+            disabled={dates.length !== 0 ? true : false}
+            value={daily}
           >
             {childrenDaily}
           </Select>
@@ -163,8 +161,8 @@ function InputTimeArea(props) {
         </div>
       </div>
       <div className="section2-promotion-footer">
-        Khuyến mãi diễn ra vào {startTime} đến {endTime} {alertDailyPromo}
-        {printAlertDatesPromo} từ {timeTotalPromo[0]} đến {timeTotalPromo[1]}
+        Khuyến mãi diễn ra vào {startTime} đến {endTime} {alertDaily}
+        {printAlertDates} từ {timeTotal[0]} đến {timeTotal[1]}
       </div>
     </Col>
   );

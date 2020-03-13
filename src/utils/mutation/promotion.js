@@ -46,13 +46,27 @@ const updateEvent = gql`
     }
   }
 `;
-const deletePromotion=arrId=>{
-  
-}
+const deletePromotion = gql`
+  mutation deletePromotions($ids: [Int]!) {
+    deletePromotions(ids: $ids) {
+      name
+    }
+  }
+`;
+const deleteEvents = gql`
+  mutation deleteEvents($ids : [Int]!){
+    deleteEvents(ids: $ids){
+      name
+    }
+  }
+  `;
+
 export {
   createPromotion,
   createItemEvent,
   createEvent,
   updateEvent,
-  updatePromotion
+  updatePromotion,
+  deleteEvents,
+  deletePromotion
 };

@@ -107,10 +107,10 @@ const checkMainInfoPromoAndEvent = (
   if (
     namePromo != "" &&
     promoType != "" &&
-    (datesPromo.length > 0 || dailyPromo.length > 0) &&
     startTime !== "" &&
     endTime !== "" &&
-    timeTotalPromo !== ""
+    timeTotalPromo !== ""&&
+    (datesPromo.length > 0 || dailyPromo.length > 0)
   ) {
     return true;
   } else {

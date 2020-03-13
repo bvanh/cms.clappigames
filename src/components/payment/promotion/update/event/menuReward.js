@@ -1,4 +1,4 @@
-import React, { useState, useEffect,useMemo } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { DatePicker, Select, TimePicker } from "antd";
 import { useLazyQuery, useMutation, useQuery } from "@apollo/react-hooks";
 import "../../../../../static/style/promotion.css";
@@ -33,10 +33,9 @@ const eventCointype = [
   }
 ];
 const MenuRewardEventByMoney = props => {
-  const { paymentType, config } = props.detailPromo;
-  const { game, server, type } = JSON.parse(config);
+  const { paymentType } = props.detailPromo;
   const { listServer } = props.typePromo;
-  const { platformPromoId, serverGame } = props.indexPromo
+  const { platformId, server, type } = props.indexPromoAndEvent
   const [eventByMoneyIndex, setEventByMoneyIndex] = useState({
     eventType: [],
     eventPaymentType: [],
@@ -48,8 +47,8 @@ const MenuRewardEventByMoney = props => {
       setListGame(data.listPartners);
     }
   });
-  useEffect(() => {
-    props.setIndexPromo({ ...props.indexPromo, platformPromoId: game, serverGame: server })
+  useMemo(() => {
+    // props.setIndexPromoAndEvent({ ...props.indexPromoAndEvent, platformId: game, server: server })
     if (paymentType === "COIN") {
       dispatchNameEventByMoney(paymentType);
       setEventByMoneyIndex({
@@ -148,13 +147,13 @@ const MenuRewardEventByMoney = props => {
       >
         {printEventMoneyType}
       </Select>
-      {props.indexEventByMoney.isPaymentTypeByCoin &&
+      {props.nameEventByMoney === 'COIN' &&
         <div>
           <p className="promotion-title-field">Chọn game</p>
           <Select
             style={{ width: 120 }}
             onChange={props.handleChangePlatform}
-            value={platformPromoId}
+            value={platformId}
           >
             {printPlatform}
           </Select>{" "}
@@ -164,7 +163,7 @@ const MenuRewardEventByMoney = props => {
             style={{ width: 120 }}
             onChange={props.handleChangeServer}
             name="server"
-            value={serverGame}
+            value={server}
           >
             {printListServer}
           </Select>{" "}

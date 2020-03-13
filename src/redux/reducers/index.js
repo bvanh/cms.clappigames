@@ -29,7 +29,7 @@ const initialState = {
     coin: newItem,
     inkind: newItem
   },
-  idPromoAndEventCreateInUpdate:null
+  idPromoAndEventCreateInUpdate: []
 };
 export default (state = initialState, action) => {
   const newIndexConfig = { ...state.indexConfig };
@@ -169,9 +169,10 @@ export default (state = initialState, action) => {
         indexConfig: newInitalIndexConfig
       };
     case actions.SAVE_ID_IN_UPDATE:
+      const newId = state.idPromoAndEventCreateInUpdate;
       return {
         ...state,
-        idPromoAndEventCreateInUpdate: action.value
+        idPromoAndEventCreateInUpdate: [...newId, action.value]
       };
     default:
       return state;

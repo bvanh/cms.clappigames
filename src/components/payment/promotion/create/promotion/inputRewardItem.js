@@ -17,19 +17,18 @@ function EventByItems(props) {
     { productName: "", partnerProductId: "" }
   ]);
   const {
-    namePromo,
-    platformPromoId,
-    serverGame,
-    statusPromo,
-    typePromo,
-    timeTotalPromo,
-    datesPromo,
-    dailyPromo,
+    name,
+    status,
+    type,
+    timeTotal,
+    dates,
+    daily,
     startTime,
     endTime
-  } = props.indexPromo;
+  } = props.indexPromoAndEvent;
+  const { platformId, server } = props.indexGameForPromo
   const { indexShop, isUpdate } = props;
-  const { data } = useQuery(getListPartnerProducts(platformPromoId), {
+  useQuery(getListPartnerProducts(platformId), {
     onCompleted: data => {
       setItemForEventTypeItem(data.listPartnerProducts);
     }
@@ -37,40 +36,42 @@ function EventByItems(props) {
   const [createPromo] = useMutation(createPromotion, {
     variables: {
       req: {
-        name: namePromo,
-        type: typePromo,
-        status: statusPromo,
-        game: platformPromoId,
-        server: serverGame,
+        name: name,
+        type: type,
+        status: status,
+        game: platformId,
+        server: server,
         shop: JSON.stringify(indexShop),
         eventTime: JSON.stringify({
-          startTime: moment(timeTotalPromo[0]).format("YYYY-MM-DD hh:mm"),
-          endTime: moment(timeTotalPromo[1]).format("YYYY-MM-DD hh:mm"),
-          dates: datesPromo,
-          daily: dailyPromo,
+          startTime: moment(timeTotal[0]).format("YYYY-MM-DD hh:mm"),
+          endTime: moment(timeTotal[1]).format("YYYY-MM-DD hh:mm"),
+          dates: dates,
+          daily: daily,
           hour: [startTime, endTime]
         })
       }
     },
     onCompleted: data => {
-      isUpdate ? dispatchSaveIdCreateInUpdate(data.id) : console.log(data);
+      isUpdate
+        ? dispatchSaveIdCreateInUpdate(data.createPromotion.id)
+        : console.log(data);
     }
   });
   const submitCreatePromo = async () => {
     if (
       checkMainInfoPromoAndEvent(
-        namePromo,
-        typePromo,
-        timeTotalPromo[0],
+        name,
+        type,
+        timeTotal[0],
         startTime,
         endTime,
-        datesPromo,
-        dailyPromo
+        dates,
+        daily
       ) &&
       checkPurchaseItemIsEmtry(indexShop) &&
       checkItemIsEmtry(indexShop) &&
-      serverGame !== "" &&
-      platformPromoId !== ""
+      server !== "" &&
+      platformId !== ""
     ) {
       await createPromo();
       props.successAlert(true);
@@ -143,7 +144,7 @@ function EventByItems(props) {
       {val.productName}
     </Option>
   ));
-  const printItem = indexShop.map(function(val, index1) {
+  const printItem = indexShop.map(function (val, index1) {
     const printReward = val.rewards.map((valReward, index2) => (
       <div key={index2}>
         <Input

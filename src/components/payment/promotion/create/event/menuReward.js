@@ -20,7 +20,10 @@ import {
 import { queryGetPlatform } from "../../../../../utils/queryPlatform";
 import { getListPartnerProducts } from "../../../../../utils/queryPartnerProducts";
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
-import {connect} from 'react-redux'
+import {
+  getListServer,
+} from "../../../../../utils/query/promotion";
+import { connect } from "react-redux";
 import {
   dispatchTypeEventByMoney,
   dispatchNameEventByMoney
@@ -46,14 +49,25 @@ const eventCointype = [
 ];
 const MenuRewardEventByMoney = props => {
   const { server } = props;
-  const {listGame, listServer } = props.typePromo;
+  const {listGame } = props.typePromo;
+  const { platformId } = props.indexPromoAndEvent
   const [eventByMoneyIndex, setEventByMoneyIndex] = useState({
     eventType: [],
     eventPaymentType: [],
     value: ""
   });
+  const [listServer, setListServer] = useState([
+    {
+      server: 0,
+      serverName: "All server"
+    }
+  ]);
   const { eventType, eventPaymentType, value } = eventByMoneyIndex;
-
+  useQuery(getListServer(platformId), {
+    onCompleted: data => {
+      setListServer(data.listPartnerServers);
+    }
+  });
   useMemo(() => {
     dispatchNameEventByMoney("MONEY");
     setEventByMoneyIndex({
@@ -103,7 +117,7 @@ const MenuRewardEventByMoney = props => {
   };
   const handleChanePaymentTypeByMoney = async val => {
     if (val === "COIN") {
-      props.getItemsForEventTypeMoney();
+      // props.getItemsForEventTypeMoney();
     }
     await setEventByMoneyIndex({ ...eventByMoneyIndex, value: val });
     dispatchTypeEventByMoney(val);

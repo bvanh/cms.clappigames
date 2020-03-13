@@ -1,13 +1,15 @@
 import React, { Component, useState } from "react";
 import { useQuery } from "@apollo/react-hooks";
 import "../../../../../static/style/promotion.css";
+import { connect } from "react-redux";
 import { queryGetPlatform } from "../../../../../utils/queryPlatform";
 import { getPromotionType } from "../../../../../utils/queryPaymentAndPromoType";
 import { Select } from "antd";
 const { Option } = Select;
 
 function MenuRewardByItem(props) {
-  const { serverGame, platformPromoId, typePromo } = props.indexPromo;
+  const { type } = props.indexPromoAndEvent;
+  const { server, platformId } = props.indexGameForPromo;
   const { listServer } = props.typePromo;
   const [listType, setListType] = useState([{ name: "", description: "" }]);
   const [listGame, setListGame] = useState([{}]);
@@ -43,9 +45,9 @@ function MenuRewardByItem(props) {
           <h3>Chọn game:</h3>
           <Select
             style={{ width: "65%" }}
-            onChange={props.handleChangePlatform}
+            onChange={props.handleChangePlatformPromo}
             placeholder="-Chọn game-"
-            value={platformPromoId}
+            value={platformId}
           >
             {printPlatform}
           </Select>{" "}
@@ -55,9 +57,9 @@ function MenuRewardByItem(props) {
           <Select
             placeholder="-Chọn server-"
             style={{ width: "65%" }}
-            onChange={props.handleChangeServer}
+            onChange={props.handleChangeServerPromo}
             name="server"
-            value={serverGame}
+            value={server}
           >
             {printListServer}
           </Select>{" "}
@@ -68,7 +70,7 @@ function MenuRewardByItem(props) {
         <Select
           style={{ width: "65%" }}
           onChange={props.handleChangeTypePromo}
-          value={typePromo}
+          value={type}
         >
           {printPromoType}
         </Select>{" "}
@@ -76,4 +78,9 @@ function MenuRewardByItem(props) {
     </div>
   );
 }
-export default MenuRewardByItem;
+function mapStateToProps(state) {
+  return {
+    detailPromo: state.detailPromo
+  };
+}
+export default connect(mapStateToProps, null)(MenuRewardByItem);

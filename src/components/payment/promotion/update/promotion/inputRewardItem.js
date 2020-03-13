@@ -12,19 +12,18 @@ function EventByItems(props) {
     { productName: "", partnerProductId: "" }
   ]);
   const {
-    namePromo,
-    platformPromoId,
-    serverGame,
-    statusPromo,
-    typePromo,
-    timeTotalPromo,
-    datesPromo,
-    dailyPromo,
+    name,
+    status,
+    type,
+    timeTotal,
+    dates,
+    daily,
     startTime,
     endTime
-  } = props.indexPromo;
-  const { indexShop } = props
-  const { data } = useQuery(getListPartnerProducts(platformPromoId), {
+  } = props.indexPromoAndEvent;
+  const { indexShop } = props;
+  const { platformId, server } = props.indexGameForPromo
+  const { data } = useQuery(getListPartnerProducts(platformId), {
     onCompleted: data => {
       setItemForEventTypeItem(data.listPartnerProducts);
     }
@@ -33,17 +32,17 @@ function EventByItems(props) {
     variables: {
       id: id,
       req: {
-        name: namePromo,
-        type: typePromo,
-        status: statusPromo,
-        game: platformPromoId,
-        server: serverGame,
+        name: name,
+        type: type,
+        status: status,
+        game: platformId,
+        server: server,
         shop: JSON.stringify(indexShop),
         eventTime: JSON.stringify({
-          startTime: moment(timeTotalPromo[0],'DD-MM-YYYY').format('YYYY-MM-DD hh:mm'),
-          endTime: moment(timeTotalPromo[1],'DD-MM-YYYY').format('YYYY-MM-DD hh:mm'),
-          dates: datesPromo,
-          daily: dailyPromo,
+          startTime: moment(timeTotal[0], 'DD-MM-YYYY').format('YYYY-MM-DD hh:mm'),
+          endTime: moment(timeTotal[1], 'DD-MM-YYYY').format('YYYY-MM-DD hh:mm'),
+          dates: dates,
+          daily: daily,
           hour: [startTime, endTime]
         })
       }

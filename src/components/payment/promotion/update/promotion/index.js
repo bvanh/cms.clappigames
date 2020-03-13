@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { Row, Col, DatePicker, Select, Icon, Modal } from "antd";
 import { useLazyQuery, useMutation, useQuery } from "@apollo/react-hooks";
-import moment from "moment";
+import { deleteEvents, deletePromotion } from '../../../../../utils/mutation/promotion'
 import "../../../../../static/style/promotion.css";
 import EventByItems from "./inputRewardItem";
 import MenuRewardByItem from "./menuRewardItem";
@@ -26,10 +26,10 @@ import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 function UpdatePromotion(props) {
   const {
     name,
+    id,
     game,
     status,
     eventTime,
-    server,
     shop,
     type,
     config,
@@ -38,22 +38,21 @@ function UpdatePromotion(props) {
   const { startTime, endTime, dates, daily, hour } = JSON.parse(eventTime);
   const [alertUpdateSuccess, setAlertUpdateSuccess] = useState(false);
   const [switchTypeEvent, setSwitchTypeEvent] = useState(shop ? true : false);
+  const [isCreateEvent, setIsCreateEvent] = useState(false);
   const [indexShop, setIndexShop] = useState(shop ? JSON.parse(shop) : "");
-  const [indexPromo, setIndexPromo] = useState({
-    eventPaymentType: [],
-    namePromo: name,
-    platformPromoId: game,
-    serverGame: server,
-    statusPromo: status,
-    typePromo: type,
-    timeTotalPromo: [startTime, endTime],
-    datesPromo: dates,
-    dailyPromo: daily,
+  const [indexPromoAndEvent, setIndexPromoAndEvent] = useState({
+    name: name,
+    platformId: game,
+    server: '',
+    status: status,
+    type: type,
+    timeTotal: [startTime, endTime],
+    dates: dates,
+    daily: daily,
     startTime: hour[0],
     endTime: hour[1]
   });
   const [typePromo, setTypePromo] = useState({
-    eventPaymentType: [],
     listGame: [{}],
     listServer: [
       {
@@ -68,6 +67,10 @@ function UpdatePromotion(props) {
       }
     ]
   });
+  const [indexGameForPromo, setIndexGameForPromo] = useState({
+    platformId: game,
+    server: props.detailPromo.server
+  })
   const [alertInfoPromo, setAlertInfoPromo] = useState({
     dailyAlert: [],
     datesAlert: [],
@@ -78,14 +81,31 @@ function UpdatePromotion(props) {
     isPaymentTypeByCoin: paymentType === "COIN" ? true : false,
     itemsForEventByMoney: [{ productName: "", productId: "" }]
   });
-  const { platformPromoId, statusPromo, serverGame } = indexPromo;
-  const { listGame, listItems, listServer } = typePromo;
+  const { platformId, server } = indexGameForPromo;
+  const {listItems} = typePromo;
   const [getListPartnerByPlatform] = useLazyQuery(getListPartnerProducts2, {
     onCompleted: data => {
       setTypePromo({ ...typePromo, listItems: data.listPartnerProducts });
     }
   });
-  const { data2, refetch } = useQuery(getListServer(platformPromoId), {
+  useQuery(queryGetPlatform, {
+    onCompleted: data => {
+      setTypePromo({ ...typePromo, listGame: data.listPartners });
+    }
+  })
+  const [deleteEvent] = useMutation(deleteEvents, {
+    variables: {
+      ids: props.idCreatePromoAndEvent
+    },
+    onCompleted: data => console.log(data)
+  })
+  const [deletePromo] = useMutation(deletePromotion, {
+    variables: {
+      ids: [id]
+    },
+    onCompleted: data => console.log(data)
+  })
+  useQuery(getListServer(platformId), {
     onCompleted: data => {
       setTypePromo({
         ...typePromo,
@@ -99,7 +119,7 @@ function UpdatePromotion(props) {
       });
     }
   });
-  const { data3 } = useQuery(getListItemsForEvent, {
+ useQuery(getListItemsForEvent, {
     onCompleted: data => {
       setIndexEventByMoney({
         ...indexEventByMoney,
@@ -116,7 +136,32 @@ function UpdatePromotion(props) {
       }),
     [switchTypeEvent]
   );
+  const resetGameAndServer = () => {
+    // setTypePromo({
+    //   ...typePromo,
+    //   listServer: [
+    //     {
+    //       server: 0,
+    //       serverName: "All server"
+    //     }
+    //   ]
+    // });
+    // setindexPromoAndEvent({ ...indexPromoAndEvent, platformPromoId: "", server: "" });
+  };
   const handleChangePlatform = async e => {
+    dispatchResetItemRewards();
+    await setIndexPromoAndEvent({
+      ...indexPromoAndEvent,
+      platformId: e,
+      server: 0
+    });
+    await getListPartnerByPlatform({
+      variables: {
+        partnerId: e
+      }
+    });
+  };
+  const handleChangePlatformPromo = async e => {
     dispatchResetItemRewards();
     setIndexShop([
       {
@@ -130,10 +175,9 @@ function UpdatePromotion(props) {
         ]
       }
     ]);
-    await setIndexPromo({
-      ...indexPromo,
-      platformPromoId: e,
-      serverGame: 0
+    await setIndexGameForPromo({
+      platformId: e,
+      server: 0
     });
     await getListPartnerByPlatform({
       variables: {
@@ -142,31 +186,38 @@ function UpdatePromotion(props) {
     });
   };
   const setInfoPromo = e => {
-    setIndexPromo({ ...indexPromo, [e.target.name]: e.target.value });
+    setIndexPromoAndEvent({ ...indexPromoAndEvent, [e.target.name]: e.target.value });
+  };
+  const handleChangeServerPromo = e => {
+    setIndexGameForPromo({ ...indexGameForPromo, server: e });
   };
   const handleChangeServer = e => {
-    setIndexPromo({ ...indexPromo, serverGame: e });
+    setIndexPromoAndEvent({ ...indexPromoAndEvent, serverGame: e });
   };
   const onChangeDatePicker = (value, dateString) => {
     console.log(dateString)
-    setIndexPromo({ ...indexPromo, timeTotalPromo: dateString });
+    setIndexPromoAndEvent({ ...indexPromoAndEvent, timeTotal: dateString });
   };
   const setTimePromo = (timeString, val) => {
 
     if (val === "startTime") {
-      setIndexPromo({ ...indexPromo, startTime: timeString !== "" ? timeString + ":00" : '' });
+      setIndexPromoAndEvent({ ...indexPromoAndEvent, startTime: timeString !== "" ? timeString + ":00" : '' });
     } else {
-      setIndexPromo({ ...indexPromo, endTime: timeString !== "" ? timeString + ":59" : '' });
+      setIndexPromoAndEvent({ ...indexPromoAndEvent, endTime: timeString !== "" ? timeString + ":59" : '' });
     }
   };
   const handleChangeDaily = value => {
-    setIndexPromo({ ...indexPromo, dailyPromo: value.sort((a, b) => a - b) });
+    setIndexPromoAndEvent({ ...indexPromoAndEvent, daily: value.sort((a, b) => a - b) });
   };
   const handleChangeDates = value => {
-    setIndexPromo({ ...indexPromo, datesPromo: value.sort((a, b) => a - b) });
+    setIndexPromoAndEvent({ ...indexPromoAndEvent, dates: value.sort((a, b) => a - b) });
   };
   const handleChangeTypePromo = val => {
-    setIndexPromo({ ...indexPromo, promoType: val });
+    setIndexPromoAndEvent({ ...indexPromoAndEvent, promoType: val });
+  };
+  const successAlert = value => {
+    setIsCreateEvent(value);
+    setAlertUpdateSuccess(true);
   };
   return (
     <Row className="container-promotion">
@@ -188,7 +239,8 @@ function UpdatePromotion(props) {
         <div>
           <InputNameAndTypeArea
             alertUpdateSuccess={alertUpdateSuccess}
-            indexPromo={indexPromo}
+            resetGameAndServer={resetGameAndServer}
+            indexPromoAndEvent={indexPromoAndEvent}
             typePromo={typePromo}
             setTypePromo={setTypePromo}
             setInfoPromo={setInfoPromo}
@@ -199,19 +251,20 @@ function UpdatePromotion(props) {
             <MenuRewardByItem
               indexShop={indexShop}
               setIndexShop={setIndexShop}
-              indexPromo={indexPromo}
+              indexPromoAndEvent={indexPromoAndEvent}
+              indexGameForPromo={indexGameForPromo}
               typePromo={typePromo}
-              handleChangePlatform={handleChangePlatform}
+              handleChangePlatformPromo={handleChangePlatformPromo}
               handleChangeTypePromo={handleChangeTypePromo}
-              handleChangeServer={handleChangeServer}
+              handleChangeServerPromo={handleChangeServerPromo}
             />
           ) : (
               <MenuRewardEventByMoney
-                indexPromo={indexPromo}
-                setIndexPromo={setIndexPromo}
+                indexPromoAndEvent={indexPromoAndEvent}
+                setIndexPromoAndEvent={setIndexPromoAndEvent}
                 indexEventByMoney={indexEventByMoney}
                 setIndexEventByMoney={setIndexEventByMoney}
-                server={serverGame}
+                server={server}
                 typePromo={typePromo}
                 handleChangePlatform={handleChangePlatform}
                 handleChangeServer={handleChangeServer}
@@ -220,7 +273,7 @@ function UpdatePromotion(props) {
         </div>
       </Col>
       <InputTimeArea
-        indexPromo={indexPromo}
+        indexPromoAndEvent={indexPromoAndEvent}
         alertInfoPromo={alertInfoPromo}
         onChangeDatePicker={onChangeDatePicker}
         handleChangeDaily={handleChangeDaily}
@@ -231,17 +284,18 @@ function UpdatePromotion(props) {
         {switchTypeEvent ? (
           <EventByItems
             listItems={listItems}
-            indexPromo={indexPromo}
+            indexPromoAndEvent={indexPromoAndEvent}
             indexShop={indexShop}
             setIndexShop={setIndexShop}
+            indexGameForPromo={indexGameForPromo}
           />
         ) : (
             <InputRewardForShowByMoney
-              setAlertUpdateSuccess={setAlertUpdateSuccess}
+              alertUpdateSuccess={successAlert}
               typePromo={typePromo}
               listItems={listItems}
-              indexPromo={indexPromo}
-              setIndexPromo={setIndexPromo}
+              indexPromoAndEvent={indexPromoAndEvent}
+              setIndexPromoAndEvent={setIndexPromoAndEvent}
               indexEventByMoney={indexEventByMoney}
               setIndexEventByMoney={setIndexEventByMoney}
               isUpdate={props.isUpdate}
@@ -252,6 +306,9 @@ function UpdatePromotion(props) {
         title={<Icon type="check-circle" />}
         visible={alertUpdateSuccess}
         onCancel={() => setAlertUpdateSuccess(false)}
+        onOk={() => {
+          isCreateEvent ? deletePromo() : deleteEvent();
+        }}
         okText={<Link to="/payment/promotion">Xem danh sách</Link>}
         cancelText="Hủy bỏ"
       ></Modal>
