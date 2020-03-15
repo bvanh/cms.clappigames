@@ -1,7 +1,14 @@
 import React, { useState, useCallback } from "react";
 import { Button, Input, Row, Col, Select } from "antd";
 import { updatePromotion } from "../../../../../utils/mutation/promotion";
-import moment from 'moment'
+import moment from "moment";
+import {
+  checkNumb,
+  checkMainInfoPromoAndEvent,
+  checkPurchaseItemIsEmtry,
+  alertError,
+  checkItemIsEmtry
+} from "../../promoService";
 import { useLazyQuery, useMutation, useQuery } from "@apollo/react-hooks";
 import { getListPartnerProducts } from "../../../../../utils/queryPartnerProducts";
 import { connect } from "react-redux";
@@ -22,7 +29,7 @@ function EventByItems(props) {
     endTime
   } = props.indexPromoAndEvent;
   const { indexShop } = props;
-  const { platformId, server } = props.indexGameForPromo
+  const { platformId, server } = props.indexGameForPromo;
   const { data } = useQuery(getListPartnerProducts(platformId), {
     onCompleted: data => {
       setItemForEventTypeItem(data.listPartnerProducts);
@@ -39,8 +46,12 @@ function EventByItems(props) {
         server: server,
         shop: JSON.stringify(indexShop),
         eventTime: JSON.stringify({
-          startTime: moment(timeTotal[0], 'DD-MM-YYYY').format('YYYY-MM-DD hh:mm'),
-          endTime: moment(timeTotal[1], 'DD-MM-YYYY').format('YYYY-MM-DD hh:mm'),
+          startTime: moment(timeTotal[0], "DD-MM-YYYY").format(
+            "YYYY-MM-DD hh:mm"
+          ),
+          endTime: moment(timeTotal[1], "DD-MM-YYYY").format(
+            "YYYY-MM-DD hh:mm"
+          ),
           dates: dates,
           daily: daily,
           hour: [startTime, endTime]
@@ -50,8 +61,25 @@ function EventByItems(props) {
     onCompleted: data => console.log(data)
   });
   const submitUpdatePromo = async () => {
-    await updatePromo();
-    alert("update thanh cong");
+    if (
+      checkMainInfoPromoAndEvent(
+        name,
+        type,
+        timeTotal[0],
+        startTime,
+        endTime,
+        dates,
+        daily
+      ) &&
+      checkNumb(indexShop) &&
+      checkItemIsEmtry(indexShop) &&
+      checkPurchaseItemIsEmtry(indexShop)
+    ) {
+      await updatePromo();
+      props.successAlert(false);
+    } else {
+      alertError();
+    }
   };
   const addItem = () => {
     const newItem = {
@@ -83,11 +111,13 @@ function EventByItems(props) {
   };
   const reduceReward = async (numberItem, indexReward) => {
     const newShop = [...indexShop];
-    const newReward = await indexShop[numberItem].rewards.filter(
-      (value, i) => indexReward !== i
-    );
-    newShop[numberItem].rewards = newReward;
-    props.setIndexShop(newShop);
+    if (newShop.length > 0) {
+      const newReward = await indexShop[numberItem].rewards.filter(
+        (value, i) => indexReward !== i
+      );
+      newShop[numberItem].rewards = newReward;
+      props.setIndexShop(newShop);
+    }
   };
   const handleChooseReward = (positionItem, positionReward, val) => {
     const newItem = [...indexShop];
@@ -96,7 +126,8 @@ function EventByItems(props) {
   };
   const handleChooseNumbReward = (positionItem, positionReward, e) => {
     const newItem = [...indexShop];
-    newItem[positionItem].rewards[positionReward].numb = e.target.value !== '' ? Number(e.target.value) : '';
+    newItem[positionItem].rewards[positionReward].numb =
+      e.target.value !== "" ? Number(e.target.value) : "";
     props.setIndexShop(newItem);
   };
   const handleChooseItem = (positionItem, value) => {
@@ -106,8 +137,9 @@ function EventByItems(props) {
   };
   const handleChooseNumbItem = (positionItem, e) => {
     const newItem = [...indexShop];
-    newItem[positionItem].purchaseTimes = e.target.value !== '' ? Number(e.target.value) : '';
-    console.log(newItem)
+    newItem[positionItem].purchaseTimes =
+      e.target.value !== "" ? Number(e.target.value) : "";
+    console.log(newItem);
     props.setIndexShop(newItem);
   };
   const printListItems = itemsForEventTypeItem.map((val, index) => (
@@ -115,7 +147,7 @@ function EventByItems(props) {
       {val.productName}
     </Option>
   ));
-  const printItem = indexShop.map(function (val, index1) {
+  const printItem = indexShop.map(function(val, index1) {
     const printReward = val.rewards.map((valReward, index2) => (
       <div key={index2}>
         <Input
@@ -142,7 +174,7 @@ function EventByItems(props) {
           <Input
             value={indexShop[index1].purchaseTimes}
             type="number"
-            step='100'
+            step="100"
             min={index1 > 0 ? indexShop[index1 - 1].purchaseTimes : 0}
             name="pucharseTimes"
             onChange={e => handleChooseNumbItem(index1, e)}

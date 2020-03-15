@@ -10,7 +10,7 @@ import { dispatchDetailPromoAndEvent } from "../../../../../redux/actions/index"
 import { useQuery } from "react-apollo";
 const { TabPane } = Tabs;
 const { confirm } = Modal;
-const ReachableContext = React.createContext();
+
 
 function DetailEvent(props) {
   const query = new URLSearchParams(window.location.search);

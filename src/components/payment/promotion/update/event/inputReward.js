@@ -27,9 +27,8 @@ import {
 } from "../../../../../redux/actions";
 const { Option } = Select;
 function InputRewardForShowByMoney(props) {
-  const { config, paymentType, id } = props.detailPromo;
-  const { type, data, game } = JSON.parse(config);
   const { indexEventByMoney } = props;
+  const { type } = JSON.parse(props.detailPromo.config);
   const [listItemForEvent, setListItemForEvent] = useState({
     isShow: false,
     itemsForEventTypeMoney: [{ productName: "", partnerProductId: "" }]
@@ -37,25 +36,24 @@ function InputRewardForShowByMoney(props) {
   const [rowItems, setRowItems] = useState(0);
   const [itemNumb, setItemNumb] = useState(null);
   const { inkind, item, coin } = props.indexConfig;
-  useEffect(() => {
-    dispatchTypeEventByMoney(type);
-    dispatchSetDataTypePromo({ isType: type.toLowerCase(), data: data });
-    props.setIsCreatePromo(false)
-  }, []);
   const { isShow, itemsForEventTypeMoney } = listItemForEvent;
   const {
+    id,
     name,
     platformId,
     server,
     status,
-    promoType,
     timeTotal,
     dates,
     daily,
     startTime,
     endTime
   } = props.indexPromoAndEvent;
-  useQuery(getListPartnerProducts(game), {
+  useEffect(() => {
+    dispatchTypeEventByMoney(type);
+    props.setIsCreatePromo(false);
+  }, []);
+  useQuery(getListPartnerProducts(platformId), {
     onCompleted: data => {
       setListItemForEvent({
         ...listItemForEvent,
@@ -92,8 +90,8 @@ function InputRewardForShowByMoney(props) {
     status: status,
     paymentType: props.nameEventByMoney,
     eventTime: JSON.stringify({
-      startTime: moment(timeTotal[0], 'DD-MM-YYYY').format("YYYY-MM-DD hh:mm"),
-      endTime: moment(timeTotal[1], 'DD-MM-YYYY').format("YYYY-MM-DD hh:mm"),
+      startTime: moment(timeTotal[0], "DD-MM-YYYY").format("YYYY-MM-DD hh:mm"),
+      endTime: moment(timeTotal[1], "DD-MM-YYYY").format("YYYY-MM-DD hh:mm"),
       dates: dates,
       daily: daily,
       hour: [startTime, endTime]
@@ -159,17 +157,25 @@ function InputRewardForShowByMoney(props) {
           checkRewardsIsEmtry(inkind)
         ) {
           await updateEventByInkind();
-          props.alertUpdateSuccess(false);
+          props.successAlert(false);
         } else if (checkPoint(coin) && checkRewardsIsEmtry(coin)) {
           await updateEventByCoin();
-          props.alertUpdateSuccess(false);
+          props.successAlert(false);
         }
-      } else if (props.nameEventByMoney === "COIN" && checkPoint(item) && checkRewardsIsEmtry(item) && platformId !== '' && server !== '') {
+      } else if (
+        props.nameEventByMoney === "COIN" &&
+        checkPoint(item) &&
+        checkRewardsIsEmtry(item) &&
+        platformId !== "" &&
+        server !== ""
+      ) {
         await updateEventByItem();
-        props.alertUpdateSuccess(false);
+        props.successAlert(false);
+      } else {
+        alertError();
       }
-    }else{
-      alertError()
+    } else {
+      alertError();
     }
   };
   const addItem = val => {
@@ -218,6 +224,7 @@ function InputRewardForShowByMoney(props) {
     setRowItems(val);
     setItemNumb(null);
   };
+  // console.log(props.typeEventByMoney, type,'ffg');
   const printListItems = props.listItems.map((val, index) => (
     <Option value={val.partnerProductId} key={index}>
       {val.productName}
@@ -242,7 +249,7 @@ function InputRewardForShowByMoney(props) {
       </Col>
     )
   );
-  const printItemInkind = inkind.map(function (val, index1) {
+  const printItemInkind = inkind.map(function(val, index1) {
     return (
       <div key={index1}>
         <Col md={24}>
@@ -284,7 +291,7 @@ function InputRewardForShowByMoney(props) {
         mode="multiple"
         value={val.rewards}
         style={{ width: "90%" }}
-      // onChange={value => handleChooseItem(index1, value)}
+        // onChange={value => handleChooseItem(index1, value)}
       >
         {printItemsEvent}
       </Select>{" "}
@@ -292,6 +299,16 @@ function InputRewardForShowByMoney(props) {
       <span onClick={() => reduceItem("coin", index1)}>xóa item</span>
     </Col>
   ));
+  const defaultEventInput = () => {
+    if (
+      props.typeEventByMoney === "INKIND" &&
+      props.nameEventByMoney === "MONEY"
+    ) {
+      return true;
+    } else {
+      return false;
+    }
+  };
   const printItemPartner = item.map((val, index1) => (
     <Col md={24} key={index1}>
       TỪ
@@ -315,6 +332,7 @@ function InputRewardForShowByMoney(props) {
       <span onClick={() => reduceItem("item", index1)}>xóa item</span>
     </Col>
   ));
+
   return (
     <>
       <Row>
@@ -334,12 +352,10 @@ function InputRewardForShowByMoney(props) {
             <Button onClick={() => addItem("coin")}>Thêm điều kiện</Button>
           </>
         )}
-        {props.typeEventByMoney === "INKIND" && (
+        {defaultEventInput() && (
           <>
             {printItemInkind}
-            <Button onClick={() => addItem('inkind')}>
-              Thêm điều kiện
-            </Button>
+            <Button onClick={() => addItem("inkind")}>Thêm điều kiện</Button>
           </>
         )}
         {props.typeEventByMoney === "ITEM" && (

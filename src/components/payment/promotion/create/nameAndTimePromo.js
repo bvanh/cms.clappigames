@@ -26,7 +26,7 @@ function InputNameAndTypeArea(props) {
       <Input
         placeholder="Vd: Chương trìn khuyến mãi mở server"
         onChange={props.setInfoPromo}
-        name="namePromo"
+        name="name"
         value={name}
       ></Input>
       <div className="promotion-title-status">
@@ -34,7 +34,7 @@ function InputNameAndTypeArea(props) {
         <Radio.Group
           onChange={props.setInfoPromo}
           value={status}
-          name="statusPromo"
+          name="status"
         >
           <Radio value="COMPLETE">Kích hoạt</Radio>
           <Radio value="INPUT">Chưa áp dụng</Radio>

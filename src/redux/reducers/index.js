@@ -29,7 +29,7 @@ const initialState = {
     coin: newItem,
     inkind: newItem
   },
-  idPromoAndEventCreateInUpdate: []
+  idPromoAndEventCreateInUpdate: [null]
 };
 export default (state = initialState, action) => {
   const newIndexConfig = { ...state.indexConfig };
@@ -158,7 +158,7 @@ export default (state = initialState, action) => {
         ...state,
         indexConfig: newIndexConfig
       };
-    case actions.SET_INITIAL_indexConfig:
+    case actions.SET_INITIAL_INDEXCONFIG:
       const newInitalIndexConfig = {
         item: initialItem,
         coin: initialItem,

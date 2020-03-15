@@ -4,22 +4,23 @@ import { useLazyQuery, useQuery } from "@apollo/react-hooks";
 import ListPromo from "./listPromo";
 import ListEvents from "./listEvents";
 import { Link } from "react-router-dom";
-import {connect} from 'react-redux'
+import { connect } from "react-redux";
 import CreatePromotion from "../create/index";
-import {dispatchSwitchCreatePromo} from '../../../../redux/actions/index'
+import { queryGetPlatform } from "../../../../utils/queryPlatform";
+import { dispatchSwitchCreatePromo,dispatchListPartner} from "../../../../redux/actions/index";
 import "../../../../static/style/listUsers.css";
-
+import moment from 'moment'
 function ListPromoAndEvent(props) {
-  const [isTypePromo,setIsTypePromo] = useState("promo");
+  const [isTypePromo, setIsTypePromo] = useState("promo");
   // const [isCreatePromo, setIsCreatePromo] = useState(false);
   const switchPromoAndEvent = e => {
-   setIsTypePromo(e.target.value);
+    setIsTypePromo(e.target.value);
   };
-  // const [getPlatform] = useLazyQuery(queryGetPlatform, {
-  //   onCompleted: data => {
-  //     setTypePromo({ ...typePromo, listGame: data.listPartners });
-  //   }
-  // });
+  useQuery(queryGetPlatform, {
+    onCompleted: data => {
+      dispatchListPartner(data.listPartners)
+    }
+  });
   return (
     <>
       {props.isCreatePromo ? (
@@ -27,7 +28,10 @@ function ListPromoAndEvent(props) {
           <div className="title">
             <h2>
               Quản lý khuyến mãi{" "}
-              <Button size="small" onClick={() => dispatchSwitchCreatePromo(false)}>
+              <Button
+                size="small"
+                onClick={() => dispatchSwitchCreatePromo(false)}
+              >
                 Tạo mới
               </Button>
             </h2>
@@ -64,7 +68,7 @@ function ListPromoAndEvent(props) {
 }
 function mapStateToProps(state) {
   return {
-    isCreatePromo:state.isCreatePromo
+    isCreatePromo: state.isCreatePromo
   };
 }
 export default connect(mapStateToProps, null)(ListPromoAndEvent);

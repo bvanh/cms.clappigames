@@ -14,7 +14,7 @@ import moment from "moment";
 import {
   initialIndexEventByMoney,
   initialIndexPromo,
-  initialTypePromo
+  initiallistPartner
 } from "../promoService";
 import {
   getListServer,
@@ -37,11 +37,12 @@ const initialIndexShop = [
 function CreatePromotion() {
   const [switchTypeEvent, setSwitchTypeEvent] = useState(true);
   const [indexPromoAndEvent, setIndexPromoAndEvent] = useState({
-    name: '',
+    name: "",
     platformId: "",
     server: "",
     status: "COMPLETE",
     type: "",
+    typeEvent: "",
     timeTotal: [
       moment().format("YYYY-MM-DD HH:mm"),
       moment().format("YYYY-MM-DD HH:mm")
@@ -52,10 +53,10 @@ function CreatePromotion() {
     endTime: "00:00:00"
   });
   const [indexGameForPromo, setIndexGameForPromo] = useState({
-    platformId: '',
-    server: ''
-  })
-  const [typePromo, setTypePromo] = useState({
+    platformId: "",
+    server: ""
+  });
+  const [listPartner, setListPartner] = useState({
     listGame: [{}],
     listServer: [
       {
@@ -77,21 +78,21 @@ function CreatePromotion() {
   });
   const [indexShop, setIndexShop] = useState(initialIndexShop);
   const { platformId, status, server } = indexPromoAndEvent;
-  const { listGame, listItems, listServer } = typePromo;
+  const { listGame, listItems, listServer } = listPartner;
   const { data } = useQuery(getListPartnerProducts(platformId), {
     onCompleted: data => {
-      setTypePromo({ ...typePromo, listItems: data.listPartnerProducts });
+      setListPartner({ ...listPartner, listItems: data.listPartnerProducts });
     }
   });
   useQuery(queryGetPlatform, {
     onCompleted: data => {
-      setTypePromo({ ...typePromo, listGame: data.listPartners });
+      setListPartner({ ...listPartner, listGame: data.listPartners });
     }
-  })
+  });
   const { data2 } = useQuery(getListServer(platformId), {
     onCompleted: data => {
-      setTypePromo({
-        ...typePromo,
+      setListPartner({
+        ...listPartner,
         listServer: [
           {
             server: 0,
@@ -137,19 +138,26 @@ function CreatePromotion() {
     });
   };
   const resetGameAndServer = () => {
-    setTypePromo({
-      ...typePromo,
+    setListPartner({
+      ...listPartner,
       listServer: [
         {
           server: 0,
           serverName: "All server"
         }
-      ],
-    })
-    setIndexPromoAndEvent({ ...indexPromoAndEvent, platformPromoId: "", server: "" })
-  }
+      ]
+    });
+    setIndexPromoAndEvent({
+      ...indexPromoAndEvent,
+      platformPromoId: "",
+      server: ""
+    });
+  };
   const setInfoPromo = e => {
-    setIndexPromoAndEvent({ ...indexPromoAndEvent, [e.target.name]: e.target.value });
+    setIndexPromoAndEvent({
+      ...indexPromoAndEvent,
+      [e.target.name]: e.target.value
+    });
   };
   const handleChangeServer = e => {
     setIndexPromoAndEvent({ ...indexPromoAndEvent, server: e });
@@ -158,25 +166,43 @@ function CreatePromotion() {
     setIndexGameForPromo({ ...indexGameForPromo, server: e });
   };
   const onChangeDatePicker = (value, dateString) => {
-    setIndexPromoAndEvent({ ...indexPromoAndEvent, timeTotalPromo: dateString });
+    setIndexPromoAndEvent({
+      ...indexPromoAndEvent,
+      timeTotal: dateString
+    });
+  };
+  const handleChangeTypePromo = val => {
+    setIndexPromoAndEvent({ ...indexPromoAndEvent, type: val });
   };
   const setTimePromo = (timeString, val) => {
     if (val === "startTime") {
-      setIndexPromoAndEvent({ ...indexPromoAndEvent, startTime: timeString !== "" ? timeString + ":00" : '' });
+      setIndexPromoAndEvent({
+        ...indexPromoAndEvent,
+        startTime: timeString !== "" ? timeString + ":00" : ""
+      });
     } else {
-      setIndexPromoAndEvent({ ...indexPromoAndEvent, endTime: timeString !== "" ? timeString + ":59" : '' });
+      setIndexPromoAndEvent({
+        ...indexPromoAndEvent,
+        endTime: timeString !== "" ? timeString + ":59" : ""
+      });
     }
   };
   const handleChangeDaily = value => {
-    setIndexPromoAndEvent({ ...indexPromoAndEvent, dailyPromo: value.sort((a, b) => a - b) });
+    setIndexPromoAndEvent({
+      ...indexPromoAndEvent,
+      daily: value.sort((a, b) => a - b)
+    });
   };
   const handleChangeDates = value => {
-    setIndexPromoAndEvent({ ...indexPromoAndEvent, datesPromo: value.sort((a, b) => a - b) });
+    setIndexPromoAndEvent({
+      ...indexPromoAndEvent,
+      dates: value.sort((a, b) => a - b)
+    });
   };
-  const handleChangeTypePromo = val => {
-    setIndexPromoAndEvent({ ...indexPromoAndEvent, typePromo: val });
+  const handleChangelistPartner = val => {
+    setIndexPromoAndEvent({ ...indexPromoAndEvent, listPartner: val });
   };
-  const successAlert = (val) => {
+  const successAlert = val => {
     Modal.confirm({
       title: "Tạo khuyến mãi thành công",
       okText: "Xem danh sách",
@@ -185,7 +211,7 @@ function CreatePromotion() {
         dispatchSwitchCreatePromo(true);
       },
       onCancel() {
-        setSwitchTypeEvent(!switchTypeEvent)
+        setSwitchTypeEvent(!switchTypeEvent);
       }
     });
   };
@@ -209,9 +235,9 @@ function CreatePromotion() {
         <Col md={12} className="section1-promotion">
           <div>
             <InputNameAndTypeArea
-              typePromo={typePromo}
+              listPartner={listPartner}
               indexPromoAndEvent={indexPromoAndEvent}
-              setTypePromo={setTypePromo}
+              setListPartner={setListPartner}
               status={status}
               setInfoPromo={setInfoPromo}
               resetGameAndServer={resetGameAndServer}
@@ -221,24 +247,27 @@ function CreatePromotion() {
             {/*router chọn game,server */}
             {switchTypeEvent ? (
               <MenuRewardByItem
-                server={server}
-                typePromo={typePromo}
-                handleChangePlatformPromo={handleChangePlatformPromo}
+                indexGameForPromo={indexGameForPromo}
+                listPartner={listPartner}
                 handleChangeTypePromo={handleChangeTypePromo}
+                indexPromoAndEvent={indexPromoAndEvent}
+                handleChangePlatformPromo={handleChangePlatformPromo}
+                handleChangelistPartner={handleChangelistPartner}
                 handleChangeServerPromo={handleChangeServerPromo}
               />
             ) : (
-                <MenuRewardEventByMoney
-                  switchTypeEvent={switchTypeEvent}
-                  indexEventByMoney={indexEventByMoney}
-                  setIndexEventByMoney={setIndexEventByMoney}
-                  getItemsForEventTypeMoney={getItemsForEventTypeMoney}
-                  server={server}
-                  typePromo={typePromo}
-                  handleChangePlatform={handleChangePlatform}
-                  handleChangeServer={handleChangeServer}
-                />
-              )}
+              <MenuRewardEventByMoney
+                switchTypeEvent={switchTypeEvent}
+                indexPromoAndEvent={indexPromoAndEvent}
+                indexEventByMoney={indexEventByMoney}
+                setIndexEventByMoney={setIndexEventByMoney}
+                getItemsForEventTypeMoney={getItemsForEventTypeMoney}
+                server={server}
+                listPartner={listPartner}
+                handleChangePlatform={handleChangePlatform}
+                handleChangeServer={handleChangeServer}
+              />
+            )}
           </div>
         </Col>
         <InputTimeArea
@@ -259,19 +288,19 @@ function CreatePromotion() {
               setIndexShop={setIndexShop}
             />
           ) : (
-              <InputRewardByMoney
-                listItems={listItems}
-                successAlert={successAlert}
-                indexShop={indexShop}
-                setIndexShop={setIndexShop}
-                indexPromoAndEvent={indexPromoAndEvent}
-                typePromo={typePromo}
-                setIndexPromoAndEvent={setIndexPromoAndEvent}
-                indexEventByMoney={indexEventByMoney}
-                setIndexEventByMoney={setIndexEventByMoney}
-                getItemsForEventTypeMoney={getItemsForEventTypeMoney}
-              />
-            )}
+            <InputRewardByMoney
+              listItems={listItems}
+              successAlert={successAlert}
+              indexShop={indexShop}
+              setIndexShop={setIndexShop}
+              indexPromoAndEvent={indexPromoAndEvent}
+              listPartner={listPartner}
+              setIndexPromoAndEvent={setIndexPromoAndEvent}
+              indexEventByMoney={indexEventByMoney}
+              setIndexEventByMoney={setIndexEventByMoney}
+              getItemsForEventTypeMoney={getItemsForEventTypeMoney}
+            />
+          )}
         </Col>
       </Row>
     </Router>

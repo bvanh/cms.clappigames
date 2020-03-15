@@ -109,7 +109,7 @@ const checkMainInfoPromoAndEvent = (
     promoType != "" &&
     startTime !== "" &&
     endTime !== "" &&
-    timeTotalPromo !== ""&&
+    timeTotalPromo !== "" &&
     (datesPromo.length > 0 || dailyPromo.length > 0)
   ) {
     return true;
@@ -129,7 +129,7 @@ const checkPurchaseItemIsEmtry = indexShop => {
 };
 const checkRewardsIsEmtry = indexShop => {
   const result = indexShop.map((val, i) => {
-    if (val.rewards.length > 0) {
+    if (val.rewards.length > 0 && val.rewards[0] !== "") {
       return true;
     } else {
       return false;
@@ -138,17 +138,17 @@ const checkRewardsIsEmtry = indexShop => {
   return result.every((val, i) => val != false);
 };
 const checkItemIsEmtry = indexShop => {
+  let demo = [];
   const result1 = indexShop.map((value, i) => {
     const result = value.rewards.map((value2, i) => {
       if (value2.itemId.length > 0) {
-        return true;
+        demo.push(true);
       } else {
-        return false;
+        demo.push(false);
       }
     });
-    return result[0];
   });
-  return result1.every((val, i) => val != false);
+  return demo.every((val, i) => val != false);
 };
 const checkPoint = indexShop => {
   const demo = indexShop.map((val, i) => {
@@ -158,7 +158,23 @@ const checkPoint = indexShop => {
   });
   return demo.every((val, i) => val === true || val === undefined);
 };
-
+const checkNumb = indexShop => {
+  const demo = indexShop.map((val, i) => {
+    if (i > 0) {
+      return val.purchaseTimes > indexShop[i - 1].purchaseTimes;
+    }
+  });
+  return demo.every((val, i) => val === true || val === undefined);
+};
+const checkTime = startTime => {
+  const startTimes = moment(startTime).format("x");
+  const now1 = moment().format("x");
+  if (Number(now1) - Number(startTimes) < 0) {
+    return true;
+  } else {
+    return false;
+  }
+};
 const alertError = () => {
   Modal.error({
     title: "Chú ý !!!",
@@ -183,5 +199,7 @@ export {
   checkItemIsEmtry,
   checkPurchaseItemIsEmtry,
   checkPoint,
-  alertError
+  checkNumb,
+  alertError,
+  checkTime
 };

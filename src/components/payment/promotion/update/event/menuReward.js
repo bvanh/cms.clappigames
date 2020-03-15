@@ -33,22 +33,22 @@ const eventCointype = [
   }
 ];
 const MenuRewardEventByMoney = props => {
-  const { paymentType } = props.detailPromo;
-  const { listServer } = props.typePromo;
-  const { platformId, server, type } = props.indexPromoAndEvent
+  const { paymentType, config } = props.detailPromo;
+  const { listServer } = props.listPartner;
+  const { platformId, server, type } = props.indexPromoAndEvent;
   const [eventByMoneyIndex, setEventByMoneyIndex] = useState({
     eventType: [],
     eventPaymentType: [],
-    value: type,
+    value: JSON.parse(config).type
   });
-  const [listGame, setListGame] = useState([{}])
+  const [listGame, setListGame] = useState([{}]);
   useQuery(queryGetPlatform, {
     onCompleted: data => {
       setListGame(data.listPartners);
     }
   });
   useMemo(() => {
-    // props.setIndexPromoAndEvent({ ...props.indexPromoAndEvent, platformId: game, server: server })
+    // props.setIndexPromoAndEvent({ ...props.indexPromoAndEvent, platformId: platformId, server: server })
     if (paymentType === "COIN") {
       dispatchNameEventByMoney(paymentType);
       setEventByMoneyIndex({
@@ -57,11 +57,11 @@ const MenuRewardEventByMoney = props => {
         value: "ITEM"
       });
       dispatchTypeEventByMoney("ITEM");
-    } else if (paymentType === 'MONEY') {
+    } else if (paymentType === "MONEY") {
       dispatchNameEventByMoney(paymentType);
       setEventByMoneyIndex({
         ...eventByMoneyIndex,
-        eventPaymentType: eventMoneyType,
+        eventPaymentType: eventMoneyType
       });
       dispatchTypeEventByMoney(type);
     }
@@ -118,7 +118,7 @@ const MenuRewardEventByMoney = props => {
       {val.name}
     </Option>
   ));
-  const printPlatform = listGame.map((val, index) => (
+  const printPlatform = props.listPartners.map((val, index) => (
     <Option value={val.partnerId} key={index}>
       {val.partnerName}
     </Option>
@@ -138,7 +138,7 @@ const MenuRewardEventByMoney = props => {
         placeholder="-Chọn game-"
       >
         {printEventType}
-      </Select>{" "}
+      </Select>
       <span>Hình thức</span>
       <Select
         value={value}
@@ -147,7 +147,7 @@ const MenuRewardEventByMoney = props => {
       >
         {printEventMoneyType}
       </Select>
-      {props.nameEventByMoney === 'COIN' &&
+      {props.nameEventByMoney === "COIN" && (
         <div>
           <p className="promotion-title-field">Chọn game</p>
           <Select
@@ -168,7 +168,7 @@ const MenuRewardEventByMoney = props => {
             {printListServer}
           </Select>{" "}
         </div>
-      }
+      )}
     </div>
   );
 };
@@ -176,7 +176,8 @@ function mapStateToProps(state) {
   return {
     typeEventByMoney: state.typeEventByMoney,
     nameEventByMoney: state.nameEventByMoney,
-    detailPromo: state.detailPromo
+    detailPromo: state.detailPromo,
+    listPartners:state.listPartner
   };
 }
 export default connect(mapStateToProps, null)(MenuRewardEventByMoney);

@@ -2,14 +2,21 @@ import React, { Component, useState } from "react";
 import { Select } from "antd";
 import { getPromotionType } from "../../../../../utils/queryPaymentAndPromoType";
 import { queryGetPlatform } from "../../../../../utils/queryPlatform";
+import { getListServer } from "../../../../../utils/query/promotion";
 import { useQuery } from "@apollo/react-hooks";
+import {connect} from 'react-redux'
 const { Option } = Select;
 
 function MenuRewardByItem(props) {
-  const { server } = props;
-
-  const { listServer } = props.typePromo;
-  const [listGame, setListGame] = useState([{}])
+  const { platformId, server } = props.indexGameForPromo;
+  const { type} = props.indexPromoAndEvent;
+  const [listGame, setListGame] = useState([{}]);
+  const [listServer, setListServer] = useState([
+    {
+      server: 0,
+      serverName: "All server"
+    }
+  ]);
   const [listTypePromo, setListTypePromo] = useState([
     { name: "", description: "" }
   ]);
@@ -23,12 +30,17 @@ function MenuRewardByItem(props) {
       setListGame(data.listPartners);
     }
   });
+  useQuery(getListServer(platformId), {
+    onCompleted: data => {
+      setListServer([...listServer, ...data.listPartnerServers]);
+    }
+  });
   const printPromoType = listTypePromo.map((val, index) => (
     <Option value={val.name} key={index}>
       {val.description}
     </Option>
   ));
-  const printPlatform = listGame.map((val, i) => (
+  const printPlatform = props.listPartners.map((val, i) => (
     <Option value={val.partnerId} key={i}>
       {val.partnerName}
     </Option>
@@ -47,6 +59,7 @@ function MenuRewardByItem(props) {
             style={{ width: "65%" }}
             onChange={props.handleChangePlatformPromo}
             placeholder="-Chọn game-"
+            value={platformId}
           >
             {printPlatform}
           </Select>{" "}
@@ -58,6 +71,7 @@ function MenuRewardByItem(props) {
             style={{ width: "65%" }}
             onChange={props.handleChangeServerPromo}
             name="server"
+            value={server}
           >
             {printListServer}
           </Select>{" "}
@@ -69,6 +83,7 @@ function MenuRewardByItem(props) {
           style={{ width: "65%" }}
           onChange={props.handleChangeTypePromo}
           placeholder="-Tặng quà-"
+          value={type}
         >
           {printPromoType}
         </Select>{" "}
@@ -76,4 +91,9 @@ function MenuRewardByItem(props) {
     </div>
   );
 }
-export default MenuRewardByItem;
+function mapStateToProps(state) {
+  return {
+    listPartners:state.listPartner
+  };
+}
+export default connect(mapStateToProps, null)(MenuRewardByItem);

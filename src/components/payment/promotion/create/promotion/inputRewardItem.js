@@ -9,7 +9,8 @@ import {
   checkMainInfoPromoAndEvent,
   checkItemIsEmtry,
   checkPurchaseItemIsEmtry,
-  checkPoint
+  checkNumb,
+  alertError
 } from "../../promoService";
 const { Option } = Select;
 function EventByItems(props) {
@@ -26,7 +27,7 @@ function EventByItems(props) {
     startTime,
     endTime
   } = props.indexPromoAndEvent;
-  const { platformId, server } = props.indexGameForPromo
+  const { platformId, server } = props.indexGameForPromo;
   const { indexShop, isUpdate } = props;
   useQuery(getListPartnerProducts(platformId), {
     onCompleted: data => {
@@ -69,6 +70,7 @@ function EventByItems(props) {
         daily
       ) &&
       checkPurchaseItemIsEmtry(indexShop) &&
+      checkNumb(indexShop) &&
       checkItemIsEmtry(indexShop) &&
       server !== "" &&
       platformId !== ""
@@ -76,9 +78,10 @@ function EventByItems(props) {
       await createPromo();
       props.successAlert(true);
     } else {
-      alert("kiểm tra và điền đầy đủ thông tin");
+      alertError();
     }
   };
+
   const addItem = () => {
     const newItem = {
       purchaseTimes: indexShop[indexShop.length - 1].purchaseTimes,
@@ -144,7 +147,7 @@ function EventByItems(props) {
       {val.productName}
     </Option>
   ));
-  const printItem = indexShop.map(function (val, index1) {
+  const printItem = indexShop.map(function(val, index1) {
     const printReward = val.rewards.map((valReward, index2) => (
       <div key={index2}>
         <Input

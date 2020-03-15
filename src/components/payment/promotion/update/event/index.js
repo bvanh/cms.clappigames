@@ -16,7 +16,9 @@ import {
 } from "../../create/nameAndTimePromo";
 import {
   dispatchResetItemRewards,
-  dispatchInititalIndexConfig
+  dispatchInititalIndexConfig,
+  dispatchTypeEventByMoney,
+  dispatchSetDataTypePromo
 } from "../../../../../redux/actions/index";
 import { initialIndexShop } from "../../promoService";
 import { getListPartnerProducts2 } from "../../../../../utils/queryPartnerProducts";
@@ -37,26 +39,25 @@ function UpdateEvent(props) {
     paymentType
   } = props.detailPromo;
   const { startTime, endTime, dates, daily, hour } = JSON.parse(eventTime);
-  const { game, server, type } = JSON.parse(config);
   const [alertUpdateSuccess, setAlertUpdateSuccess] = useState(false);
   const [switchTypeEvent, setSwitchTypeEvent] = useState(config ? false : true);
   const [indexShop, setIndexShop] = useState(initialIndexShop);
   const [isCreatePromo, setIsCreatePromo] = useState(false);
+  const { game, server, data, type } = JSON.parse(config);
   const [indexPromoAndEvent, setIndexPromoAndEvent] = useState({
-    eventPaymentType: [],
+    id:id,
     name: name,
     platformId: game,
     server: server,
     status: status,
-    type: type ? type : "",
+    type: '',
     timeTotal: [startTime, endTime],
     dates: dates,
     daily: daily,
     startTime: hour[0],
     endTime: hour[1]
   });
-  const [typePromo, setTypePromo] = useState({
-    eventPaymentType: [],
+  const [listPartner, setListPartner] = useState({
     listGame: [{}],
     listServer: [
       {
@@ -85,9 +86,22 @@ function UpdateEvent(props) {
     platformId: "",
     server: ""
   });
+  const [getListPartnerByPlatform] = useLazyQuery(getListPartnerProducts2, {
+    onCompleted: data => {
+      setListPartner({ ...listPartner, listItems: data.listPartnerProducts });
+    }
+  });
+  useEffect(() => {
+    dispatchTypeEventByMoney(type);
+    dispatchSetDataTypePromo({ isType: type.toLowerCase(), data: data });
+    getListPartnerByPlatform({
+      variables: {
+        partnerId: game
+      }
+    });
+  }, []);
   const { platformId } = indexPromoAndEvent;
-  console.log(platformId)
-  const { listItems } = typePromo;
+  const { listGame, listItems, listServer } = listPartner;
   const [deleteEvent] = useMutation(deleteEvents, {
     variables: {
       ids: [id]
@@ -100,15 +114,10 @@ function UpdateEvent(props) {
     },
     onCompleted: data => console.log(data)
   });
-  const [getListPartnerByPlatform] = useLazyQuery(getListPartnerProducts2, {
-    onCompleted: data => {
-      setTypePromo({ ...typePromo, listItems: data.listPartnerProducts });
-    }
-  });
   useQuery(getListServer(platformId), {
     onCompleted: data => {
-      setTypePromo({
-        ...typePromo,
+      setListPartner({
+        ...listPartner,
         listServer: [
           {
             server: 0,
@@ -127,15 +136,15 @@ function UpdateEvent(props) {
       });
     }
   });
-  useMemo(
-    () =>
-      getListPartnerByPlatform({
-        variables: {
-          partnerId: config ? JSON.parse(config).game : ""
-        }
-      }),
-    [switchTypeEvent]
-  );
+  // useMemo(
+  //   () =>
+  //     getListPartnerByPlatform({
+  //       variables: {
+  //         partnerId: platformId
+  //       }
+  //     }),
+  //   [switchTypeEvent]
+  // );
   const handleChangePlatform = async e => {
     dispatchResetItemRewards();
     await setIndexPromoAndEvent({
@@ -149,8 +158,9 @@ function UpdateEvent(props) {
       }
     });
   };
+  const resetGameAndServer = () => {
+  };
   const handleChangePlatformPromo = async e => {
-    console.log(e)
     dispatchResetItemRewards();
     setIndexShop([
       {
@@ -165,7 +175,6 @@ function UpdateEvent(props) {
       }
     ]);
     await setIndexGameForPromo({
-      ...indexGameForPromo,
       platformId: e,
       server: 0
     });
@@ -175,26 +184,17 @@ function UpdateEvent(props) {
       }
     });
   };
-  const resetGameAndServer = () => {
-    setTypePromo({
-      ...typePromo,
-      listServer: [
-        {
-          server: 0,
-          serverName: "All server"
-        }
-      ]
-    });
-    setIndexPromoAndEvent({ ...indexPromoAndEvent, platformId: "", server: "" });
+  const handleChangeServerPromo = e => {
+    setIndexGameForPromo({ ...indexGameForPromo, server: e });
   };
   const setInfoPromo = e => {
-    setIndexPromoAndEvent({ ...indexPromoAndEvent, [e.target.name]: e.target.value });
+    setIndexPromoAndEvent({
+      ...indexPromoAndEvent,
+      [e.target.name]: e.target.value
+    });
   };
   const handleChangeServer = e => {
     setIndexPromoAndEvent({ ...indexPromoAndEvent, server: e });
-  };
-  const handleChangeServerPromo = e => {
-    setIndexGameForPromo({ ...indexGameForPromo, server: e });
   };
   const onChangeDatePicker = (value, dateString) => {
     console.log(dateString);
@@ -214,26 +214,34 @@ function UpdateEvent(props) {
     }
   };
   const handleChangeDaily = value => {
-    setIndexPromoAndEvent({ ...indexPromoAndEvent, daily: value.sort((a, b) => a - b) });
+    setIndexPromoAndEvent({
+      ...indexPromoAndEvent,
+      daily: value.sort((a, b) => a - b)
+    });
   };
   const handleChangeDates = value => {
-    setIndexPromoAndEvent({ ...indexPromoAndEvent, dates: value.sort((a, b) => a - b) });
+    setIndexPromoAndEvent({
+      ...indexPromoAndEvent,
+      dates: value.sort((a, b) => a - b)
+    });
   };
   const handleChangeTypePromo = val => {
-    setIndexPromoAndEvent({ ...indexPromoAndEvent, typePromo: val });
+    setIndexPromoAndEvent({ ...indexPromoAndEvent, type: val });
   };
   const successAlert = value => {
     setIsCreatePromo(value);
     setAlertUpdateSuccess(true);
   };
+  const backToList = () => {
+    dispatchInititalIndexConfig();
+    isCreatePromo ? deleteEvent() : console.log(null);
+  };
+
   return (
     <Row className="container-promotion">
       <div>
         <div>
-          <Link
-            to="/payment/promotion"
-            onClick={() => dispatchInititalIndexConfig()}
-          >
+          <Link to="/payment/promotion" onClick={backToList}>
             <span>
               <Icon type="arrow-left" style={{ paddingRight: ".2rem" }} />
               Quay lại
@@ -247,8 +255,8 @@ function UpdateEvent(props) {
           <InputNameAndTypeArea
             alertUpdateSuccess={alertUpdateSuccess}
             indexPromoAndEvent={indexPromoAndEvent}
-            typePromo={typePromo}
-            setTypePromo={setTypePromo}
+            // listPartner={listPartner}
+            // setListPartner={setListPartner}
             resetGameAndServer={resetGameAndServer}
             setInfoPromo={setInfoPromo}
             switchTypeEvent={switchTypeEvent}
@@ -259,23 +267,24 @@ function UpdateEvent(props) {
               indexShop={indexShop}
               setIndexShop={setIndexShop}
               indexPromoAndEvent={indexPromoAndEvent}
-              typePromo={typePromo}
+              indexGameForPromo={indexGameForPromo}
+              listPartner={listPartner}
               handleChangePlatformPromo={handleChangePlatformPromo}
               handleChangeTypePromo={handleChangeTypePromo}
               handleChangeServerPromo={handleChangeServerPromo}
             />
           ) : (
-              <MenuRewardEventByMoney
-                indexPromoAndEvent={indexPromoAndEvent}
-                setIndexPromoAndEvent={setIndexPromoAndEvent}
-                indexEventByMoney={indexEventByMoney}
-                setIndexEventByMoney={setIndexEventByMoney}
-                server={server}
-                typePromo={typePromo}
-                handleChangePlatform={handleChangePlatform}
-                handleChangeServer={handleChangeServer}
-              />
-            )}
+            <MenuRewardEventByMoney
+              indexPromoAndEvent={indexPromoAndEvent}
+              setIndexPromoAndEvent={setIndexPromoAndEvent}
+              indexEventByMoney={indexEventByMoney}
+              setIndexEventByMoney={setIndexEventByMoney}
+              server={server}
+              listPartner={listPartner}
+              handleChangePlatform={handleChangePlatform}
+              handleChangeServer={handleChangeServer}
+            />
+          )}
         </div>
       </Col>
       <InputTimeArea
@@ -291,24 +300,25 @@ function UpdateEvent(props) {
           <EventByItems
             listItems={listItems}
             indexPromoAndEvent={indexPromoAndEvent}
+            indexGameForPromo={indexGameForPromo}
             indexShop={indexShop}
             setIndexShop={setIndexShop}
             isUpdate={props.isUpdate}
             successAlert={successAlert}
-            indexGameForPromo={indexGameForPromo}
           />
         ) : (
-            <InputRewardForShowByMoney
-              alertUpdateSuccess={successAlert}
-              setIsCreatePromo={setIsCreatePromo}
-              typePromo={typePromo}
-              listItems={listItems}
-              indexPromoAndEvent={indexPromoAndEvent}
-              setIndexPromoAndEvent={setIndexPromoAndEvent}
-              indexEventByMoney={indexEventByMoney}
-              setIndexEventByMoney={setIndexEventByMoney}
-            />
-          )}
+          <InputRewardForShowByMoney
+            successAlert={successAlert}
+            listPartner={listPartner}
+            listItems={listItems}
+            switchTypeEvent={switchTypeEvent}
+            indexPromoAndEvent={indexPromoAndEvent}
+            setIndexPromoAndEvent={setIndexPromoAndEvent}
+            indexEventByMoney={indexEventByMoney}
+            setIndexEventByMoney={setIndexEventByMoney}
+            setIsCreatePromo={setIsCreatePromo}
+          />
+        )}
       </Col>
       <Modal
         title={<Icon type="check-circle" />}
@@ -324,7 +334,6 @@ function UpdateEvent(props) {
   );
 }
 function mapStateToProps(state) {
-  console.log(state.idPromoAndEventCreateInUpdate);
   return {
     detailPromo: state.detailPromo,
     idCreatePromoAndEvent: state.idPromoAndEventCreateInUpdate

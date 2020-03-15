@@ -8,7 +8,9 @@ import {
 } from "../../../../../utils/mutation/promotion";
 import {
   checkMainInfoPromoAndEvent,
-  checkRewardsIsEmtry
+  checkRewardsIsEmtry,
+  checkPoint,
+  alertError
 } from "../../promoService";
 import { dispatchSaveIdCreateInUpdate } from "../../../../../redux/actions/index";
 import { useLazyQuery, useMutation, useQuery } from "@apollo/react-hooks";
@@ -20,9 +22,11 @@ function InputrewardForShowByMoney(props) {
   const { isUpdate } = props;
   const [listItemForEvent, setListItemForEvent] = useState({
     isShow: false,
-    itemsForEventTypeMoney: [{ productName: "", partnerProductId: "" }],
+    itemsForEventTypeMoney: [{ productName: "", partnerProductId: "" }]
   });
-  const [coinEvent, setCoinEvent] = useState([{ productId: "", productName: "" }])
+  const [coinEvent, setCoinEvent] = useState([
+    { productId: "", productName: "" }
+  ]);
   const {
     name,
     platformId,
@@ -83,15 +87,14 @@ function InputrewardForShowByMoney(props) {
       }
     },
     onCompleted: async data => {
-      const demo = {
+      const newItem1 = {
         productName: data.createProduct.productName,
         productId: data.createProduct.productId
       };
-      const newCoinEvent = [...listItemForEvent.coinEvent, demo];
-      setListItemForEvent({ ...listItemForEvent, coinEvent: newCoinEvent });
-      const newItem = [...indexShop];
-      newItem[rowItems].rewards[0] = data.createProduct.productId;
-      setIndexShop(newItem);
+      setCoinEvent([...coinEvent, newItem1]);
+      const newItem2 = [...indexShop];
+      newItem2[rowItems].rewards[0] = data.createProduct.productId;
+      setIndexShop(newItem2);
     }
   });
   const [createEventByMoney] = useMutation(createEvent, {
@@ -114,7 +117,10 @@ function InputrewardForShowByMoney(props) {
       }
     },
     onCompleted: data => {
-      isUpdate ? dispatchSaveIdCreateInUpdate(data.createEvents.id) : console.log(data);
+      console.log(data);
+      isUpdate
+        ? dispatchSaveIdCreateInUpdate(data.createEvent.id)
+        : console.log(data);
     }
   });
   const [createEventByMoneyForItem] = useMutation(createEvent, {
@@ -139,7 +145,9 @@ function InputrewardForShowByMoney(props) {
       }
     },
     onCompleted: data => {
-      isUpdate ? dispatchSaveIdCreateInUpdate(data.createEvents.id) : console.log(data);
+      isUpdate
+        ? dispatchSaveIdCreateInUpdate(data.createEvent.id)
+        : console.log(data);
     }
   });
   const submitCreateEvent = async () => {
@@ -152,15 +160,15 @@ function InputrewardForShowByMoney(props) {
         endTime,
         dates,
         daily
-      )
+      ) &&
+      checkPoint(indexShop)
     ) {
       if (props.nameEventByMoney === "MONEY") {
         if (checkRewardsIsEmtry(indexShop)) {
           await createEventByMoney();
-          props.successAlert();
+          props.successAlert(true);
         } else {
-          console.log("money");
-          alert("kiểm tra và điền đầy đủ thông tin");
+          alertError()
         }
       } else if (props.nameEventByMoney === "COIN") {
         if (
@@ -169,14 +177,13 @@ function InputrewardForShowByMoney(props) {
           server !== ""
         ) {
           await createEventByMoneyForItem();
-          props.successAlert();
+          props.successAlert(true);
         } else {
-          console.log("coin");
-          alert("kiểm tra và điền đầy đủ thông tin");
+          alertError();
         }
       }
     } else {
-      alert("kiểm tra và điền đầy đủ thông tin");
+      alertError();
     }
   };
   const addItem = () => {
@@ -245,7 +252,7 @@ function InputrewardForShowByMoney(props) {
       </Radio>
     </Col>
   ));
-  const printItem = indexShop.map(function (val, index1) {
+  const printItem = indexShop.map(function(val, index1) {
     return (
       <div key={index1}>
         <Col md={24}>
@@ -259,7 +266,7 @@ function InputrewardForShowByMoney(props) {
             style={{ width: "10%" }}
           ></Input>
           {props.nameEventByMoney === "MONEY" ? "VNĐ" : "C.COIN"}
-          {props.typeEventByMoney === "INKIND" && (
+          {props.typeEventByMoney === "INKIND"  && (
             <Input
               value={indexShop[index1].rewards[0]}
               placeholder="-Điền quà out game-"

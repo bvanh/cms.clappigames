@@ -49,7 +49,7 @@ const eventCointype = [
 ];
 const MenuRewardEventByMoney = props => {
   const { server } = props;
-  const {listGame } = props.typePromo;
+  const {listGame } = props.listPartner;
   const { platformId } = props.indexPromoAndEvent
   const [eventByMoneyIndex, setEventByMoneyIndex] = useState({
     eventType: [],
@@ -65,7 +65,7 @@ const MenuRewardEventByMoney = props => {
   const { eventType, eventPaymentType, value } = eventByMoneyIndex;
   useQuery(getListServer(platformId), {
     onCompleted: data => {
-      setListServer(data.listPartnerServers);
+      setListServer([...listServer,...data.listPartnerServers]);
     }
   });
   useMemo(() => {
@@ -132,7 +132,7 @@ const MenuRewardEventByMoney = props => {
       {val.name}
     </Option>
   ));
-  const printPlatform = listGame.map((val, i) => (
+  const printPlatform = props.listPartners.map((val, i) => (
     <Option value={val.partnerId} key={i}>
       {val.partnerName}
     </Option>
@@ -189,7 +189,8 @@ const MenuRewardEventByMoney = props => {
 function mapStateToProps(state) {
   return {
     typeEventByMoney: state.typeEventByMoney,
-    nameEventByMoney: state.nameEventByMoney
+    nameEventByMoney: state.nameEventByMoney,
+    listPartners:state.listPartner
   };
 }
 export default connect(mapStateToProps, null)(MenuRewardEventByMoney);

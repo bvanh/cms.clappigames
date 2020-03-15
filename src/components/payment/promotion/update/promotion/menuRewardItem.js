@@ -10,10 +10,10 @@ const { Option } = Select;
 function MenuRewardByItem(props) {
   const { type } = props.indexPromoAndEvent;
   const { server, platformId } = props.indexGameForPromo;
-  const { listServer } = props.typePromo;
+  const { listServer } = props.listPartner;
   const [listType, setListType] = useState([{ name: "", description: "" }]);
   const [listGame, setListGame] = useState([{}]);
-  useQuery(queryGetPlatform, {
+  const { data } = useQuery(queryGetPlatform, {
     onCompleted: data => {
       setListGame(data.listPartners);
     }
@@ -28,59 +28,60 @@ function MenuRewardByItem(props) {
       {val.description}
     </Option>
   ));
-  const printPlatform = listGame.map((val, i) => (
-    <Option value={val.partnerId} key={i}>
-      {val.partnerName}
-    </Option>
-  ));
-  const printListServer = listServer.map((val, index) => (
-    <Option value={val.server} key={index}>
-      {val.serverName}
-    </Option>
-  ));
-  return (
-    <div className="promo-section2">
-      <div className="promo-choose-platform">
+    const printPlatform = props.listPartners.map((val, i) => (
+      <Option value={val.partnerId} key={i}>
+        {val.partnerName}
+      </Option>
+    ));
+    const printListServer = listServer.map((val, index) => (
+      <Option value={val.server} key={index}>
+        {val.serverName}
+      </Option>
+    ));
+    return (
+      <div className="promo-section2">
+        <div className="promo-choose-platform">
+          <div className="promo-choose-platform-name">
+            <h3>Chọn game:</h3>
+            <Select
+              style={{ width: "65%" }}
+              onChange={props.handleChangePlatformPromo}
+              placeholder="-Chọn game-"
+              value={platformId}
+            >
+              {printPlatform}
+            </Select>{" "}
+          </div>
+          <div className="promo-choose-platform-server">
+            <h3>Server:</h3>
+            <Select
+              placeholder="-Chọn server-"
+              style={{ width: "65%" }}
+              onChange={props.handleChangeServerPromo}
+              name="server"
+              value={server}
+            >
+              {printListServer}
+            </Select>{" "}
+          </div>
+        </div>
         <div className="promo-choose-platform-name">
-          <h3>Chọn game:</h3>
+          <h3 style={{ marginRight: "1.5rem" }}>Hình thức:</h3>
           <Select
             style={{ width: "65%" }}
-            onChange={props.handleChangePlatformPromo}
-            placeholder="-Chọn game-"
-            value={platformId}
+            onChange={props.handleChangeTypePromo}
+            value={type}
           >
-            {printPlatform}
-          </Select>{" "}
-        </div>
-        <div className="promo-choose-platform-server">
-          <h3>Server:</h3>
-          <Select
-            placeholder="-Chọn server-"
-            style={{ width: "65%" }}
-            onChange={props.handleChangeServerPromo}
-            name="server"
-            value={server}
-          >
-            {printListServer}
+            {printPromoType}
           </Select>{" "}
         </div>
       </div>
-      <div className="promo-choose-platform-name">
-        <h3 style={{ marginRight: "1.5rem" }}>Hình thức:</h3>
-        <Select
-          style={{ width: "65%" }}
-          onChange={props.handleChangeTypePromo}
-          value={type}
-        >
-          {printPromoType}
-        </Select>{" "}
-      </div>
-    </div>
-  );
+    );
 }
 function mapStateToProps(state) {
   return {
-    detailPromo: state.detailPromo
+    detailPromo: state.detailPromo,
+    listPartners:state.listPartner
   };
 }
 export default connect(mapStateToProps, null)(MenuRewardByItem);
