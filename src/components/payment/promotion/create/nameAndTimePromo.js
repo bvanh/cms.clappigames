@@ -85,13 +85,39 @@ function InputTimeArea(props) {
       {val}
     </Option>
   ));
+  const onChangeDates = (field, value) => {
+    console.log([field],value)
+    // this.setState({
+    //   [field]: value,
+    // });
+  };
   return (
     <Col md={12} className="section2-promotion">
       <div>
         <h3 className="promotion-title-field">Thời gian áp dụng </h3>
         <div className="section2-promotion-pickTime">
           <h3>Thời gian: </h3>
-          <RangePicker
+          <DatePicker
+            // disabledDate={this.disabledStartDate}
+            showTime
+            format="YYYY-MM-DD HH:mm:ss"
+            value={moment(timeTotal[0], "YYYY-MM-DD hh:mm")}
+            placeholder="Start"
+            onChange={onChangeDates}
+            onOpenChange={props.handleStartTimeTotal}
+          />
+          <DatePicker
+            // disabledDate={this.disabledEndDate}
+            name='start'
+            showTime
+            format="YYYY-MM-DD HH:mm:ss"
+            value={moment(timeTotal[1], "YYYY-MM-DD hh:mm")}
+            placeholder="End"
+            onChange={onChangeDates}
+            // open={endOpen}
+            onOpenChange={props.handleEndTimeTotal}
+          />
+          {/* <RangePicker
             showTime={{ format: "hh:mm" }}
             style={{ width: "80%" }}
             format="YYYY-MM-DD hh:mm"
@@ -105,7 +131,7 @@ function InputTimeArea(props) {
                   moment(timeTotal[1], "YYYY-MM-DD hh:mm")
                 ]
             }
-          />
+          /> */}
         </div>
         <div className="section2-promotion-pickTime">
           <h3>Theo ngày: </h3>

@@ -37,7 +37,6 @@ function TypeEvent(props) {
       setItemsEvent(data.listProducts)
     }
   })
-  // useMemo(() => getPartnerProducts(), [game]);
   const printListItems = productsEventTypeItem.map((val, index) => (
     <Option value={val.partnerProductId} key={index}>
       {val.productName}
@@ -48,8 +47,6 @@ function TypeEvent(props) {
       {val.productName}
     </Option>
   ))
-  // console.log(props.detailPromo)
-  // useMemo(() => console.log(config), [props.detailPromo])
   if (config) {
     const indexShop = JSON.parse(config);
     const printPlatform = listGame.map((val, i) => (
