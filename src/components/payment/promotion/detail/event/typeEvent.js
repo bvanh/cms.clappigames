@@ -32,6 +32,7 @@ function TypeEvent(props) {
     onCompleted: data => setListGame(data.listPartners)
   })
   useQuery(getListItemsForEvent, {
+    fetchPolicy: 'cache-and-network',
     onCompleted: data => {
       setItemsEvent(data.listProducts)
     }

@@ -134,6 +134,7 @@ function UpdateEvent(props) {
     }
   });
   useQuery(getListItemsForEvent, {
+    fetchPolicy:'cache-and-network',
     onCompleted: data => {
       setIndexEventByMoney({
         ...indexEventByMoney,
