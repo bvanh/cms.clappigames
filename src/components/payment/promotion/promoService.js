@@ -3,7 +3,7 @@ import moment from "moment";
 import { Modal, Icon } from "antd";
 import { Link } from "react-router-dom";
 const printAlertDailyPromo = arr => {
-  return arr.map(function(val, index) {
+  return arr.map(function (val, index) {
     switch (val) {
       case 0:
         return <span key={index}>Thứ 2,</span>;
@@ -169,7 +169,7 @@ const checkNumb = indexShop => {
 const checkTime = startTime => {
   const startTimes = moment(startTime).format("x");
   const now1 = moment().format("x");
-  if (Number(now1) - Number(startTimes) < 0) {
+  if (Number(now1) - Number(startTimes) > 0) {
     return true;
   } else {
     return false;

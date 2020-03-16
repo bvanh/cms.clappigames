@@ -55,7 +55,7 @@ function ListPromoAndEvent(props) {
             </Radio.Group>
           </div>
           {isTypePromo === "promo" ? (
-            <ListPromo />
+            <ListPromo isCreatePromo={props.isCreatePromo}/>
           ) : (
             <ListEvents isPromo={isTypePromo} />
           )}

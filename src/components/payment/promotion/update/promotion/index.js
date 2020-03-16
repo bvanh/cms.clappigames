@@ -25,8 +25,8 @@ import {
   getListItemsForEvent
 } from "../../../../../utils/query/promotion";
 import { checkTime } from "../../promoService";
+import moment from 'moment'
 import { connect } from "react-redux";
-import moment from "moment";
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 function UpdatePromotion(props) {
   const {
@@ -40,9 +40,8 @@ function UpdatePromotion(props) {
     config,
     paymentType
   } = props.detailPromo;
-
   const { startTime, endTime, dates, daily, hour } = JSON.parse(eventTime);
-  console.log(checkTime(startTime));
+  const isTimeInPromo = checkTime(startTime);
   const [alertUpdateSuccess, setAlertUpdateSuccess] = useState(false);
   const [switchTypeEvent, setSwitchTypeEvent] = useState(shop ? true : false);
   const [isCreateEvent, setIsCreateEvent] = useState(false);
@@ -53,7 +52,7 @@ function UpdatePromotion(props) {
     server: "",
     status: status,
     type: type,
-    timeTotal: [startTime, endTime],
+    timeTotal: [startTime,endTime],
     dates: dates,
     daily: daily,
     startTime: hour[0],
@@ -104,7 +103,8 @@ function UpdatePromotion(props) {
     variables: {
       ids: props.idCreatePromoAndEvent
     },
-    onCompleted: data => console.log(data)
+    onCompleted: data => {
+      console.log(data)}
   });
   const [deletePromo] = useMutation(deletePromotion, {
     variables: {
@@ -112,6 +112,7 @@ function UpdatePromotion(props) {
     },
     onCompleted: data => console.log(data)
   });
+  console.log(isCreateEvent)
   useQuery(getListServer(platformId), {
     onCompleted: data => {
       setListPartner({
@@ -143,7 +144,7 @@ function UpdatePromotion(props) {
       }),
     [switchTypeEvent]
   );
-  const resetGameAndServer = () => {};
+  const resetGameAndServer = () => { };
 
   const handleChangePlatform = async e => {
     dispatchResetItemRewards();
@@ -267,8 +268,9 @@ function UpdatePromotion(props) {
             setInfoPromo={setInfoPromo}
             switchTypeEvent={switchTypeEvent}
             setSwitchTypeEvent={setSwitchTypeEvent}
+            isTimeInPromo={isTimeInPromo}
           />
-          {checkTime(startTime) ? (
+          {switchTypeEvent ? (
             <MenuRewardByItem
               indexShop={indexShop}
               setIndexShop={setIndexShop}
@@ -278,19 +280,20 @@ function UpdatePromotion(props) {
               handleChangePlatformPromo={handleChangePlatformPromo}
               handleChangelistPartner={handleChangeTypePromo}
               handleChangeServerPromo={handleChangeServerPromo}
+              isTimeInPromo={isTimeInPromo}
             />
           ) : (
-            <MenuRewardEventByMoney
-              indexPromoAndEvent={indexPromoAndEvent}
-              setIndexPromoAndEvent={setIndexPromoAndEvent}
-              indexEventByMoney={indexEventByMoney}
-              setIndexEventByMoney={setIndexEventByMoney}
-              server={indexPromoAndEvent.server}
-              listPartner={listPartner}
-              handleChangePlatform={handleChangePlatform}
-              handleChangeServer={handleChangeServer}
-            />
-          )}
+              <MenuRewardEventByMoney
+                indexPromoAndEvent={indexPromoAndEvent}
+                setIndexPromoAndEvent={setIndexPromoAndEvent}
+                indexEventByMoney={indexEventByMoney}
+                setIndexEventByMoney={setIndexEventByMoney}
+                server={indexPromoAndEvent.server}
+                listPartner={listPartner}
+                handleChangePlatform={handleChangePlatform}
+                handleChangeServer={handleChangeServer}
+              />
+            )}
         </div>
       </Col>
       <InputTimeArea
@@ -302,7 +305,7 @@ function UpdatePromotion(props) {
         setTimePromo={setTimePromo}
       />
       <Col md={24}>
-        {switchTypeEvent && checkTime(startTime) ? (
+        {switchTypeEvent ? (
           <EventByItems
             listItems={listItems}
             indexPromoAndEvent={indexPromoAndEvent}
@@ -310,19 +313,20 @@ function UpdatePromotion(props) {
             setIndexShop={setIndexShop}
             indexGameForPromo={indexGameForPromo}
             successAlert={successAlert}
+            isTimeInPromo={isTimeInPromo}
           />
         ) : (
-          <InputRewardForShowByMoney
-            successAlert={successAlert}
-            listPartner={listPartner}
-            listItems={listItems}
-            indexPromoAndEvent={indexPromoAndEvent}
-            setIndexPromoAndEvent={setIndexPromoAndEvent}
-            indexEventByMoney={indexEventByMoney}
-            setIndexEventByMoney={setIndexEventByMoney}
-            isUpdate={props.isUpdate}
-          />
-        )}
+            <InputRewardForShowByMoney
+              successAlert={successAlert}
+              listPartner={listPartner}
+              listItems={listItems}
+              indexPromoAndEvent={indexPromoAndEvent}
+              setIndexPromoAndEvent={setIndexPromoAndEvent}
+              indexEventByMoney={indexEventByMoney}
+              setIndexEventByMoney={setIndexEventByMoney}
+              isUpdate={props.isUpdate}
+            />
+          )}
       </Col>
       <Modal
         title={<Icon type="check-circle" />}
@@ -339,7 +343,8 @@ function UpdatePromotion(props) {
 }
 function mapStateToProps(state) {
   return {
-    detailPromo: state.detailPromo
+    detailPromo: state.detailPromo,
+    idCreatePromoAndEvent: state.idPromoAndEventCreateInUpdate
   };
 }
 export default connect(mapStateToProps, null)(UpdatePromotion);

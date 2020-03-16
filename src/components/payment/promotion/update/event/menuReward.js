@@ -136,6 +136,7 @@ const MenuRewardEventByMoney = props => {
         style={{ width: 120 }}
         onChange={handleChangePaymentType}
         placeholder="-Chọn game-"
+        disabled={props.isTimeInPromo}
       >
         {printEventType}
       </Select>
@@ -144,6 +145,7 @@ const MenuRewardEventByMoney = props => {
         value={value}
         style={{ width: 120 }}
         onChange={handleChanePaymentTypeByMoney}
+        disabled={props.isTimeInPromo}
       >
         {printEventMoneyType}
       </Select>
@@ -154,6 +156,7 @@ const MenuRewardEventByMoney = props => {
             style={{ width: 120 }}
             onChange={props.handleChangePlatform}
             value={platformId}
+            disabled={props.isTimeInPromo}
           >
             {printPlatform}
           </Select>{" "}
@@ -164,6 +167,7 @@ const MenuRewardEventByMoney = props => {
             onChange={props.handleChangeServer}
             name="server"
             value={server}
+            disabled={props.isTimeInPromo}
           >
             {printListServer}
           </Select>{" "}

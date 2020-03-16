@@ -34,7 +34,7 @@ const initialIndexShop = [
     ]
   }
 ];
-function CreatePromotion() {
+function CreatePromotion(props) {
   const [switchTypeEvent, setSwitchTypeEvent] = useState(true);
   const [indexPromoAndEvent, setIndexPromoAndEvent] = useState({
     name: "",
@@ -44,8 +44,8 @@ function CreatePromotion() {
     type: "",
     typeEvent: "",
     timeTotal: [
-      moment().format("YYYY-MM-DD HH:mm"),
-      moment().format("YYYY-MM-DD HH:mm")
+      moment().subtract(1,'hours').format("YYYY-MM-DD hh:mm"),
+      moment().subtract(1,'hours').format("YYYY-MM-DD hh:mm")
     ],
     dates: [],
     daily: [],
@@ -286,6 +286,7 @@ function CreatePromotion() {
               indexGameForPromo={indexGameForPromo}
               indexShop={indexShop}
               setIndexShop={setIndexShop}
+            
             />
           ) : (
             <InputRewardByMoney

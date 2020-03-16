@@ -1,13 +1,15 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Table, Button, Pagination, Input, Tabs } from "antd";
 import {
   getListEventsByType,
 } from "../../../../utils/query/promotion";
-import { useLazyQuery, useQuery } from "@apollo/react-hooks";
+import { useLazyQuery, useQuery, useMutation } from "@apollo/react-hooks";
 import { Link } from "react-router-dom";
+import { connect } from 'react-redux'
+import { deleteEvents } from "../../../../utils/mutation/promotion";
 
 const { TabPane } = Tabs;
-function ListEvents() {
+function ListEvents(props) {
   const [pageIndex, setPageIndex] = useState({
     currentPage: 1,
     pageSize: 10,
@@ -16,11 +18,19 @@ function ListEvents() {
     name: ""
   });
   const [dataListEvents, setData] = useState(null);
+  const [listDelete, setListDelete] = useState([])
   const { currentPage, pageSize, status, paymentType, name } = pageIndex;
   const [getData, { loading, data }] = useLazyQuery(getListEventsByType, {
+    fetchPolicy: "cache-and-network",
     onCompleted: data => {
       setData(data.listEventsByType);
     }
+  });
+  const [deleteEvent] = useMutation(deleteEvents, {
+    variables: {
+      ids: listDelete
+    },
+    onCompleted: data => console.log(data)
   });
   useEffect(() => {
     getData({
@@ -43,12 +53,12 @@ function ListEvents() {
       title: "Hình thức",
       dataIndex: "config",
       key: "type",
-      render:index=>{
-        if(JSON.parse(index).type==='INKIND'){
+      render: index => {
+        if (JSON.parse(index).type === 'INKIND') {
           return <span>Tặng quà out Game</span>
-        }else if(JSON.parse(index).type==='COIN'){
+        } else if (JSON.parse(index).type === 'COIN') {
           return <span>Tặng C.COIN</span>
-        }else {
+        } else {
           return <span>Tặng Item in Game</span>
         }
       }
@@ -90,21 +100,27 @@ function ListEvents() {
       )
     }
   ];
+  const onSelectListDelete = (selectedRowKeys, selectedRows) => {
+    setListDelete(selectedRows.map((val, i) => val.id));
+  };
+  const rowSelection = {
+    onChange: onSelectListDelete,
+  };
   const handleChangeTypePromo = statusValue => {
     setPageIndex({ ...pageIndex, status: statusValue });
-    getData({
+     getData({
       variables: {
         currentPage: currentPage,
         pageSize: pageSize,
-        status: statusValue,
+        status: status,
         paymentType: paymentType,
-        name: ""
+        name: name
       }
     });
   };
   const goPage = pageNumber => {
     setPageIndex({ ...pageIndex, currentPage: pageNumber });
-    getData({
+     getData({
       variables: {
         currentPage: currentPage,
         pageSize: pageSize,
@@ -118,7 +134,7 @@ function ListEvents() {
     setPageIndex({ ...pageIndex, name: e.target.value });
   };
   const onSearchPromo = () => {
-    getData({
+     getData({
       variables: {
         currentPage: currentPage,
         pageSize: pageSize,
@@ -128,6 +144,19 @@ function ListEvents() {
       }
     });
   };
+  const submitDelete = async () => {
+    await deleteEvent();
+     getData({
+      variables: {
+        currentPage: currentPage,
+        pageSize: pageSize,
+        status: status,
+        paymentType: paymentType,
+        name: name
+      }
+    });
+    setListDelete([])
+  }
   if (loading) return "Loading...";
   return (
     <div>
@@ -140,12 +169,14 @@ function ListEvents() {
         <TabPane tab="Đang áp dụng" key="COMPLETE"></TabPane>
         <TabPane tab="Chưa áp dụng" key="INPUT"></TabPane>
       </Tabs>
+      <Button onClick={submitDelete} disabled={listDelete.length > 0 ? false : true}>Delete</Button>
       {dataListEvents && (
         <>
           <Table
             columns={columns}
             dataSource={dataListEvents.rows}
             pagination={false}
+            rowSelection={rowSelection}
           />
           <Pagination
             current={currentPage}
@@ -159,5 +190,10 @@ function ListEvents() {
     </div>
   );
 }
+function mapStateToProps(state) {
+  return {
+    isCreatePromo: state.isCreatePromo
+  };
+}
+export default connect(mapStateToProps, null)(ListEvents);
 
-export default ListEvents;

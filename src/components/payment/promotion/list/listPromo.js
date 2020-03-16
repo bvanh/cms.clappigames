@@ -1,11 +1,15 @@
-import React, { useState, useEffect } from "react";
-import { Table, Button, Pagination, Input, Tabs } from "antd";
+import React, { useState, useEffect, useMemo } from "react";
+import { Table, Button, Pagination, Input, Tabs, Modal } from "antd";
 import {
   getListEventByType,
   getListPromotionByType
 } from "../../../../utils/query/promotion";
-import { useLazyQuery, useQuery } from "@apollo/react-hooks";
+import { useLazyQuery, useQuery, useMutation } from "@apollo/react-hooks";
 import { Link } from "react-router-dom";
+import { connect } from 'react-redux'
+import {
+  deletePromotion
+} from "../../../../utils/mutation/promotion";
 
 const { TabPane } = Tabs;
 function ListPromo() {
@@ -19,13 +23,21 @@ function ListPromo() {
     name: ""
   });
   const [dataListPromo, setData] = useState(null);
+  const [listDelete, setListDelete] = useState([])
   const { currentPage, pageSize, status, type, game, server, name } = pageIndex;
   const [getData, { loading, data }] = useLazyQuery(getListPromotionByType, {
+    fetchPolicy: "cache-and-network",
     onCompleted: data => {
       setData(data.listPromotionsByType);
     }
   });
-  useEffect(() => {
+  const [deletePromo] = useMutation(deletePromotion, {
+    variables: {
+      ids: listDelete
+    },
+    onCompleted: data => console.log(data)
+  });
+  useMemo(() => {
     getData({
       variables: {
         currentPage: currentPage,
@@ -35,7 +47,7 @@ function ListPromo() {
         game: game,
         server: server,
         name: name
-      }
+      },
     });
   }, []);
   const columns = [
@@ -89,7 +101,6 @@ function ListPromo() {
   ];
   const handleChangeTypePromo = statusValue => {
     setPageIndex({ ...pageIndex, status: statusValue });
-
     getData({
       variables: {
         currentPage: currentPage,
@@ -132,6 +143,27 @@ function ListPromo() {
       }
     });
   };
+  const submitDelete = async () => {
+    await deletePromo();
+    getData({
+      variables: {
+        currentPage: currentPage,
+        pageSize: pageSize,
+        status: status,
+        type: type,
+        game: game,
+        server: server,
+        name: name
+      }
+    });
+    setListDelete([])
+  }
+  const onSelectListDelete = (selectedRowKeys, selectedRows) => {
+    setListDelete(selectedRows.map((val, i) => val.id));
+  };
+  const rowSelection = {
+    onChange: onSelectListDelete,
+  };
   if (loading) return "Loading...";
   return (
     <div>
@@ -144,12 +176,14 @@ function ListPromo() {
         <TabPane tab="Đang áp dụng" key="COMPLETE"></TabPane>
         <TabPane tab="Chưa áp dụng" key="INPUT"></TabPane>
       </Tabs>
+      <Button onClick={submitDelete} disabled={listDelete.length > 0 ? false : true}>Delete</Button>
       {dataListPromo && (
         <>
           <Table
             columns={columns}
             dataSource={dataListPromo.rows}
             pagination={false}
+            rowSelection={rowSelection}
           />
           <Pagination
             current={currentPage}
@@ -163,5 +197,4 @@ function ListPromo() {
     </div>
   );
 }
-
-export default ListPromo;
+export default ListPromo

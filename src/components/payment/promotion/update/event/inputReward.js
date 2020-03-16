@@ -90,8 +90,8 @@ function InputRewardForShowByMoney(props) {
     status: status,
     paymentType: props.nameEventByMoney,
     eventTime: JSON.stringify({
-      startTime: moment(timeTotal[0], "DD-MM-YYYY").format("YYYY-MM-DD hh:mm"),
-      endTime: moment(timeTotal[1], "DD-MM-YYYY").format("YYYY-MM-DD hh:mm"),
+      startTime: timeTotal[0],
+      endTime: timeTotal[1],
       dates: dates,
       daily: daily,
       hour: [startTime, endTime]
@@ -261,6 +261,7 @@ function InputRewardForShowByMoney(props) {
             name="pucharseTimes"
             onChange={e => handleChooseNumbItem("inkind", index1, e)}
             style={{ width: "10%" }}
+            disabled={props.isTimeInPromo}
           ></Input>
           VNĐ
           <Input
@@ -269,6 +270,7 @@ function InputRewardForShowByMoney(props) {
             name="pucharseTimes"
             onChange={e => handleChooseInKind(index1, e)}
             style={{ width: "10%" }}
+            disabled={props.isTimeInPromo}
           ></Input>
           <span onClick={() => reduceItem("inkind", index1)}>xóa item</span>
         </Col>
@@ -285,6 +287,7 @@ function InputRewardForShowByMoney(props) {
         name="pucharseTimes"
         onChange={e => handleChooseNumbItem("coin", index1, e)}
         style={{ width: "10%" }}
+        disabled={props.isTimeInPromo}
       ></Input>
       ...
       <Select
@@ -292,11 +295,12 @@ function InputRewardForShowByMoney(props) {
         value={val.rewards}
         style={{ width: "90%" }}
         // onChange={value => handleChooseItem(index1, value)}
+        disabled={props.isTimeInPromo}
       >
         {printItemsEvent}
       </Select>{" "}
       <span onClick={() => showModal(index1)}>show item COIN</span>
-      <span onClick={() => reduceItem("coin", index1)}>xóa item</span>
+      <span onClick={() => reduceItem("coin", index1)}disabled={props.isTimeInPromo}>xóa item</span>
     </Col>
   ));
   const defaultEventInput = () => {
@@ -319,6 +323,7 @@ function InputRewardForShowByMoney(props) {
         name="pucharseTimes"
         onChange={e => handleChooseNumbItem("item", index1, e)}
         style={{ width: "10%" }}
+        disabled={props.isTimeInPromo}
       ></Input>
       ...
       <Select
@@ -326,10 +331,11 @@ function InputRewardForShowByMoney(props) {
         value={val.rewards}
         style={{ width: "90%" }}
         onChange={value => handleChooseItemPartner(index1, value)}
+        disabled={props.isTimeInPromo}
       >
         {printListItems}
       </Select>{" "}
-      <span onClick={() => reduceItem("item", index1)}>xóa item</span>
+      <Button onClick={() => reduceItem("item", index1)} disabled={props.isTimeInPromo}>xóa item</Button>
     </Col>
   ));
 
@@ -342,26 +348,25 @@ function InputRewardForShowByMoney(props) {
         </Col>
       </Row>
       <div className="btn-create-promo">
-        <Button>Hủy</Button>
-        <Button onClick={() => submitUpdateEvent()}>Cập nhật khuyến mãi</Button>
+        <Button onClick={() => submitUpdateEvent()}>Xác nhận</Button>
       </div>
       <Row>
         {props.typeEventByMoney === "COIN" && (
           <>
             {printItemCoin}
-            <Button onClick={() => addItem("coin")}>Thêm điều kiện</Button>
+            <Button onClick={() => addItem("coin")} disabled={props.isTimeInPromo}>Thêm điều kiện</Button>
           </>
         )}
         {defaultEventInput() && (
           <>
             {printItemInkind}
-            <Button onClick={() => addItem("inkind")}>Thêm điều kiện</Button>
+            <Button onClick={() => addItem("inkind")} disabled={props.isTimeInPromo}>Thêm điều kiện</Button>
           </>
         )}
         {props.typeEventByMoney === "ITEM" && (
           <>
             {printItemPartner}
-            <Button onClick={() => addItem("item")}>Thêm điều kiện</Button>
+            <Button onClick={() => addItem("item")} disabled={props.isTimeInPromo}>Thêm điều kiện</Button>
           </>
         )}
       </Row>

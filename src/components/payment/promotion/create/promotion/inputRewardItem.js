@@ -44,8 +44,8 @@ function EventByItems(props) {
         server: server,
         shop: JSON.stringify(indexShop),
         eventTime: JSON.stringify({
-          startTime: moment(timeTotal[0]).format("YYYY-MM-DD hh:mm"),
-          endTime: moment(timeTotal[1]).format("YYYY-MM-DD hh:mm"),
+          startTime: timeTotal[0],
+          endTime: timeTotal[1],
           dates: dates,
           daily: daily,
           hour: [startTime, endTime]
@@ -76,6 +76,7 @@ function EventByItems(props) {
       platformId !== ""
     ) {
       await createPromo();
+     
       props.successAlert(true);
     } else {
       alertError();
@@ -147,7 +148,7 @@ function EventByItems(props) {
       {val.productName}
     </Option>
   ));
-  const printItem = indexShop.map(function(val, index1) {
+  const printItem = indexShop.map(function (val, index1) {
     const printReward = val.rewards.map((valReward, index2) => (
       <div key={index2}>
         <Input
@@ -209,8 +210,7 @@ function EventByItems(props) {
         </div>
       </div>
       <div className="btn-create-promo">
-        <Button>Hủy</Button>
-        <Button onClick={submitCreatePromo}>Tạo khuyến mãi</Button>
+        <Button onClick={submitCreatePromo}>Xác nhận</Button>
       </div>
       <Row>
         {printItem}

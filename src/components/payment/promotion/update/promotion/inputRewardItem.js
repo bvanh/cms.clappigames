@@ -46,12 +46,8 @@ function EventByItems(props) {
         server: server,
         shop: JSON.stringify(indexShop),
         eventTime: JSON.stringify({
-          startTime: moment(timeTotal[0], "DD-MM-YYYY").format(
-            "YYYY-MM-DD hh:mm"
-          ),
-          endTime: moment(timeTotal[1], "DD-MM-YYYY").format(
-            "YYYY-MM-DD hh:mm"
-          ),
+          startTime: timeTotal[0],
+          endTime: timeTotal[1],
           dates: dates,
           daily: daily,
           hour: [startTime, endTime]
@@ -147,7 +143,7 @@ function EventByItems(props) {
       {val.productName}
     </Option>
   ));
-  const printItem = indexShop.map(function(val, index1) {
+  const printItem = indexShop.map(function (val, index1) {
     const printReward = val.rewards.map((valReward, index2) => (
       <div key={index2}>
         <Input
@@ -156,12 +152,14 @@ function EventByItems(props) {
           name="pucharseTimes"
           onChange={e => handleChooseNumbReward(index1, index2, e)}
           style={{ width: "10%" }}
+          disabled={props.isTimeInPromo}
         ></Input>
         <Select
           mode="multiple"
           value={indexShop[index1].rewards[index2].itemId}
           style={{ width: "60%" }}
           onChange={value => handleChooseReward(index1, index2, value)}
+          disabled={props.isTimeInPromo}
         >
           {printListItems}
         </Select>{" "}
@@ -179,19 +177,21 @@ function EventByItems(props) {
             name="pucharseTimes"
             onChange={e => handleChooseNumbItem(index1, e)}
             style={{ width: "10%" }}
+            disabled={props.isTimeInPromo}
           ></Input>
           <Select
             value={indexShop[index1].purchaseItemId}
             style={{ width: "90%" }}
             onChange={value => handleChooseItem(index1, value)}
+            disabled={props.isTimeInPromo}
           >
             {printListItems}
           </Select>{" "}
-          <span onClick={() => reduceItem(index1)}>xóa item</span>
+          <Button onClick={() => reduceItem(index1)} disabled={props.isTimeInPromo}>xóa item</Button>
         </Col>
         <Col md={12}>
           {printReward}
-          <Button onClick={() => addReward(index1)}>Thêm quà</Button>
+          <Button onClick={() => addReward(index1)} disabled={props.isTimeInPromo}>Thêm quà</Button>
         </Col>
       </div>
     );
@@ -209,12 +209,11 @@ function EventByItems(props) {
         </div>
       </div>
       <div className="btn-create-promo">
-        <Button>Hủy</Button>
-        <Button onClick={submitUpdatePromo}>Cập nhật khuyến mãi</Button>
+        <Button onClick={submitUpdatePromo}>Xác nhận</Button>
       </div>
       <Row>
         {printItem}
-        <Button onClick={() => addItem()}>Thêm điều kiện</Button>
+        <Button onClick={() => addItem()} disabled={props.isTimeInPromo}>Thêm điều kiện</Button>
       </Row>
     </div>
   );

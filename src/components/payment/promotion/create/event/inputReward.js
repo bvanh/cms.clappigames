@@ -104,8 +104,8 @@ function InputrewardForShowByMoney(props) {
         status: status,
         paymentType: props.nameEventByMoney,
         eventTime: JSON.stringify({
-          startTime: moment(timeTotal[0]).format("YYYY-MM-DD hh:mm"),
-          endTime: moment(timeTotal[1]).format("YYYY-MM-DD hh:mm"),
+          startTime: timeTotal[0],
+          endTime: timeTotal[1],
           dates: dates,
           daily: daily,
           hour: [startTime, endTime]
@@ -117,7 +117,6 @@ function InputrewardForShowByMoney(props) {
       }
     },
     onCompleted: data => {
-      console.log(data);
       isUpdate
         ? dispatchSaveIdCreateInUpdate(data.createEvent.id)
         : console.log(data);
@@ -130,8 +129,8 @@ function InputrewardForShowByMoney(props) {
         status: status,
         paymentType: props.nameEventByMoney,
         eventTime: JSON.stringify({
-          startTime: timeTotal[0],
-          endTime: timeTotal[1],
+          startTime: moment(timeTotal[0]).format("YYYY-MM-DD hh:mm"),
+          endTime: moment(timeTotal[1]).format("YYYY-MM-DD hh:mm"),
           dates: dates,
           daily: daily,
           hour: [startTime, endTime]
@@ -322,7 +321,7 @@ function InputrewardForShowByMoney(props) {
       </Row>
       <div className="btn-create-promo">
         <Button>Hủy</Button>
-        <Button onClick={submitCreateEvent}>Tạo khuyến mãi</Button>
+        <Button onClick={submitCreateEvent}>Xác nhận</Button>
       </div>
       <Row>
         {printItem}

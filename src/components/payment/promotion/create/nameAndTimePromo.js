@@ -42,6 +42,7 @@ function InputNameAndTypeArea(props) {
       </div>
       <h3>Hình thức khuyến mãi</h3>
       <Radio.Group
+        disabled={props.isTimeInPromo ? props.isTimeInPromo : false}
         value={switchTypeEvent}
         buttonStyle="solid"
         onChange={e => {
@@ -93,15 +94,15 @@ function InputTimeArea(props) {
           <RangePicker
             showTime={{ format: "hh:mm" }}
             style={{ width: "80%" }}
-            format="DD-MM-YYYY hh:mm"
+            format="YYYY-MM-DD hh:mm"
             placeholder={["-Thời gian bắt đầu", "- Thời gian kết thúc"]}
             onChange={props.onChangeDatePicker}
             value={
               timeTotal[0] === ""
                 ? [null, null]
                 : [
-                  moment(timeTotal[0], "DD-MM-YYYY hh:mm"),
-                  moment(timeTotal[1], "DD-MM-YYYY hh:mm")
+                  moment(timeTotal[0], "YYYY-MM-DD hh:mm"),
+                  moment(timeTotal[1], "YYYY-MM-DD hh:mm")
                 ]
             }
           />
@@ -161,7 +162,7 @@ function InputTimeArea(props) {
         </div>
       </div>
       <div className="section2-promotion-footer">
-        Khuyến mãi diễn ra vào {startTime} đến {endTime} {alertDaily}
+        Khuyến mãi diễn ra {startTime === '00:00:00' ? '' : `lúc ${startTime} đến ${endTime}`} vào các ngày {alertDaily}
         {printAlertDates} từ {timeTotal[0]} đến {timeTotal[1]}
       </div>
     </Col>

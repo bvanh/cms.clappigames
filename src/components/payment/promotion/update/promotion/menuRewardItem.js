@@ -48,6 +48,7 @@ function MenuRewardByItem(props) {
               onChange={props.handleChangePlatformPromo}
               placeholder="-Chọn game-"
               value={platformId}
+              disabled={props.isTimeInPromo}
             >
               {printPlatform}
             </Select>{" "}
@@ -60,6 +61,7 @@ function MenuRewardByItem(props) {
               onChange={props.handleChangeServerPromo}
               name="server"
               value={server}
+              disabled={props.isTimeInPromo}
             >
               {printListServer}
             </Select>{" "}
@@ -71,6 +73,7 @@ function MenuRewardByItem(props) {
             style={{ width: "65%" }}
             onChange={props.handleChangeTypePromo}
             value={type}
+            disabled={props.isTimeInPromo}
           >
             {printPromoType}
           </Select>{" "}

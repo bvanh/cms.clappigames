@@ -11,7 +11,6 @@ import { useQuery } from "react-apollo";
 
 const { TabPane } = Tabs;
 const { confirm } = Modal;
-const ReachableContext = React.createContext();
 
 function DetailPromotion(props) {
   const query = new URLSearchParams(window.location.search);
@@ -23,17 +22,17 @@ function DetailPromotion(props) {
       title: "Chỉnh sửa khuyến mãi",
       content: (
         <div>
-            - Hệ thống chỉ cho phép cập nhật khuyến mãi khi chưa phát sinh giao
-            dịch có khuyến mãi
+          - Hệ thống chỉ cho phép cập nhật khuyến mãi khi chưa phát sinh giao
+          dịch có khuyến mãi
           <br />
-          <span>
+          <p>
             - Nếu chương trình khuyến mãi chưa phát sinh giao dịch nào có thể
             sửa được toàn bộ
-          </span>
-          <span>
+          </p>
+          <p>
             - Nếu chương trình khuyến mãi đã phát sinh giao dịch thì có thể sửa
             1 số thông tin nhưng không thay đổi được hình thưc khuyến mãi
-          </span>
+          </p>
           +) Các tt có thể sửa: Tên chương trình, trạng thái, thời gian áp dụng
         </div>
       ),
@@ -56,37 +55,37 @@ function DetailPromotion(props) {
       {isUpdate ? (
         <UpdatePromotion isUpdate={isUpdate} />
       ) : (
-        <Row>
-          <Link to="/payment/promotion">
-            <span>
-              <Icon type="arrow-left" style={{ paddingRight: ".2rem" }} />
+          <Row>
+            <Link to="/payment/promotion">
+              <span>
+                <Icon type="arrow-left" style={{ paddingRight: ".2rem" }} />
               Quay lại
             </span>
-          </Link>
-          <div className="promo-title">
-            <div className="promo-title-name">
-              <h2>{name}</h2>
-              <Button onClick={showConfirm}>Edit</Button>
+            </Link>
+            <div className="promo-title">
+              <div className="promo-title-name">
+                <h2>{name}</h2>
+                <Button onClick={showConfirm}>Edit</Button>
+              </div>
+              <div>
+                <h3 style={{ margin: "0 1rem 0 0" }}>Trạng thái</h3>
+                <Radio.Group value={status}>
+                  <Radio value="COMPLETE">Kích hoạt</Radio>
+                  <Radio value="INPUT">Chưa áp dụng</Radio>
+                </Radio.Group>
+              </div>
             </div>
-            <div>
-              <h3 style={{ margin: "0 1rem 0 0" }}>Trạng thái</h3>
-              <Radio.Group value={status}>
-                <Radio value="COMPLETE">Kích hoạt</Radio>
-                <Radio value="INPUT">Chưa áp dụng</Radio>
-              </Radio.Group>
-            </div>
-          </div>
-          <Tabs activeKey={isShowPromo} onChange={key => setIsShowPromo(key)}>
-            <TabPane tab="Hình thức khuyến mãi" key="1">
-              <TypePromo />
-            </TabPane>
-            <TabPane tab="Thời gian áp dụng" key="2">
-              <TimePromo />
-            </TabPane>
-            <TabPane tab="Lịch sử khuyến mãi" key="3"></TabPane>
-          </Tabs>
-        </Row>
-      )}
+            <Tabs activeKey={isShowPromo} onChange={key => setIsShowPromo(key)}>
+              <TabPane tab="Hình thức khuyến mãi" key="1">
+                <TypePromo />
+              </TabPane>
+              <TabPane tab="Thời gian áp dụng" key="2">
+                <TimePromo />
+              </TabPane>
+              <TabPane tab="Lịch sử khuyến mãi" key="3"></TabPane>
+            </Tabs>
+          </Row>
+        )}
     </>
   );
 }

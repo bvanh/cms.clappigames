@@ -6,6 +6,7 @@ const createPromotion = gql`
       id
       shop
       name
+      eventTime
     }
   }
 `;
