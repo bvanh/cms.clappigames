@@ -5,18 +5,14 @@ import { queryGetPlatform } from "../../../../../utils/queryPlatform";
 import { getListServer } from "../../../../../utils/query/promotion";
 import { useQuery } from "@apollo/react-hooks";
 import {connect} from 'react-redux'
+import {indexAllServer} from '../../promoService'
 const { Option } = Select;
 
 function MenuRewardByItem(props) {
   const { platformId, server } = props.indexGameForPromo;
   const { type} = props.indexPromoAndEvent;
   const [listGame, setListGame] = useState([{}]);
-  const [listServer, setListServer] = useState([
-    {
-      server: 0,
-      serverName: "All server"
-    }
-  ]);
+  const [listServer, setListServer] = useState([indexAllServer]);
   const [listTypePromo, setListTypePromo] = useState([
     { name: "", description: "" }
   ]);
@@ -32,7 +28,7 @@ function MenuRewardByItem(props) {
   });
   useQuery(getListServer(platformId), {
     onCompleted: data => {
-      setListServer([...listServer, ...data.listPartnerServers]);
+      setListServer([...data.listPartnerServers,indexAllServer]);
     }
   });
   const printPromoType = listTypePromo.map((val, index) => (

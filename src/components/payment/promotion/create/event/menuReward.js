@@ -20,9 +20,8 @@ import {
 import { queryGetPlatform } from "../../../../../utils/queryPlatform";
 import { getListPartnerProducts } from "../../../../../utils/queryPartnerProducts";
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
-import {
-  getListServer,
-} from "../../../../../utils/query/promotion";
+import { getListServer } from "../../../../../utils/query/promotion";
+import { indexAllServer } from "../../promoService";
 import { connect } from "react-redux";
 import {
   dispatchTypeEventByMoney,
@@ -49,23 +48,18 @@ const eventCointype = [
 ];
 const MenuRewardEventByMoney = props => {
   const { server } = props;
-  const {listGame } = props.listPartner;
-  const { platformId } = props.indexPromoAndEvent
+  const { listGame } = props.listPartner;
+  const { platformId } = props.indexPromoAndEvent;
   const [eventByMoneyIndex, setEventByMoneyIndex] = useState({
     eventType: [],
     eventPaymentType: [],
     value: ""
   });
-  const [listServer, setListServer] = useState([
-    {
-      server: 0,
-      serverName: "All server"
-    }
-  ]);
+  const [listServer, setListServer] = useState([indexAllServer]);
   const { eventType, eventPaymentType, value } = eventByMoneyIndex;
   useQuery(getListServer(platformId), {
     onCompleted: data => {
-      setListServer([...listServer,...data.listPartnerServers]);
+      setListServer([...data.listPartnerServers,indexAllServer]);
     }
   });
   useMemo(() => {
@@ -190,7 +184,7 @@ function mapStateToProps(state) {
   return {
     typeEventByMoney: state.typeEventByMoney,
     nameEventByMoney: state.nameEventByMoney,
-    listPartners:state.listPartner
+    listPartners: state.listPartner
   };
 }
 export default connect(mapStateToProps, null)(MenuRewardEventByMoney);

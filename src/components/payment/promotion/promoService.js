@@ -172,12 +172,28 @@ const checkTime = startTime => {
     return false;
   }
 };
+const checkStartHour = (startTime) => {
+  switch (startTime) {
+    case '00:00:00':
+      return '00:00:00'
+    default:
+      return startTime;
+  }
+}
+const checkEndHour = (endTime) => {
+  switch (endTime) {
+    case '00:00:00':
+      return '23:59:59'
+    default:
+      return endTime;
+  }
+}
 const alertErrorItemPromo = () => {
   Modal.error({
-    title: "Ki !!!",
+    title: "Error !!!",
     content: (
       <div>
-        <p>+ Điền đẩy đủ thông tin.</p>
+        <p>+ Kiểm tra thông tin game, server, item, hình thức.</p>
         <p>+ Giá trị các mốc khuyến mãi tăng dần.</p>
       </div>
     )
@@ -185,15 +201,18 @@ const alertErrorItemPromo = () => {
 };
 const alertErrorNamePromo = () => {
   Modal.error({
-    title: "Chú ý !!!",
+    title: "Error!!!",
     content: (
       <div>
-        <p>+ Điền đẩy đủ thông tin.</p>
-        <p>+ Giá trị các mốc khuyến mãi tăng dần.</p>
+        <p>+ Kiểm tra thông tin tên, trạng thái, thời gian.</p>
       </div>
     )
   });
 };
+const indexAllServer = {
+  server: 0,
+  serverName: "All server"
+}
 export {
   printAlertDailyPromo,
   daily0,
@@ -208,6 +227,9 @@ export {
   checkPurchaseItemIsEmtry,
   checkPoint,
   checkNumb,
-  alertError,
-  checkTime
+  alertErrorNamePromo,
+  alertErrorItemPromo,
+  checkTime,
+  checkEndHour, checkStartHour,
+  indexAllServer
 };

@@ -10,7 +10,10 @@ import {
   checkMainInfoPromoAndEvent,
   checkRewardsIsEmtry,
   checkPoint,
-  alertError
+  alertErrorNamePromo,
+  alertErrorItemPromo,
+  checkEndHour,
+  checkStartHour
 } from "../../promoService";
 import { dispatchSaveIdCreateInUpdate } from "../../../../../redux/actions/index";
 import { useLazyQuery, useMutation, useQuery } from "@apollo/react-hooks";
@@ -133,7 +136,7 @@ function InputrewardForShowByMoney(props) {
           endTime: moment(timeTotal[1]).format("YYYY-MM-DD hh:mm"),
           dates: dates,
           daily: daily,
-          hour: [startTime, endTime]
+          hour: [checkStartHour(startTime), checkEndHour(endTime)]
         }),
         config: JSON.stringify({
           game: platformId,
@@ -156,33 +159,31 @@ function InputrewardForShowByMoney(props) {
         props.nameEventByMoney,
         timeTotal[0],
         startTime,
-        endTime,
-        dates,
-        daily
-      ) &&
-      checkPoint(indexShop)
+        endTime
+      )
     ) {
       if (props.nameEventByMoney === "MONEY") {
-        if (checkRewardsIsEmtry(indexShop)) {
+        if (checkRewardsIsEmtry(indexShop) && checkPoint(indexShop)) {
           await createEventByMoney();
           props.successAlert(true);
         } else {
-          alertError()
+          alertErrorItemPromo();
         }
       } else if (props.nameEventByMoney === "COIN") {
         if (
           checkRewardsIsEmtry(indexShop) &&
+          checkPoint(indexShop) &&
           platformId !== "" &&
           server !== ""
         ) {
           await createEventByMoneyForItem();
           props.successAlert(true);
         } else {
-          alertError();
+          alertErrorItemPromo();
         }
       }
     } else {
-      alertError();
+      alertErrorNamePromo();
     }
   };
   const addItem = () => {
@@ -265,7 +266,7 @@ function InputrewardForShowByMoney(props) {
             style={{ width: "10%" }}
           ></Input>
           {props.nameEventByMoney === "MONEY" ? "VNĐ" : "C.COIN"}
-          {props.typeEventByMoney === "INKIND"  && (
+          {props.typeEventByMoney === "INKIND" && (
             <Input
               value={indexShop[index1].rewards[0]}
               placeholder="-Điền quà out game-"

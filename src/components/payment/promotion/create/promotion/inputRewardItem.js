@@ -10,7 +10,10 @@ import {
   checkItemIsEmtry,
   checkPurchaseItemIsEmtry,
   checkNumb,
-  alertError
+  alertErrorNamePromo,
+  alertErrorItemPromo,
+  checkEndHour,
+  checkStartHour
 } from "../../promoService";
 const { Option } = Select;
 function EventByItems(props) {
@@ -48,7 +51,7 @@ function EventByItems(props) {
           endTime: timeTotal[1],
           dates: dates,
           daily: daily,
-          hour: [startTime, endTime]
+          hour: [checkStartHour(startTime),checkEndHour(endTime)]
         })
       }
     },
@@ -60,26 +63,22 @@ function EventByItems(props) {
   });
   const submitCreatePromo = async () => {
     if (
-      checkMainInfoPromoAndEvent(
-        name,
-        type,
-        timeTotal[0],
-        startTime,
-        endTime,
-        dates,
-        daily
-      ) &&
-      checkPurchaseItemIsEmtry(indexShop) &&
-      checkNumb(indexShop) &&
-      checkItemIsEmtry(indexShop) &&
-      server !== "" &&
-      platformId !== ""
+      checkMainInfoPromoAndEvent(name, type, timeTotal[0], startTime, endTime)
     ) {
-      await createPromo();
-     
-      props.successAlert(true);
+      if (
+        checkPurchaseItemIsEmtry(indexShop) &&
+        checkNumb(indexShop) &&
+        checkItemIsEmtry(indexShop) &&
+        server !== "" &&
+        platformId !== ""
+      ) {
+        await createPromo();
+        props.successAlert(true);
+      } else {
+        alertErrorItemPromo();
+      }
     } else {
-      alertError();
+      alertErrorNamePromo();
     }
   };
 
@@ -148,7 +147,7 @@ function EventByItems(props) {
       {val.productName}
     </Option>
   ));
-  const printItem = indexShop.map(function (val, index1) {
+  const printItem = indexShop.map(function(val, index1) {
     const printReward = val.rewards.map((valReward, index2) => (
       <div key={index2}>
         <Input

@@ -12,7 +12,9 @@ import {
   checkMainInfoPromoAndEvent,
   checkRewardsIsEmtry,
   alertErrorNamePromo,
-  alertErrorItemPromo
+  alertErrorItemPromo,
+  checkStartHour,
+  checkEndHour
 } from "../../promoService";
 import { getListPartnerProducts } from "../../../../../utils/queryPartnerProducts";
 import {
@@ -95,7 +97,7 @@ function InputRewardForShowByMoney(props) {
       endTime: timeTotal[1],
       dates: dates,
       daily: daily,
-      hour: [startTime, endTime]
+      hour: [checkStartHour(startTime),checkEndHour(endTime)]
     })
   };
   const [updateEventByInkind] = useMutation(updateEvent, {

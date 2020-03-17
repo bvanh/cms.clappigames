@@ -6,8 +6,11 @@ import {
   checkNumb,
   checkMainInfoPromoAndEvent,
   checkPurchaseItemIsEmtry,
-  alertError,
-  checkItemIsEmtry
+  alertErrorNamePromo,
+  alertErrorItemPromo,
+  checkItemIsEmtry,
+  checkEndHour,
+  checkStartHour
 } from "../../promoService";
 import { useLazyQuery, useMutation, useQuery } from "@apollo/react-hooks";
 import { getListPartnerProducts } from "../../../../../utils/queryPartnerProducts";
@@ -50,7 +53,7 @@ function EventByItems(props) {
           endTime: timeTotal[1],
           dates: dates,
           daily: daily,
-          hour: [startTime, endTime]
+          hour: [checkStartHour(startTime), checkEndHour(endTime)]
         })
       }
     },
@@ -64,17 +67,18 @@ function EventByItems(props) {
         timeTotal[0],
         startTime,
         endTime,
-        dates,
-        daily
-      ) &&
-      checkNumb(indexShop) &&
-      checkItemIsEmtry(indexShop) &&
-      checkPurchaseItemIsEmtry(indexShop)
+      )
     ) {
-      await updatePromo();
-      props.successAlert(false);
+      if (checkNumb(indexShop) &&
+        checkItemIsEmtry(indexShop) &&
+        checkPurchaseItemIsEmtry(indexShop)) {
+          await updatePromo();
+        props.successAlert(false);
+      } else {
+        alertErrorItemPromo();
+      }
     } else {
-      alertError();
+      alertErrorNamePromo();
     }
   };
   const addItem = () => {

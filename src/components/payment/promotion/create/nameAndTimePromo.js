@@ -89,12 +89,6 @@ function InputTimeArea(props) {
       {val}
     </Option>
   ));
-  const disabledStartDate = startValue => {
-    // const endValue = moment(timeTotal[1]).format("x");
-    // console.log(startValue.valueOf(), moment(endValue).format("x"));
-    // return startValue.valueOf() > Number(endValue);
-  };
-
   const disabledEndDate = endValue => {
     const startValue = moment(timeTotal[0]).format("x");
     return endValue.valueOf() <= Number(startValue);
@@ -116,11 +110,11 @@ function InputTimeArea(props) {
         <div className="section2-promotion-pickTime">
           <h3>Thời gian: </h3>
           <DatePicker
-            disabledDate={disabledStartDate}
             showTime={{ format: "HH:mm" }}
             format="YYYY-MM-DD HH:mm"
             value={moment(timeTotal[0], "YYYY-MM-DD hh:mm")}
             placeholder="Start"
+            allowClear={false}
             onChange={props.handleStartTimeTotal}
             disabled={props.isTimeInPromo}
           />
@@ -129,9 +123,9 @@ function InputTimeArea(props) {
             name="start"
             showTime={{ format: "HH:mm" }}
             format="YYYY-MM-DD HH:mm"
-            value={moment(timeTotal[1], "YYYY-MM-DD hh:mm")}
+            value={moment(timeTotal[1], "YYYY-MM-DD HH:mm")}
             placeholder="End"
-            // open={endOpen}
+            allowClear={false}
             onChange={props.handleEndTimeTotal}
           />
         </div>
@@ -167,7 +161,7 @@ function InputTimeArea(props) {
             <TimePicker
               open={isOpenTimePicker}
               minuteStep={10}
-              format={"HH:mm"}
+              format="HH:mm"
               placeholder="- Giờ bắt đầu"
               onOpenChange={openPickTime}
               onChange={(time, timeString) =>

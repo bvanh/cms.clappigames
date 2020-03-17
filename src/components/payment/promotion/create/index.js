@@ -43,14 +43,7 @@ function CreatePromotion(props) {
     status: "INPUT",
     type: "",
     typeEvent: "",
-    timeTotal: [
-      moment()
-        .subtract(1, "hours")
-        .format("YYYY-MM-DD hh:mm:ss"),
-      moment()
-        .subtract(1, "hours")
-        .format("YYYY-MM-DD hh:mm:ss")
-    ],
+    timeTotal: [null, null],
     dates: [],
     daily: [],
     startTime: "00:00:00",
@@ -81,7 +74,7 @@ function CreatePromotion(props) {
     itemsForEventByMoney: [{ productName: "", productId: "" }]
   });
   const [indexShop, setIndexShop] = useState(initialIndexShop);
-  const isTimeInPromo=null;
+  const isTimeInPromo = null;
   const { platformId, status, server } = indexPromoAndEvent;
   const { listGame, listItems, listServer } = listPartner;
   const { data } = useQuery(getListPartnerProducts(platformId), {
@@ -171,8 +164,15 @@ function CreatePromotion(props) {
     setIndexGameForPromo({ ...indexGameForPromo, server: e });
   };
   const handleStartTimeTotal = value => {
+    console.log(value);
     const newTimetotal = indexPromoAndEvent.timeTotal;
     newTimetotal[0] = moment(value).format("YYYY-MM-DD hh:mm") + ":00";
+    const numbEndTime = Number(moment(newTimetotal[1]).format("x"));
+    if (value.valueOf() - numbEndTime > 0) {
+      newTimetotal[1] = moment(value)
+        .add(10, "days")
+        .format("YYYY-MM-DD hh:mm");
+    }
     setIndexPromoAndEvent({
       ...indexPromoAndEvent,
       timeTotal: newTimetotal
@@ -301,7 +301,6 @@ function CreatePromotion(props) {
           handleChangeDates={handleChangeDates}
           setTimePromo={setTimePromo}
           isTimeInPromo={isTimeInPromo}
-          
         />
         <Col md={24}>
           {switchTypeEvent ? (
