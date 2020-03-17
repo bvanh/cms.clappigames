@@ -1,34 +1,49 @@
-import React, { useState } from "react";
-import moment from "moment";
+import React, { useState, useEffect, useMemo } from "react";
+
 import { Line } from "react-chartjs-2";
 import { Link } from "react-router-dom";
-import { useQuery } from "@apollo/react-hooks";
-import { getListChartCharges } from "../../../../utils/query/chart";
-import {optionLine} from '../../../../utils/configCharts'
+import { useQuery, useLazyQuery } from "@apollo/react-hooks";
+import { getDataDau } from "../../utils/query/stats";
+import { optionLineForStats } from "../../utils/configCharts";
+import { connect } from "react-redux";
 import { Icon, DatePicker, Input, Select } from "antd";
 const { Option } = Select;
 
-const ChartCharges = props => {
+const ChartStats = props => {
     const [timeValue, setTimeValue] = useState({
-        fromDate: "2019-12-23",
-        toDate: "2020-01-05"
+        fromDate: "2020-03-01",
+        toDate: "2020-03-29"
     });
-    const [dataCharts, setDataCharts] = useState({ xAxis: [], yAxis: [] });
-
+    const { nameStats, partnerId } = props;
     const { fromDate, toDate } = timeValue;
-    const { data } = useQuery(getListChartCharges(fromDate, toDate), {
-        onCompleted: data =>
-            setDataCharts({
-                xAxis: JSON.parse(data.listCacheChargesByDate.xAxis),
-                yAxis: JSON.parse(data.listCacheChargesByDate.yAxis)
-            })
+    const [dataCharts, setDataCharts] = useState({
+        xAxis: [],
+        yAxis: []
     });
-    const converData = (paymentType) => {
+    const [getData] = useLazyQuery(getDataDau, {
+        onCompleted: data => {
+            setDataCharts({
+                xAxis: JSON.parse(data.chartDau.xAxis),
+                yAxis: JSON.parse(data.chartDau.yAxis)
+            })
+            console.log(JSON.parse(data.chartDau.yAxis))
+        }
+    });
+    useMemo(() =>
+        getData({
+            variables: {
+                fromDate: fromDate,
+                toDate: toDate,
+                game: partnerId
+            }
+        }), [partnerId]
+    );
+    const convertData = (typeOs) => {
         const demo = [];
         const dataAll = dataCharts.yAxis.map((val, i) =>
             val.map((val2, i) => {
-                if (val2.paymentType === paymentType) {
-                    demo.push(val2.money);
+                if (val2.os === typeOs) {
+                    demo.push(val2.dau);
                 }
             })
         );
@@ -38,56 +53,56 @@ const ChartCharges = props => {
         labels: dataCharts.xAxis,
         datasets: [
             {
-                label: "ALL",
+                label: 'ALL',
                 fill: false,
                 backgroundColor: "rgba(75,192,192,0.4)",
                 borderColor: "rgba(75,192,192,0.4)",
                 borderWidth: 2,
                 hoverBackgroundColor: "rgba(255,99,132,0.4)",
                 hoverBorderColor: "rgba(255,99,132,1)",
-                data: converData('ALL')
+                data: convertData('ALL')
             },
             {
-                label: "GATE",
+                label: "WEB",
                 fill: false,
                 backgroundColor: "#ffd54f",
                 borderColor: "#ffd54f",
                 borderWidth: 2,
                 hoverBackgroundColor: "rgba(255,99,132,0.4)",
                 hoverBorderColor: "rgba(255,99,132,1)",
-                data: converData('GATE')
+                data: convertData('web')
             },
             {
-                label: "MOMO",
+                label: "ANDROID",
                 fill: false,
                 backgroundColor: "#fcaf18",
                 borderColor: "#fcaf18",
                 borderWidth: 2,
                 hoverBackgroundColor: "rgba(255,99,132,0.4)",
                 hoverBorderColor: "rgba(255,99,132,1)",
-                data: converData('MOMO')
+                data: convertData('android')
             },
             {
-                label: "NGANLUONG",
+                label: "IOS",
                 fill: false,
                 backgroundColor: "#4280ad",
                 borderColor: "#4280ad",
                 borderWidth: 2,
                 hoverBackgroundColor: "rgba(255,99,132,0.4)",
                 hoverBorderColor: "rgba(255,99,132,1)",
-                data: converData('NGANLUONG')
+                data: convertData('ios')
             }
         ]
     };
     return (
-        <div className="line_chart">
-            <Line
-                data={dataChart}
-                width={100}
-                height={50}
-                options={optionLine}
-            />
+        <div style={{ width: '85%' }}>
+            <div className='title-stats'>
+                <h2>{nameStats}</h2>
+                <span>Daily active users</span>
+            </div>
+            <Line data={dataChart} width={100} height={50} options={optionLineForStats} />
         </div>
     );
 };
-export default ChartCharges;
+
+export default ChartStats;

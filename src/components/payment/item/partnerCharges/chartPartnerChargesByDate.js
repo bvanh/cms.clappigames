@@ -8,7 +8,7 @@ import {
   getListChartCharges,
   getListPartnerCharges
 } from "../../../../utils/query/chart";
-import optionLine from "../../../../utils/configCharts";
+import {optionLine} from "../../../../utils/configCharts";
 import { connect } from "react-redux";
 import { Icon, DatePicker, Input, Select } from "antd";
 const { Option } = Select;

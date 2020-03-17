@@ -15,6 +15,7 @@ import ListPartnerItems from "./components/payment/item/listPartnerProduct/index
 import EditProductCoin from './components/payment/coin/listCoin/editCoin'
 import EditPartnerProductItem from './components/payment/item/listPartnerProduct/editItems'
 import CreatePromotion from './components/payment/promotion/create/index'
+import Stats from './components/stats/index'
 import ListPromoAndEvent from './components/payment/promotion/list/index'
 import DetailPromotion from './components/payment/promotion/detail/promotion/index'
 import DetailEvent from './components/payment/promotion/detail/event/index'
@@ -100,7 +101,7 @@ function App(props) {
                 key="sub1"
                 title={
                   <span>
-                    <Icon type="line-chart" />
+                    <Icon type="transaction"/>
                     <span>Payment</span>
                   </span>
                 }
@@ -113,6 +114,12 @@ function App(props) {
                 </Menu.Item>
                 <Menu.Item key="7"> <Link to="/payment/promotion">Promotion</Link></Menu.Item>
               </SubMenu>
+              <Menu.Item key="8">
+                <Link to="/stats">
+                  <Icon type="line-chart" />
+                  <span className="nav-text">STATS</span>
+                </Link>
+              </Menu.Item>
               <Menu.Item key="9">
                 <Link to="/" onClick={() => dispatchSwitchLogin(false)}>
                   <Icon type="logout" />
@@ -188,6 +195,10 @@ function App(props) {
                <Route
                 path="/payment/promotion/detail/event"
                 render={() => <DetailEvent />}
+              />
+              <Route
+                path="/stats"
+                render={() => <Stats />}
               />
             </Content>
             <Footer style={{ textAlign: "center", bottom: '0', width: '100%' }}>LUSSOM ©2020</Footer>
