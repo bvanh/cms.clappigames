@@ -11,7 +11,8 @@ import {
   checkPoint,
   checkMainInfoPromoAndEvent,
   checkRewardsIsEmtry,
-  alertError
+  alertErrorNamePromo,
+  alertErrorItemPromo
 } from "../../promoService";
 import { getListPartnerProducts } from "../../../../../utils/queryPartnerProducts";
 import {
@@ -146,8 +147,6 @@ function InputRewardForShowByMoney(props) {
         timeTotal[0],
         startTime,
         endTime,
-        dates,
-        daily
       )
     ) {
       if (props.nameEventByMoney === "MONEY") {
@@ -172,10 +171,10 @@ function InputRewardForShowByMoney(props) {
         await updateEventByItem();
         props.successAlert(false);
       } else {
-        alertError();
+        alertErrorItemPromo();
       }
     } else {
-      alertError();
+      alertErrorNamePromo();
     }
   };
   const addItem = val => {

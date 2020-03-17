@@ -193,9 +193,28 @@ function UpdateEvent(props) {
   const handleChangeServer = e => {
     setIndexPromoAndEvent({ ...indexPromoAndEvent, server: e });
   };
-  const onChangeDatePicker = (value, dateString) => {
-    console.log(dateString);
-    setIndexPromoAndEvent({ ...indexPromoAndEvent, timeTotal: dateString });
+  const handleStartTimeTotal = value => {
+    const newTimetotal = indexPromoAndEvent.timeTotal;
+    newTimetotal[0] = moment(value).format("YYYY-MM-DD hh:mm") + ":00";
+    setIndexPromoAndEvent({
+      ...indexPromoAndEvent,
+      timeTotal: newTimetotal
+    });
+  };
+  const handleEndTimeTotal = value => {
+    const newTimetotal = indexPromoAndEvent.timeTotal;
+    newTimetotal[1] = moment(value).format("YYYY-MM-DD hh:mm") + ":59";
+    setIndexPromoAndEvent({
+      ...indexPromoAndEvent,
+      timeTotal: newTimetotal
+    });
+  };
+  const pickAllDay = () => {
+    setIndexPromoAndEvent({
+      ...indexPromoAndEvent,
+      startTime: "00:00:00",
+      endTime: "23:59:59"
+    });
   };
   const setTimePromo = (timeString, val) => {
     if (val === "startTime") {
@@ -287,10 +306,13 @@ function UpdateEvent(props) {
       <InputTimeArea
         indexPromoAndEvent={indexPromoAndEvent}
         alertInfoPromo={alertInfoPromo}
-        onChangeDatePicker={onChangeDatePicker}
+        handleStartTimeTotal={handleStartTimeTotal}
+        handleEndTimeTotal={handleEndTimeTotal}
+        pickAllDay={pickAllDay}
         handleChangeDaily={handleChangeDaily}
         handleChangeDates={handleChangeDates}
         setTimePromo={setTimePromo}
+        isTimeInPromo={isTimeInPromo}
       />
       <Col md={24}>
         {switchTypeEvent ? (

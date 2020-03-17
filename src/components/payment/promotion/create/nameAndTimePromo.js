@@ -1,5 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { Input, Row, Col, Radio, DatePicker, Select, TimePicker } from "antd";
+import {
+  Input,
+  Row,
+  Col,
+  Radio,
+  DatePicker,
+  Select,
+  TimePicker,
+  Button
+} from "antd";
 import moment from "moment";
 import { useLazyQuery, useMutation, useQuery } from "@apollo/react-hooks";
 import "../../../../static/style/promotion.css";
@@ -31,11 +40,7 @@ function InputNameAndTypeArea(props) {
       ></Input>
       <div className="promotion-title-status">
         <h3>Trạng thái</h3>
-        <Radio.Group
-          onChange={props.setInfoPromo}
-          value={status}
-          name="status"
-        >
+        <Radio.Group onChange={props.setInfoPromo} value={status} name="status">
           <Radio value="COMPLETE">Kích hoạt</Radio>
           <Radio value="INPUT">Chưa áp dụng</Radio>
         </Radio.Group>
@@ -59,6 +64,7 @@ function InputNameAndTypeArea(props) {
 }
 // /////
 function InputTimeArea(props) {
+  const [isOpenTimePicker, setIsOpenTime] = useState(false);
   const {
     dates,
     daily,
@@ -68,9 +74,7 @@ function InputTimeArea(props) {
     timeTotal
   } = props.indexPromoAndEvent;
   const alertDaily = printAlertDailyPromo(daily);
-  const printAlertDates = dates.map((val, i) => (
-    <>ngày mùng {val}, </>
-  ));
+  const printAlertDates = dates.map((val, i) => <>ngày mùng {val}, </>);
   // const printAlertTimeTotalPromo = timeTotalAlert.map((val, i) => <>{val}</>);
   const childrenDates = [];
   for (let i = 1; i <= 31; i++) {
@@ -85,11 +89,25 @@ function InputTimeArea(props) {
       {val}
     </Option>
   ));
-  const onChangeDates = (field, value) => {
-    console.log([field],value)
-    // this.setState({
-    //   [field]: value,
-    // });
+  const disabledStartDate = startValue => {
+    // const endValue = moment(timeTotal[1]).format("x");
+    // console.log(startValue.valueOf(), moment(endValue).format("x"));
+    // return startValue.valueOf() > Number(endValue);
+  };
+
+  const disabledEndDate = endValue => {
+    const startValue = moment(timeTotal[0]).format("x");
+    return endValue.valueOf() <= Number(startValue);
+  };
+  const pickAllDay = () => {
+    setIsOpenTime(false);
+    props.pickAllDay();
+  };
+  const openPickTime = () => {
+    setIsOpenTime(true);
+  };
+  const closePickTime = () => {
+    setIsOpenTime(false);
   };
   return (
     <Col md={12} className="section2-promotion">
@@ -98,40 +116,24 @@ function InputTimeArea(props) {
         <div className="section2-promotion-pickTime">
           <h3>Thời gian: </h3>
           <DatePicker
-            // disabledDate={this.disabledStartDate}
-            showTime
-            format="YYYY-MM-DD HH:mm:ss"
+            disabledDate={disabledStartDate}
+            showTime={{ format: "HH:mm" }}
+            format="YYYY-MM-DD HH:mm"
             value={moment(timeTotal[0], "YYYY-MM-DD hh:mm")}
             placeholder="Start"
-            onChange={onChangeDates}
-            onOpenChange={props.handleStartTimeTotal}
+            onChange={props.handleStartTimeTotal}
+            disabled={props.isTimeInPromo}
           />
           <DatePicker
-            // disabledDate={this.disabledEndDate}
-            name='start'
-            showTime
-            format="YYYY-MM-DD HH:mm:ss"
+            disabledDate={disabledEndDate}
+            name="start"
+            showTime={{ format: "HH:mm" }}
+            format="YYYY-MM-DD HH:mm"
             value={moment(timeTotal[1], "YYYY-MM-DD hh:mm")}
             placeholder="End"
-            onChange={onChangeDates}
             // open={endOpen}
-            onOpenChange={props.handleEndTimeTotal}
+            onChange={props.handleEndTimeTotal}
           />
-          {/* <RangePicker
-            showTime={{ format: "hh:mm" }}
-            style={{ width: "80%" }}
-            format="YYYY-MM-DD hh:mm"
-            placeholder={["-Thời gian bắt đầu", "- Thời gian kết thúc"]}
-            onChange={props.onChangeDatePicker}
-            value={
-              timeTotal[0] === ""
-                ? [null, null]
-                : [
-                  moment(timeTotal[0], "YYYY-MM-DD hh:mm"),
-                  moment(timeTotal[1], "YYYY-MM-DD hh:mm")
-                ]
-            }
-          /> */}
         </div>
         <div className="section2-promotion-pickTime">
           <h3>Theo ngày: </h3>
@@ -163,32 +165,49 @@ function InputTimeArea(props) {
           <h3>Theo giờ:</h3>
           <div style={{ width: "80%" }}>
             <TimePicker
+              open={isOpenTimePicker}
               minuteStep={10}
               format={"HH:mm"}
               placeholder="- Giờ bắt đầu"
+              onOpenChange={openPickTime}
               onChange={(time, timeString) =>
                 props.setTimePromo(timeString, "startTime")
               }
-              value={startTime === ""
-                ? null : moment(startTime, "HH:mm")}
+              value={startTime === "" ? null : moment(startTime, "HH:mm")}
               style={{ width: "50%" }}
+              addon={() => (
+                <Button size="small" type="primary" onClick={pickAllDay}>
+                  24h
+                </Button>
+              )}
             />
             <TimePicker
+              open={isOpenTimePicker}
               minuteStep={10}
-              value={endTime === ""
-                ? null : moment(endTime, "HH:mm")}
+              value={endTime === "" ? null : moment(endTime, "HH:mm")}
               style={{ width: "50%" }}
               format={"HH:mm"}
               placeholder="- Giờ kết thúc"
+              onOpenChange={openPickTime}
               onChange={(time, timeString) => {
                 props.setTimePromo(timeString, "endTime");
               }}
+              addon={() => (
+                <div className="pickTime-footer">
+                  <Button size="small" type="primary" onClick={pickAllDay}>
+                    24h
+                  </Button>
+                  <a onClick={closePickTime}>close</a>
+                </div>
+              )}
             />
           </div>
         </div>
       </div>
       <div className="section2-promotion-footer">
-        Khuyến mãi diễn ra {startTime === '00:00:00' ? '' : `lúc ${startTime} đến ${endTime}`} vào các ngày {alertDaily}
+        Khuyến mãi diễn ra{" "}
+        {endTime === "00:00:00" ? "" : `lúc ${startTime} đến ${endTime}`} vào
+        các ngày {alertDaily}
         {printAlertDates} từ {timeTotal[0]} đến {timeTotal[1]}
       </div>
     </Col>

@@ -100,17 +100,14 @@ const checkMainInfoPromoAndEvent = (
   promoType,
   timeTotalPromo,
   startTime,
-  endTime,
-  datesPromo,
-  dailyPromo
+  endTime
 ) => {
   if (
     namePromo != "" &&
     promoType != "" &&
     startTime !== "" &&
     endTime !== "" &&
-    timeTotalPromo !== "" &&
-    (datesPromo.length > 0 || dailyPromo.length > 0)
+    timeTotalPromo !== ""
   ) {
     return true;
   } else {
@@ -175,7 +172,18 @@ const checkTime = startTime => {
     return false;
   }
 };
-const alertError = () => {
+const alertErrorItemPromo = () => {
+  Modal.error({
+    title: "Ki !!!",
+    content: (
+      <div>
+        <p>+ Điền đẩy đủ thông tin.</p>
+        <p>+ Giá trị các mốc khuyến mãi tăng dần.</p>
+      </div>
+    )
+  });
+};
+const alertErrorNamePromo = () => {
   Modal.error({
     title: "Chú ý !!!",
     content: (

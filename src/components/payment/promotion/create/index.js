@@ -40,12 +40,16 @@ function CreatePromotion(props) {
     name: "",
     platformId: "",
     server: "",
-    status: "COMPLETE",
+    status: "INPUT",
     type: "",
     typeEvent: "",
     timeTotal: [
-      moment().subtract(1, 'hours').format("YYYY-MM-DD hh:mm"),
-      moment().subtract(1, 'hours').format("YYYY-MM-DD hh:mm")
+      moment()
+        .subtract(1, "hours")
+        .format("YYYY-MM-DD hh:mm:ss"),
+      moment()
+        .subtract(1, "hours")
+        .format("YYYY-MM-DD hh:mm:ss")
     ],
     dates: [],
     daily: [],
@@ -77,6 +81,7 @@ function CreatePromotion(props) {
     itemsForEventByMoney: [{ productName: "", productId: "" }]
   });
   const [indexShop, setIndexShop] = useState(initialIndexShop);
+  const isTimeInPromo=null;
   const { platformId, status, server } = indexPromoAndEvent;
   const { listGame, listItems, listServer } = listPartner;
   const { data } = useQuery(getListPartnerProducts(platformId), {
@@ -165,30 +170,29 @@ function CreatePromotion(props) {
   const handleChangeServerPromo = e => {
     setIndexGameForPromo({ ...indexGameForPromo, server: e });
   };
-  // const onChangeDatePicker = (value, dateString) => {
-  //   setIndexPromoAndEvent({
-  //     ...indexPromoAndEvent,
-  //     timeTotal: dateString
-  //   });
-  // };
-  const handleStartTimeTotal = (value) => {
-    console.log(value)
+  const handleStartTimeTotal = value => {
     const newTimetotal = indexPromoAndEvent.timeTotal;
-    newTimetotal[0] = value;
+    newTimetotal[0] = moment(value).format("YYYY-MM-DD hh:mm") + ":00";
     setIndexPromoAndEvent({
       ...indexPromoAndEvent,
       timeTotal: newTimetotal
     });
-  }
-  const handleEndTimeTotal = (value) => {
-    console.log(value)
+  };
+  const handleEndTimeTotal = value => {
     const newTimetotal = indexPromoAndEvent.timeTotal;
-    newTimetotal[1] = value;
+    newTimetotal[1] = moment(value).format("YYYY-MM-DD hh:mm") + ":59";
     setIndexPromoAndEvent({
       ...indexPromoAndEvent,
       timeTotal: newTimetotal
     });
-  }
+  };
+  const pickAllDay = () => {
+    setIndexPromoAndEvent({
+      ...indexPromoAndEvent,
+      startTime: "00:00:00",
+      endTime: "23:59:59"
+    });
+  };
   const handleChangeTypePromo = val => {
     setIndexPromoAndEvent({ ...indexPromoAndEvent, type: val });
   };
@@ -274,27 +278,30 @@ function CreatePromotion(props) {
                 handleChangeServerPromo={handleChangeServerPromo}
               />
             ) : (
-                <MenuRewardEventByMoney
-                  switchTypeEvent={switchTypeEvent}
-                  indexPromoAndEvent={indexPromoAndEvent}
-                  indexEventByMoney={indexEventByMoney}
-                  setIndexEventByMoney={setIndexEventByMoney}
-                  getItemsForEventTypeMoney={getItemsForEventTypeMoney}
-                  server={server}
-                  listPartner={listPartner}
-                  handleChangePlatform={handleChangePlatform}
-                  handleChangeServer={handleChangeServer}
-                />
-              )}
+              <MenuRewardEventByMoney
+                switchTypeEvent={switchTypeEvent}
+                indexPromoAndEvent={indexPromoAndEvent}
+                indexEventByMoney={indexEventByMoney}
+                setIndexEventByMoney={setIndexEventByMoney}
+                getItemsForEventTypeMoney={getItemsForEventTypeMoney}
+                server={server}
+                listPartner={listPartner}
+                handleChangePlatform={handleChangePlatform}
+                handleChangeServer={handleChangeServer}
+              />
+            )}
           </div>
         </Col>
         <InputTimeArea
           indexPromoAndEvent={indexPromoAndEvent}
           handleStartTimeTotal={handleStartTimeTotal}
           handleEndTimeTotal={handleEndTimeTotal}
+          pickAllDay={pickAllDay}
           handleChangeDaily={handleChangeDaily}
           handleChangeDates={handleChangeDates}
           setTimePromo={setTimePromo}
+          isTimeInPromo={isTimeInPromo}
+          
         />
         <Col md={24}>
           {switchTypeEvent ? (
@@ -305,22 +312,21 @@ function CreatePromotion(props) {
               indexGameForPromo={indexGameForPromo}
               indexShop={indexShop}
               setIndexShop={setIndexShop}
-
             />
           ) : (
-              <InputRewardByMoney
-                listItems={listItems}
-                successAlert={successAlert}
-                indexShop={indexShop}
-                setIndexShop={setIndexShop}
-                indexPromoAndEvent={indexPromoAndEvent}
-                listPartner={listPartner}
-                setIndexPromoAndEvent={setIndexPromoAndEvent}
-                indexEventByMoney={indexEventByMoney}
-                setIndexEventByMoney={setIndexEventByMoney}
-                getItemsForEventTypeMoney={getItemsForEventTypeMoney}
-              />
-            )}
+            <InputRewardByMoney
+              listItems={listItems}
+              successAlert={successAlert}
+              indexShop={indexShop}
+              setIndexShop={setIndexShop}
+              indexPromoAndEvent={indexPromoAndEvent}
+              listPartner={listPartner}
+              setIndexPromoAndEvent={setIndexPromoAndEvent}
+              indexEventByMoney={indexEventByMoney}
+              setIndexEventByMoney={setIndexEventByMoney}
+              getItemsForEventTypeMoney={getItemsForEventTypeMoney}
+            />
+          )}
         </Col>
       </Row>
     </Router>
