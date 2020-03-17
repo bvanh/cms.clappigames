@@ -183,7 +183,7 @@ function UpdateEvent(props) {
   };
   const handleStartTimeTotal = value => {
     const newTimetotal = indexPromoAndEvent.timeTotal;
-    newTimetotal[0] = moment(value).format("YYYY-MM-DD hh:mm") + ":00";
+    newTimetotal[0] = moment(value).format("YYYY-MM-DD HH:mm") + ":00";
     setIndexPromoAndEvent({
       ...indexPromoAndEvent,
       timeTotal: newTimetotal
@@ -191,7 +191,7 @@ function UpdateEvent(props) {
   };
   const handleEndTimeTotal = value => {
     const newTimetotal = indexPromoAndEvent.timeTotal;
-    newTimetotal[1] = moment(value).format("YYYY-MM-DD hh:mm") + ":59";
+    newTimetotal[1] = moment(value).format("YYYY-MM-DD HH:mm") + ":59";
     setIndexPromoAndEvent({
       ...indexPromoAndEvent,
       timeTotal: newTimetotal

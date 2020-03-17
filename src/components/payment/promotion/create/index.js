@@ -45,9 +45,9 @@ function CreatePromotion(props) {
     typeEvent: "",
     timeTotal: [
       moment()
-        .format("YYYY-MM-DD hh:mm:ss"),
+        .format("YYYY-MM-DD HH:mm"),
       moment()
-        .format("YYYY-MM-DD hh:mm:ss")
+        .format("YYYY-MM-DD HH:mm")
     ],
     dates: [],
     daily: [],
@@ -169,9 +169,8 @@ function CreatePromotion(props) {
     setIndexGameForPromo({ ...indexGameForPromo, server: e });
   };
   const handleStartTimeTotal = value => {
-    console.log(value)
     const newTimetotal = indexPromoAndEvent.timeTotal;
-    newTimetotal[0] = moment(value).format("YYYY-MM-DD hh:mm") + ":00";
+    newTimetotal[0] = moment(value).format("YYYY-MM-DD HH:mm") + ":00";
     const numbEndTime = Number(moment(newTimetotal[1]).format("x"));
     if (value.valueOf() - numbEndTime > 0) {
       newTimetotal[1] = moment(value)

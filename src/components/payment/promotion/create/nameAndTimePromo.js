@@ -112,7 +112,7 @@ function InputTimeArea(props) {
           <DatePicker
             showTime={{ format: "HH:mm" }}
             format="YYYY-MM-DD HH:mm"
-            value={moment(timeTotal[0], "YYYY-MM-DD hh:mm")}
+            defaultValue={moment(timeTotal[0], "YYYY-MM-DD HH:mm")}
             placeholder="Start"
             allowClear={false}
             onChange={props.handleStartTimeTotal}
@@ -120,10 +120,9 @@ function InputTimeArea(props) {
           />
           <DatePicker
             disabledDate={disabledEndDate}
-            name="start"
             showTime={{ format: "HH:mm" }}
-            format="YYYY-MM-DD HH:mm"
-            value={moment(timeTotal[1], "YYYY-MM-DD HH:mm")}
+            format="YYYY-MM-DD HH:mm" 
+            defaultValue={moment(timeTotal[1], "YYYY-MM-DD HH:mm")}
             placeholder="End"
             allowClear={false}
             onChange={props.handleEndTimeTotal}
