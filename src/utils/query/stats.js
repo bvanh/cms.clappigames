@@ -10,7 +10,7 @@ import { gql } from "apollo-boost";
 //   }
 // `;
 // };
-const getDataDau = gql`
+const getDataDAU = gql`
   query chartDau(
     $fromDate: String!
     $toDate: String!
@@ -19,6 +19,22 @@ const getDataDau = gql`
     chartDau(
       fromDate: $fromDate
       toDate: $toDate
+      game: $game
+    ) {
+      xAxis
+      yAxis
+    }
+  }
+`;
+const getDataMAU = gql`
+  query chartMau(
+    $fromMonth: String!
+    $toMonth: String!
+    $game: String!
+  ) {
+    chartMau(
+      fromMonth: $fromMonth
+      toMonth: $toMonth
       game: $game
     ) {
       xAxis
@@ -36,4 +52,4 @@ const getListPartnerByGame = gql`
   }
 `;
 
-export {getListPartnerByGame,getDataDau };
+export { getListPartnerByGame, getDataDAU, getDataMAU };

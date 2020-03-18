@@ -7,116 +7,109 @@ import { getDataDAU, getDataMAU } from "../../utils/query/stats";
 import { optionLineForStats } from "../../utils/configCharts";
 import { connect } from "react-redux";
 import { Icon, DatePicker, Input, Select } from "antd";
-import { dates } from "../../utils/dateInfo";
+import { months } from "../../utils/dateInfo";
 import moment from "moment";
 const { Option } = Select;
-const listSelectDates = [
-    { days: "3 days ago", variables: "THREE_DAY_AGO" },
-    { days: "7 days ago", variables: "SEVENT_DAY_AGO" },
-    { days: "14 days ago", variables: "FOURTEEN_DAY_AGO" },
-    { days: "30 days ago", variables: "THIRTY_DAY_AGO" }
+const { MonthPicker } = DatePicker
+const listSelectmonths = [
+    { days: "3 months ago", variables: "THREE_MONTHS_AGO" },
+    { days: "6 months ago", variables: "SIX_MONTHS_AGO" },
+    { days: "1 years ago", variables: "ONE_YEAR_AGO" },
 ];
-const ChartStats = props => {
+const ChartStatsMau = props => {
     const [timeValue, setTimeValue] = useState({
-        fromDate: dates.SEVENT_DAY_AGO,
-        toDate: dates.TODAY,
-        fromDateCustom: null,
-        toDateCustom: null
+        fromMonth: months.THREE_MONTHS_AGO,
+        toMonth: months.THISMONTH,
+        fromMonthCustom: null,
+        toMonthCustom: null,
+        defaulSelectMonth: 'THREE_MONTHS_AGO'
     });
-    const [isSelectDates, setIsSelectDates] = useState(false);
+    const [isSelectMonths, setIsSelectMonths] = useState(false);
     const { nameStats, partnerId } = props;
-    console.log(nameStats,partnerId)
-    const { fromDate, toDate, fromDateCustom, toDateCustom } = timeValue;
+    const { fromMonth, toMonth, fromMonthCustom, toMonthCustom, defaulSelectMonth } = timeValue;
     const [dataCharts, setDataCharts] = useState({
         xAxis: [],
         yAxis: []
     });
-    const { TODAY } = dates;
-    const [getData] = useLazyQuery(getDataDAU, {
+    const { THISMONTH } = months;
+    const [getDataMau] = useLazyQuery(getDataMAU, {
         onCompleted: data => {
             setDataCharts({
-                xAxis: JSON.parse(data.chartDau.xAxis),
-                yAxis: JSON.parse(data.chartDau.yAxis)
+                xAxis: JSON.parse(data.chartMau.xAxis),
+                yAxis: JSON.parse(data.chartMau.yAxis)
             });
         }
     });
-    useMemo(
-        () => {
-            switch (nameStats) {
-                case 'DAU':
-                    getData({
-                        variables: {
-                            fromDate: fromDate,
-                            toDate: toDate,
-                            game: partnerId
-                        }
-                    })
-                    break;
-                default:
-                    break;
+    useMemo(() => {
+        getDataMau({
+            variables: {
+                fromMonth: months.THREE_MONTHS_AGO,
+                toMonth: THISMONTH,
+                game: partnerId
             }
-        },
-        [partnerId]
-    );
+        });
+        setTimeValue({ ...timeValue, defaulSelectMonth: "THREE_MONTHS_AGO" })
+    }, [partnerId]);
     const disabledDate = current => {
-        if (fromDateCustom != null) {
+        if (fromMonthCustom != null) {
             return (
                 (current &&
                     current <
-                    moment(fromDateCustom)
-                        .subtract(1, "days")
-                        .endOf("day")) ||
-                current > moment().endOf("day")
+                    moment(fromMonthCustom)
+                        .subtract(1, "months")
+                        .endOf("months")) ||
+                current > moment().endOf("month")
             );
         }
     };
 
-    const changeDates = val => {
-        setTimeValue({ fromDate: dates[val], toDate: TODAY });
-        getData({
+    const changemonths = val => {
+        console.log(val)
+        setTimeValue({ ...timeValue, fromMonth: months[val], toMonth: THISMONTH, defaulSelectMonth: val });
+        getDataMau({
             variables: {
-                fromDate: dates[val],
-                toDate: TODAY,
+                fromMonth: months[val],
+                toMonth: THISMONTH,
                 game: partnerId
             }
         });
     };
-    const handleChangeRangeDates = value => {
-        changeDates(value);
+    const handleChangeRangemonths = value => {
+        changemonths(value);
     };
-    const showDateSelect = () => {
-        setIsSelectDates(!isSelectDates);
+    const showmonthselect = () => {
+        setIsSelectMonths(!isSelectMonths);
     };
     const convertData = typeOs => {
         const demo = [];
         const dataAll = dataCharts.yAxis.map((val, i) =>
             val.map((val2, i) => {
                 if (val2.os === typeOs) {
-                    demo.push(val2.dau);
+                    demo.push(val2.mau);
                 }
             })
         );
         return demo;
     };
-    const changeRangeDates = value => {
-        if (fromDateCustom == null) {
-            setTimeValue({ ...timeValue, fromDateCustom: value });
+    const changeRangemonths = value => {
+        if (fromMonthCustom == null) {
+            setTimeValue({ ...timeValue, fromMonthCustom: value });
         } else {
             setTimeValue({
                 ...timeValue,
-                toDateCustom: moment(value).format("YYYY-MM-DD")
+                toMonthCustom: moment(value).format("YYYY-MM-DD")
             });
         }
     };
     const submitDateCustom = () => {
-        getData({
+        getDataMau({
             variables: {
-                fromDate: fromDateCustom,
-                toDate: toDateCustom,
+                fromMonth: fromMonthCustom,
+                toMonth: toMonthCustom,
                 game: partnerId
             }
         });
-        setIsSelectDates(!isSelectDates);
+        setIsSelectMonths(!isSelectMonths);
     };
     const dataChart = {
         labels: dataCharts.xAxis,
@@ -163,7 +156,7 @@ const ChartStats = props => {
             }
         ]
     };
-    const printOptionDates = listSelectDates.map((val, i) => (
+    const printOptionmonths = listSelectmonths.map((val, i) => (
         <Option value={val.variables} key={i}>
             {val.days}
         </Option>
@@ -171,51 +164,51 @@ const ChartStats = props => {
     return (
         <div style={{ width: "85%" }} className="chart-stats">
             <div className="title-stats">
-                <h2 style={{ margin: '0' }}>{nameStats}</h2>
+                <h2 style={{ margin: "0" }}>{nameStats}</h2>
                 <span>Daily active users</span>
             </div>
-            <div className="chart-select-dates">
+            <div className="chart-select-months">
                 <Select
-                    defaultValue="SEVENT_DAY_AGO"
-                    style={{ width: 120, marginTop: '1.5rem' }}
-                    onChange={handleChangeRangeDates}
-                    className='select_dates-stats'
+                    value={defaulSelectMonth}
+                    style={{ width: 120, marginTop: "1.5rem" }}
+                    onChange={handleChangeRangemonths}
+                    className="select_months-stats"
                 >
-                    {printOptionDates}
-                    <Option value="5" onClick={showDateSelect}>
+                    {printOptionmonths}
+                    <Option value="5" onClick={showmonthselect}>
                         Custom...
           </Option>
                 </Select>
-                {isSelectDates && (
+                {isSelectMonths && (
                     <div className="modal_datepicker">
-                        <DatePicker
+                        <MonthPicker
                             allowClear={false}
                             disabledDate={disabledDate}
                             format="YYYY-MM-DD"
                             value={
-                                fromDateCustom == null
+                                fromMonthCustom == null
                                     ? null
-                                    : moment(fromDateCustom, "YYYY-MM-DD")
+                                    : moment(fromMonthCustom, "YYYY-MM-DD")
                             }
-                            placeholder="StartDate"
-                            onChange={e => changeRangeDates(e)}
-                            className="input_date_chart"
+                            placeholder="StartMonth"
+                            onChange={e => changeRangemonths(e)}
+                            className="input_month_chart"
                             open={true}
-                            dropdownClassName="calendar-select-stats"
+                            dropdownClassName="calendar-selectmonth-stats"
                             renderExtraFooter={() => (
                                 <div className="datepicker_footer">
                                     <span
                                         onClick={() =>
                                             setTimeValue({
                                                 ...timeValue,
-                                                fromDateCustom: null,
-                                                toDateCustom: null
+                                                fromMonthCustom: null,
+                                                toMonthCustom: null
                                             })
                                         }
                                     >
                                         CLEAR
                   </span>
-                                    <span onClick={showDateSelect}>CANCEL</span>
+                                    <span onClick={showmonthselect}>CANCEL</span>
                                     <span style={{ color: "#0085ff" }} onClick={submitDateCustom}>
                                         APPLY
                   </span>
@@ -224,10 +217,10 @@ const ChartStats = props => {
                         />
                         <Input
                             open={true}
-                            value={toDateCustom}
-                            placeholder="EndDate"
+                            value={toMonthCustom}
+                            placeholder="EndMonth"
                             suffix={<Icon type="calendar" style={{ color: "#9e9e9e" }} />}
-                            className="input_date_chart"
+                            className="input_month_chart"
                         />
                     </div>
                 )}
@@ -242,4 +235,4 @@ const ChartStats = props => {
     );
 };
 
-export default ChartStats;
+export default ChartStatsMau;

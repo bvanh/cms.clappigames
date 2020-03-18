@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { Upload, Checkbox, Row, Col, Card, Icon, Button } from "antd";
 import UploadImages from "./upload";
+import ImagePicker from 'react-image-picker'
+import 'react-image-picker/dist/index.css'
 import { useQuery, useMutation } from "@apollo/react-hooks";
 import { queryListImages } from "../../utils/queryMedia";
 import { DELETE_IMAGE, CREATE_ALBUM } from '../../utils/mutation/media'
@@ -16,14 +18,17 @@ const gridStyle = {
 };
 function Media() {
   const [selectedImage, setSelectedImage] = useState([]);
-  const [dataImage, setDataImage] = useState([])
+  const [dataImage, setDataImage] = useState([{ url: "", status: "", id: "", name: "", partnerName: "" }])
   const [deleteImages] = useMutation(DELETE_IMAGE, {
     variables: {
       ids: selectedImage
     }
   });
   const { loading, error, data, refetch } = useQuery(queryListImages, {
-    onCompleted: data => setDataImage(data)
+    onCompleted: data => {
+      const newListImage = data.listUploadedImages.filter((val, i) => val.status !== 'INVISIBLE')
+      setDataImage(newListImage)
+    }
   });
   if (loading) return "Loading...";
   if (error) return `Error! ${error.message}`;
@@ -40,6 +45,9 @@ function Media() {
     setSelectedImage(val);
     console.log(JSON.stringify({ images: val }));
   };
+  const onPickImages = (value) => {
+    console.log(value)
+  }
   const submitDelete = async () => {
     await deleteImages();
     await refetch();
@@ -65,6 +73,11 @@ function Media() {
             </div>
           </div>
         )}
+        <ImagePicker
+          multiple
+          images={dataImage.map((image, i) => ({ src: image.url, value: image.id }))}
+          onPick={onPickImages}
+        />
         <Checkbox.Group style={{ width: "100%" }} onChange={onChange}>
           <Col>{printListImages}</Col>
         </Checkbox.Group>

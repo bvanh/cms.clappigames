@@ -4,8 +4,9 @@ import { useState } from "react";
 import { dataListStats } from "./statsService";
 import { getListPartnerByGame } from "../../utils/query/stats";
 import { useQuery } from "@apollo/react-hooks";
-import '../../static/style/stats.css'
+import "../../static/style/stats.css";
 import ChartStats from "./chartStats";
+import ChartStatsMau from "./chartStatsMau";
 const { SubMenu } = Menu;
 
 function Stats() {
@@ -15,7 +16,7 @@ function Stats() {
   ]);
   const [indexStats, setIndexStats] = useState({
     partnerId: "",
-    nameStats: "MAU"
+    nameStats: ""
   });
   const { partnerId, nameStats } = indexStats;
   useQuery(getListPartnerByGame, {
@@ -40,7 +41,7 @@ function Stats() {
     ));
     return (
       <SubMenu
-        key={`sub${i}`}
+        key={value1.partnerName}
         title={
           <span>
             <span>{value1.fullName}</span>
@@ -52,11 +53,23 @@ function Stats() {
     );
   });
   return (
-    <div className='stats'>
-      <Menu onClick={handleClick} style={{ width: "15%" }} mode="inline">
+    <div className="stats">
+      <Menu
+        onClick={handleClick}
+        style={{ width: "15%" }}
+        mode="inline"
+        defaultSelectedKeys={[
+          `{"partnerId":"1BA3F861-D4F2-4D97-9F78-38633155EC27","nameStats":"DAU"}`
+        ]}
+        defaultOpenKeys={["3qzombie"]}
+      >
         {printMenuStats}
       </Menu>
-      <ChartStats nameStats={nameStats} partnerId={partnerId} />
+      {nameStats === "MAU" ? (
+        <ChartStatsMau nameStats={nameStats} partnerId={partnerId} />
+      ) : (
+        <ChartStats nameStats={nameStats} partnerId={partnerId} />
+      )}
     </div>
   );
 }
