@@ -49,9 +49,9 @@ const getRefreshToken = () => {
   }
 };
 function checkTokenFinal() {
-  if (checkToken()) {
-    let demo = getRefreshToken();
-    demo.then(val => dispatchSetAccessToken(val));
-  };
+    if (checkToken()) {
+      let demo = getRefreshToken();
+      demo.then(val => dispatchSetAccessToken(val));
+    }
 }
 export default checkTokenFinal;

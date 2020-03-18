@@ -8,28 +8,31 @@ import NewsEditor from "./components/news/newsEdit";
 import ListNews from "./components/news/index";
 import AddNews from "./components/news/addnews";
 import ListImages from "./components/media/index";
-import Album from './components/media/album/album'
-import UpdateAlbum from './components/media/album/update'
-import ListCoin from './components/payment/coin/listCoin/listCoin'
+import Album from "./components/media/album/album";
+import UpdateAlbum from "./components/media/album/update";
+import ListCoin from "./components/payment/coin/listCoin/listCoin";
 import ListPartnerItems from "./components/payment/item/listPartnerProduct/index";
-import EditProductCoin from './components/payment/coin/listCoin/editCoin'
-import EditPartnerProductItem from './components/payment/item/listPartnerProduct/editItems'
-import CreatePromotion from './components/payment/promotion/create/index'
-import Stats from './components/stats/index'
-import ListPromoAndEvent from './components/payment/promotion/list/index'
-import DetailPromotion from './components/payment/promotion/detail/promotion/index'
-import DetailEvent from './components/payment/promotion/detail/event/index'
+import EditProductCoin from "./components/payment/coin/listCoin/editCoin";
+import EditPartnerProductItem from "./components/payment/item/listPartnerProduct/editItems";
+import CreatePromotion from "./components/payment/promotion/create/index";
+import Stats from "./components/stats/index";
+import ListPromoAndEvent from "./components/payment/promotion/list/index";
+import DetailPromotion from "./components/payment/promotion/detail/promotion/index";
+import DetailEvent from "./components/payment/promotion/detail/event/index";
 import { ApolloProvider } from "@apollo/react-hooks";
 import ApolloClient from "apollo-boost";
 import { importImage } from "./utils/importImg";
 import checkTokenFinal from "./utils/checkToken";
-import { dispatchSwitchLogin, dispatchListPartner } from "./redux/actions/index";
+import {
+  dispatchSwitchLogin,
+  dispatchListPartner
+} from "./redux/actions/index";
 import { Layout, Menu, Icon, Dropdown } from "antd";
 import "./static/style/menu.css";
-import CreateProductCoin from "./components/payment/coin/listCoin/addnewCoin";
 const { SubMenu } = Menu;
 const { Header, Content, Footer, Sider } = Layout;
 checkTokenFinal();
+const checkToken = setInterval(checkTokenFinal, 3300000);
 function App(props) {
   const userName = localStorage.getItem("userNameCMS");
   if (props.isLogin === false || props.isLogin === null) {
@@ -39,7 +42,6 @@ function App(props) {
       </Router>
     );
   }
-  checkTokenFinal();
   const client = new ApolloClient({
     uri: "https://api.cms.cubegame.vn/graphql",
     headers: {
@@ -101,7 +103,7 @@ function App(props) {
                 key="sub1"
                 title={
                   <span>
-                    <Icon type="transaction"/>
+                    <Icon type="transaction" />
                     <span>Payment</span>
                   </span>
                 }
@@ -112,7 +114,10 @@ function App(props) {
                 <Menu.Item key="6">
                   <Link to="/payment/items">Item </Link>
                 </Menu.Item>
-                <Menu.Item key="7"> <Link to="/payment/promotion">Promotion</Link></Menu.Item>
+                <Menu.Item key="7">
+                  {" "}
+                  <Link to="/payment/promotion">Promotion</Link>
+                </Menu.Item>
               </SubMenu>
               <Menu.Item key="8">
                 <Link to="/stats">
@@ -158,7 +163,11 @@ function App(props) {
               <Route exact path="/news/addnews" render={() => <AddNews />} />
               <Route exact path="/media" render={() => <ListImages />} />
               <Route exact path="/media/album" render={() => <Album />} />
-              <Route exact path="/media/album/edit" render={() => <UpdateAlbum />} />
+              <Route
+                exact
+                path="/media/album/edit"
+                render={() => <UpdateAlbum />}
+              />
               <Route
                 exact
                 path="/payment/items"
@@ -169,17 +178,13 @@ function App(props) {
                 path="/payment/items/edit"
                 render={() => <EditPartnerProductItem />}
               />
-              <Route
-                exact
-                path="/payment/coin"
-                render={() => <ListCoin />}
-              />
+              <Route exact path="/payment/coin" render={() => <ListCoin />} />
               <Route
                 exact
                 path="/payment/coin/edit"
                 render={() => <EditProductCoin />}
               />
-               <Route
+              <Route
                 path="/payment/promotion/create"
                 render={() => <CreatePromotion />}
               />
@@ -192,16 +197,15 @@ function App(props) {
                 path="/payment/promotion/detail/promotion"
                 render={() => <DetailPromotion />}
               />
-               <Route
+              <Route
                 path="/payment/promotion/detail/event"
                 render={() => <DetailEvent />}
               />
-              <Route
-                path="/stats"
-                render={() => <Stats />}
-              />
+              <Route path="/stats" render={() => <Stats />} />
             </Content>
-            <Footer style={{ textAlign: "center", bottom: '0', width: '100%' }}>LUSSOM ©2020</Footer>
+            <Footer style={{ textAlign: "center", bottom: "0", width: "100%" }}>
+              LUSSOM ©2020
+            </Footer>
           </Layout>
         </Layout>
       </Router>

@@ -38,6 +38,9 @@ const ChartStats = props => {
             }
         }), [partnerId]
     );
+    const handleChange=(value)=> {
+        console.log(`selected ${value}`);
+      }
     const convertData = (typeOs) => {
         const demo = [];
         const dataAll = dataCharts.yAxis.map((val, i) =>
@@ -100,6 +103,11 @@ const ChartStats = props => {
                 <h2>{nameStats}</h2>
                 <span>Daily active users</span>
             </div>
+            <Select defaultValue="lucy" style={{ width: 120 }} onChange={handleChange}>
+            <Option value="jack">Jack</Option>
+            <Option value="lucy">Lucy</Option>
+            <Option value="Yiminghe">yiminghe</Option>
+          </Select>
             <Line data={dataChart} width={100} height={50} options={optionLineForStats} />
         </div>
     );

@@ -278,9 +278,12 @@ function InputrewardForShowByMoney(props) {
           {props.typeEventByMoney === "COIN" && (
             <>
               <Select
-                mode="multiple"
+                // mode="multiple"
                 value={indexShop[index1].rewards[0]}
-                style={{ width: "90%" }}
+                style={{ width: "15%" }}
+                dropdownClassName='dropdown-coin-event'
+                showArrow={false}
+                className='select-coin-event'
               >
                 {printListItemsEvent}
               </Select>{" "}

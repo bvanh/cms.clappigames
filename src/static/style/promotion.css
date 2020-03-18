@@ -143,3 +143,9 @@
   display: flex;
   justify-content: space-between;
 }
+.dropdown-coin-event{
+  display: none !important;
+}
+.select-coin-event>.ant-select-selection--single{
+  cursor: auto;
+}

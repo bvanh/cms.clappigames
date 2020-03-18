@@ -121,7 +121,7 @@ function InputTimeArea(props) {
           <DatePicker
             disabledDate={disabledEndDate}
             showTime={{ format: "HH:mm" }}
-            format="YYYY-MM-DD HH:mm" 
+            format="YYYY-MM-DD HH:mm"
             defaultValue={moment(timeTotal[1], "YYYY-MM-DD HH:mm")}
             placeholder="End"
             allowClear={false}
@@ -158,6 +158,7 @@ function InputTimeArea(props) {
           <h3>Theo giờ:</h3>
           <div style={{ width: "80%" }}>
             <TimePicker
+              allowClear={false}
               open={isOpenTimePicker}
               minuteStep={10}
               format="HH:mm"
@@ -176,6 +177,7 @@ function InputTimeArea(props) {
             />
             <TimePicker
               open={isOpenTimePicker}
+              allowClear={false}
               minuteStep={10}
               value={endTime === "" ? null : moment(endTime, "HH:mm")}
               style={{ width: "50%" }}

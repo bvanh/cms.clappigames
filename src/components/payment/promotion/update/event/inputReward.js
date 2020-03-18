@@ -292,10 +292,11 @@ function InputRewardForShowByMoney(props) {
       ></Input>
       ...
       <Select
-        mode="multiple"
         value={val.rewards}
-        style={{ width: "90%" }}
-        // onChange={value => handleChooseItem(index1, value)}
+        style={{ width: "15%" }}
+        dropdownClassName='dropdown-coin-event'
+        showArrow={false}
+        className='select-coin-event'
         disabled={props.isTimeInPromo}
       >
         {printItemsEvent}
