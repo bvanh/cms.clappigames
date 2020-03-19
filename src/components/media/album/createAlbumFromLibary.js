@@ -3,29 +3,30 @@ import { Upload, Checkbox, Row, Col, Card, Icon, Button, Modal } from "antd";
 import UploadImages from "../upload";
 import { useQuery, useMutation } from "@apollo/react-hooks";
 import { queryListImages } from "../../../utils/queryMedia";
+import ImagePicker from 'react-image-picker'
 import { DELETE_IMAGE, CREATE_ALBUM } from "../../../utils/mutation/media";
 import "../../../static/style/media.css";
 import { Link } from "react-router-dom";
 import createAlbumFromComp from "./createAlbumFromComp";
 
-const gridStyle = {
-  width: "24%",
-  textAlign: "center",
-  padding: "2px",
-  margin: ".5%",
-  position: "relative"
-};
 function CreateAlbumFromLibary(props) {
   const { imagesForAlbum } = props;
+  const [selectedImage, setSelectedImage] = useState([])
   const [dataImage, setDataImage] = useState([]);
   const [visible, setVisible] = useState(true);
   const { loading, error, data, refetch } = useQuery(queryListImages, {
-    onCompleted: data => setDataImage(data)
+    fetchPolicy: "cache-and-network",
+    onCompleted: data => {
+      const newListImage = data.listUploadedImages.filter(
+        (val, i) => val.status !== "INVISIBLE"
+      );
+      setDataImage(newListImage);
+    }
   });
   if (loading) return "Loading...";
   if (error) return `Error! ${error.message}`;
   const getImagesForAlbum = valImg => {
-   props.setImagesForAlbum(valImg)
+    props.setImagesForAlbum(valImg);
   };
   const handleOk = e => {
     setVisible(false);
@@ -37,20 +38,13 @@ function CreateAlbumFromLibary(props) {
   const showImages = () => {
     setVisible(true);
   };
-  const printListImages = data.listUploadedImages.map(function(val, index) {
-    if (val.status !== "INVISIBLE") {
-      return (
-        <Card.Grid style={gridStyle} key={index}>
-          <Checkbox value={val.url} className="checkbox-image">
-            <img src={val.url} alt={val.name} width="100%" />
-          </Checkbox>
-        </Card.Grid>
-      );
-    }
-  });
   const printImageSelected = imagesForAlbum.map((val, index) => (
     <img src={val} width="15%" key={index} />
   ));
+  const onPickImages = value => {
+    const listDelete = value.map((val, i) => val.value);
+    setSelectedImage(listDelete);
+  };
   return (
     <>
       <div>
@@ -75,13 +69,14 @@ function CreateAlbumFromLibary(props) {
                 </span>
               </div>
             )}
-            <Checkbox.Group
-              style={{ width: "100%" }}
-              defaultValue={imagesForAlbum}
-              onChange={getImagesForAlbum}
-            >
-              <Col>{printListImages}</Col>
-            </Checkbox.Group>
+            <ImagePicker
+              multiple
+              images={dataImage.map((image, i) => ({
+                src: image.url,
+                value: image.id
+              }))}
+              onPick={onPickImages}
+            />
           </Col>
         </Row>
       </Modal>

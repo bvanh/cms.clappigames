@@ -45,6 +45,7 @@ function UpdateAlbum() {
     queryGetImagesFromAlbumByType(albumId, userAdmin),
     {
       onCompleted: data => {
+        console.log(JSON.parse(data.listAdminAlbums[0].data).listImages)
         setImagesForAlbum(JSON.parse(data.listAdminAlbums[0].data).listImages)
         setPageIndex({ ...pageIndex, albumName: data.listAdminAlbums[0].name })
       }

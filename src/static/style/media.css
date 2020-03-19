@@ -35,3 +35,23 @@
     justify-content: center;
 
 }
+.image_picker .selected .checked .icon {
+  height: 25px !important;
+  width: 25px !important;
+}
+.image_picker .selected .checked {
+  left: 5px;
+  top: 5px;
+}
+.image_picker .responsive .thumbnail {
+  padding: 0px !important;
+  border: 5px solid #ffffff !important;
+}
+.image_picker .responsive .selected {
+  border: 5px solid #7eadf5 !important;
+  background-color: rgba(178, 34, 34, 0) !important;
+}
+.image_picker .responsive {
+  width: 33.33333% !important;
+  margin-bottom: 7px !important;
+}
