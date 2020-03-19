@@ -6,6 +6,7 @@ const UPLOAD_IMAGE = gql`
       name
       path
       url
+      status
     }
   }
 `;

@@ -5,7 +5,7 @@ import { ApolloClient } from "apollo-client";
 import { ApolloProvider, Mutation } from "react-apollo";
 import { UPLOAD_IMAGE } from "../../utils/mutation/media";
 import { connect } from "react-redux";
-import { Upload, Icon, message, Button } from "antd";
+import { Upload, Icon, message, Button,Col } from "antd";
 
 const { Dragger } = Upload;
 
@@ -44,13 +44,16 @@ function UploadImages(props) {
       }
     }
   };
+  const cancelUpload=()=>{
+    setFileImage(null)
+  }
   return (
     <ApolloProvider client={client}>
       <Mutation mutation={UPLOAD_IMAGE}>
         {(singleUploadStream, { data, loading, error }) => {
           console.log(data, loading, error);
           return (
-            <>
+            <Col md={8} className='section-upload'>
               <Dragger {...configDrag}>
                 <p className="ant-upload-drag-icon">
                   <Icon type="file-add" />
@@ -59,7 +62,8 @@ function UploadImages(props) {
                   Click or drag file to this area to upload
                 </p>
               </Dragger>
-
+              <div className='btn-load-images'>
+              <Button style={{marginRight:"10px"}} onClick={cancelUpload}>Cancel</Button>
               <Button
                 onClick={async () => {
                   for (var key of fileImage) {
@@ -74,10 +78,11 @@ function UploadImages(props) {
                 }}
                 disabled={fileImage !== [] && fileImage !== null ? false : true}
               >
-                upload
+                Load media
               </Button>
+              </div>
               {loading && <p>Loading.....</p>}
-            </>
+            </Col>
           );
         }}
       </Mutation>

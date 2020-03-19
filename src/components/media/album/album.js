@@ -10,14 +10,15 @@ import { Link } from "react-router-dom";
 const { Meta } = Card;
 const Album = () => {
   const [pageIndex, setPageIndex] = useState({
-    currentPage: 2,
+    currentPage: 5,
     pageSize: 10,
     userAdmin: localStorage.getItem("userNameCMS"),
     albumName: ""
   });
   const [selectedAlbumId, setSelectedAlbumId] = useState([]);
   const [isCreateAlbum, setIsCreateAlbum] = useState(false);
-  const [imagesForAlbum, setImagesForAlbum] = useState([]);
+  const [imagesForCreateAlbum, setImagesForCreateAlbum] = useState([]);
+  const [imagesAlbum, setImagesAlbum] = useState([{ id: "", user: "", name: "", status: "", data: "" }])
   const [pickDataImages, setPickDataImages] = useState({
     fromComp: "",
     fromLibary: ""
@@ -34,14 +35,22 @@ const Album = () => {
       req: {
         user: userAdmin,
         name: albumName,
-        data: `{"listImages":${JSON.stringify(imagesForAlbum)}}`
+        data: `{"listImages":${JSON.stringify(imagesForCreateAlbum)}}`
       }
     },
-    onCompleted: data => console.log("tạo thành công")
+    onCompleted: data => {
+      console.log(JSON.parse(data.createAdminAlbum.data));
+    }
   });
   const { loading, error, data, refetch } = useQuery(
-    queryGetListAlbumByAdmin(currentPage, pageSize, userAdmin)
+    queryGetListAlbumByAdmin(currentPage, pageSize, userAdmin), {
+    onCompleted: data => {
+      console.log(data.listAdminAlbumsByUser)
+      setImagesAlbum(data.listAdminAlbumsByUser.rows)
+    }
+  }
   );
+
   if (loading) return "Loading...";
   if (error) return `Error! ${error.message}`;
   const onChange = val => {
@@ -56,36 +65,45 @@ const Album = () => {
     setSelectedAlbumId([]);
   };
   const submitCreateAlbum = () => {
-    if (albumName === ""){
+    if (albumName === "" || imagesForCreateAlbum.length === 0) {
       alert("thieu name");
     } else {
       createAlbum();
     }
   };
-  const printListAlbum = data.listAdminAlbumsByUser.rows.map(function(
+  const backScreenUpdate = () => {
+    setPickDataImages({ fromComp: "", fromLibary: "" });
+  };
+  const printListAlbum = imagesAlbum.map(function (
     val,
     index
   ) {
     if (val.status !== "INVISIBLE" && val.id >= 15) {
       return (
-        <Card
-          hoverable
-          style={{ width: 240 }}
-          cover={
-            <img alt={val.name} src={JSON.parse(val.data).listImages[0]} />
-          }
-          actions={[
-            <Checkbox value={val.id} className="checkbox-album"></Checkbox>,
-            <Link to={`/media/album/edit?id=${val.id}`}><Icon type="edit" key="edit" /></Link>,
-            <Icon type="ellipsis" key="ellipsis" />
-          ]}
-          key={index}
-        >
-          <Meta
-            title={val.name}
-            description={`${JSON.parse(val.data).listImages.length} ảnh`}
-          />
-        </Card>
+        <Col sm={6} key={index} style={{ padding: "0 .5rem .5rem .5rem" }}>
+          <Link to={`/media/album/edit?id=${val.id}`}>
+            <Card
+              hoverable
+              style={{ width: '100%' }}
+              cover={
+                <div><img alt={val.name} src={JSON.parse(JSON.parse(val.data).listImages[0]).url} width='100%' /></div>
+              }
+            // actions={[
+            //   <Checkbox value={val.id} className="checkbox-album"></Checkbox>,
+            //   <Link to={`/media/album/edit?id=${val.id}`}>
+            //     <Icon type="edit" key="edit" />
+            //   </Link>,
+            //   <Icon type="ellipsis" key="ellipsis" />
+            // ]}
+
+            >
+              <Meta
+                title={val.name}
+                description={`${JSON.parse(val.data).listImages.length} ảnh`}
+              />
+            </Card>
+          </Link>
+        </Col>
       );
     }
   });
@@ -111,13 +129,9 @@ const Album = () => {
             </div>
           </div>
         )}
-        <Checkbox.Group
-          style={{ width: "100%" }}
-          onChange={onChange}
-          className="container-album"
-        >
-          <Col>{printListAlbum}</Col>
-        </Checkbox.Group>
+        <Row>
+          {printListAlbum}
+        </Row>
       </Col>
       <Col md={8}>
         {isCreateAlbum ? (
@@ -126,82 +140,78 @@ const Album = () => {
             <p>Tạo album mới</p>
           </div>
         ) : (
-          <div className="create-album">
-            <h3>
-              <Icon
-                onClick={() => setIsCreateAlbum(false)}
-                type="close"
-                style={{ marginRight: "5px", fontSize: "15px" }}
-              />
+            <div className="create-album">
+              <h3>
+                <Icon
+                  onClick={() => setIsCreateAlbum(false)}
+                  type="close"
+                  style={{ marginRight: "5px", fontSize: "15px" }}
+                />
               Tạo album mới
             </h3>
-            <input
-              className="input-album-name"
-              placeholder="Nhập tên album"
-              value={albumName}
-              name="name"
-              onChange={e => getAlbumName(e)}
-            />
-            <p>Thêm ảnh</p>
-            {fromComp === "pickFromComp" && (
-              <CreateAlbumFromComp
-                setImagesForAlbum={setImagesForAlbum}
-                submitCreateAlbum={submitCreateAlbum}
-                albumName={albumName}
-                refetch={refetch}
-                imagesForAlbum={imagesForAlbum}
-                setPickDataImages={() =>
-                  setPickDataImages({ ...pickDataImages, fromComp: "" })
-                }
-                removeAlbumName={() =>
-                  setPageIndex({ ...pageIndex, albumName: "" })
-                }
+              <input
+                className="input-album-name"
+                placeholder="Nhập tên album"
+                value={albumName}
+                name="name"
+                onChange={e => getAlbumName(e)}
               />
-            )}
-            {fromLibary === "pickFromLibary" && (
-              <CreateAlbumFromLibary
-                setImagesForAlbum={setImagesForAlbum}
-                submitCreateAlbum={submitCreateAlbum}
-                refetch={refetch}
-                imagesForAlbum={imagesForAlbum}
-                setPickDataImages={() =>
-                  setPickDataImages({ ...pickDataImages, fromComp: "" })
-                }
-                removeAlbumName={() =>
-                  setPageIndex({ ...pageIndex, albumName: "" })
-                }
-              />
-            )}
-            {fromComp === "" || fromLibary === "" ? (
-              <>
-                <div
-                  className="create-album-pick"
-                  onClick={() =>
-                    setPickDataImages({
-                      fromComp: "f",
-                      fromComp: "pickFromComp"
-                    })
+              <p className='add-images'>Thêm ảnh</p>
+              {fromComp === "pickFromComp" && (
+                <CreateAlbumFromComp
+                  setImagesForCreateAlbum={setImagesForCreateAlbum}
+                  submitCreateAndUpdateAlbum={submitCreateAlbum}
+                  albumName={albumName}
+                  refetch={refetch}
+                  imagesForCreateAlbum={imagesForCreateAlbum}
+                  setPickDataImages={backScreenUpdate}
+                  removeAlbumName={() =>
+                    setPageIndex({ ...pageIndex, albumName: "" })
                   }
-                >
-                  <Icon type="plus" />
+                />
+              )}
+              {fromLibary === "pickFromLibary" && (
+                <CreateAlbumFromLibary
+                  setImagesForCreateAlbum={setImagesForCreateAlbum}
+                  submitCreateAndUpdateAlbum={submitCreateAlbum}
+                  refetch={refetch}
+                  imagesForCreateAlbum={imagesForCreateAlbum}
+                  setPickDataImages={backScreenUpdate}
+                  removeAlbumName={() =>
+                    setPageIndex({ ...pageIndex, albumName: "" })
+                  }
+                />
+              )}
+              {fromLibary === "" ? (
+                <>
+                  <div
+                    className="create-album-pick"
+                    onClick={() =>
+                      setPickDataImages({
+                        fromComp: "f",
+                        fromComp: "pickFromComp"
+                      })
+                    }
+                  >
+                    <Icon type="plus" />
                   Chọn ảnh từ máy tính
                 </div>
-                <div
-                  className="create-album-pick"
-                  onClick={() =>
-                    setPickDataImages({
-                      ...pickDataImages,
-                      fromLibary: "pickFromLibary"
-                    })
-                  }
-                >
-                  <Icon type="search" />
+                  <div
+                    className="create-album-pick"
+                    onClick={() =>
+                      setPickDataImages({
+                        ...pickDataImages,
+                        fromLibary: "pickFromLibary"
+                      })
+                    }
+                  >
+                    <Icon type="search" />
                   Chọn ảnh từ thư viện
                 </div>
-              </>
-            ) : null}
-          </div>
-        )}
+                </>
+              ) : null}
+            </div>
+          )}
       </Col>
     </Row>
   );

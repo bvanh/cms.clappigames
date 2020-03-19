@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Upload, Checkbox, Row, Col, Card, Icon, Button } from "antd";
-import { UPDATE_ALBUM } from '../../../utils/mutation/media'
+import { UPDATE_ALBUM } from "../../../utils/mutation/media";
+import ImagePicker from "react-image-picker";
 import CreateAlbumFromComp from "./createAlbumFromComp";
 import CreateAlbumFromLibary from "./createAlbumFromLibary";
 import { useQuery, useMutation } from "@apollo/react-hooks";
@@ -31,7 +32,7 @@ function UpdateAlbum() {
   const [imagesForAlbum, setImagesForAlbum] = useState([]);
   const [pickDataImages, setPickDataImages] = useState({
     fromComp: "",
-    fromLibary: ""
+    fromLibary:"pickFromLibary"
   });
   const { albumName } = pageIndex;
   const { fromComp, fromLibary } = pickDataImages;
@@ -44,10 +45,10 @@ function UpdateAlbum() {
   const { loading, error, data, refetch } = useQuery(
     queryGetImagesFromAlbumByType(albumId, userAdmin),
     {
+      fetchPolicy: "cache-and-network",
       onCompleted: data => {
-        console.log(JSON.parse(data.listAdminAlbums[0].data).listImages)
-        setImagesForAlbum(JSON.parse(data.listAdminAlbums[0].data).listImages)
-        setPageIndex({ ...pageIndex, albumName: data.listAdminAlbums[0].name })
+        setImagesForAlbum(JSON.parse(data.listAdminAlbums[0].data).listImages);
+        setPageIndex({ ...pageIndex, albumName: data.listAdminAlbums[0].name });
       }
     }
   );
@@ -78,27 +79,28 @@ function UpdateAlbum() {
   //     setSelectedAlbumId([]);
   //   };
   const submitUpdateAlbum = async () => {
-    if (albumName === "" || imagesForAlbum.length === 0) {
+    if (albumName === "") {
       alert("thieu noi dung");
     } else {
       await updateAlbum();
       refetch();
     }
   };
-  const printListImages = listImages.map((val, index) => (
-    <Card.Grid style={gridStyle} key={index}>
-      <Checkbox value={val} className="checkbox-image">
-        <img src={val} alt={val.name} width="100%" />
-      </Checkbox>
-    </Card.Grid>
-  ));
+  const backScreenUpdate = () => {
+    setPickDataImages({ fromComp: "", fromLibary: "" });
+  };
+  const onPickImages = (value) => {
+    let newImages = imagesForAlbum;
+    const selectedImages = value.map((val, i) => val.value)
+    newImages = newImages.filter(e => selectedImages.indexOf(e) < 0)
+    setImagesForAlbum(newImages)
+  }
   //   const submitDelete = async () => {
   //     await deleteImages();
   //     await refetch();
   //     setSelectedImage([]);
   //   };
   // console.log(JSON.parse(data.listAdminAlbums[0].data))
-  console.log(imagesForAlbum)
   return (
     <Row>
       <h2>Media</h2>
@@ -122,9 +124,14 @@ function UpdateAlbum() {
             </div>
           </div>
         )}
-        <Checkbox.Group style={{ width: "100%" }} onChange={onChange}>
-          <div>{printListImages}</div>
-        </Checkbox.Group>
+        <ImagePicker
+          multiple
+          images={listImages.map((image, i) => ({
+            src: JSON.parse(image).url,
+            value: image
+          }))}
+          onPick={onPickImages}
+        />
       </Col>
       <Col md={8}>
         <div className="create-album">
@@ -134,7 +141,7 @@ function UpdateAlbum() {
               type="close"
               style={{ marginRight: "5px", fontSize: "15px" }}
             />
-            Tạo album mới
+            Update Album
           </h3>
           <input
             className="input-album-name"
@@ -143,16 +150,16 @@ function UpdateAlbum() {
             name="name"
             onChange={e => getAlbumName(e)}
           />
-          <p>Thêm ảnh</p>
+          <p className='add-images'>
+            Thêm ảnh
+          </p>
           {fromComp === "pickFromComp" && (
             <CreateAlbumFromComp
-              setImagesForAlbum={setImagesForAlbum}
-              submitCreateAlbum={submitUpdateAlbum}
+              setImagesForCreateAlbum={setImagesForAlbum}
+              submitCreateAndUpdateAlbum={submitUpdateAlbum}
               refetch={refetch}
-              imagesForAlbum={imagesForAlbum}
-              setPickDataImages={() =>
-                setPickDataImages({ ...pickDataImages, fromComp: "" })
-              }
+              imagesForCreateAlbum={imagesForAlbum}
+              setPickDataImages={backScreenUpdate}
               removeAlbumName={() =>
                 setPageIndex({ ...pageIndex, albumName: "" })
               }
@@ -160,19 +167,17 @@ function UpdateAlbum() {
           )}
           {fromLibary === "pickFromLibary" && (
             <CreateAlbumFromLibary
-              setImagesForAlbum={setImagesForAlbum}
-              submitCreateAlbum={submitUpdateAlbum}
+              setImagesForCreateAlbum={setImagesForAlbum}
+              submitCreateAndUpdateAlbum={submitUpdateAlbum}
               refetch={refetch}
-              imagesForAlbum={imagesForAlbum}
-              setPickDataImages={() =>
-                setPickDataImages({ ...pickDataImages, fromComp: "" })
-              }
+              imagesForCreateAlbum={imagesForAlbum}
+              setPickDataImages={backScreenUpdate}
               removeAlbumName={() =>
                 setPageIndex({ ...pageIndex, albumName: "" })
               }
             />
           )}
-          {fromLibary === "" || fromLibary === "" ? (
+          {fromLibary === "" ? (
             <>
               <div
                 className="create-album-pick"
@@ -199,6 +204,11 @@ function UpdateAlbum() {
                 Chọn ảnh từ thư viện
               </div>
             </>
+          ) : null}
+          {fromComp === "" && fromLibary === "" ? (
+            <Button  className='btn-submit-album' onClick={submitUpdateAlbum}>
+              Submit
+            </Button>
           ) : null}
         </div>
       </Col>

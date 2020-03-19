@@ -3,31 +3,31 @@ import { Upload, Checkbox, Row, Col, Card, Icon, Button, Modal } from "antd";
 import UploadImages from "../upload";
 import { useQuery, useMutation } from "@apollo/react-hooks";
 import { queryListImages } from "../../../utils/queryMedia";
-import ImagePicker from 'react-image-picker'
+import ImagePicker from "react-image-picker";
 import { DELETE_IMAGE, CREATE_ALBUM } from "../../../utils/mutation/media";
 import "../../../static/style/media.css";
 import { Link } from "react-router-dom";
 import createAlbumFromComp from "./createAlbumFromComp";
 
 function CreateAlbumFromLibary(props) {
-  const { imagesForAlbum } = props;
-  const [selectedImage, setSelectedImage] = useState([])
+  const { imagesForCreateAlbum } = props;
   const [dataImage, setDataImage] = useState([]);
-  const [visible, setVisible] = useState(true);
+  const [visible, setVisible] = useState(false);
   const { loading, error, data, refetch } = useQuery(queryListImages, {
     fetchPolicy: "cache-and-network",
     onCompleted: data => {
-      const newListImage = data.listUploadedImages.filter(
+      let newListImage = data.listUploadedImages.filter(
         (val, i) => val.status !== "INVISIBLE"
       );
+      const idOldImage = imagesForCreateAlbum.map((val, i) =>
+        Number(JSON.parse(val).id)
+      );
+      newListImage = newListImage.filter(e => idOldImage.indexOf(e.id) < 0);
       setDataImage(newListImage);
     }
   });
   if (loading) return "Loading...";
   if (error) return `Error! ${error.message}`;
-  const getImagesForAlbum = valImg => {
-    props.setImagesForAlbum(valImg);
-  };
   const handleOk = e => {
     setVisible(false);
   };
@@ -38,34 +38,57 @@ function CreateAlbumFromLibary(props) {
   const showImages = () => {
     setVisible(true);
   };
-  const printImageSelected = imagesForAlbum.map((val, index) => (
-    <img src={val} width="15%" key={index} />
+  const printImageSelected = imagesForCreateAlbum.map((val, index) => (
+    <Col xs={4} style={{ height: "55px" }} key={index}>
+      <img
+        src={JSON.parse(val).url}
+        style={{ height: "100%", width: "100%" }}
+        key={index}
+      />
+    </Col>
   ));
   const onPickImages = value => {
-    const listDelete = value.map((val, i) => val.value);
-    setSelectedImage(listDelete);
+    const listImageForShow = value.map((val, i) => val.value);
+    const newListImage = [...imagesForCreateAlbum, ...listImageForShow];
+    const filterImages = newListImage.filter(
+      (value, i, newListImage) => newListImage.indexOf(value) === i
+    );
+    props.setImagesForCreateAlbum(filterImages);
+  };
+  const updateAlbum = () => {
+    setVisible(false);
+    props.submitCreateAndUpdateAlbum();
+    props.setPickDataImages();
   };
   return (
     <>
       <div>
-        <Button onClick={showImages}>chọn ảnh</Button>
-        <span>{imagesForAlbum.length}</span> items đã được chọn
-        <p> {printImageSelected}</p>
-        <Button onClick={() => props.submitCreateAlbum()}>Tao album</Button>
+        <a onClick={showImages} style={{paddingRight:".5rem"}}><Icon type="double-right" />Chọn ảnh</a>
+        <span>{imagesForCreateAlbum.length}</span> items đã được chọn
+        <Row style={{margin:"1rem 0"}}>{printImageSelected}</Row>
+        
+        <Button onClick={updateAlbum} style={{width:"100%",marginBottom:".5rem"}} >
+          Submit
+        </Button>
+        
+        <a onClick={props.setPickDataImages}>
+          <Icon type="double-left" />
+          Quay lại
+        </a>
       </div>
       <Modal
-        title="Basic Modal"
+        title="Media"
         visible={visible}
         onOk={handleOk}
         onCancel={handleCancel}
       >
         <Row>
           <Col>
-            {imagesForAlbum.length > 0 && (
+            {imagesForCreateAlbum.length > 0 && (
               <div className="btn-media-options">
                 <span>
                   <Icon type="close" style={{ marginRight: "5px" }} />
-                  <span>{imagesForAlbum.length}</span> items đã được chọn
+                  <span>{imagesForCreateAlbum.length}</span> items đã được chọn
                 </span>
               </div>
             )}
@@ -73,7 +96,7 @@ function CreateAlbumFromLibary(props) {
               multiple
               images={dataImage.map((image, i) => ({
                 src: image.url,
-                value: image.id
+                value: `{"id":"${image.id}","status":"${image.status}","name":"${image.name}","url":"${image.url}"}`
               }))}
               onPick={onPickImages}
             />

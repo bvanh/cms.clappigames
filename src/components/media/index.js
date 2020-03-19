@@ -20,7 +20,6 @@ function Media() {
     }
   });
   const { loading, error, data, refetch } = useQuery(queryListImages, {
-    fetchPolicy:'cache-and-network',
     onCompleted: data => {
       const newListImage = data.listUploadedImages.filter(
         (val, i) => val.status !== "INVISIBLE"
@@ -41,12 +40,11 @@ function Media() {
   };
   return (
     <Row>
-      <h2>Media</h2>
-      <Link to="/media/album">
-        <h2>Album</h2>
+      <Link to="/media">
+        <h2>Media</h2>
       </Link>
-      <Col md={16}>
-        {selectedImage.length > 0 && (
+      <Col md={16} className="container-images">
+        {selectedImage.length > 0 ? (
           <div className="btn-media-options">
             <span>
               <Icon type="close" style={{ marginRight: "5px" }} />
@@ -61,7 +59,14 @@ function Media() {
               <Icon type="download" style={{ fontSize: "18px" }} />
             </div>
           </div>
-        )}
+        ) : <div className='menu-images'>
+            <Link to="/media" style={{ marginRight: "3rem" }}>
+              <h3>Images</h3>
+            </Link>
+            <Link to="/media/album">
+              <h3>Album</h3>
+            </Link>
+          </div>}
         <ImagePicker
           multiple
           images={dataImage.map((image, i) => ({
@@ -71,9 +76,7 @@ function Media() {
           onPick={onPickImages}
         />
       </Col>
-      <Col md={8}>
         <UploadImages refetch={refetch} />
-      </Col>
     </Row>
   );
 }

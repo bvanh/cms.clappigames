@@ -52,12 +52,13 @@ function CreateAlbumFromComp(props) {
     }
   };
   const getImagesForAlbum = async data => {
-    await props.setImagesForAlbum([
-      ...props.imagesForAlbum,
-      data.singleUploadImage.url
+     delete data.singleUploadImage['path'];
+     delete data.singleUploadImage['__typename'];
+    props.setImagesForCreateAlbum([
+      ...props.imagesForCreateAlbum,
+      JSON.stringify(data.singleUploadImage)
     ]);
   };
-  console.log(fileImage);
   return (
     <ApolloProvider client={client}>
       <Mutation
@@ -80,9 +81,9 @@ function CreateAlbumFromComp(props) {
 
               <Button
                 onClick={async () => {
-                  if(props.albumName ===''){
-                    console.log('thieu tên album')
-                  }else{
+                  if (props.albumName === "") {
+                    console.log("thieu tên album");
+                  } else {
                     for (var key of fileImage) {
                       await singleUploadStream({
                         variables: {
@@ -91,15 +92,20 @@ function CreateAlbumFromComp(props) {
                         }
                       });
                     }
-                    await props.submitCreateAlbum();
+                    await props.submitCreateAndUpdateAlbum();
                     props.setPickDataImages();
                     props.removeAlbumName();
                   }
                 }}
                 disabled={fileImage.length === 0 ? true : false}
+                style={{ margin: "1rem 0" }}
               >
-                Tạo album
+                Submit
               </Button>
+              <a onClick={props.setPickDataImages}>
+                <Icon type="double-left" />
+                Quay lại
+              </a>
               {loading && <p>Loading.....</p>}
             </>
           );

@@ -3,37 +3,69 @@
   top: 0;
   left: 0;
 }
-.btn-media-options{
-    display: flex;
-    justify-content: space-between;
+.btn-media-options {
+  display: flex;
+  justify-content: space-between;
+  padding: 1.3rem 1rem;
+  border-bottom: 1px solid #bbb8b8;
 }
-
+.menu-images {
+  display: flex;
+  flex-direction: row;
+  padding: 1rem;
+  border-bottom: 1px solid #c5c0c0;
+}
+.container-images {
+  background: #e5e5e5;
+}
+.section-upload{
+  height: 77vh;
+  padding: 0 1rem;
+}
+.ant-upload-drag {
+  height: 30% !important;
+}
+.ant-btn{
+  border-radius: 0px;
+}
+.btn-load-images{
+  position: absolute;
+  bottom: 0;
+  right: 5px;
+}
 /* album */
-.container-album{
-  display:flex;
+.container-album {
+  display: flex;
   flex-direction: column;
 }
-.create-album{
+.create-album {
   display: flex;
   flex-direction: column;
   background: rgb(234, 234, 234);
+  padding: 1rem;
 }
-.input-album-name{
+.input-album-name {
   padding: 0;
   border: none;
   background: rgb(234, 234, 234);
   border-bottom: 1.5px solid;
   border-radius: 0;
-  height: 35px;
-    margin-left: 0.5rem;
-    font-size: 1rem;
+  height: 4rem;
+  margin-left: 0.5rem;
+  font-size: 2rem;
 }
-.create-album-pick{
+.create-album-pick {
   height: 55px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px dotted;
+  margin: 2rem;
+  cursor: pointer;
+}
+.image_picker {
+  height: 70vh;
+  overflow-y: scroll;
 }
 .image_picker .selected .checked .icon {
   height: 25px !important;
@@ -52,6 +84,18 @@
   background-color: rgba(178, 34, 34, 0) !important;
 }
 .image_picker .responsive {
-  width: 33.33333% !important;
-  margin-bottom: 7px !important;
+  /* width: 33.33333% !important; */
+  margin: 10px !important;
+}
+.ant-card-cover > * {
+  width: 150px;
+  height: 150px;
+}
+.add-images {
+  margin: 1.5rem 0.5rem 1rem;
+  font-size: 1.2rem;
+}
+.btn-submit-album {
+  margin: 0 auto;
+  width: 80%;
 }
