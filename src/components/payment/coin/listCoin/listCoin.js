@@ -16,6 +16,7 @@ import { useLazyQuery, useMutation, useQuery } from "@apollo/react-hooks";
 import { Link } from "react-router-dom";
 import "../../../../static/style/listProducts.css";
 import ChartCharges from "../listCharges/chartCacheCharges";
+import ListCharges from '../listCharges/listCharges'
 import CreateProductCoin from "../listCoin/addnewCoin";
 import { deleteCoinProduct } from "../../../../utils/mutation/productCoin";
 const radioStyle = {
@@ -224,6 +225,7 @@ function ListCoin(props) {
         <Col md={12}>
           <Col>Xu hướng mua Item</Col>
           <Col><ChartCharges /></Col>
+          <ListCharges/>
         </Col>
       </Row>
     );

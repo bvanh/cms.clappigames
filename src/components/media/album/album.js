@@ -18,7 +18,9 @@ const Album = () => {
   const [selectedAlbumId, setSelectedAlbumId] = useState([]);
   const [isCreateAlbum, setIsCreateAlbum] = useState(false);
   const [imagesForCreateAlbum, setImagesForCreateAlbum] = useState([]);
-  const [imagesAlbum, setImagesAlbum] = useState([{ id: "", user: "", name: "", status: "", data: "" }])
+  const [imagesAlbum, setImagesAlbum] = useState([
+    { id: "", user: "", name: "", status: "", data: "" }
+  ]);
   const [pickDataImages, setPickDataImages] = useState({
     fromComp: "",
     fromLibary: ""
@@ -43,12 +45,13 @@ const Album = () => {
     }
   });
   const { loading, error, data, refetch } = useQuery(
-    queryGetListAlbumByAdmin(currentPage, pageSize, userAdmin), {
-    onCompleted: data => {
-      console.log(data.listAdminAlbumsByUser)
-      setImagesAlbum(data.listAdminAlbumsByUser.rows)
+    queryGetListAlbumByAdmin(currentPage, pageSize, userAdmin),
+    {
+      onCompleted: data => {
+        console.log(data.listAdminAlbumsByUser);
+        setImagesAlbum(data.listAdminAlbumsByUser.rows);
+      }
     }
-  }
   );
 
   if (loading) return "Loading...";
@@ -74,28 +77,30 @@ const Album = () => {
   const backScreenUpdate = () => {
     setPickDataImages({ fromComp: "", fromLibary: "" });
   };
-  const printListAlbum = imagesAlbum.map(function (
-    val,
-    index
-  ) {
+  const printListAlbum = imagesAlbum.map(function(val, index) {
     if (val.status !== "INVISIBLE" && val.id >= 15) {
       return (
         <Col sm={6} key={index} style={{ padding: "0 .5rem .5rem .5rem" }}>
           <Link to={`/media/album/edit?id=${val.id}`}>
             <Card
               hoverable
-              style={{ width: '100%' }}
+              style={{ width: "100%" }}
               cover={
-                <div><img alt={val.name} src={JSON.parse(JSON.parse(val.data).listImages[0]).url} width='100%' /></div>
+                <div>
+                  <img
+                    alt={val.name}
+                    src={JSON.parse(JSON.parse(val.data).listImages[0]).url}
+                    width="100%"
+                  />
+                </div>
               }
-            // actions={[
-            //   <Checkbox value={val.id} className="checkbox-album"></Checkbox>,
-            //   <Link to={`/media/album/edit?id=${val.id}`}>
-            //     <Icon type="edit" key="edit" />
-            //   </Link>,
-            //   <Icon type="ellipsis" key="ellipsis" />
-            // ]}
-
+              // actions={[
+              //   <Checkbox value={val.id} className="checkbox-album"></Checkbox>,
+              //   <Link to={`/media/album/edit?id=${val.id}`}>
+              //     <Icon type="edit" key="edit" />
+              //   </Link>,
+              //   <Icon type="ellipsis" key="ellipsis" />
+              // ]}
             >
               <Meta
                 title={val.name}
@@ -109,11 +114,11 @@ const Album = () => {
   });
   return (
     <Row>
-      <h2>
-        Media <Link to="/media/album">Album</Link>
-      </h2>
-      <Col md={16}>
-        {selectedAlbumId.length > 0 && (
+      <Link to="/media">
+        <h2>Media</h2>
+      </Link>
+      <Col md={16} className="container-images">
+        {selectedAlbumId.length > 0 ? (
           <div className="btn-media-options">
             <span>
               <Icon type="close" style={{ marginRight: "5px" }} />
@@ -128,90 +133,97 @@ const Album = () => {
               <Icon type="download" style={{ fontSize: "18px" }} />
             </div>
           </div>
+        ) : (
+          <div className="menu-images">
+            <Link to="/media" style={{ marginRight: "3rem" }}>
+              <h3>Images</h3>
+            </Link>
+            <Link to="/media/album">
+              <h3>Album</h3>
+            </Link>
+          </div>
         )}
-        <Row>
-          {printListAlbum}
-        </Row>
+        <Row style={{padding:'1rem .5rem'}}>{printListAlbum}</Row>
       </Col>
-      <Col md={8}>
+      <Col md={8} className="create-album">
         {isCreateAlbum ? (
-          <div className="create-album" onClick={() => setIsCreateAlbum(false)}>
+          <div onClick={() => setIsCreateAlbum(false)}>
             <Icon type="folder-add" style={{ fontSize: "60px" }} />
             <p>Tạo album mới</p>
           </div>
         ) : (
-            <div className="create-album">
-              <h3>
-                <Icon
-                  onClick={() => setIsCreateAlbum(false)}
-                  type="close"
-                  style={{ marginRight: "5px", fontSize: "15px" }}
-                />
+          <div >
+            <h3>
+              <Icon
+                onClick={() => setIsCreateAlbum(false)}
+                type="close"
+                style={{ marginRight: "5px", fontSize: "15px" }}
+              />
               Tạo album mới
             </h3>
-              <input
-                className="input-album-name"
-                placeholder="Nhập tên album"
-                value={albumName}
-                name="name"
-                onChange={e => getAlbumName(e)}
+            <input
+              className="input-album-name"
+              placeholder="Nhập tên album"
+              value={albumName}
+              name="name"
+              onChange={e => getAlbumName(e)}
+            />
+            <p className="add-images">Thêm ảnh</p>
+            {fromComp === "pickFromComp" && (
+              <CreateAlbumFromComp
+                setImagesForCreateAlbum={setImagesForCreateAlbum}
+                submitCreateAndUpdateAlbum={submitCreateAlbum}
+                albumName={albumName}
+                refetch={refetch}
+                imagesForCreateAlbum={imagesForCreateAlbum}
+                setPickDataImages={backScreenUpdate}
+                removeAlbumName={() =>
+                  setPageIndex({ ...pageIndex, albumName: "" })
+                }
               />
-              <p className='add-images'>Thêm ảnh</p>
-              {fromComp === "pickFromComp" && (
-                <CreateAlbumFromComp
-                  setImagesForCreateAlbum={setImagesForCreateAlbum}
-                  submitCreateAndUpdateAlbum={submitCreateAlbum}
-                  albumName={albumName}
-                  refetch={refetch}
-                  imagesForCreateAlbum={imagesForCreateAlbum}
-                  setPickDataImages={backScreenUpdate}
-                  removeAlbumName={() =>
-                    setPageIndex({ ...pageIndex, albumName: "" })
+            )}
+            {fromLibary === "pickFromLibary" && (
+              <CreateAlbumFromLibary
+                setImagesForCreateAlbum={setImagesForCreateAlbum}
+                submitCreateAndUpdateAlbum={submitCreateAlbum}
+                refetch={refetch}
+                imagesForCreateAlbum={imagesForCreateAlbum}
+                setPickDataImages={backScreenUpdate}
+                removeAlbumName={() =>
+                  setPageIndex({ ...pageIndex, albumName: "" })
+                }
+              />
+            )}
+            {fromLibary === "" ? (
+              <>
+                <div
+                  className="create-album-pick"
+                  onClick={() =>
+                    setPickDataImages({
+                      fromComp: "f",
+                      fromComp: "pickFromComp"
+                    })
                   }
-                />
-              )}
-              {fromLibary === "pickFromLibary" && (
-                <CreateAlbumFromLibary
-                  setImagesForCreateAlbum={setImagesForCreateAlbum}
-                  submitCreateAndUpdateAlbum={submitCreateAlbum}
-                  refetch={refetch}
-                  imagesForCreateAlbum={imagesForCreateAlbum}
-                  setPickDataImages={backScreenUpdate}
-                  removeAlbumName={() =>
-                    setPageIndex({ ...pageIndex, albumName: "" })
-                  }
-                />
-              )}
-              {fromLibary === "" ? (
-                <>
-                  <div
-                    className="create-album-pick"
-                    onClick={() =>
-                      setPickDataImages({
-                        fromComp: "f",
-                        fromComp: "pickFromComp"
-                      })
-                    }
-                  >
-                    <Icon type="plus" />
+                >
+                  <Icon type="plus" />
                   Chọn ảnh từ máy tính
                 </div>
-                  <div
-                    className="create-album-pick"
-                    onClick={() =>
-                      setPickDataImages({
-                        ...pickDataImages,
-                        fromLibary: "pickFromLibary"
-                      })
-                    }
-                  >
-                    <Icon type="search" />
+                <div
+                  className="create-album-pick"
+                  onClick={() =>
+                    setPickDataImages({
+                      ...pickDataImages,
+                      fromLibary: "pickFromLibary"
+                    })
+                  }
+                >
+                  <Icon type="search" />
                   Chọn ảnh từ thư viện
                 </div>
-                </>
-              ) : null}
-            </div>
-          )}
+              </>
+            ) : null}
+          </div>
+        )}
       </Col>
     </Row>
   );

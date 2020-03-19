@@ -59,14 +59,16 @@ function Media() {
               <Icon type="download" style={{ fontSize: "18px" }} />
             </div>
           </div>
-        ) : <div className='menu-images'>
+        ) : (
+          <div className="menu-images">
             <Link to="/media" style={{ marginRight: "3rem" }}>
               <h3>Images</h3>
             </Link>
             <Link to="/media/album">
               <h3>Album</h3>
             </Link>
-          </div>}
+          </div>
+        )}
         <ImagePicker
           multiple
           images={dataImage.map((image, i) => ({
@@ -76,7 +78,7 @@ function Media() {
           onPick={onPickImages}
         />
       </Col>
-        <UploadImages refetch={refetch} />
+      <UploadImages refetch={refetch} />
     </Row>
   );
 }

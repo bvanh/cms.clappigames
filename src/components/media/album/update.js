@@ -32,7 +32,7 @@ function UpdateAlbum() {
   const [imagesForAlbum, setImagesForAlbum] = useState([]);
   const [pickDataImages, setPickDataImages] = useState({
     fromComp: "",
-    fromLibary:"pickFromLibary"
+    fromLibary: "pickFromLibary"
   });
   const { albumName } = pageIndex;
   const { fromComp, fromLibary } = pickDataImages;
@@ -89,12 +89,12 @@ function UpdateAlbum() {
   const backScreenUpdate = () => {
     setPickDataImages({ fromComp: "", fromLibary: "" });
   };
-  const onPickImages = (value) => {
+  const onPickImages = value => {
     let newImages = imagesForAlbum;
-    const selectedImages = value.map((val, i) => val.value)
-    newImages = newImages.filter(e => selectedImages.indexOf(e) < 0)
-    setImagesForAlbum(newImages)
-  }
+    const selectedImages = value.map((val, i) => val.value);
+    newImages = newImages.filter(e => selectedImages.indexOf(e) < 0);
+    setImagesForAlbum(newImages);
+  };
   //   const submitDelete = async () => {
   //     await deleteImages();
   //     await refetch();
@@ -103,12 +103,11 @@ function UpdateAlbum() {
   // console.log(JSON.parse(data.listAdminAlbums[0].data))
   return (
     <Row>
-      <h2>Media</h2>
-      <Link to="/media/album">
-        <h2>Album</h2>
+      <Link to="/media">
+        <h2>Media</h2>
       </Link>
-      <Col md={16}>
-        {selectedImage.length > 0 && (
+      <Col md={16} className="container-images">
+        {selectedImage.length > 0 ? (
           <div className="btn-media-options">
             <span>
               <Icon type="close" style={{ marginRight: "5px" }} />
@@ -118,10 +117,19 @@ function UpdateAlbum() {
               <Icon
                 type="delete"
                 style={{ fontSize: "18px", margin: "0 5px" }}
-              // onClick={submitDelete}
+                // onClick={submitDelete}
               />
               <Icon type="download" style={{ fontSize: "18px" }} />
             </div>
+          </div>
+        ) : (
+          <div className="menu-images">
+            <Link to="/media" style={{ marginRight: "3rem" }}>
+              <h3>Images</h3>
+            </Link>
+            <Link to="/media/album">
+              <h3>Album</h3>
+            </Link>
           </div>
         )}
         <ImagePicker
@@ -133,8 +141,8 @@ function UpdateAlbum() {
           onPick={onPickImages}
         />
       </Col>
-      <Col md={8}>
-        <div className="create-album">
+      <Col md={8} className="create-album">
+        <div>
           <h3>
             <Icon
               onClick={() => setIsCreateAlbum(false)}
@@ -150,9 +158,7 @@ function UpdateAlbum() {
             name="name"
             onChange={e => getAlbumName(e)}
           />
-          <p className='add-images'>
-            Thêm ảnh
-          </p>
+          <p className="add-images">Thêm ảnh</p>
           {fromComp === "pickFromComp" && (
             <CreateAlbumFromComp
               setImagesForCreateAlbum={setImagesForAlbum}
@@ -206,7 +212,7 @@ function UpdateAlbum() {
             </>
           ) : null}
           {fromComp === "" && fromLibary === "" ? (
-            <Button  className='btn-submit-album' onClick={submitUpdateAlbum}>
+            <Button className="btn-submit-album" onClick={submitUpdateAlbum}>
               Submit
             </Button>
           ) : null}

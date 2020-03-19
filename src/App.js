@@ -31,9 +31,10 @@ import { Layout, Menu, Icon, Dropdown } from "antd";
 import "./static/style/menu.css";
 const { SubMenu } = Menu;
 const { Header, Content, Footer, Sider } = Layout;
-checkTokenFinal();
-const checkToken = setInterval(checkTokenFinal, 3300000);
+
 function App(props) {
+  checkTokenFinal();
+  const checkToken = setInterval(checkTokenFinal, 3300000);
   const userName = localStorage.getItem("userNameCMS");
   if (props.isLogin === false || props.isLogin === null) {
     return (

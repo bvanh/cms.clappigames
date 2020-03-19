@@ -41,8 +41,11 @@
 .create-album {
   display: flex;
   flex-direction: column;
+  padding: 0 .5rem;
+}
+.create-album>div{
+  padding: 1rem 1rem;
   background: rgb(234, 234, 234);
-  padding: 1rem;
 }
 .input-album-name {
   padding: 0;
@@ -51,7 +54,7 @@
   border-bottom: 1.5px solid;
   border-radius: 0;
   height: 4rem;
-  margin-left: 0.5rem;
+  width: 100%;
   font-size: 2rem;
 }
 .create-album-pick {

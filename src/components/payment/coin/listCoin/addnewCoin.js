@@ -17,7 +17,7 @@ function CreateProductCoin(props) {
   const productId = query.get("productId");
   const [oldDataProduct, setOldDataProduct] = useState({
     statusBtnCancel: false,
-    oldData: null
+    oldData: { productName: "", type: "", sort: null, price: null, status: "" }
   });
   const [dataProduct, setDataProduct] = useState({
     productName: "",
@@ -38,6 +38,19 @@ function CreateProductCoin(props) {
       }
     }
   });
+  const checkStatusData = () => {
+    if (
+      productName !== "" &&
+      type !== "" &&
+      sort !== null &&
+      price !== null &&
+      status !== ""
+    ) {
+      return false;
+    } else {
+      return true;
+    }
+  };
   const getNameAndPrice = e => {
     setDataProduct({ ...dataProduct, [e.target.name]: e.target.value });
     setOldDataProduct({ ...oldDataProduct, statusBtnCancel: false });
@@ -63,7 +76,9 @@ function CreateProductCoin(props) {
   };
   const { enumValues } = props.data.__type;
   const printPaymentTypes = enumValues.map((val, index) => (
-    <Radio value={val.name}key={index}>{val.name}</Radio>
+    <Radio value={val.name} key={index}>
+      {val.name}
+    </Radio>
   ));
   return (
     <Row>
@@ -84,7 +99,7 @@ function CreateProductCoin(props) {
               >
                 Hủy
               </Button>
-              <Button onClick={submitUpdateCoin}>Tạo mới C.coin</Button>
+              <Button onClick={submitUpdateCoin} disabled={checkStatusData()}>Tạo mới C.coin</Button>
             </p>
           </div>
         </div>
@@ -105,13 +120,18 @@ function CreateProductCoin(props) {
           </div>
           <div className="product-input-update">
             <span className="edit-product-content-title">Tên C.coin</span>
-            <Input name="productName" onChange={getNameAndPrice}></Input>
+            <Input
+              name="productName"
+              onChange={getNameAndPrice}
+              value={productName}
+            ></Input>
             <span className="edit-product-content-title">Giá (VNĐ)</span>
             <Input
               type="number"
               max="9990000000"
               name="price"
               onChange={getNameAndPrice}
+              value={price}
             ></Input>
             <div>
               <Col>
@@ -127,7 +147,11 @@ function CreateProductCoin(props) {
                 >
                   Kiểu thanh toán
                 </span>
-                <Radio.Group name="type" onChange={getStatusAndType}>
+                <Radio.Group
+                  name="type"
+                  onChange={getStatusAndType}
+                  value={type}
+                >
                   {printPaymentTypes}
                 </Radio.Group>
               </Col>
@@ -137,7 +161,11 @@ function CreateProductCoin(props) {
         <Col md={8} className="section2">
           <div>
             <p className="edit-product-content-title">Trạng thái</p>
-            <Radio.Group onChange={getStatusAndType} name="status">
+            <Radio.Group
+              onChange={getStatusAndType}
+              name="status"
+              value={status}
+            >
               <Radio style={radioStyle} value="INPUT">
                 INPUT
               </Radio>

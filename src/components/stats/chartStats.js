@@ -25,7 +25,7 @@ const ChartStats = props => {
     });
     const [isSelectDates, setIsSelectDates] = useState(false);
     const { nameStats, partnerId } = props;
-    console.log(nameStats,partnerId)
+    // console.log(nameStats,partnerId)
     const { fromDate, toDate, fromDateCustom, toDateCustom } = timeValue;
     const [dataCharts, setDataCharts] = useState({
         xAxis: [],
