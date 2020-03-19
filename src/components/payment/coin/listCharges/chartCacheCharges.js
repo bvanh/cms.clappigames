@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import moment from "moment";
 import { Line } from "react-chartjs-2";
 import { Link } from "react-router-dom";
@@ -23,7 +23,7 @@ const ChartCharges = props => {
     toDateCustom: null
   });
   const [dataCharts, setDataCharts] = useState({ xAxis: [], yAxis: [] });
-
+  const [isSelectDates, setIsSelectDates] = useState(false);
   const { fromDate, toDate, fromDateCustom, toDateCustom } = timeValue;
   const { TODAY } = dates;
   const [getData] = useLazyQuery(getListChartCharges(fromDate, toDate), {
