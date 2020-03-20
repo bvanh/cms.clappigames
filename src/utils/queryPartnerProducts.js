@@ -1,22 +1,31 @@
 import { gql } from "apollo-boost";
-const queryGetListPartnerProducts = (currentPage, pageSize, partnerId, partnerProductName) => {
-  return gql`
-    query {
-      listPartnerProductsByPartner(currentPage: ${currentPage},pageSize: ${pageSize},partnerId: "${partnerId}",partnerProductName:"${partnerProductName}") {
-        count
-        rows {
-          partnerProductId
-          partnerId
-          productName
-          promotion {
-            type
-          }
-          coin
-          createAt
+const queryGetListPartnerProducts = gql`
+  query listPartnerProductsByPartner(
+    $currentPage: Int!
+    $pageSize: Int!
+    $partnerId: String!
+    $partnerProductName: String!
+  ) {
+    listPartnerProductsByPartner(
+      currentPage: $currentPage
+      pageSize: $pageSize
+      partnerId: $partnerId
+      partnerProductName: $partnerProductName
+    ) {
+      count
+      rows {
+        partnerProductId
+        partnerId 
+        productName
+        promotion {
+          type
         }
+        coin
+        createAt
       }
-    }`;
-};
+    }
+  }
+`;
 // get productId
 const queryGetRefPartnerProducts = partnerId => {
   return gql`
@@ -95,7 +104,7 @@ const getListPartnerProducts = partnerId => {
 };
 const getListPartnerProducts2 = gql`
   query listPartnerProducts($partnerId: String) {
-    listPartnerProducts(partnerId:$partnerId){
+    listPartnerProducts(partnerId: $partnerId) {
       productName
       partnerProductId
     }

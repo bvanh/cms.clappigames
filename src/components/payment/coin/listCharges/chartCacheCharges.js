@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import moment from "moment";
 import { Line } from "react-chartjs-2";
 import { Link } from "react-router-dom";
@@ -10,10 +10,10 @@ import { Icon, DatePicker, Input, Select } from "antd";
 const { Option } = Select;
 
 const listSelectDates = [
-  { days: "3 days ago", variables: "THREE_DAY_AGO" },
-  { days: "7 days ago", variables: "SEVENT_DAY_AGO" },
-  { days: "14 days ago", variables: "FOURTEEN_DAY_AGO" },
-  { days: "30 days ago", variables: "THIRTY_DAY_AGO" }
+  { days: "Last 3 days", variables: "THREE_DAY_AGO" },
+  { days: "Last 7 days", variables: "SEVENT_DAY_AGO" },
+  { days: "Last 14 days", variables: "FOURTEEN_DAY_AGO" },
+  { days: "Last 30 days", variables: "THIRTY_DAY_AGO" }
 ];
 const ChartCharges = props => {
   const [timeValue, setTimeValue] = useState({
@@ -26,7 +26,7 @@ const ChartCharges = props => {
   const [isSelectDates, setIsSelectDates] = useState(false);
   const { fromDate, toDate, fromDateCustom, toDateCustom } = timeValue;
   const { TODAY } = dates;
-  const [getData] = useLazyQuery(getListChartCharges(fromDate, toDate), {
+  const [getData] = useLazyQuery(getListChartCharges, {
     onCompleted: data =>
       setDataCharts({
         xAxis: JSON.parse(data.listCacheChargesByDate.xAxis),
@@ -34,26 +34,31 @@ const ChartCharges = props => {
       })
   });
   useEffect(() => {
-    getData;
+    getData({
+      variables: {
+        fromDate: fromDate,
+        toDate: toDate
+      }
+    });
   }, []);
   const disabledDate = current => {
     if (fromDateCustom != null) {
       return (
         (current &&
           current <
-            moment(fromDateCustom)
-              .subtract(1, "days")
-              .endOf("day")) ||
+          moment(fromDateCustom)
+            .subtract(1, "days")
+            .endOf("day")) ||
         current > moment().endOf("day")
       );
     }
   };
   const changeDates = val => {
-    setTimeValue({ fromDate: dates[val], toDate: TODAY });
+    setTimeValue({ ...timeValue, fromDate: dates[val], toDate: TODAY });
     getData({
       variables: {
         fromDate: dates[val],
-        toDate: TODAY,
+        toDate: TODAY
       }
     });
   };
@@ -65,23 +70,23 @@ const ChartCharges = props => {
   };
   const changeRangeDates = value => {
     if (fromDateCustom == null) {
-        setTimeValue({ ...timeValue, fromDateCustom: value });
+      setTimeValue({ ...timeValue, fromDateCustom: value });
     } else {
-        setTimeValue({
-            ...timeValue,
-            toDateCustom: moment(value).format("YYYY-MM-DD")
-        });
+      setTimeValue({
+        ...timeValue,
+        toDateCustom: moment(value).format("YYYY-MM-DD")
+      });
     }
-};
-const submitDateCustom = () => {
+  };
+  const submitDateCustom = () => {
     getData({
-        variables: {
-            fromDate: fromDateCustom,
-            toDate: toDateCustom,
-        }
+      variables: {
+        fromDate: fromDateCustom,
+        toDate: toDateCustom
+      }
     });
     setIsSelectDates(!isSelectDates);
-};
+  };
   const converData = paymentType => {
     const demo = [];
     const dataAll = dataCharts.yAxis.map((val, i) =>
@@ -146,11 +151,12 @@ const submitDateCustom = () => {
   return (
     <div className="line_chart">
       <div className="chart-charges-title">
+        <h2>Doanh thu</h2>
         <Select
           defaultValue="SEVENT_DAY_AGO"
-          style={{ width: 120, marginTop: "1.5rem" }}
+          style={{ width: 120}}
           onChange={handleChangeRangeDates}
-          className="select_dates-stats"
+          className="select-charges-date"
         >
           {printOptionDates}
           <Option value="5" onClick={showDateSelect}>
@@ -203,7 +209,7 @@ const submitDateCustom = () => {
           </div>
         )}
       </div>
-      <Line data={dataChart} width={100} height={50} options={optionLine} />
+      <Line data={dataChart} width={100} height={40} options={optionLine} />
     </div>
   );
 };

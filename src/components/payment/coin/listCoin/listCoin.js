@@ -29,12 +29,13 @@ function ListCoin(props) {
     currentPage: 1,
     type: "",
     pageSize: 100,
+    productName: "",
     listTypePayment: []
   });
   const [isCreateCoin, setIsCreateCoin] = useState(false);
   const [dataCoin, setDataCoin] = useState(null);
   const [itemsForDelete, setItemsForDelete] = useState([]);
-  const { currentPage, type, pageSize, listTypePayment } = pageIndex;
+  const { currentPage, type, pageSize, listTypePayment, productName } = pageIndex;
   const [getDataCoin, { loading, refetch }] = useLazyQuery(queryGetListCoin, {
     fetchPolicy: "cache-and-network",
     onCompleted: data => {
@@ -57,7 +58,7 @@ function ListCoin(props) {
         currentPage: currentPage,
         type: type,
         pageSize: pageSize,
-        productName:""
+        productName: productName
       }
     });
   }, []);
@@ -70,7 +71,7 @@ function ListCoin(props) {
         currentPage: currentPage,
         type: type,
         pageSize: pageSize,
-        productName:""
+        productName: productName
       }
     });
   };
@@ -81,7 +82,7 @@ function ListCoin(props) {
         currentPage: currentPage,
         type: "",
         pageSize: pageSize,
-        productName:""
+        productName: productName
       }
     });
   };
@@ -155,7 +156,7 @@ function ListCoin(props) {
     }
   ];
   const getValueSearch = e => {
-    setPageIndex({ ...pageIndex, search: e.target.value });
+    setPageIndex({ ...pageIndex, productName: e.target.value });
   };
   const onSearch = () => {
     getDataCoin({
@@ -163,7 +164,7 @@ function ListCoin(props) {
         currentPage: currentPage,
         type: type,
         pageSize: pageSize,
-        productName:""
+        productName: productName
       }
     });
   };
@@ -193,16 +194,19 @@ function ListCoin(props) {
           <div className="products-title">
             <div>
               <h2>Quản lý C.coin</h2>
-              <Link to="/payment/coin" onClick={() => setIsCreateCoin(true)}>
-                <Button icon="plus">Thêm gói C.coin</Button>
-              </Link>
+              <div className='view-more'>
+                <a className='btn-view-more'>Chi tiết <Icon type="double-right" /></a>
+                <Link to="/payment/coin" onClick={() => setIsCreateCoin(true)}>
+                  <Button icon="plus">Thêm gói C.coin</Button>
+                </Link>
+              </div>
             </div>
             <div className="btn-search-users">
               <Button disabled={!hasSelected} onClick={submitDeleteProduct}>
                 Delete
               </Button>
-              <Input onChange={e => getValueSearch(e)} />
-              <Button onClick={onSearch}>Search</Button>
+              <Input onChange={e => getValueSearch(e)} onPressEnter={onSearch} prefix={<Icon type="search" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder='Tìm kiếm tên c.coin' />
+              {/* <Button onClick={onSearch}>Search</Button> */}
             </div>
           </div>
           {dataCoin && (
@@ -222,10 +226,9 @@ function ListCoin(props) {
             </>
           )}
         </Col>
-        <Col md={12}>
-          <Col>Xu hướng mua Item</Col>
+        <Col md={12} style={{padding:'0 1rem'}}>
           <Col><ChartCharges /></Col>
-          <ListCharges/>
+          <ListCharges />
         </Col>
       </Row>
     );
