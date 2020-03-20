@@ -3,6 +3,7 @@ import { Table, Button, Pagination, Input, Row, Col, Select,Icon } from "antd";
 import {
   queryGetListPartnerCharges
 } from "../../../../utils/queryPartnerProducts";
+import moment from 'moment'
 import { useLazyQuery } from "@apollo/react-hooks";
 import { Link } from "react-router-dom";
 
@@ -110,7 +111,10 @@ function ListPartnerCharges() {
     {
       title: "Time",
       dataIndex: "createAt",
-      key: "createAt"
+      key: "createAt",
+      render: time => (
+        <span>{moment.utc(Number(time)).format("HH:mm DD-MM-YYYY")}</span>
+      )
     },
     {
       title: "Status",

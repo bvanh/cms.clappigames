@@ -59,7 +59,9 @@ const queryGetListCharges = gql`
       rows {
         createAt
         chargeId
+        userId
         baseCoin
+        price
         paymentType
         status
         user {

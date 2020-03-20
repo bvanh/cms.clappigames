@@ -69,8 +69,14 @@
   justify-content: space-between;
   margin-bottom: 1rem;
 }
-.list-charges-title{
+.list-charges-title {
   display: flex;
   justify-content: space-between;
-  margin: 1.5rem 0 .5rem
+  margin: 1.5rem 0 0.5rem;
+}
+/* detail-charges */
+.btn-search-charges {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
 }

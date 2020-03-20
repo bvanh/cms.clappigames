@@ -43,24 +43,6 @@ function ListPartnerItems() {
   }, []);
   const columns = [
     {
-      title: "Action",
-      key: "action",
-      render: (text, record) => (
-        <span>
-          <Link
-            to={`/payment/items/edit?partnerProductId=${record.partnerProductId}`}
-          >
-            Edit
-          </Link>
-        </span>
-      )
-    },
-    // {
-    //   title: "Status",
-    //   dataIndex: "status",
-    //   key: "status"
-    // },
-    {
       title: "Id",
       dataIndex: "partnerProductId",
       key: "productId"
@@ -78,17 +60,26 @@ function ListPartnerItems() {
     {
       title: "Promotion",
       dataIndex: "promotion",
-      key: "discount"
+      key: "discount",
+      render: index => <span>{index === null ? "NO" : "YES"}</span>
     },
     {
-      title: "Time",
-      dataIndex: "createAt",
-      key: "time"
-    },
-    {
-      title: "partnerId",
+      title: "Game",
       dataIndex: "partnerId",
       key: "partnerId"
+    },
+    {
+      title: "Action",
+      key: "action",
+      render: (text, record) => (
+        <span>
+          <Link
+            to={`/payment/items/edit?partnerProductId=${record.partnerProductId}`}
+          >
+            Edit
+          </Link>
+        </span>
+      )
     }
   ];
   const rowSelection = {
@@ -177,7 +168,7 @@ function ListPartnerItems() {
             </>
           )}
         </Col>
-        <Col md={12} style={{padding:"0 1rem"}}>
+        <Col md={12} style={{ padding: "0 1rem" }}>
           <ChartPartnerChages />
           <ListPartnerChages />
         </Col>

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Table, Button, Pagination, Input, Row, Col, Select,Icon} from "antd";
+import { Table, Button, Pagination, Input, Row, Col, Select, Icon } from "antd";
+import moment from 'moment'
 import {
   queryGetListCoin,
   queryGetListCharges
@@ -33,7 +34,7 @@ function ListCharges() {
     queryGetListCharges,
     {
       onCompleted: data => {
-          console.log(data)
+        console.log(data);
         setDataCharges(data);
       }
     }
@@ -91,7 +92,10 @@ function ListCharges() {
     {
       title: "Time",
       dataIndex: "createAt",
-      key: "createAt"
+      key: "createAt",
+      render: time => (
+        <span>{moment.utc(Number(time)).format("HH:mm DD-MM-YYYY")}</span>
+      )
     },
     {
       title: "Status",
@@ -109,16 +113,18 @@ function ListCharges() {
     <>
       <div className="list-charges-title">
         <h2>Lịch sử giao dịch</h2>
-        <div className='view-more'>
-                <a className='btn-view-more'>Chi tiết <Icon type="double-right" /></a>
-        <Select
-          defaultValue="SEVENT_DAY_AGO"
-          style={{ width: 120 }}
-          onChange={handleChangeRangeDates}
-          className="select-charges-date"
-        >
-          {printOptionDates}
-        </Select>
+        <div className="view-more">
+          <Link className="btn-view-more" to='/payment/coin/charges/detail'>
+            Chi tiết <Icon type="double-right" />
+          </Link>
+          <Select
+            defaultValue="SEVENT_DAY_AGO"
+            style={{ width: 120 }}
+            onChange={handleChangeRangeDates}
+            className="select-charges-date"
+          >
+            {printOptionDates}
+          </Select>
         </div>
       </div>
       {dataCharges && (
