@@ -12,7 +12,9 @@ import {
   Radio,
   Tabs
 } from "antd";
-import UploadImagesInNews from './upload'
+import ImagePicker from "react-image-picker";
+import "react-image-picker/dist/index.css";
+import UploadImagesInNews from "./upload";
 import { useQuery, useMutation } from "@apollo/react-hooks";
 import { queryListImages } from "../../../utils/queryMedia";
 import { connect } from "react-redux";
@@ -35,27 +37,32 @@ function ListImagesForNews(props) {
   });
   const { isShow, albumId } = isDetailAlbum;
   const { loading, error, data, refetch } = useQuery(queryListImages, {
-    onCompleted: data => setDataImage(data)
+    onCompleted: data => {
+      const newDataImage=data.listUploadedImages.filter((val,i)=>val.status!=='INVISIBLE')
+      setDataImage(newDataImage)}
   });
   if (loading) return "Loading...";
   if (error) return `Error! ${error.message}`;
-  const printListImages = data.listUploadedImages.map(function(val, index) {
-    if (val.status !== "INVISIBLE") {
-      return (
-        <Radio value={val.url} key={index} className="list-images-news">
-          <img src={val.url} width="30%" className="image-news" />
-        </Radio>
-      );
-    }
-  });
+  // const printListImages = data.listUploadedImages.map(function(val, index) {
+  //   if (val.status !== "INVISIBLE") {
+  //     return (
+  //       <Radio value={val.url} key={index} className="list-images-news">
+  //         <img src={val.url} width="30%" className="image-news" />
+  //       </Radio>
+  //     );
+  //   }
+  // });
   const getUrl = e => {
     dispatchSetUrlImage(e.target.value);
   };
+  const onPickImages=(value)=>{
+    dispatchSetUrlImage(value.value);
+  }
   const setIsAlbum = () => {
     setDetailAlbum({ isShow: true, albumId: null });
   };
-  const operations = <UploadImagesInNews/>;
-  console.log(albumId,isShow)
+  const operations = <UploadImagesInNews />;
+  console.log(albumId, isShow);
   return (
     <>
       <Modal
@@ -79,9 +86,13 @@ function ListImagesForNews(props) {
           <TabPane tab="Tất cả ảnh" key="1">
             <Row className="listImages_news">
               <Col>
-                <Radio.Group buttonStyle="solid" onChange={getUrl}>
-                  {printListImages}
-                </Radio.Group>
+                <ImagePicker
+                  images={dataImage.map((image, i) => ({
+                    src: image.url,
+                    value: image.url
+                  }))}
+                  onPick={onPickImages}
+                />
               </Col>
             </Row>
           </TabPane>

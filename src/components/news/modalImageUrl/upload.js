@@ -6,7 +6,9 @@ import { ApolloProvider, Mutation } from "react-apollo";
 import { UPLOAD_IMAGE } from "../../../utils/mutation/media";
 import { connect } from "react-redux";
 import { Upload, Icon, message, Button } from "antd";
-
+import {
+  dispatchSetUrlImage
+} from "../../../redux/actions";
 const { Dragger } = Upload;
 
 const apolloCache = new InMemoryCache();
@@ -31,7 +33,7 @@ function UploadImagesInNews(props) {
           const demo=()=>{
             console.log('fsfsf')
           }
-          console.log(data, loading, error);
+          if(data){dispatchSetUrlImage(data.singleUploadImage.url)}
           return (
             <>
               <form

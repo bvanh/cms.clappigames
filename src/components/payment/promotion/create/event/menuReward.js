@@ -59,7 +59,7 @@ const MenuRewardEventByMoney = props => {
   const { eventType, eventPaymentType, value } = eventByMoneyIndex;
   useQuery(getListServer(platformId), {
     onCompleted: data => {
-      setListServer([...data.listPartnerServers,indexAllServer]);
+      setListServer([...data.listPartnerServers, indexAllServer]);
     }
   });
   useMemo(() => {
@@ -137,46 +137,58 @@ const MenuRewardEventByMoney = props => {
     </Option>
   ));
   return (
-    <div>
-      <p className="promotion-title-field">Chọn loại hóa đơn</p>
-      <Select
-        style={{ width: 120 }}
-        onChange={handleChangePaymentType}
-        placeholder="-Chọn game-"
-        value={props.nameEventByMoney}
-      >
-        {printEventType}
-      </Select>{" "}
-      <span>Hình thức</span>
-      <Select
-        value={value}
-        style={{ width: 120 }}
-        onChange={handleChanePaymentTypeByMoney}
-      >
-        {printEventMoneyType}
-      </Select>
-      {props.indexEventByMoney.isPaymentTypeByCoin && (
+    <div className="promo-section2">
+      <div className="promo-choose-platform">
         <div>
-          <p className="promotion-title-field">Chọn game</p>
-          <Select
-            style={{ width: 120 }}
-            onChange={props.handleChangePlatform}
-            placeholder="-Chọn game-"
-          >
-            {printPlatform}
-          </Select>{" "}
-          <span>Server</span>
-          <Select
-            placeholder="-Chọn server-"
-            style={{ width: 120 }}
-            onChange={props.handleChangeServer}
-            name="server"
-            value={server}
-          >
-            {printListServer}
-          </Select>{" "}
+          <div className="promo-choose-platform-name">
+            <p>Loại hóa đơn</p>
+            <Select
+              style={{ width: "64%" }}
+              onChange={handleChangePaymentType}
+              placeholder="-Chọn game-"
+              value={props.nameEventByMoney}
+            >
+              {printEventType}
+            </Select>{" "}
+          </div>
+          <div className="promo-choose-platform-server">
+            <span>Hình thức</span>
+            <Select
+              value={value}
+              style={{ width: "65%" }}
+              onChange={handleChanePaymentTypeByMoney}
+            >
+              {printEventMoneyType}
+            </Select>
+          </div>
         </div>
-      )}
+        {props.indexEventByMoney.isPaymentTypeByCoin && (
+          <div style={{ width: "100%" }}>
+            <div className="promo-choose-platform-name">
+              <p className="promotion-title-field">Chọn game</p>
+              <Select
+                style={{ width: "65%" }}
+                onChange={props.handleChangePlatform}
+                placeholder="-Chọn game-"
+              >
+                {printPlatform}
+              </Select>{" "}
+            </div>
+            <div className="promo-choose-platform-server">
+              <span>Server</span>
+              <Select
+                placeholder="-Chọn server-"
+                style={{ width: "65%" }}
+                onChange={props.handleChangeServer}
+                name="server"
+                value={server}
+              >
+                {printListServer}
+              </Select>{" "}
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

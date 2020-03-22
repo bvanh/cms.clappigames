@@ -90,29 +90,34 @@ function ListCoin(props) {
     {
       title: "Id",
       dataIndex: "productId",
-      key: "productId"
+      key: "productId",
+      width:"30%"
     },
     {
       title: "C.coin",
       dataIndex: "productName",
-      key: "productName"
+      key: "productName",
+      width:"15%"
     },
     ,
     {
       title: "Giá (VND)",
       dataIndex: "price",
       key: "price",
-      render: price => <span>{price.toLocaleString()} đ</span>
+      render: price => <span>{price.toLocaleString()} đ</span>,
+      width:"15%"
     },
     {
       title: "promo",
       dataIndex: "discount",
-      key: "discount"
+      key: "discount",
+      width:"10%"
     },
     {
       title: "Type",
       dataIndex: "type",
       key: "type",
+      width:"20%",
       filterDropdown: () => (
         <div style={{ padding: 8 }}>
           <Radio.Group onChange={setValueTypePayment} value={type}>
@@ -146,6 +151,7 @@ function ListCoin(props) {
     {
       title: "Action",
       key: "action",
+      width:"10%",
       render: (text, record) => (
         <span>
           <Link to={`/payment/coin/edit?productId=${record.productId}`}>

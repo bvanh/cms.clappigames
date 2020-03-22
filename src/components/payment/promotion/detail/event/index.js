@@ -11,20 +11,20 @@ import { useQuery } from "react-apollo";
 const { TabPane } = Tabs;
 const { confirm } = Modal;
 
-
 function DetailEvent(props) {
   const query = new URLSearchParams(window.location.search);
   const [isShowPromo, setIsShowPromo] = useState("1");
   const [isUpdate, setIsUpdate] = useState(false);
-  const [demo, setDemo] = useState("");
+  const [dataDetail,setDataDetail] = useState("");
   const promoId = query.get("id");
   const showConfirm = () => {
     confirm({
       title: "Chỉnh sửa khuyến mãi",
       content: (
         <div>
-          <p> - Hệ thống chỉ cho phép cập nhật khuyến mãi khi chưa phát sinh giao
-          dịch có khuyến mãi
+          <p>
+            - Hệ thống chỉ cho phép cập nhật khuyến mãi khi chưa phát sinh giao
+            dịch có khuyến mãi
           </p>
           <p>
             - Nếu chương trình khuyến mãi chưa phát sinh giao dịch nào có thể
@@ -34,7 +34,9 @@ function DetailEvent(props) {
             - Nếu chương trình khuyến mãi đã phát sinh giao dịch thì có thể sửa
             1 số thông tin nhưng không thay đổi được hình thưc khuyến mãi
           </p>
-            <p>+ Các tt có thể sửa: Tên chương trình, trạng thái, thời gian áp dụng</p>
+          <p>
+            + Các tt có thể sửa: Tên chương trình, trạng thái, thời gian áp dụng
+          </p>
         </div>
       ),
       onOk() {
@@ -48,46 +50,46 @@ function DetailEvent(props) {
   useQuery(getDetailEvent(promoId), {
     onCompleted: data => {
       dispatchDetailPromoAndEvent(data.listEvents[0]);
-      setDemo(JSON.parse(data.listEvents[0].config));
+     setDataDetail(JSON.parse(data.listEvents[0].config));
     }
   });
   const { name, status, eventTime, config } = props.detailPromo;
   return (
     <>
       {isUpdate ? (
-        <UpdateEvent isUpdate={isUpdate}/>
+        <UpdateEvent isUpdate={isUpdate} />
       ) : (
-          <Row>
-            <Link to="/payment/promotion">
-              <span>
-                <Icon type="arrow-left" style={{ paddingRight: ".2rem" }} />
+        <Row>
+          <Link to="/payment/promotion">
+            <span>
+              <Icon type="arrow-left" style={{ paddingRight: ".2rem" }} />
               Quay lại
             </span>
-            </Link>
-            <div className="promo-title">
-              <div className="promo-title-name">
-                <h2>{name}</h2>
-                <Button onClick={showConfirm}>Edit</Button>
-              </div>
-              <div>
-                <h3 style={{ margin: "0 1rem 0 0" }}>Trạng thái</h3>
-                <Radio.Group value={status}>
-                  <Radio value="COMPLETE">Kích hoạt</Radio>
-                  <Radio value="INPUT">Chưa áp dụng</Radio>
-                </Radio.Group>
-              </div>
+          </Link>
+          <div className="promo-title">
+            <div className="promo-title-name">
+              <h2>{name}</h2>
+              <Button onClick={showConfirm}>Edit</Button>
             </div>
-            <Tabs activeKey={isShowPromo} onChange={key => setIsShowPromo(key)}>
-              <TabPane tab="Hình thức khuyến mãi" key="1">
-                <TypeEvent demo={demo} />
-              </TabPane>
-              <TabPane tab="Thời gian áp dụng" key="2">
-                <TimePromo />
-              </TabPane>
-              <TabPane tab="Lịch sử khuyến mãi" key="3"></TabPane>
-            </Tabs>
-          </Row>
-        )}
+            <div>
+              <h3 style={{ margin: "0 1rem 0 0" }}>Trạng thái</h3>
+              <Radio.Group value={status}>
+                <Radio value="COMPLETE">Kích hoạt</Radio>
+                <Radio value="INPUT">Chưa áp dụng</Radio>
+              </Radio.Group>
+            </div>
+          </div>
+          <Tabs activeKey={isShowPromo} onChange={key => setIsShowPromo(key)}>
+            <TabPane tab="Hình thức khuyến mãi" key="1">
+              <TypeEvent dataDetail={dataDetail} />
+            </TabPane>
+            <TabPane tab="Thời gian áp dụng" key="2">
+              <TimePromo />
+            </TabPane>
+            <TabPane tab="Lịch sử khuyến mãi" key="3"></TabPane>
+          </Tabs>
+        </Row>
+      )}
     </>
   );
 }

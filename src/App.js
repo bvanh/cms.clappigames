@@ -19,7 +19,7 @@ import Stats from "./components/stats/index";
 import ListPromoAndEvent from "./components/payment/promotion/list/index";
 import DetailPromotion from "./components/payment/promotion/detail/promotion/index";
 import DetailEvent from "./components/payment/promotion/detail/event/index";
-import ListChargesDetail from './components/payment/coin/listCharges/detail'
+import ListChargesDetail from "./components/payment/coin/listCharges/detail";
 import { ApolloProvider } from "@apollo/react-hooks";
 import ApolloClient from "apollo-boost";
 import { importImage } from "./utils/importImg";
@@ -32,7 +32,7 @@ import { Layout, Menu, Icon, Dropdown } from "antd";
 import "./static/style/menu.css";
 const { SubMenu } = Menu;
 const { Header, Content, Footer, Sider } = Layout;
-
+checkTokenFinal();
 function App(props) {
   checkTokenFinal();
   const checkToken = setInterval(checkTokenFinal, 3300000);
@@ -189,7 +189,7 @@ function App(props) {
               <Route
                 exact
                 path="/payment/coin/charges/detail"
-                render={() => <ListChargesDetail/>}
+                render={() => <ListChargesDetail />}
               />
               <Route
                 path="/payment/promotion/create"

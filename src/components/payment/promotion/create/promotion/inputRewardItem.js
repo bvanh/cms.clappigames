@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Input, Row, Col, Select } from "antd";
+import { Button, Input, Row, Col, Select, Icon } from "antd";
 import { createPromotion } from "../../../../../utils/mutation/promotion";
 import { dispatchSaveIdCreateInUpdate } from "../../../../../redux/actions/index";
 import moment from "moment";
@@ -51,7 +51,7 @@ function EventByItems(props) {
           endTime: timeTotal[1],
           dates: dates,
           daily: daily,
-          hour: [checkStartHour(startTime),checkEndHour(endTime)]
+          hour: [checkStartHour(startTime), checkEndHour(endTime)]
         })
       }
     },
@@ -149,49 +149,49 @@ function EventByItems(props) {
   ));
   const printItem = indexShop.map(function(val, index1) {
     const printReward = val.rewards.map((valReward, index2) => (
-      <div key={index2}>
+      <div key={index2} className="more-reward">
+        <Icon type="minus" onClick={() => reduceReward(index1, index2)} style={{fontSize:"16px",margin:'0 .25rem'}} />
         <Input
           value={indexShop[index1].rewards[index2].numb}
           type="number"
           max="10"
           name="pucharseTimes"
           onChange={e => handleChooseNumbReward(index1, index2, e)}
-          style={{ width: "10%" }}
+          style={{ width: "20%" }}
         ></Input>
         <Select
           mode="multiple"
           value={indexShop[index1].rewards[index2].itemId}
-          style={{ width: "60%" }}
+          style={{ width: "80%" }}
           onChange={value => handleChooseReward(index1, index2, value)}
         >
           {printListItems}
         </Select>{" "}
-        <span onClick={() => reduceReward(index1, index2)}>Delete</span>
       </div>
     ));
     return (
       <div key={index1}>
-        <Col md={12}>
+        <Col md={12}  className='more-items'>
+          <Icon type="close" onClick={() => reduceItem(index1)} style={{fontSize:"16px",margin:'0 .25rem'}} />
           <Input
             value={indexShop[index1].purchaseTimes}
             type="number"
             min={index1 > 0 ? indexShop[index1 - 1].purchaseTimes : 0}
             name="pucharseTimes"
             onChange={e => handleChooseNumbItem(index1, e)}
-            style={{ width: "10%" }}
+            style={{ width: "20%" }}
           ></Input>
           <Select
             value={indexShop[index1].purchaseItemId}
-            style={{ width: "90%" }}
+            style={{ width: "80%" }}
             onChange={value => handleChooseItem(index1, value)}
           >
             {printListItems}
           </Select>{" "}
-          <span onClick={() => reduceItem(index1)}>xóa item</span>
         </Col>
-        <Col md={12}>
+        <Col md={12} style={{ padding: "1rem 1rem 1rem .25rem" }}>
           {printReward}
-          <Button onClick={() => addReward(index1)}>Thêm quà</Button>
+          <Button onClick={() => addReward(index1)} style={{marginLeft:'1.5rem'}}>Thêm quà</Button>
         </Col>
       </div>
     );
@@ -203,7 +203,7 @@ function EventByItems(props) {
           <div style={{ width: "20%" }}>Số lần</div>
           <div style={{ width: "80%" }}>Item mua</div>
         </div>
-        <div style={{ width: "50%", display: "flex" }}>
+        <div style={{ width: "50%", display: "flex",paddingLeft:"1.5rem" }}>
           <div style={{ width: "20%" }}>Số lượng</div>
           <div style={{ width: "80%" }}>Tặng quà</div>
         </div>
@@ -213,7 +213,7 @@ function EventByItems(props) {
       </div>
       <Row>
         {printItem}
-        <Button onClick={() => addItem()}>Thêm điều kiện</Button>
+        <Button onClick={() => addItem()} style={{margin:"1rem 1.5rem"}}>Thêm điều kiện</Button>
       </Row>
     </div>
   );

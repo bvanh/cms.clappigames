@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, Fragment } from "react";
 import { Button, Row, Col, TimePicker, Select, Input, DatePicker } from "antd";
 import { Link } from "react-router-dom";
 import moment from "moment";
@@ -18,9 +18,11 @@ function TimePromo(props) {
   const { name, status, eventTime, type, shop, game } = props.detailPromo;
   if (eventTime) {
     const { startTime, endTime, hour, dates, daily } = JSON.parse(eventTime);
-    const printAlertDatesPromo = dates.map((val, i) => <>{val}</>);
+    const printAlertDatesPromo = dates.map((val, i) => (
+      <Fragment key={i}> Ngày mùng {val},</Fragment>
+    ));
     const alertDailyPromo = printAlertDailyPromo(daily);
-    console.log(printAlertDailyPromo(daily))
+    console.log(eventTime);
     // const printAlertTimeTotalPromo = timeTotalAlert.map((val, i) => <>{val}</>);
     const childrenDates = [];
     for (let i = 1; i <= 31; i++) {
@@ -31,58 +33,69 @@ function TimePromo(props) {
         {val}
       </Option>
     ));
-    console.log(endTime)
+    console.log(endTime);
     return (
       <Col md={12} className="section2-promotion">
         <div>
           <p className="promotion-title-field">Thời gian áp dụng </p>
-          <div>
-            Thời gian:{" "}
+          <div className="section2-promotion-pickTime">
+            <h3>Thời gian:</h3>
             <RangePicker
               showTime={{ format: "HH:mm" }}
               format="DD-MM-YYYY HH:mm"
-              value={[moment(startTime,"DD-MM-YYYY HH:mm"), moment(endTime,"DD-MM-YYYY HH:mm")]}
+              value={[
+                moment(startTime, "DD-MM-YYYY HH:mm"),
+                moment(endTime, "DD-MM-YYYY HH:mm")
+              ]}
             />
           </div>
-          <div>
-            Theo ngày:{" "}
+          <div className="section2-promotion-pickTime">
+            <h3>Theo ngày:</h3>
             <Select
               mode="multiple"
-              style={{ width: "100%" }}
+              style={{ width: "80%" }}
               placeholder="- Ngày diễn ra khuyến mãi"
               value={dates}
+              dropdownClassName="dropdown-coin-event"
               disabled={daily.length !== 0 ? true : false}
             >
               {childrenDates}
             </Select>
           </div>
-          <div>
-            Theo thứ:{" "}
+          <div className="section2-promotion-pickTime">
+            <h3>Theo thứ:</h3>
             <Select
               mode="multiple"
-              style={{ width: "100%" }}
+              style={{ width: "80%" }}
               placeholder="- Chọn thứ trong tuần diễn ra khuyến mãi"
               value={daily}
+              dropdownClassName="dropdown-coin-event"
               disabled={dates.length !== 0 ? true : false}
             >
               {childrenDaily}
             </Select>
           </div>
-          <div>
-            Theo giờ:
+          <div className="section2-promotion-pickTime">
+            <h3>Theo giờ:</h3>
+            <div style={{width:"80%"}}>
             <TimePicker
               format={"HH:mm"}
+              style={{width:"50%"}}
               defaultValue={moment(hour[0], "HH:mm")}
+              showClear={false}
               placeholder="- Giờ bắt đầu"
             />
             <TimePicker
               format={"HH:mm"}
+              style={{width:"50%"}}
               defaultValue={moment(hour[1], "HH:mm")}
               placeholder="- Giờ kết thúc"
+              showClear={false}
             />
+            </div>
           </div>
         </div>
-        <div>
+        <div style={{ background: "whitesmoke", color: "red" }}>
           Khuyến mãi diễn ra vào {hour[0]} {hour[1]} {alertDailyPromo}
           {printAlertDatesPromo} từ {startTime} đến {endTime}
         </div>

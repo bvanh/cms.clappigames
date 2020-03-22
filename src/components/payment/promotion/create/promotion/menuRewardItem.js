@@ -4,13 +4,13 @@ import { getPromotionType } from "../../../../../utils/queryPaymentAndPromoType"
 import { queryGetPlatform } from "../../../../../utils/queryPlatform";
 import { getListServer } from "../../../../../utils/query/promotion";
 import { useQuery } from "@apollo/react-hooks";
-import {connect} from 'react-redux'
-import {indexAllServer} from '../../promoService'
+import { connect } from "react-redux";
+import { indexAllServer } from "../../promoService";
 const { Option } = Select;
 
 function MenuRewardByItem(props) {
   const { platformId, server } = props.indexGameForPromo;
-  const { type} = props.indexPromoAndEvent;
+  const { type } = props.indexPromoAndEvent;
   const [listGame, setListGame] = useState([{}]);
   const [listServer, setListServer] = useState([indexAllServer]);
   const [listTypePromo, setListTypePromo] = useState([
@@ -28,7 +28,7 @@ function MenuRewardByItem(props) {
   });
   useQuery(getListServer(platformId), {
     onCompleted: data => {
-      setListServer([...data.listPartnerServers,indexAllServer]);
+      setListServer([...data.listPartnerServers, indexAllServer]);
     }
   });
   const printPromoType = listTypePromo.map((val, index) => (
@@ -49,47 +49,49 @@ function MenuRewardByItem(props) {
   return (
     <div className="promo-section2">
       <div className="promo-choose-platform">
+        <div>
+          <div className="promo-choose-platform-name">
+            <p>Chọn game:</p>
+            <Select
+              style={{ width: "65%" }}
+              onChange={props.handleChangePlatformPromo}
+              placeholder="-Chọn game-"
+              value={platformId}
+            >
+              {printPlatform}
+            </Select>{" "}
+          </div>
+          <div className="promo-choose-platform-server">
+            <p>Server:</p>
+            <Select
+              placeholder="-Chọn server-"
+              style={{ width: "65%" }}
+              onChange={props.handleChangeServerPromo}
+              name="server"
+              value={server}
+            >
+              {printListServer}
+            </Select>{" "}
+          </div>
+        </div>
         <div className="promo-choose-platform-name">
-          <h3>Chọn game:</h3>
+          <p>Hình thức:</p>
           <Select
             style={{ width: "65%" }}
-            onChange={props.handleChangePlatformPromo}
-            placeholder="-Chọn game-"
-            value={platformId}
+            onChange={props.handleChangeTypePromo}
+            placeholder="-Tặng quà-"
+            value={type}
           >
-            {printPlatform}
+            {printPromoType}
           </Select>{" "}
         </div>
-        <div className="promo-choose-platform-server">
-          <h3>Server:</h3>
-          <Select
-            placeholder="-Chọn server-"
-            style={{ width: "65%" }}
-            onChange={props.handleChangeServerPromo}
-            name="server"
-            value={server}
-          >
-            {printListServer}
-          </Select>{" "}
-        </div>
-      </div>
-      <div className="promo-choose-platform-name">
-        <h3 style={{ marginRight: "1.5rem" }}>Hình thức:</h3>
-        <Select
-          style={{ width: "65%" }}
-          onChange={props.handleChangeTypePromo}
-          placeholder="-Tặng quà-"
-          value={type}
-        >
-          {printPromoType}
-        </Select>{" "}
       </div>
     </div>
   );
 }
 function mapStateToProps(state) {
   return {
-    listPartners:state.listPartner
+    listPartners: state.listPartner
   };
 }
 export default connect(mapStateToProps, null)(MenuRewardByItem);

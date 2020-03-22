@@ -8,7 +8,7 @@ import { Link } from "react-router-dom";
 const { Meta } = Card;
 const AlbumImageInNews = (props) => {
     const [pageIndex, setPageIndex] = useState({
-        currentPage: 2,
+        currentPage: 5,
         pageSize: 10,
         userAdmin: localStorage.getItem("userNameCMS"),
         albumName: ""
@@ -18,7 +18,9 @@ const AlbumImageInNews = (props) => {
     const [albumId, setAlbumId] = useState('');
     const { currentPage, pageSize, userAdmin, albumName } = pageIndex;
     const { loading, error, data, refetch } = useQuery(
-        queryGetListAlbumByAdmin(currentPage, pageSize, userAdmin)
+        queryGetListAlbumByAdmin(currentPage, pageSize, userAdmin),{
+            onCompleted:data=>console.log(JSON.parse(JSON.parse(data.listAdminAlbumsByUser.rows[0].data))[0])
+        }
     );
     if (loading) return "Loading...";
     if (error) return `Error! ${error.message}`;
@@ -35,7 +37,7 @@ const AlbumImageInNews = (props) => {
                     hoverable
                     style={{ width: 240 }}
                     cover={
-                        <img alt={val.name} src={JSON.parse(val.data).listImages[0]} />
+                        <img alt={val.name} src={JSON.parse(JSON.parse(val.data).listImages[0])} />
                     }
                     key={index}
                     onClick={() => props.setDetailAlbum({ isShow: false, albumId: val.id })}

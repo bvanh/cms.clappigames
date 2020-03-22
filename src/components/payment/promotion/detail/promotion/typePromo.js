@@ -2,24 +2,52 @@ import React, { useState, useEffect, useMemo } from "react";
 import { Button, Row, Col, Icon, Radio, Tabs, Select, Input } from "antd";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
+import { queryGetPlatform } from "../../../../../utils/queryPlatform";
 import { getDetailPromotion } from "../../../../../utils/query/promotion";
 import { getListPartnerProducts } from "../../../../../utils/queryPartnerProducts";
-import {
-  dispatchDeatilPromo,
-  dispatchDetailPromo
-} from "../../../../../redux/actions/index";
+import { getListServer } from "../../../../../utils/query/promotion";
 import { useQuery, useLazyQuery } from "react-apollo";
 const { Option } = Select;
 function TypePromotion(props) {
   const [itemsForEventTypeItem, setItemForEventTypeItem] = useState([
     { productName: "", partnerProductId: "" }
   ]);
-  const { name, status, eventTime, type, shop, game } = props.detailPromo;
+  const [listGame, setListGame] = useState([
+    { partnerId: "", partnerName: "" }
+  ]);
+  const [listServer, setListServer] = useState([
+    { server: 0, serverName: "All server" }
+  ]);
+  const {
+    name,
+    status,
+    eventTime,
+    type,
+    shop,
+    game,
+    server
+  } = props.detailPromo;
+  const [getListGame] = useLazyQuery(queryGetPlatform, {
+    onCompleted: data => setListGame(data.listPartners)
+  });
+  const [getServers] = useLazyQuery(getListServer(game), {
+    onCompleted: data => {
+      setListServer([
+        {
+          server: 0,
+          serverName: "All server"
+        },
+        ...data.listPartnerServers
+      ]);
+    }
+  });
   const [getPartnerProducts] = useLazyQuery(getListPartnerProducts(game), {
     onCompleted: data => {
       setItemForEventTypeItem(data.listPartnerProducts);
     }
   });
+  useMemo(() => getListGame(), [game]);
+  useMemo(() => getServers(), [game]);
   useMemo(() => getPartnerProducts(), [game]);
   const printListItems = itemsForEventTypeItem.map((val, index) => (
     <Option value={val.partnerProductId} key={index}>
@@ -29,20 +57,21 @@ function TypePromotion(props) {
 
   if (shop) {
     const indexShop = JSON.parse(shop);
-    console.log(indexShop);
     const printItem = indexShop.map(function(val, index1) {
       const printReward = val.rewards.map((valReward, index2) => (
-        <div key={index2}>
+        <div key={index2} className="more-reward-detail">
           <Input
             value={indexShop[index1].rewards[index2].numb}
             type="number"
             max="10"
             name="pucharseTimes"
-            style={{ width: "10%" }}
+            style={{ width: "19%", marginRight: "2%" }}
           ></Input>
           <Select
             mode="multiple"
-            style={{ width: "60%" }}
+            style={{ width: "79%" }}
+            dropdownClassName="dropdown-coin-event"
+            showArrow={false}
             value={indexShop[index1].rewards[index2].itemId}
           >
             {printListItems}
@@ -51,17 +80,19 @@ function TypePromotion(props) {
       ));
       return (
         <div key={index1}>
-          <Col md={12}>
+          <Col md={12} className="more-items-detail">
             <Input
               value={indexShop[index1].purchaseTimes}
               type="number"
               max="10"
               name="pucharseTimes"
-              style={{ width: "10%" }}
+              style={{ width: "20%", marginRight: "2%" }}
             ></Input>
             <Select
               value={indexShop[index1].purchaseItemId}
-              style={{ width: "90%" }}
+              style={{ width: "78%" }}
+              dropdownClassName="dropdown-coin-event"
+              showArrow={false}
             >
               {printListItems}
             </Select>{" "}
@@ -70,6 +101,16 @@ function TypePromotion(props) {
         </div>
       );
     });
+    const printListGame = listGame.map((val, i) => (
+      <Option value={val.partnerId} key={i}>
+        {val.partnerName}
+      </Option>
+    ));
+    const printListServer = listServer.map((val, i) => (
+      <Option value={val.server} key={i}>
+        {val.serverName}
+      </Option>
+    ));
     return (
       <Row>
         <h3>Khuyến mãi theo hàng hóa (Item)</h3>
@@ -77,24 +118,41 @@ function TypePromotion(props) {
         <div className="detail-game">
           <span style={{ marginRight: "1rem" }}>
             Game:{" "}
-            <Select defaultValue="lucy" style={{ width: 120 }} disabled>
-              <Option value="jack">Jack</Option>
-              <Option value="lucy">wara</Option>
+            <Select
+              value={game}
+              dropdownClassName="dropdown-coin-event"
+              showArrow={false}
+              size="large"
+              className="select-disable-detail"
+            >
+              {printListGame}
             </Select>
           </span>
           <span>
             Server:{" "}
-            <Select defaultValue="lucy" style={{ width: 120 }} disabled>
-              <Option value="jack">lqmt</Option>
-              <Option value="lucy">test 1</Option>
+            <Select
+              value={server}
+              dropdownClassName="dropdown-coin-event"
+              showArrow={false}
+              size="large"
+              className="select-disable-detail"
+            >
+              {printListServer}
             </Select>
+            
           </span>
         </div>
-        <div className="detail-bill-title">
-          <h3 style={{ width: "30%" }}>Số lượng Item mua</h3>
-          <h3 style={{ width: "70%" }}>Tặng Item</h3>
+        <div style={{ width: "100%" }} className="section4-promotion-title">
+          <div style={{ width: "50%", display: "flex" }}>
+            <div style={{ width: "22%" }}>Số lần</div>
+            <div style={{ width: "78%" }}>Item mua</div>
+          </div>
+          <div style={{ width: "50%", display: "flex", paddingLeft: "1.5rem" }}>
+            <div style={{ width: "22%" }}>Số lượng</div>
+            <div style={{ width: "78%" }}>Qùa tặng</div>
+          </div>
         </div>
-        <div>{printItem}</div>
+        {printItem}
       </Row>
     );
   } else {
