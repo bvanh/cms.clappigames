@@ -27,7 +27,7 @@ const Album = () => {
   });
   const [selectedAlbumId, setSelectedAlbumId] = useState([]);
   const [isCreateAlbum, setIsCreateAlbum] = useState(false);
-  const [imagesForCreateAlbum, setImagesForCreateAlbum] = useState([]);
+  const [imagesForAlbum, setImagesForAlbum] = useState([]);
   const [imagesAlbum, setImagesAlbum] = useState([
     { id: "", user: "", name: "", status: "", data: "" }
   ]);
@@ -47,7 +47,7 @@ const Album = () => {
       req: {
         user: userAdmin,
         name: albumName,
-        data: `{"listImages":${JSON.stringify(imagesForCreateAlbum)}}`
+        data: `{"listImages":${JSON.stringify(imagesForAlbum)}}`
       }
     },
     onCompleted: data => {
@@ -56,7 +56,8 @@ const Album = () => {
   });
   const { loading, error, data, refetch } = useQuery(
     queryGetListAlbumByAdmin(currentPage, pageSize, userAdmin),
-    {
+    { 
+      fetchPolicy:'cache-and-network',
       onCompleted: data => {
         setPageIndex({ ...pageIndex, count: data.listAdminAlbumsByUser.count });
         setImagesAlbum(data.listAdminAlbumsByUser.rows);
@@ -66,29 +67,29 @@ const Album = () => {
 
   if (loading) return "Loading...";
   if (error) return `Error! ${error.message}`;
-  const onChange = val => {
-    setSelectedAlbumId(val);
-  };
+
   const getAlbumName = e => {
+    console.log(e.target.value);
     setPageIndex({ ...pageIndex, albumName: e.target.value });
   };
+  console.log(albumName);
   const submitDelete = async () => {
     await deleteAlbum();
     await refetch();
     setSelectedAlbumId([]);
   };
   const submitCreateAlbum = () => {
-    if (albumName === "" || imagesForCreateAlbum.length === 0) {
-      alert("thieu name");
-    } else {
       createAlbum();
-    }
+      refetch();
   };
   const backScreenUpdate = () => {
     setPickDataImages({ fromComp: "", fromLibary: "" });
   };
   const goPage = val => {
     setPageIndex({ ...pageIndex, currentPage: val });
+  };
+  const resetAlbumName = () => {
+    setPageIndex({ ...pageIndex, albumName: "" });
   };
   const printListAlbum = imagesAlbum.map(function(val, index) {
     if (val.status !== "INVISIBLE" && val.id >= 1) {
@@ -107,13 +108,6 @@ const Album = () => {
                   />
                 </div>
               }
-              // actions={[
-              //   <Checkbox value={val.id} className="checkbox-album"></Checkbox>,
-              //   <Link to={`/media/album/edit?id=${val.id}`}>
-              //     <Icon type="edit" key="edit" />
-              //   </Link>,
-              //   <Icon type="ellipsis" key="ellipsis" />
-              // ]}
             >
               <Meta
                 title={val.name}
@@ -191,27 +185,24 @@ const Album = () => {
             <p className="add-images">Thêm ảnh</p>
             {fromComp === "pickFromComp" && (
               <CreateAlbumFromComp
-                setImagesForCreateAlbum={setImagesForCreateAlbum}
+                setImagesForAlbum={setImagesForAlbum}
                 submitCreateAndUpdateAlbum={submitCreateAlbum}
                 albumName={albumName}
                 refetch={refetch}
-                imagesForCreateAlbum={imagesForCreateAlbum}
+                imagesForAlbum={imagesForAlbum}
                 setPickDataImages={backScreenUpdate}
-                removeAlbumName={() =>
-                  setPageIndex({ ...pageIndex, albumName: "" })
-                }
+                removeAlbumName={resetAlbumName}
               />
             )}
             {fromLibary === "pickFromLibary" && (
               <CreateAlbumFromLibary
-                setImagesForCreateAlbum={setImagesForCreateAlbum}
+                setImagesForAlbum={setImagesForAlbum}
                 submitCreateAndUpdateAlbum={submitCreateAlbum}
                 refetch={refetch}
-                imagesForCreateAlbum={imagesForCreateAlbum}
+                albumName={albumName}
+                imagesForAlbum={imagesForAlbum}
                 setPickDataImages={backScreenUpdate}
-                removeAlbumName={() =>
-                  setPageIndex({ ...pageIndex, albumName: "" })
-                }
+                removeAlbumName={resetAlbumName}
               />
             )}
             {fromLibary === "" ? (

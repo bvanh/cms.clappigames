@@ -54,10 +54,12 @@ function CreateAlbumFromComp(props) {
   const getImagesForAlbum = async data => {
      delete data.singleUploadImage['path'];
      delete data.singleUploadImage['__typename'];
-    props.setImagesForCreateAlbum([
-      ...props.imagesForCreateAlbum,
+     delete data.singleUploadImage['name'];
+    props.setImagesForAlbum([
+      ...props.imagesForAlbum,
       JSON.stringify(data.singleUploadImage)
     ]);
+    console.log(JSON.stringify(data.singleUploadImage))
   };
   return (
     <ApolloProvider client={client}>

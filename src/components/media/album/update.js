@@ -36,7 +36,6 @@ function UpdateAlbum() {
   });
   const { albumName } = pageIndex;
   const { fromComp, fromLibary } = pickDataImages;
-  const [dataImage, setDataImage] = useState([]);
   //   const [deleteImages] = useMutation(DELETE_IMAGE, {
   //     variables: {
   //       ids: selectedImage
@@ -46,8 +45,8 @@ function UpdateAlbum() {
     queryGetImagesFromAlbumByType(albumId, userAdmin),
     {
       onCompleted: data => {
-        setImagesForAlbum(JSON.parse(data.listAdminAlbums[0].data).listImages)
-        setPageIndex({ ...pageIndex, albumName: data.listAdminAlbums[0].name })
+        setImagesForAlbum(JSON.parse(data.listAdminAlbums[0].data).listImages);
+        setPageIndex({ ...pageIndex, albumName: data.listAdminAlbums[0].name });
       }
     }
   );
@@ -67,7 +66,7 @@ function UpdateAlbum() {
   const { listImages } = JSON.parse(data.listAdminAlbums[0].data);
   const onChange = val => {
     setSelectedImage(val);
-    console.log(JSON.stringify({ images: val }));
+    console.log(val);
   };
   const getAlbumName = e => {
     setPageIndex({ ...pageIndex, albumName: e.target.value });
@@ -83,31 +82,27 @@ function UpdateAlbum() {
     } else {
       await updateAlbum();
       refetch();
+      setSelectedImage([]);
     }
   };
-  const printListImages = listImages.map((val, index) => (
+  const submitDelete = async () => {
+    const newImages = imagesForAlbum.filter(
+      (val, i) => selectedImage.indexOf(val) == -1
+    );
+    await setImagesForAlbum(newImages);
+    submitUpdateAlbum();
+  };
+  const backScreenUpdate = () => {
+    setPickDataImages({ fromComp: "", fromLibary: "" });
+  };
+  const resetAlbumName = () => {};
+  const printListImages = imagesForAlbum.map((val, index) => (
     <Card.Grid style={gridStyle} key={index}>
       <Checkbox value={val} className="checkbox-image">
-        <img src={val} alt={val.name} width="100%" />
+        <img src={JSON.parse(val).url} width="100%" />
       </Checkbox>
     </Card.Grid>
   ));
-  //   const submitDelete = async () => {
-  //     await deleteImages();
-  //     await refetch();
-  //     setSelectedImage([]);
-  //   };
-  // console.log(JSON.parse(data.listAdminAlbums[0].data))
-  console.log(imagesForAlbum)
-  //   const submitDelete = async () => {
-  //     await deleteImages();
-  //     await refetch();
-  //     setSelectedImage([]);
-  //   };
-  // console.log(JSON.parse(data.listAdminAlbums[0].data))
-  const backScreenUpdate=()=>{
-    console.log('fsfs')
-  }
   return (
     <Row>
       <Link to="/media">
@@ -124,7 +119,7 @@ function UpdateAlbum() {
               <Icon
                 type="delete"
                 style={{ fontSize: "18px", margin: "0 5px" }}
-                // onClick={submitDelete}
+                onClick={submitDelete}
               />
               <Icon type="download" style={{ fontSize: "18px" }} />
             </div>
@@ -139,7 +134,7 @@ function UpdateAlbum() {
             </Link>
           </div>
         )}
-       <Checkbox.Group style={{ width: "100%" }} onChange={onChange}>
+        <Checkbox.Group style={{ width: "100%" }} onChange={onChange}>
           <div>{printListImages}</div>
         </Checkbox.Group>
       </Col>
@@ -163,26 +158,22 @@ function UpdateAlbum() {
           <p className="add-images">Thêm ảnh</p>
           {fromComp === "pickFromComp" && (
             <CreateAlbumFromComp
-              setImagesForCreateAlbum={setImagesForAlbum}
+              setImagesForAlbum={setImagesForAlbum}
               submitCreateAndUpdateAlbum={submitUpdateAlbum}
               refetch={refetch}
-              imagesForCreateAlbum={imagesForAlbum}
+              imagesForAlbum={imagesForAlbum}
               setPickDataImages={backScreenUpdate}
-              removeAlbumName={() =>
-                setPageIndex({ ...pageIndex, albumName: "" })
-              }
+              removeAlbumName={resetAlbumName}
             />
           )}
           {fromLibary === "pickFromLibary" && (
             <CreateAlbumFromLibary
-              setImagesForCreateAlbum={setImagesForAlbum}
+              setImagesForAlbum={setImagesForAlbum}
               submitCreateAndUpdateAlbum={submitUpdateAlbum}
               refetch={refetch}
-              imagesForCreateAlbum={imagesForAlbum}
+              imagesForAlbum={imagesForAlbum}
               setPickDataImages={backScreenUpdate}
-              removeAlbumName={() =>
-                setPageIndex({ ...pageIndex, albumName: "" })
-              }
+              removeAlbumName={resetAlbumName}
             />
           )}
           {fromLibary === "" ? (

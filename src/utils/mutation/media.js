@@ -3,10 +3,10 @@ const UPLOAD_IMAGE = gql`
   mutation($partnerName: String!, $file: Upload) {
     singleUploadImage(partnerName: $partnerName, file: $file) {
       id
+      status
       name
       path
       url
-      status
     }
   }
 `;

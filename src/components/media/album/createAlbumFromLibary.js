@@ -18,7 +18,7 @@ const gridStyle = {
 };
 
 function CreateAlbumFromLibary(props) {
-  const { imagesForCreateAlbum } = props;
+  const { imagesForAlbum } = props;
   const [dataImage, setDataImage] = useState([]);
   const [visible, setVisible] = useState(false);
   const { loading, error, data, refetch } = useQuery(queryListImages, {
@@ -27,10 +27,10 @@ function CreateAlbumFromLibary(props) {
       let newListImage = data.listUploadedImages.filter(
         (val, i) => val.status !== "INVISIBLE"
       );
-      const idOldImage = imagesForCreateAlbum.map((val, i) =>
-        Number(JSON.parse(val).id)
-      );
-      newListImage = newListImage.filter(e => idOldImage.indexOf(e.id) < 0);
+      // const idOldImage = imagesForCreateAlbum.map((val, i) =>
+      //   Number(JSON.parse(val).id)
+      // );
+      // newListImage = newListImage.filter(e => idOldImage.indexOf(e.id) < 0);
       setDataImage(newListImage);
     }
   });
@@ -46,7 +46,7 @@ function CreateAlbumFromLibary(props) {
   const showImages = () => {
     setVisible(true);
   };
-  const printImageSelected = imagesForCreateAlbum.map((val, index) => (
+  const printImageSelected = imagesForAlbum.map((val, index) => (
     <Col xs={4} style={{ height: "55px" }} key={index}>
       <img
         src={JSON.parse(val).url}
@@ -55,48 +55,51 @@ function CreateAlbumFromLibary(props) {
       />
     </Col>
   ));
-  const onPickImages = value => {
-    const listImageForShow = value.map((val, i) => val.value);
-    const newListImage = [...imagesForCreateAlbum, ...listImageForShow];
-    const filterImages = newListImage.filter(
-      (value, i, newListImage) => newListImage.indexOf(value) === i
-    );
-    props.setImagesForCreateAlbum(filterImages);
+
+  const getImagesForAlbum = valImg => {
+    props.setImagesForAlbum(valImg);
+    console.log(valImg)
+  };
+
+  const updateAlbum = () => {
+    setVisible(false);
+    if (props.albumName == "") {
+      alert("thieu ten");
+    } else {
+      props.submitCreateAndUpdateAlbum();
+      props.setPickDataImages();
+      props.removeAlbumName();
+    }
   };
   const printListImages = data.listUploadedImages.map(function(val, index) {
     if (val.status !== "INVISIBLE") {
       return (
         <Card.Grid style={gridStyle} key={index}>
-          <Checkbox value={val.url} className="checkbox-image">
+          <Checkbox
+            value={`{"id":${val.id},"status":"${val.status}","url":"${val.url}"}`}
+            className="checkbox-image"
+          >
             <img src={val.url} alt={val.name} width="100%" />
           </Checkbox>
         </Card.Grid>
       );
     }
   });
-  const getImagesForAlbum = valImg => {
-    console.log(valImg)
-    // props.setImagesForAlbum(valImg)
-    //  props.setImagesForAlbum(valImg);
-   };
- 
-  const updateAlbum = () => {
-    setVisible(false);
-    props.submitCreateAndUpdateAlbum();
-    props.setPickDataImages();
-  };
-
   return (
     <>
       <div>
-        <a onClick={showImages} style={{paddingRight:".5rem"}}><Icon type="double-right" />Chọn ảnh</a>
-        <span>{imagesForCreateAlbum.length}</span> items đã được chọn
-        <Row style={{margin:"1rem 0"}}>{printImageSelected}</Row>
-        
-        <Button onClick={updateAlbum} style={{width:"100%",marginBottom:".5rem"}} >
+        <a onClick={showImages} style={{ paddingRight: ".5rem" }}>
+          <Icon type="double-right" />
+          Chọn ảnh
+        </a>
+        <span>{imagesForAlbum.length}</span> items đã được chọn
+        <Row style={{ margin: "1rem 0" }}>{printImageSelected}</Row>
+        <Button
+          onClick={updateAlbum}
+          style={{ width: "100%", marginBottom: ".5rem" }}
+        >
           Submit
         </Button>
-        
         <a onClick={props.setPickDataImages}>
           <Icon type="double-left" />
           Quay lại
@@ -110,30 +113,21 @@ function CreateAlbumFromLibary(props) {
       >
         <Row>
           <Col>
-            {imagesForCreateAlbum.length > 0 && (
+            {imagesForAlbum.length > 0 && (
               <div className="btn-media-options">
                 <span>
                   <Icon type="close" style={{ marginRight: "5px" }} />
-                  <span>{imagesForCreateAlbum.length}</span> items đã được chọn
+                  <span>{imagesForAlbum.length}</span> items đã được chọn
                 </span>
               </div>
             )}
             <Checkbox.Group
               style={{ width: "100%" }}
-              // defaultValue={imagesForAlbum}
+              value={imagesForAlbum}
               onChange={getImagesForAlbum}
             >
               <Col>{printListImages}</Col>
             </Checkbox.Group>
-
-            {/* <ImagePicker
-              multiple
-              images={dataImage.map((image, i) => ({
-                src: image.url,
-                value: `{"id":"${image.id}","status":"${image.status}","name":"${image.name}","url":"${image.url}"}`
-              }))}
-              onPick={onPickImages}
-            /> */}
           </Col>
         </Row>
       </Modal>

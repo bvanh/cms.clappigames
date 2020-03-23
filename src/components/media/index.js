@@ -46,11 +46,8 @@ function Media() {
   });
   const onChange = val => {
     setSelectedImage(val);
-    console.log(JSON.stringify({ images: val }));
+    console.log(val);
   };
-  const onPickImages = (value) => {
-    console.log(value)
-  }
   const submitDelete = async () => {
     await deleteImages();
     await refetch();
