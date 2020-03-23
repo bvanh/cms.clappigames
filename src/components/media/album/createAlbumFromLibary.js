@@ -9,6 +9,14 @@ import "../../../static/style/media.css";
 import { Link } from "react-router-dom";
 import createAlbumFromComp from "./createAlbumFromComp";
 
+const gridStyle = {
+  width: "24%",
+  textAlign: "center",
+  padding: "2px",
+  margin: ".5%",
+  position: "relative"
+};
+
 function CreateAlbumFromLibary(props) {
   const { imagesForCreateAlbum } = props;
   const [dataImage, setDataImage] = useState([]);
@@ -55,11 +63,29 @@ function CreateAlbumFromLibary(props) {
     );
     props.setImagesForCreateAlbum(filterImages);
   };
+  const printListImages = data.listUploadedImages.map(function(val, index) {
+    if (val.status !== "INVISIBLE") {
+      return (
+        <Card.Grid style={gridStyle} key={index}>
+          <Checkbox value={val.url} className="checkbox-image">
+            <img src={val.url} alt={val.name} width="100%" />
+          </Checkbox>
+        </Card.Grid>
+      );
+    }
+  });
+  const getImagesForAlbum = valImg => {
+    console.log(valImg)
+    // props.setImagesForAlbum(valImg)
+    //  props.setImagesForAlbum(valImg);
+   };
+ 
   const updateAlbum = () => {
     setVisible(false);
     props.submitCreateAndUpdateAlbum();
     props.setPickDataImages();
   };
+
   return (
     <>
       <div>
@@ -92,14 +118,22 @@ function CreateAlbumFromLibary(props) {
                 </span>
               </div>
             )}
-            <ImagePicker
+            <Checkbox.Group
+              style={{ width: "100%" }}
+              // defaultValue={imagesForAlbum}
+              onChange={getImagesForAlbum}
+            >
+              <Col>{printListImages}</Col>
+            </Checkbox.Group>
+
+            {/* <ImagePicker
               multiple
               images={dataImage.map((image, i) => ({
                 src: image.url,
                 value: `{"id":"${image.id}","status":"${image.status}","name":"${image.name}","url":"${image.url}"}`
               }))}
               onPick={onPickImages}
-            />
+            /> */}
           </Col>
         </Row>
       </Modal>

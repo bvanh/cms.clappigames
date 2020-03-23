@@ -15,7 +15,8 @@ const initialState = {
   userAccessToken: null,
   accessToken: JSON.parse(localStorage.getItem("accessTokenCms")),
   visibleModalNews: false,
-  urlImg: "",
+  urlImgNews: "",
+  urlImgThumbnail: "",
   typeEventByMoney: "",
   nameEventByMoney: "",
   // list game
@@ -62,8 +63,13 @@ export default (state = initialState, action) => {
     case actions.SET_URL_IMAGES:
       return {
         ...state,
-        urlImg: action.value
+        urlImgNews: action.value
       };
+    case actions.SET_URL_IMAGES_THUMBNAIL:
+      return {
+        ...state,
+        urlImgThumbnail: action.value
+      }
     case actions.SET_TYPE_EVENTMONEY:
       return {
         ...state,

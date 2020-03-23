@@ -1,6 +1,7 @@
 import { actions } from "../action_types/index";
 import store from "../store/index";
 import { isType } from "graphql";
+import { act } from "react-dom/test-utils";
 
 const setAccessToken = payload => {
   return {
@@ -33,6 +34,12 @@ const setUrlImage = value => {
     value
   };
 };
+const setUrlImageThumbnail = value => {
+  return {
+    type: actions.SET_URL_IMAGES_THUMBNAIL,
+    value
+  }
+}
 const setTypeEventByMoney = value => {
   return {
     type: actions.SET_TYPE_EVENTMONEY,
@@ -120,9 +127,9 @@ const setInitialIndexConfig = () => {
     type: actions.SET_INITIAL_INDEXCONFIG
   }
 }
-const saveIdPromoAndEventInUpdate=value=>{
+const saveIdPromoAndEventInUpdate = value => {
   return {
-    type:actions.SAVE_ID_IN_UPDATE,
+    type: actions.SAVE_ID_IN_UPDATE,
     value
   }
 }
@@ -140,6 +147,9 @@ function dispatchShowImagesNews(value) {
 }
 function dispatchSetUrlImage(value) {
   store.dispatch(setUrlImage(value));
+}
+function dispatchSetUrlImageThumbnail(value) {
+  store.dispatch(setUrlImageThumbnail(value))
 }
 function dispatchTypeEventByMoney(value) {
   store.dispatch(setTypeEventByMoney(value));
@@ -186,7 +196,7 @@ function dispatchResetItemRewards() {
 function dispatchInititalIndexConfig() {
   store.dispatch(setInitialIndexConfig());
 }
-function dispatchSaveIdCreateInUpdate(value){
+function dispatchSaveIdCreateInUpdate(value) {
   store.dispatch(saveIdPromoAndEventInUpdate(value))
 }
 export {
@@ -195,6 +205,7 @@ export {
   dispatchSetToken,
   dispatchShowImagesNews,
   dispatchSetUrlImage,
+  dispatchSetUrlImageThumbnail,
   dispatchTypeEventByMoney,
   dispatchNameEventByMoney,
   dispatchListPartner,

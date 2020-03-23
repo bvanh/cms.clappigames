@@ -32,7 +32,7 @@ function UpdateAlbum() {
   const [imagesForAlbum, setImagesForAlbum] = useState([]);
   const [pickDataImages, setPickDataImages] = useState({
     fromComp: "",
-    fromLibary: "pickFromLibary"
+    fromLibary: ""
   });
   const { albumName } = pageIndex;
   const { fromComp, fromLibary } = pickDataImages;
@@ -45,10 +45,9 @@ function UpdateAlbum() {
   const { loading, error, data, refetch } = useQuery(
     queryGetImagesFromAlbumByType(albumId, userAdmin),
     {
-      fetchPolicy: "cache-and-network",
       onCompleted: data => {
-        setImagesForAlbum(JSON.parse(data.listAdminAlbums[0].data).listImages);
-        setPageIndex({ ...pageIndex, albumName: data.listAdminAlbums[0].name });
+        setImagesForAlbum(JSON.parse(data.listAdminAlbums[0].data).listImages)
+        setPageIndex({ ...pageIndex, albumName: data.listAdminAlbums[0].name })
       }
     }
   );
@@ -79,28 +78,36 @@ function UpdateAlbum() {
   //     setSelectedAlbumId([]);
   //   };
   const submitUpdateAlbum = async () => {
-    if (albumName === "") {
+    if (albumName === "" || imagesForAlbum.length === 0) {
       alert("thieu noi dung");
     } else {
       await updateAlbum();
       refetch();
     }
   };
-  const backScreenUpdate = () => {
-    setPickDataImages({ fromComp: "", fromLibary: "" });
-  };
-  const onPickImages = value => {
-    let newImages = imagesForAlbum;
-    const selectedImages = value.map((val, i) => val.value);
-    newImages = newImages.filter(e => selectedImages.indexOf(e) < 0);
-    setImagesForAlbum(newImages);
-  };
+  const printListImages = listImages.map((val, index) => (
+    <Card.Grid style={gridStyle} key={index}>
+      <Checkbox value={val} className="checkbox-image">
+        <img src={val} alt={val.name} width="100%" />
+      </Checkbox>
+    </Card.Grid>
+  ));
   //   const submitDelete = async () => {
   //     await deleteImages();
   //     await refetch();
   //     setSelectedImage([]);
   //   };
   // console.log(JSON.parse(data.listAdminAlbums[0].data))
+  console.log(imagesForAlbum)
+  //   const submitDelete = async () => {
+  //     await deleteImages();
+  //     await refetch();
+  //     setSelectedImage([]);
+  //   };
+  // console.log(JSON.parse(data.listAdminAlbums[0].data))
+  const backScreenUpdate=()=>{
+    console.log('fsfs')
+  }
   return (
     <Row>
       <Link to="/media">
@@ -132,14 +139,9 @@ function UpdateAlbum() {
             </Link>
           </div>
         )}
-        <ImagePicker
-          multiple
-          images={listImages.map((image, i) => ({
-            src: JSON.parse(image).url,
-            value: image
-          }))}
-          onPick={onPickImages}
-        />
+       <Checkbox.Group style={{ width: "100%" }} onChange={onChange}>
+          <div>{printListImages}</div>
+        </Checkbox.Group>
       </Col>
       <Col md={8} className="create-album">
         <div>

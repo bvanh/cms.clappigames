@@ -1,5 +1,14 @@
 import React, { useState } from "react";
-import { Upload, Checkbox, Row, Col, Card, Icon, Button } from "antd";
+import {
+  Upload,
+  Checkbox,
+  Row,
+  Col,
+  Card,
+  Icon,
+  Button,
+  Pagination
+} from "antd";
 import CreateAlbumFromComp from "./createAlbumFromComp";
 import CreateAlbumFromLibary from "./createAlbumFromLibary";
 import { useQuery, useMutation } from "@apollo/react-hooks";
@@ -10,8 +19,9 @@ import { Link } from "react-router-dom";
 const { Meta } = Card;
 const Album = () => {
   const [pageIndex, setPageIndex] = useState({
-    currentPage: 5,
+    currentPage: 1,
     pageSize: 10,
+    count: "",
     userAdmin: localStorage.getItem("userNameCMS"),
     albumName: ""
   });
@@ -25,7 +35,7 @@ const Album = () => {
     fromComp: "",
     fromLibary: ""
   });
-  const { currentPage, pageSize, userAdmin, albumName } = pageIndex;
+  const { currentPage, pageSize, userAdmin, albumName, count } = pageIndex;
   const { fromComp, fromLibary } = pickDataImages;
   const [deleteAlbum] = useMutation(DELETE_ALBUM, {
     variables: {
@@ -48,7 +58,7 @@ const Album = () => {
     queryGetListAlbumByAdmin(currentPage, pageSize, userAdmin),
     {
       onCompleted: data => {
-        console.log(data.listAdminAlbumsByUser);
+        setPageIndex({ ...pageIndex, count: data.listAdminAlbumsByUser.count });
         setImagesAlbum(data.listAdminAlbumsByUser.rows);
       }
     }
@@ -77,8 +87,11 @@ const Album = () => {
   const backScreenUpdate = () => {
     setPickDataImages({ fromComp: "", fromLibary: "" });
   };
+  const goPage = val => {
+    setPageIndex({ ...pageIndex, currentPage: val });
+  };
   const printListAlbum = imagesAlbum.map(function(val, index) {
-    if (val.status !== "INVISIBLE" && val.id >= 15) {
+    if (val.status !== "INVISIBLE" && val.id >= 1) {
       return (
         <Col sm={6} key={index} style={{ padding: "0 .5rem .5rem .5rem" }}>
           <Link to={`/media/album/edit?id=${val.id}`}>
@@ -143,7 +156,14 @@ const Album = () => {
             </Link>
           </div>
         )}
-        <Row style={{padding:'1rem .5rem'}}>{printListAlbum}</Row>
+        <Row style={{ padding: "1rem .5rem" }}>{printListAlbum}</Row>
+        <Pagination
+          current={currentPage}
+          total={count}
+          pageSize={10}
+          onChange={goPage}
+          className="pagination-listUser"
+        />
       </Col>
       <Col md={8} className="create-album">
         {isCreateAlbum ? (
@@ -152,7 +172,7 @@ const Album = () => {
             <p>Tạo album mới</p>
           </div>
         ) : (
-          <div >
+          <div>
             <h3>
               <Icon
                 onClick={() => setIsCreateAlbum(false)}

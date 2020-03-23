@@ -22,7 +22,8 @@ import AlbumImageInNews from "./albumImageNews";
 import AlbumDetailImages from "./albumDetaiImages";
 import {
   dispatchShowImagesNews,
-  dispatchSetUrlImage
+  dispatchSetUrlImage,
+  dispatchSetUrlImageThumbnail
 } from "../../../redux/actions";
 import { DELETE_IMAGE, CREATE_ALBUM } from "../../../utils/mutation/media";
 import "../../../static/style/media.css";
@@ -38,25 +39,18 @@ function ListImagesForNews(props) {
   const { isShow, albumId } = isDetailAlbum;
   const { loading, error, data, refetch } = useQuery(queryListImages, {
     onCompleted: data => {
-      const newDataImage=data.listUploadedImages.filter((val,i)=>val.status!=='INVISIBLE')
-      setDataImage(newDataImage)}
+      const newDataImage = data.listUploadedImages.filter((val, i) => val.status !== 'INVISIBLE')
+      setDataImage(newDataImage)
+    }
   });
   if (loading) return "Loading...";
   if (error) return `Error! ${error.message}`;
-  // const printListImages = data.listUploadedImages.map(function(val, index) {
-  //   if (val.status !== "INVISIBLE") {
-  //     return (
-  //       <Radio value={val.url} key={index} className="list-images-news">
-  //         <img src={val.url} width="30%" className="image-news" />
-  //       </Radio>
-  //     );
-  //   }
-  // });
-  const getUrl = e => {
-    dispatchSetUrlImage(e.target.value);
-  };
-  const onPickImages=(value)=>{
-    dispatchSetUrlImage(value.value);
+  const onPickImages = (value) => {
+    if (props.isThumbnail) {
+      dispatchSetUrlImageThumbnail(value.value)
+    } else {
+      dispatchSetUrlImage(value.value);
+    }
   }
   const setIsAlbum = () => {
     setDetailAlbum({ isShow: true, albumId: null });
@@ -75,7 +69,7 @@ function ListImagesForNews(props) {
             {" "}
             URL:{" "}
             <input
-              value={props.urlImg}
+              value={props.urlImgNews}
               style={{ marginLeft: "5px", width: "100%" }}
               disabled
             />
@@ -108,8 +102,8 @@ function ListImagesForNews(props) {
             {isShow ? (
               <AlbumImageInNews setDetailAlbum={setDetailAlbum} />
             ) : (
-              <AlbumDetailImages albumId={albumId} />
-            )}
+                <AlbumDetailImages albumId={albumId} />
+              )}
           </TabPane>
         </Tabs>
       </Modal>
@@ -119,7 +113,7 @@ function ListImagesForNews(props) {
 function mapStateToProps(state) {
   return {
     visible: state.visibleModalNews,
-    urlImg: state.urlImg
+    urlImgNews: state.urlImgNews,
   };
 }
 export default connect(mapStateToProps, null)(ListImagesForNews);

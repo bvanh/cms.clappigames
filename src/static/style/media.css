@@ -18,17 +18,17 @@
 .container-images {
   background: #e5e5e5;
 }
-.section-upload{
+.section-upload {
   height: 77vh;
   padding: 0 1rem;
 }
 .ant-upload-drag {
   height: 30% !important;
 }
-.ant-btn{
+.ant-btn {
   border-radius: 0px;
 }
-.btn-load-images{
+.btn-load-images {
   position: absolute;
   bottom: 0;
   right: 5px;
@@ -41,9 +41,9 @@
 .create-album {
   display: flex;
   flex-direction: column;
-  padding: 0 .5rem;
+  padding: 0 0.5rem;
 }
-.create-album>div{
+.create-album > div {
   padding: 1rem 1rem;
   background: rgb(234, 234, 234);
 }
@@ -91,7 +91,7 @@
   margin: 10px !important;
 }
 .ant-card-cover > * {
-  width: 150px;
+  padding: 1rem;
   height: 150px;
 }
 .add-images {
@@ -101,4 +101,41 @@
 .btn-submit-album {
   margin: 0 auto;
   width: 80%;
+}
+.checkbox-image {
+  padding: 0.3rem;
+}
+.checkbox-image > span > span {
+  border-radius: 100% !important;
+}
+.checkbox-image > .ant-checkbox-checked::after {
+  border-radius: 100%;
+}
+.checkbox-image > .ant-checkbox {
+  display: none;
+}
+.checkbox-image:hover .ant-checkbox {
+  display: block;
+}
+.checkbox-image > .ant-checkbox-checked {
+  display: block !important;
+}
+.ant-checkbox + span {
+  padding: 0;
+}
+/* .checkbox-image-container > .ant-checkbox-wrapper-checked {
+  background: #44c581;
+} */
+.checkbox-image > span > div {
+  width: 100%;
+  background: white;
+}
+.checkbox-image>.ant-checkbox{
+  position: absolute;
+  top: 8px;
+  left: 8px;
+}
+.checkbox-image .ant-checkbox-checked .ant-checkbox-inner {
+  background-color: #44c581;
+  border-color: #44c581;
 }

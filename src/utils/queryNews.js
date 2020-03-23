@@ -36,6 +36,8 @@ const queryNewsDetail = newsId => {
         title
         status
         content
+        shortContent
+        image
         createAt
         type
         platform
@@ -50,6 +52,8 @@ const UpdateNews = gql`
       content
       platform
       type
+      shortContent
+      image
     }
   }
 `;
@@ -60,6 +64,8 @@ const createNews = gql`
       content
       type
       platform
+      shortContent
+      image
     }
   }
 `;
