@@ -82,8 +82,8 @@ const NewsEditor = () => {
     let data = updateNews();
     console.log(data);
   };
-  const handleChangeSchedule = () => {};
-  const handleChangeDateSchedule = () => {};
+  const handleChangeSchedule = () => { };
+  const handleChangeDateSchedule = () => { };
   const printType = listType.type.map((val, index) => (
     <Option value={val} name="type" key={index}>
       {val}
@@ -116,13 +116,13 @@ const NewsEditor = () => {
         <JoditEditor
           ref={editor}
           value={content}
-          // config={config}
-          // tabIndex={1} // tabIndex of textarea
-          // onBlur={newContent => setContent(newContent)} // preferred to use only this option to update the content for performance reasons
-          //         onChange={newContent => {}}
+        // config={config}
+        // tabIndex={1} // tabIndex of textarea
+        // onBlur={newContent => setContent(newContent)} // preferred to use only this option to update the content for performance reasons
+        //         onChange={newContent => {}}
         />
       </Col>
-      <Col sm={6}>
+      <Col sm={6} style={{ padding: "0 1rem" }}>
         <div className="set-schedule-news">
           <h3>Chế độ đăng</h3>
           <Radio.Group onChange={handleChangeSchedule}>
@@ -138,40 +138,40 @@ const NewsEditor = () => {
           <div style={{ display: "flex" }}>
             <div style={{ width: "50%" }}>
               <p>Ngày</p>
-              <DatePicker onChange={handleChangeDateSchedule} />
+              <DatePicker onChange={handleChangeDateSchedule} style={{ width: "100%" }} />
             </div>
             <div style={{ width: "50%" }}>
               <p>Thời điểm</p>
-              <TimePicker />
+              <TimePicker style={{ width: "100%" }} />
             </div>
           </div>
         </div>
-        <div>
-          Platform
+        <div className="set-platform-news">
+          <h3>Platform</h3>
           <Select
             value={platform}
-            style={{ width: 120 }}
+            style={{ width: '100%' }}
             onChange={(e, value) => handleChangeType(e, value)}
           >
             {printPlatform}
           </Select>
         </div>
-        <div>
-          Loại bài viết
+        <div className="set-type-news">
+          <h3>Loại bài viết</h3>
           <Select
             value={type}
-            style={{ width: 120 }}
+            style={{ width: '100%' }}
             onChange={(e, value) => handleChangeType(e, value)}
           >
             {printType}
           </Select>
         </div>
-        <div>
-        Chọn ảnh thumbnail
-        <img />
-        <a>Thay đổi</a>
+        <div className="set-thumbnail-news">
+          <h3>Chọn ảnh thumbnail</h3>
+          <img />
+          <a>Thay đổi</a>
         </div>
-        <Button onClick={submitUpdateNews}>Update</Button>
+        <Button onClick={submitUpdateNews}>Submit</Button>
       </Col>
     </Row>
   );

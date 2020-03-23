@@ -37,9 +37,13 @@
 }
 .set-schedule-news{
     padding: 1rem;
+    background: #f0f2f5;
+    margin-bottom: 1rem;
 }
 .set-thumbnail-news,.set-platform-news,.set-type-news{
     padding: 1rem;
     display: flex;
     flex-direction: column;
+    background: #f0f2f5;
+    margin-bottom: 1rem;
 }

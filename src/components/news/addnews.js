@@ -109,7 +109,7 @@ const AddNews = () => {
           onChange={e => setNewsIndex({ ...newsIndex, title: e.target.value })}
         />
         <Input
-          placeholder="Giới thiệu ngắn bài viết"
+          placeholder="Thêm subtitle..."
           value={title}
           name="title"
           onChange={e => setNewsIndex({ ...newsIndex, title: e.target.value })}
@@ -126,7 +126,7 @@ const AddNews = () => {
           //         onChange={newContent => {}}
         />
       </Col>
-      <Col sm={6}>
+      <Col sm={6} style={{padding:"0 1rem"}}>
         <div className="set-schedule-news">
           <h3>Chế độ đăng</h3>
           <Radio.Group onChange={handleChangeSchedule}>
@@ -142,40 +142,40 @@ const AddNews = () => {
           <div style={{ display: "flex" }}>
             <div style={{ width: "50%" }}>
               <p>Ngày</p>
-              <DatePicker onChange={handleChangeDateSchedule} />
+              <DatePicker onChange={handleChangeDateSchedule} style={{width:"100%"}} />
             </div>
             <div style={{ width: "50%" }}>
               <p>Thời điểm</p>
-              <TimePicker />
+              <TimePicker style={{width:"100%"}}/>
             </div>
           </div>
         </div>
         <div className="set-platform-news">
-          Platform
+          <h3>Platform</h3>
           <Select
             value={platform}
-            style={{ width: 120 }}
+            style={{ width: '100%' }}
             onChange={(e, value) => handleChangeType(e, value)}
           >
             {printPlatform}
           </Select>
         </div>
         <div className="set-type-news">
-          Loại bài viết
+          <h3>Loại bài viết</h3>
           <Select
             value={type}
-            style={{ width: 120 }}
+            style={{ width: '100%' }}
             onChange={(e, value) => handleChangeType(e, value)}
           >
             {printType}
           </Select>
         </div>
         <div className="set-thumbnail-news">
-          Chọn ảnh thumbnail
+          <h3>Chọn ảnh thumbnail</h3>
           <img />
           <a>Thay đổi</a>
         </div>
-        <Button onClick={submitUpdateNews}>Update</Button>
+        <Button onClick={submitUpdateNews}>Submit</Button>
       </Col>
       <ListImagesForNews />
     </Row>
