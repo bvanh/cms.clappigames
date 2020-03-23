@@ -5,7 +5,7 @@ import { ApolloClient } from "apollo-client";
 import { ApolloProvider, Mutation } from "react-apollo";
 import { UPLOAD_IMAGE } from "../../utils/mutation/media";
 import { connect } from "react-redux";
-import { Upload, Icon, message, Button,Col } from "antd";
+import { Upload, Icon, message, Button, Col, Modal } from "antd";
 
 const { Dragger } = Upload;
 
@@ -36,15 +36,24 @@ function UploadImages(props) {
         console.log("loading...");
       }
       if (status === "done") {
-        message.success(`${info.file.name} file uploaded successfully.`);
+        // message.success(`${info.file.name} file uploaded successfully.`);
         setFileImage(info.fileList);
         setStatusUploadBtn(false);
       } else if (status === "error") {
         message.error(`${info.file.name} file upload failed.`);
       }
+    },
+    onRemove(info){
+      console.log(info)
     }
   };
-  const cancelUpload=()=>{
+  const cancelUpload = () => {
+    setFileImage(null)
+  }
+  const success = () => {
+    Modal.success({
+      content: 'Tải ảnh thành công...!',
+    });
     setFileImage(null)
   }
   return (
@@ -63,22 +72,23 @@ function UploadImages(props) {
                 </p>
               </Dragger>
               <div className='btn-load-images'>
-              <Button style={{marginRight:"10px"}} onClick={cancelUpload}>Cancel</Button>
-              <Button
-                onClick={async () => {
-                  for (var key of fileImage) {
-                    await singleUploadStream({
-                      variables: {
-                        partnerName: "lqmt",
-                        file: key.originFileObj
-                      }
-                    });
-                  }
-                  props.refetch();
-                }}
-                disabled={fileImage !== [] && fileImage !== null ? false : true}
-              >
-                Load media
+                <Button style={{ marginRight: "10px" }} onClick={cancelUpload}>Cancel</Button>
+                <Button
+                  onClick={async () => {
+                    for (var key of fileImage) {
+                      await singleUploadStream({
+                        variables: {
+                          partnerName: "lqmt",
+                          file: key.originFileObj
+                        }
+                      });
+                    }
+                    props.refetch();
+                    success();
+                  }}
+                  disabled={fileImage !== [] && fileImage !== null ? false : true}
+                >
+                  Load media
               </Button>
               </div>
               {loading && <p>Loading.....</p>}
