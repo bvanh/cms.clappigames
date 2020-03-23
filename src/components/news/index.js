@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { Table, Button, Pagination,Input } from "antd";
+import { Table, Button, Pagination, Input } from "antd";
 import moment from "moment";
 import { useQuery, useMutation } from "@apollo/react-hooks";
 import { queryGetNews, queryDeleteNews } from "../../utils/queryNews";
 import { Link } from "react-router-dom";
-import '../../static/style/news.css'
+import "../../static/style/news.css";
 
 function ListNews() {
   const [selectedRows, setSelectRows] = useState([]);
@@ -15,14 +15,14 @@ function ListNews() {
     fromDate: "06/28/2019",
     toDate: "11/06/2019"
   });
-
+  const { currentPage, pageSize, search, fromDate, toDate } = pageIndex;
   const { loading, error, data, refetch } = useQuery(
     queryGetNews(
-      pageIndex.currentPage,
-      pageIndex.pageSize,
-      pageIndex.search,
-      pageIndex.fromDate,
-      pageIndex.toDate
+      currentPage,
+      pageSize,
+      search,
+      fromDate,
+      toDate
     )
   );
   useEffect(() => {
@@ -96,7 +96,7 @@ function ListNews() {
   // const filterData=data.listNewsByType.rows.filter(val=>val.status!=='DELETED')
   return (
     <div>
-      <div style={{ marginBottom: 16 }} className='news-header'>
+      <div style={{ marginBottom: 16 }} className="news-header">
         {/* <Button
           type="primary"
           // onClick={this.start}
@@ -105,8 +105,8 @@ function ListNews() {
         >
           Reload
         </Button> */}
-         <Input  />
-          <Button >Search</Button>
+        <Input />
+        <Button>Search</Button>
         <Button type="primary">
           <Link to="/news/addnews">Addnew</Link>
         </Button>

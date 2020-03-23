@@ -82,7 +82,7 @@ function App(props) {
             <div className="logo">
               <img src={importImage["logoclappigames.png"]} width="100%" />
             </div>
-            <Menu theme="dark" mode="inline" defaultSelectedKeys={["1"]}>
+            <Menu theme="dark" mode="inline">
               <Menu.Item key="1">
                 <Link to="/">
                   <Icon type="idcard" />

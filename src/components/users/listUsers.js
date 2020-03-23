@@ -10,13 +10,17 @@ function Danhsach() {
     currentPage: 1,
     search: "",
     type: 1,
-    pageSize: 10
+    pageSize: 10,
+    count: null
   });
-  const [dataUsers, setData] = useState(null);
+  const [dataUsers, setData] = useState([
+    { username: "", userId: "", coin: "", emai: "" }
+  ]);
   const { currentPage, search, type, pageSize } = pageIndex;
   const [getData, { loading, data }] = useLazyQuery(queryGetListUsers, {
     onCompleted: data => {
-      setData(data);
+      setData(data.listUsersByType.rows);
+      setPageIndex({ ...pageIndex, count: data.listUsersByType.count });
     }
   });
   useEffect(() => {
@@ -81,32 +85,42 @@ function Danhsach() {
       }
     });
   };
-  if (loading) return "Loading...";
+  const resetSearch = () => {
+    setPageIndex({
+      ...pageIndex,
+      currentPage: 1,
+      pageSize: 10,
+      type: 1,
+      search: ""
+    });
+    getData({
+      variables: {
+        currentPage: 1,
+        type: type,
+        pageSize: 10,
+        search: ""
+      }
+    });
+  };
   return (
     <div className="container-listUser">
       <div className="title">
         <h2>Tổng quan về người dùng</h2>
         <div className="btn-search-users">
-          <Input onChange={e => getValueSearch(e)} />
+          <a onClick={resetSearch} style={{width:"100px"}}>Quay lại</a>
+          <Input onChange={e => getValueSearch(e)} value={search}/>
           <Button onClick={onSearch}>Search</Button>
         </div>
       </div>
-      {dataUsers && (
-        <>
-          <Table
-            columns={columns}
-            dataSource={dataUsers.listUsersByType.rows}
-            pagination={false}
-          />
-          <Pagination
-            current={pageIndex.currentPage}
-            total={dataUsers.listUsersByType.count}
-            pageSize={10}
-            onChange={goPage}
-            className="pagination-listUser"
-          />
-        </>
-      )}
+
+      <Table columns={columns} dataSource={dataUsers} pagination={false} />
+      <Pagination
+        current={pageIndex.currentPage}
+        total={pageIndex.count}
+        pageSize={10}
+        onChange={goPage}
+        className="pagination-listUser"
+      />
     </div>
   );
 }
