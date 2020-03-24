@@ -1,48 +1,59 @@
 import React, { useState, useEffect } from "react";
 import { Table, Button, Pagination, Input } from "antd";
 import moment from "moment";
-import { useQuery, useMutation } from "@apollo/react-hooks";
+import { useLazyQuery, useMutation } from "@apollo/react-hooks";
 import { queryGetNews, queryDeleteNews } from "../../utils/queryNews";
 import { Link } from "react-router-dom";
 import "../../static/style/news.css";
-
+import {
+  dispatchShowImagesNews,
+  dispatchSetUrlImageThumbnail
+} from "../../redux/actions";
 function ListNews() {
-  const [selectedRows, setSelectRows] = useState([]);
   const [pageIndex, setPageIndex] = useState({
     currentPage: 1,
     pageSize: 10,
-    search: "",
-    fromDate: "06/28/2019",
-    toDate: "11/06/2019"
+    search: ""
   });
-  
-  const { currentPage, pageSize, search, fromDate, toDate } = pageIndex;
-  const { loading, error, data, refetch } = useQuery(
-    queryGetNews(
-      currentPage,
-      pageSize,
-      search,
-      fromDate,
-      toDate
-    )
-  );
+  const [data, setData] = useState([]);
+  const [listNewsDelete, setItemsForDelete] = useState([]);
+  const { currentPage, pageSize, search } = pageIndex;
+  const [getData] = useLazyQuery(queryGetNews, {
+    onCompleted: data => setData(data.listNewsByType)
+  });
   useEffect(() => {
-    refetch();
+    getData({
+      variables: {
+        currentPage: currentPage,
+        pageSize: pageSize,
+        search: search
+      }
+    });
+    dispatchShowImagesNews(null);
+    dispatchSetUrlImageThumbnail(null);
   }, []);
   const [deleteNews] = useMutation(queryDeleteNews);
-  const submitDeleteNews = async value => {
-    await deleteNews({ variables: { newsId: value } });
-    refetch();
+  const submitDeleteNews = async () => {
+    await deleteNews({ variables: { ids: listNewsDelete } });
+    getData({
+      variables: {
+        currentPage: currentPage,
+        pageSize: pageSize,
+        search: search
+      }
+    })
   };
-
-  if (loading) return "Loading...";
-  if (error) return `Error! ${error.message}`;
   const columns = [
     {
       title: "Title",
       dataIndex: "title",
       key: "title",
-      width: "25%"
+      width: "25%",
+      render: (text, record) => (
+        <span>
+          <Link to={`news/edit?newsId=${record.newsId}`}>{text}</Link>
+        </span>
+      )
     },
     {
       title: "Type",
@@ -70,60 +81,75 @@ function ListNews() {
       )
     },
     {
-      title: "Action",
-      key: "action",
-      render: (text, record) => (
-        <span>
-          <Link to={`news/edit?newsId=${record.newsId}`}>Edit</Link>|
-          <a onClick={() => submitDeleteNews(record.newsId)}>Delete</a>
-        </span>
-      )
+      title: "Trạng thái",
+      dataIndex: "status",
+      key: "status"
+      // render: time => (
+      //   <span>{moment.utc(Number(time)).format("HH:mm DD-MM-YYYY")}</span>
+      // )
     }
   ];
-  // const onSelectChange = (selectedRowKeys, selectedRows) => {
-  //   console.log("selectedRowKeys changed: ", selectedRowKeys, selectedRows);
-  //   setSelectRowKeys(selectedRowKeys);
-  // };
-  // const rowSelection = {
-  //   onChange: (selectedRowKeys, selectedRows) => {
-  //     setSelectRows(selectedRows);
-  //     console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
-  //   }
-  // };
-  // const hasSelected = selectedRows.length > 0;
+  const rowSelection = {
+    onChange: (selectRowsKeys, selectedRows) => {
+      const itemsIdForDelete = selectedRows.map((val, index) => val.newsId);
+      setItemsForDelete(itemsIdForDelete);
+    }
+  };
+  const handleSetSearchValue = e => {
+    setPageIndex({ ...pageIndex, search: e.target.value });
+  };
+  const submitSearch=()=>{
+    getData({
+      variables: {
+        currentPage: currentPage,
+        pageSize: pageSize,
+        search: search
+      }
+    })
+  }
   const goPage = pageNumber => {
     setPageIndex({ ...pageIndex, currentPage: pageNumber });
+    getData({
+      variables: {
+        currentPage: pageNumber,
+        pageSize: pageSize,
+        search: search
+      }
+    })
   };
-  // const filterData=data.listNewsByType.rows.filter(val=>val.status!=='DELETED')
+  const resetImage = () => {
+    dispatchSetUrlImageThumbnail(null);
+    dispatchShowImagesNews(null);
+  };
   return (
     <div>
       <div style={{ marginBottom: 16 }} className="news-header">
-        {/* <Button
-          type="primary"
-          // onClick={this.start}
-          disabled={!hasSelected}
-          loading={loading2}
+        <Input onChange={handleSetSearchValue} value={search} />
+        <Button onClick={submitSearch} onPressEnter={submitSearch}>Search</Button>
+        <Button
+          disabled={listNewsDelete.length > 0 ? false : true}
+          onClick={submitDeleteNews}
         >
-          Reload
-        </Button> */}
-        <Input />
-        <Button>Search</Button>
+          Delete
+        </Button>
         <Button type="primary">
-          <Link to="/news/addnews">Addnew</Link>
+          <Link to="/news/addnews" onClick={resetImage}>
+            Addnew
+          </Link>
         </Button>
         {/* <span style={{ marginLeft: 8 }}>
           {hasSelected ? `Selected ${selectedRows.length} items` : ""}
         </span> */}
       </div>
       <Table
-        // rowSelection={rowSelection}
+        rowSelection={rowSelection}
         columns={columns}
-        dataSource={data.listNewsByType.rows}
+        dataSource={data.rows}
         pagination={false}
       />
       <Pagination
         current={pageIndex.currentPage}
-        total={data.listNewsByType.count}
+        total={data.count}
         pageSize={10}
         onChange={goPage}
         className="pagination-listUser"

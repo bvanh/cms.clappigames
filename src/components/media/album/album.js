@@ -27,7 +27,8 @@ const Album = () => {
   });
   const [selectedAlbumId, setSelectedAlbumId] = useState([]);
   const [isCreateAlbum, setIsCreateAlbum] = useState(false);
-  const [imagesForAlbum, setImagesForAlbum] = useState([]);
+  const [imagesForAlbumByComp, setImagesForAlbumByComp] = useState([]);
+  const [imagesForAlbumByLi, setImagesForAlbumByLi] = useState([]);
   const [imagesAlbum, setImagesAlbum] = useState([
     { id: "", user: "", name: "", status: "", data: "" }
   ]);
@@ -42,12 +43,24 @@ const Album = () => {
       ids: selectedAlbumId
     }
   });
-  const [createAlbum] = useMutation(CREATE_ALBUM, {
+  const [createAlbumByComp] = useMutation(CREATE_ALBUM, {
     variables: {
       req: {
         user: userAdmin,
         name: albumName,
-        data: `{"listImages":${JSON.stringify(imagesForAlbum)}}`
+        data: `{"listImages":${JSON.stringify(imagesForAlbumByComp)}}`
+      }
+    },
+    onCompleted: data => {
+      console.log(JSON.parse(data.createAdminAlbum.data));
+    }
+  });
+  const [createAlbumByLi] = useMutation(CREATE_ALBUM, {
+    variables: {
+      req: {
+        user: userAdmin,
+        name: albumName,
+        data: `{"listImages":${JSON.stringify(imagesForAlbumByLi)}}`
       }
     },
     onCompleted: data => {
@@ -56,8 +69,8 @@ const Album = () => {
   });
   const { loading, error, data, refetch } = useQuery(
     queryGetListAlbumByAdmin(currentPage, pageSize, userAdmin),
-    { 
-      fetchPolicy:'cache-and-network',
+    {
+      fetchPolicy: "cache-and-network",
       onCompleted: data => {
         setPageIndex({ ...pageIndex, count: data.listAdminAlbumsByUser.count });
         setImagesAlbum(data.listAdminAlbumsByUser.rows);
@@ -72,15 +85,18 @@ const Album = () => {
     console.log(e.target.value);
     setPageIndex({ ...pageIndex, albumName: e.target.value });
   };
-  console.log(albumName);
   const submitDelete = async () => {
     await deleteAlbum();
     await refetch();
     setSelectedAlbumId([]);
   };
-  const submitCreateAlbum = () => {
-      createAlbum();
-      refetch();
+  const submitCreateAlbumByComp = () => {
+    createAlbumByComp();
+    refetch();
+  };
+  const submitCreateAlbumByLi = () => {
+    createAlbumByLi();
+    refetch();
   };
   const backScreenUpdate = () => {
     setPickDataImages({ fromComp: "", fromLibary: "" });
@@ -92,7 +108,7 @@ const Album = () => {
     setPageIndex({ ...pageIndex, albumName: "" });
   };
   const printListAlbum = imagesAlbum.map(function(val, index) {
-    if (val.status !== "INVISIBLE" && val.id >= 1) {
+    if (val.id >= 1) {
       return (
         <Col sm={6} key={index} style={{ padding: "0 .5rem .5rem .5rem" }}>
           <Link to={`/media/album/edit?id=${val.id}`}>
@@ -185,22 +201,22 @@ const Album = () => {
             <p className="add-images">Thêm ảnh</p>
             {fromComp === "pickFromComp" && (
               <CreateAlbumFromComp
-                setImagesForAlbum={setImagesForAlbum}
-                submitCreateAndUpdateAlbum={submitCreateAlbum}
+                setImagesForAlbum={setImagesForAlbumByComp}
+                submitCreateAndUpdateAlbum={submitCreateAlbumByComp}
                 albumName={albumName}
                 refetch={refetch}
-                imagesForAlbum={imagesForAlbum}
+                imagesForAlbum={imagesForAlbumByComp}
                 setPickDataImages={backScreenUpdate}
                 removeAlbumName={resetAlbumName}
               />
             )}
             {fromLibary === "pickFromLibary" && (
               <CreateAlbumFromLibary
-                setImagesForAlbum={setImagesForAlbum}
-                submitCreateAndUpdateAlbum={submitCreateAlbum}
+                setImagesForAlbum={setImagesForAlbumByLi}
+                submitCreateAndUpdateAlbum={submitCreateAlbumByLi}
                 refetch={refetch}
                 albumName={albumName}
-                imagesForAlbum={imagesForAlbum}
+                imagesForAlbum={imagesForAlbumByLi}
                 setPickDataImages={backScreenUpdate}
                 removeAlbumName={resetAlbumName}
               />

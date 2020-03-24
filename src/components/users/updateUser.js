@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Row, Col, Input, Button, Icon, Select, DatePicker } from "antd";
+import { Row, Col, Input, Button, Icon, Select, DatePicker, Modal } from "antd";
 import moment from 'moment';
 import { gql } from "apollo-boost";
 import { useQuery, useMutation } from "@apollo/react-hooks";
@@ -27,7 +27,10 @@ function UpdateInforUser(props) {
     sdt: mobile,
     name: nickname,
     gender: gender,
-    dateBirth: dateOfBirth
+    dateBirth: dateOfBirth,
+    identifyCard: identifyCard,
+    dateOfIssue: dateOfIssue,
+    placeOfIssue: placeOfIssue
   });
   const getInforUser = e => {
     setUserInfor({ ...userInfor, [e.target.name]: e.target.value });
@@ -49,7 +52,10 @@ function UpdateInforUser(props) {
         nickname: userInfor.name,
         gender: userInfor.gender,
         mobile: userInfor.sdt,
-        dateOfBirth: userInfor.dateBirth
+        dateOfBirth: userInfor.dateBirth,
+        identifyCard: userInfor.identifyCard,
+        placeOfIssue: userInfor.placeOfIssue,
+        dateOfIssue: userInfor.dateOfIssue
       }
     }
   });
@@ -61,10 +67,24 @@ function UpdateInforUser(props) {
   const getInforSelect = (val) => {
     setUserInfor({ ...userInfor, gender: val })
   }
+  const handleChangeDateOfIssue = (val) => {
+    setUserInfor({ ...userInfor, dateOfIssue: val })
+  }
+  const handleChangeDateBirth = (val) => {
+    setUserInfor({ ...userInfor, dateBirth: val })
+  }
   const submitUpdate = () => {
     let data = updateUser();
-    console.log(data);
+    data.then(val =>
+      success()
+    )
   };
+  const success = () => {
+    Modal.success({
+      content: 'Cập nhật thành công !',
+      onOk() { props.switchEdit(false) }
+    });
+  }
   return (
     <Col md={16}>
       <div className="info-detail">
@@ -92,20 +112,35 @@ function UpdateInforUser(props) {
               name="name"
               onChange={getInforUser}
             /></p>
-            <p>Giới tính : <Select defaultValue={gender} onChange={getInforSelect} className='select-infor'>
+            <p>Giới tính : <Select defaultValue={gender} onChange={getInforSelect} className='select-infor' showArrow={false}>
               <Option value="MALE">MALE</Option>
               <Option value="FEMALE">FEMALE</Option>
               <Option value="OHTER">OTHER</Option>
             </Select></p>
-            <p>Ngày sinh : <DatePicker defaultValue={moment(userInfor.dateBirth, dateFormat)} format={dateFormat} disabledDate={disabledDate} className='datePicker-user' /></p>
+            <p>Ngày sinh : <DatePicker defaultValue={moment(userInfor.dateBirth, dateFormat)} format={dateFormat} className='datePicker-user' onChange={(date, dateString) => handleChangeDateBirth(dateString)} /></p>
           </div>
-          <div>
-            <p>CMND: <span className='detail-user'>{identifyCard}</span></p>
-            <p>Ngày cấp: <span className='detail-user'>{dateOfIssue}</span></p>
-            <p>Nơi cấp: <span className='detail-user'>{placeOfIssue}</span></p>
+          <div className='input-update-identifyCard'>
+            <p>CMND: <input
+              className='input-update'
+              type='number'
+              placeholder=""
+              value={userInfor.identifyCard}
+              name="identifyCard"
+              onChange={getInforUser}
+            /></p>
+            <p>Ngày cấp:
+            <DatePicker defaultValue={moment(userInfor.dateOfIssue, dateFormat)} format={dateFormat} className='datePicker-user' onChange={(date, dateString) => handleChangeDateOfIssue(dateString)} />
+            </p>
+            <p style={{ width: "33%" }}>Nơi cấp: <input
+              className='input-update'
+              style={{ width: '100%' }}
+              placeholder=""
+              value={userInfor.placeOfIssue}
+              name="name"
+              onChange={getInforUser}
+            /></p>
           </div>
-
-
+          <p>Địa chỉ: <span className='detail-user'>{address}</span></p>
         </Row>
         <div className='btn-update-gr'><Button onClick={submitUpdate} type='link'>Update</Button>
           <Button onClick={() => props.switchEdit(false)} type='link'>Back</Button></div>

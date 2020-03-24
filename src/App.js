@@ -30,6 +30,7 @@ import {
 } from "./redux/actions/index";
 import { Layout, Menu, Icon, Dropdown } from "antd";
 import "./static/style/menu.css";
+import { is } from "immutable";
 const { SubMenu } = Menu;
 const { Header, Content, Footer, Sider } = Layout;
 checkTokenFinal();
@@ -50,6 +51,17 @@ function App(props) {
       Authorization: `Bearer ${props.token.accessToken}`
     }
   });
+  const converPathname = () => {
+    const pathName = window.location.pathname.slice(1);
+    const checkPathName = pathName.indexOf("/");
+    if (checkPathName > 0) {
+      return checkPathName;
+    } else {
+      return pathName.length;
+    }
+  };
+  const pathName = window.location.pathname.slice(1);
+  const isMenu = pathName.slice(0, converPathname());
   const menu = (
     <Menu>
       <Menu.Item>
@@ -82,27 +94,27 @@ function App(props) {
             <div className="logo">
               <img src={importImage["logoclappigames.png"]} width="100%" />
             </div>
-            <Menu theme="dark" mode="inline">
-              <Menu.Item key="1">
+            <Menu theme="dark" mode="inline" defaultSelectedKeys={isMenu===''?['users']:[isMenu]}>
+              <Menu.Item key="users">
                 <Link to="/">
                   <Icon type="idcard" />
                   <span className="nav-text">USERS</span>
                 </Link>
               </Menu.Item>
-              <Menu.Item key="2">
+              <Menu.Item key="news">
                 <Link to="/news">
                   <Icon type="read" />
                   <span className="nav-text">NEWS</span>
                 </Link>
               </Menu.Item>
-              <Menu.Item key="3">
+              <Menu.Item key="media">
                 <Link to="/media">
                   <Icon type="picture" />
                   <span className="nav-text">MEDIA</span>
                 </Link>
               </Menu.Item>
               <SubMenu
-                key="sub1"
+                key="payment"
                 title={
                   <span>
                     <Icon type="transaction" />
@@ -121,13 +133,13 @@ function App(props) {
                   <Link to="/payment/promotion">Promotion</Link>
                 </Menu.Item>
               </SubMenu>
-              <Menu.Item key="8">
+              <Menu.Item key="stats">
                 <Link to="/stats">
                   <Icon type="line-chart" />
                   <span className="nav-text">STATS</span>
                 </Link>
               </Menu.Item>
-              <Menu.Item key="9">
+              <Menu.Item key="logout">
                 <Link to="/" onClick={() => dispatchSwitchLogin(false)}>
                   <Icon type="logout" />
                   <span className="nav-text">LogOut</span>

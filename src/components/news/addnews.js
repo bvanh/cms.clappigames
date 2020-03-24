@@ -15,15 +15,16 @@ import {
   DatePicker,
   TimePicker,
   Col,
-  Row
+  Row,
+  Modal
 } from "antd";
 import { dispatchShowImagesNews, dispatchSetUrlImageThumbnail } from "../../redux/actions";
 import { gql } from "apollo-boost";
-import buttonListToolbar from "../../utils/itemToolbar";
-import SunEditor from "suneditor-react";
+import { Link } from 'react-router-dom'
 import "suneditor/dist/css/suneditor.min.css"; // Import Sun Editor's CSS File
 import JoditEditor from "jodit-react";
 import "jodit/build/jodit.min.css";
+import { set } from "immutable";
 // import ListNews from ".";
 const { Option } = Select;
 const listType = {
@@ -39,15 +40,16 @@ const radioStyle = {
   lineHeight: "30px"
 };
 const AddNews = props => {
-  const editor = useRef(null);
+  // const editor = useRef(null);
   const [isThumbnail, setIsThumbnail] = useState(false)
+  const [visible, setVisible] = useState(false)
   const [listPlatform, setListPlatform] = useState([]);
+  const [newContent, setNewContent] = useState('')
   const [newsIndex, setNewsIndex] = useState({
     title: "",
     subTitle: "",
     type: "NEWS",
-    status: "COMPLETE",
-    content: "",
+    status: "INPUT",
     platform: "5A6DC0B0-B02B-40FB-BA2C-3C42EC442B89"
   });
   useQuery(queryGetPlatform(), {
@@ -55,13 +57,13 @@ const AddNews = props => {
       setListPlatform(dataPartner.listPartners);
     }
   });
-  const { content, title, status, type, platform, subTitle } = newsIndex;
+  const { title, status, type, platform, subTitle } = newsIndex;
   const [updateNews] = useMutation(createNews, {
     variables: {
       req: {
         title: title,
         shortContent: subTitle,
-        content: content,
+        content: newContent,
         platform: platform,
         type: type,
         status: status,
@@ -72,10 +74,33 @@ const AddNews = props => {
     onCompleted: data => console.log(data)
   });
   const handleChangeType = (e, val) => {
-
     setNewsIndex({ ...newsIndex, [val.props.name]: e });
     console.log(newsIndex)
   };
+  const submitUpdateNews = () => {
+    if (title !== "" && newContent !== "" && subTitle !== "" && status !== "") {
+      let data = updateNews();
+      data.then(val => {
+        setVisible(true)
+        setNewsIndex({
+          ...newsIndex, title: "", subTitle: "", type: "NEWS",
+          status: "INPUT",
+          platform: "5A6DC0B0-B02B-40FB-BA2C-3C42EC442B89"
+        });
+        setNewContent("")
+        dispatchSetUrlImageThumbnail(null)
+      });
+    } else {
+      alert("thieu thong tin!");
+    }
+  };
+  const showUrlImagesNews = val => {
+    setIsThumbnail(val);
+    dispatchShowImagesNews(true);
+  };
+  const handleCancel = () => {
+    setVisible(false)
+  }
   const printType = listType.type.map((val, index) => (
     <Option value={val} name="type" key={index}>
       {val}
@@ -93,51 +118,34 @@ const AddNews = props => {
       {val.partnerName}
     </Option>
   ));
-  const submitUpdateNews = () => {
-    if (title !== "" && content !== "") {
-      let data = updateNews();
-      data.then(val => {
-        alert("tao bai viet thanh cong");
-        setNewsIndex({ ...newsIndex, title: "", subTitle: "", content: "" });
-        dispatchSetUrlImageThumbnail(null)
-      });
-    } else {
-      alert("thieu thong tin!");
-    }
-  };
-  const showUrlImagesNews = val => {
-    setIsThumbnail(val);
-    dispatchShowImagesNews(true);
-  };
   return (
     <Row>
-      <Col sm={18}>
+      <Col sm={18} className='section1-news'>
         <h3>Thêm bài viết mới</h3>
         <Input
           placeholder="Thêm tiêu đề bài viết"
           value={title}
           name="title"
-          onChange={e => setNewsIndex({ ...newsIndex, title: e.target.value })}
+          onChange={(e) => setNewsIndex({ ...newsIndex, title: e.target.value })}
         />
         <Input
           placeholder="Thêm subtitle..."
           value={subTitle}
-          name="title"
-          onChange={e =>
-            setNewsIndex({ ...newsIndex, subTitle: e.target.value })
+          name="subTitle"
+          onChange={(e) => setNewsIndex({ ...newsIndex, subTitle: e.target.value })
           }
         />
-        <Button onClick={() => showUrlImagesNews(false)}>
-          Lấy đường dẫn Image
-        </Button>
         <JoditEditor
-          ref={editor}
-          value={content}
+          // ref={editor}
+          value={newContent}
           // config={config}
           // tabIndex={1} // tabIndex of textarea
-          onBlur={newContent => setNewsIndex({ ...newsIndex, content: newContent })} // preferred to use only this option to update the content for performance reasons
-        // onChange={newContent => {console.log(newContent)}}
+          // onBlur={newContent => setNewsIndex({ ...newsIndex, content: newContent })} // preferred to use only this option to update the content for performance reasons
+          onBlur={newContent => setNewContent(newContent)}
         />
+        <Button onClick={() => showUrlImagesNews(false)} style={{ marginTop: ".5rem" }}>
+          Lấy đường dẫn Image
+        </Button>
       </Col>
       <Col sm={6} style={{ padding: "0 1rem" }}>
         <div className="set-schedule-news">
@@ -157,12 +165,12 @@ const AddNews = props => {
               <p>Ngày</p>
               <DatePicker
                 onChange={handleChangeDateSchedule}
-                style={{ width: "100%" }}
+                style={{ width: "99%", marginRight: "1%" }}
               />
             </div>
-            <div style={{ width: "50%" }}>
+            <div style={{ width: "50%" }} className='timePick-schedule-news'>
               <p>Thời điểm</p>
-              <TimePicker style={{ width: "100%" }} />
+              <TimePicker style={{ width: "99%", marginLeft: "1%" }} />
             </div>
           </div>
         </div>
@@ -188,7 +196,7 @@ const AddNews = props => {
         </div>
         <div className="set-thumbnail-news">
           <h3>Chọn ảnh thumbnail</h3>
-          <div style={{ padding: ".5rem" }}>
+          <div style={{ width: "70%", margin: "0 auto" }}>
             <img src={props.urlImgThumbnail} style={{ width: "100%" }} />
           </div>
           <a onClick={() => showUrlImagesNews(true)}>Chọn ảnh</a>
@@ -196,6 +204,14 @@ const AddNews = props => {
         <Button onClick={submitUpdateNews}>Submit</Button>
       </Col>
       <ListImagesForNews isThumbnail={isThumbnail} />
+      <Modal
+        title="Cập nhật thành công !"
+        visible={visible}
+        okText={<Link to='/news'>Xem danh sách</Link>}
+        cancelText="Tiếp tục"
+        onCancel={handleCancel}
+      >
+      </Modal>
     </Row>
   );
 };

@@ -16,7 +16,7 @@ import { useLazyQuery, useMutation, useQuery } from "@apollo/react-hooks";
 import { Link } from "react-router-dom";
 import "../../../../static/style/listProducts.css";
 import ChartCharges from "../listCharges/chartCacheCharges";
-import ListCharges from '../listCharges/listCharges'
+import ListCharges from "../listCharges/listCharges";
 import CreateProductCoin from "../listCoin/addnewCoin";
 import { deleteCoinProduct } from "../../../../utils/mutation/productCoin";
 const radioStyle = {
@@ -35,7 +35,13 @@ function ListCoin(props) {
   const [isCreateCoin, setIsCreateCoin] = useState(false);
   const [dataCoin, setDataCoin] = useState(null);
   const [itemsForDelete, setItemsForDelete] = useState([]);
-  const { currentPage, type, pageSize, listTypePayment, productName } = pageIndex;
+  const {
+    currentPage,
+    type,
+    pageSize,
+    listTypePayment,
+    productName
+  } = pageIndex;
   const [getDataCoin, { loading, refetch }] = useLazyQuery(queryGetListCoin, {
     fetchPolicy: "cache-and-network",
     onCompleted: data => {
@@ -91,13 +97,13 @@ function ListCoin(props) {
       title: "Id",
       dataIndex: "productId",
       key: "productId",
-      width:"30%"
+      width: "30%"
     },
     {
       title: "C.coin",
       dataIndex: "productName",
       key: "productName",
-      width:"15%"
+      width: "15%"
     },
     ,
     {
@@ -105,19 +111,19 @@ function ListCoin(props) {
       dataIndex: "price",
       key: "price",
       render: price => <span>{price.toLocaleString()} đ</span>,
-      width:"15%"
+      width: "15%"
     },
     {
       title: "promo",
       dataIndex: "discount",
       key: "discount",
-      width:"10%"
+      width: "10%"
     },
     {
       title: "Type",
       dataIndex: "type",
       key: "type",
-      width:"20%",
+      width: "20%",
       filterDropdown: () => (
         <div style={{ padding: 8 }}>
           <Radio.Group onChange={setValueTypePayment} value={type}>
@@ -151,7 +157,7 @@ function ListCoin(props) {
     {
       title: "Action",
       key: "action",
-      width:"10%",
+      width: "10%",
       render: (text, record) => (
         <span>
           <Link to={`/payment/coin/edit?productId=${record.productId}`}>
@@ -161,19 +167,19 @@ function ListCoin(props) {
       )
     }
   ];
-  const getValueSearch = e => {
-    setPageIndex({ ...pageIndex, productName: e.target.value });
-  };
-  const onSearch = () => {
-    getDataCoin({
-      variables: {
-        currentPage: currentPage,
-        type: type,
-        pageSize: pageSize,
-        productName: productName
-      }
-    });
-  };
+  // const getValueSearch = e => {
+  //   setPageIndex({ ...pageIndex, productName: e.target.value });
+  // };
+  // const onSearch = () => {
+  //   getDataCoin({
+  //     variables: {
+  //       currentPage: currentPage,
+  //       type: type,
+  //       pageSize: pageSize,
+  //       productName: productName
+  //     }
+  //   });
+  // };
   const rowSelection = {
     onChange: (selectRowsKeys, selectedRows) => {
       const itemsIdForDelete = selectedRows.map((val, index) => val.productId);
@@ -200,18 +206,23 @@ function ListCoin(props) {
           <div className="products-title">
             <div>
               <h2>Quản lý C.coin</h2>
-              <div className='view-more'>
-                <a className='btn-view-more'>Chi tiết <Icon type="double-right" /></a>
+              <div className="view-more">
+                {/*<a className="btn-view-more">
+                  Chi tiết <Icon type="double-right" />
+    </a>*/}
                 <Link to="/payment/coin" onClick={() => setIsCreateCoin(true)}>
                   <Button icon="plus">Thêm gói C.coin</Button>
                 </Link>
+                <Button disabled={!hasSelected} onClick={submitDeleteProduct}>
+                  Delete
+                </Button>
               </div>
             </div>
             <div className="btn-search-users">
-              <Button disabled={!hasSelected} onClick={submitDeleteProduct}>
+              {/*<Button disabled={!hasSelected} onClick={submitDeleteProduct}>
                 Delete
               </Button>
-              <Input onChange={e => getValueSearch(e)} onPressEnter={onSearch} prefix={<Icon type="search" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder='Tìm kiếm tên c.coin' />
+              {/* <Input onChange={e => getValueSearch(e)} onPressEnter={onSearch} prefix={<Icon type="search" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder='Tìm kiếm tên c.coin' />
               {/* <Button onClick={onSearch}>Search</Button> */}
             </div>
           </div>
@@ -232,8 +243,10 @@ function ListCoin(props) {
             </>
           )}
         </Col>
-        <Col md={12} style={{padding:'0 1rem'}}>
-          <Col><ChartCharges /></Col>
+        <Col md={12} style={{ padding: "0 1rem" }}>
+          <Col>
+            <ChartCharges />
+          </Col>
           <ListCharges />
         </Col>
       </Row>

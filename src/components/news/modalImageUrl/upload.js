@@ -7,7 +7,8 @@ import { UPLOAD_IMAGE } from "../../../utils/mutation/media";
 import { connect } from "react-redux";
 import { Upload, Icon, message, Button } from "antd";
 import {
-  dispatchSetUrlImage
+  dispatchSetUrlImage,
+  dispatchSetUrlImageThumbnail
 } from "../../../redux/actions";
 const { Dragger } = Upload;
 
@@ -26,14 +27,16 @@ function UploadImagesInNews(props) {
     cache: apolloCache,
     link: uploadLink
   });
+  console.log(props.isThumnail)
   return (
     <ApolloProvider client={client}>
       <Mutation mutation={UPLOAD_IMAGE}>
         {(singleUploadStream, { data, loading, error }) => {
-          const demo=()=>{
-            console.log('fsfsf')
+          if (data && props.isThumbnail==false) {
+            dispatchSetUrlImage(data.singleUploadImage.url);
+          } else if (data && props.isThumbnail) {
+            dispatchSetUrlImageThumbnail(data.singleUploadImage.url);
           }
-          if(data){dispatchSetUrlImage(data.singleUploadImage.url)}
           return (
             <>
               <form
@@ -41,27 +44,30 @@ function UploadImagesInNews(props) {
                   console.log("Submitted");
                 }}
                 encType={"multipart/form-data"}
-                name='Tải ảnh lên'
+                name="Tải ảnh lên"
+                style={{ paddingRight: "2rem" }}
               >
                 <input
-                style={{display:'none'}}
+                  style={{ display: "none" }}
                   name={"fileNews"}
-                  id='fileNews'
+                  id="fileNews"
                   type={"file"}
-                  onChange={ async ({ target: { files } }) => {
+                  onChange={async ({ target: { files } }) => {
                     for (var value of files) {
-                        await singleUploadStream({
-                            variables: {
-                                partnerName: "lqmt",
-                                file: value
-                            }
-                        });
+                      await singleUploadStream({
+                        variables: {
+                          partnerName: "lqmt",
+                          file: value
+                        }
+                      });
                     }
-                    alert('tải thành công')
+                    alert("tải thành công");
                   }}
                   multiple
                 />
-                <label for="fileNews">Tải ảnh lên</label>
+                <label for="fileNews" style={{ cursor: "pointer" }}>
+                  Tải ảnh lên
+                </label>
                 {loading && <p>Loading.....</p>}
               </form>
             </>

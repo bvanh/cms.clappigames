@@ -86,3 +86,13 @@ input:focus {
   top: 0;
   right: 3%;
 }
+.input-dateOfIssue,.input-dateOfIssue>div,.input-dateOfIssue>div>input{
+  height: 25px;
+}
+.input-dateOfIssue>div>input{
+  border: none;
+  background-color: #f3f3f3;
+  border-bottom: 1.5px solid;
+  border-radius: 0;
+  height: 25px;
+}

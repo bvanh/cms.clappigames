@@ -11,9 +11,9 @@ const { Dragger } = Upload;
 
 const apolloCache = new InMemoryCache();
 function UploadImages(props) {
-  const [fileImage, setFileImage] = useState(null);
+  const [fileList, setFileImage] = useState([]);
   const [statusUploadBtn, setStatusUploadBtn] = useState(true);
-
+  const [statusUploadList, setStatusUploadList] = useState(false);
   const uploadLink = createUploadLink({
     uri: "https://api.cms.cubegame.vn/graphql",
     headers: {
@@ -30,39 +30,33 @@ function UploadImages(props) {
     multiple: true,
     showUploadList: { showDownloadIcon: false },
     action: "https://www.mocky.io/v2/5cc8019d300000980a055e76",
-    onChange(info) {
-      const { status } = info.file;
-      if (status !== "uploading") {
-        console.log("loading...");
-      }
-      if (status === "done") {
-        // message.success(`${info.file.name} file uploaded successfully.`);
-        setFileImage(info.fileList);
-        setStatusUploadBtn(false);
-      } else if (status === "error") {
-        message.error(`${info.file.name} file upload failed.`);
-      }
+    onRemove(file) {
+      const index = fileList.indexOf(file);
+      const newFileList = fileList.slice();
+      newFileList.splice(index, 1);
+      setFileImage(newFileList);
     },
-    onRemove(info){
-      console.log(info)
-    }
+    beforeUpload: (file, fileList) => {
+      setFileImage(fileList);
+    },
+    fileList
   };
   const cancelUpload = () => {
-    setFileImage(null)
-  }
+    setFileImage([]);
+  };
   const success = () => {
     Modal.success({
-      content: 'Tải ảnh thành công...!',
+      content: "Tải ảnh thành công...!"
     });
-    setFileImage(null)
-  }
+    setFileImage([]);
+  };
   return (
     <ApolloProvider client={client}>
       <Mutation mutation={UPLOAD_IMAGE}>
         {(singleUploadStream, { data, loading, error }) => {
           console.log(data, loading, error);
           return (
-            <Col md={8} className='section-upload'>
+            <Col md={8} className="section-upload">
               <Dragger {...configDrag}>
                 <p className="ant-upload-drag-icon">
                   <Icon type="file-add" />
@@ -71,25 +65,27 @@ function UploadImages(props) {
                   Click or drag file to this area to upload
                 </p>
               </Dragger>
-              <div className='btn-load-images'>
-                <Button style={{ marginRight: "10px" }} onClick={cancelUpload}>Cancel</Button>
+              <div className="btn-load-images">
+                <Button style={{ marginRight: "10px" }} onClick={cancelUpload}>
+                  Cancel
+                </Button>
                 <Button
                   onClick={async () => {
-                    for (var key of fileImage) {
+                    for (var key of fileList) {
                       await singleUploadStream({
                         variables: {
                           partnerName: "lqmt",
-                          file: key.originFileObj
+                          file: key
                         }
                       });
                     }
                     props.refetch();
                     success();
                   }}
-                  disabled={fileImage !== [] && fileImage !== null ? false : true}
+                  disabled={fileList.length === 0 ? true : false}
                 >
                   Load media
-              </Button>
+                </Button>
               </div>
               {loading && <p>Loading.....</p>}
             </Col>

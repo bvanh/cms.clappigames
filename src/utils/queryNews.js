@@ -1,23 +1,26 @@
 import { gql } from "apollo-boost";
-const queryGetNews = (currentPage, pageSize, searchValue, fromDate, toDate) => {
-  return gql`
-    query{
-        listNewsByType(currentPage: ${currentPage}, pageSize: ${pageSize}, search: "${searchValue}",fromDate:"${fromDate}",toDate:"${toDate}") {
-            count
-            rows {
-                newsId
-                title
-                createAt
-                type
-                platform
-                partner {
-                    partnerName
-                  }
-            }
-          }
+const queryGetNews = gql`
+  query listNewsByType($currentPage: Int!, $pageSize: Int!, $search: String) {
+    listNewsByType(
+      currentPage: $currentPage
+      pageSize: $pageSize
+      search: $search
+    ) {
+      count
+      rows {
+        newsId
+        title
+        createAt
+        type
+        platform
+        status
+        partner {
+          partnerName
         }
-    `;
-};
+      }
+    }
+  }
+`;
 const queryGetPlatform = () => {
   return gql`
     query {
@@ -70,8 +73,8 @@ const createNews = gql`
   }
 `;
 const queryDeleteNews = gql`
-  mutation DeleteNews($newsId: Int!) {
-    deleteNews(newsId: $newsId) {
+  mutation DeleteNews($ids: [Int]!) {
+    deleteNews(ids: $ids) {
       title
     }
   }
