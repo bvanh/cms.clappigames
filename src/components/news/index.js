@@ -15,6 +15,7 @@ function ListNews() {
     fromDate: "06/28/2019",
     toDate: "11/06/2019"
   });
+  
   const { currentPage, pageSize, search, fromDate, toDate } = pageIndex;
   const { loading, error, data, refetch } = useQuery(
     queryGetNews(
