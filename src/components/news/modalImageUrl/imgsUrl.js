@@ -12,9 +12,7 @@ import {
   Radio,
   Tabs
 } from "antd";
-import ImagePicker from "react-image-picker";
-import "react-image-picker/dist/index.css";
-import UploadImagesInNews from "./upload";
+import UploadImagesInNews from './upload'
 import { useQuery, useMutation } from "@apollo/react-hooks";
 import { queryListImages } from "../../../utils/queryMedia";
 import { connect } from "react-redux";
@@ -38,34 +36,41 @@ function ListImagesForNews(props) {
   });
   const { isShow, albumId } = isDetailAlbum;
   const { loading, error, data, refetch } = useQuery(queryListImages, {
-    onCompleted: data => {
-      const newDataImage = data.listUploadedImages.filter((val, i) => val.status !== 'INVISIBLE')
-      setDataImage(newDataImage)
-    }
+    onCompleted: data => setDataImage(data)
   });
   if (loading) return "Loading...";
   if (error) return `Error! ${error.message}`;
-  const onPickImages = (value) => {
-    if (props.isThumbnail) {
-      dispatchSetUrlImageThumbnail(value.value)
-    } else {
-      dispatchSetUrlImage(value.value);
+  const printListImages = data.listUploadedImages.map(function (val, index) {
+    if (val.status !== "INVISIBLE") {
+      return (
+        <Radio value={val.url} key={index} className="list-images-news">
+          {/* <Icon type="check-circle" theme="filled"style={{color:"red"}} className='icon-checked-images'/> */}
+          <img src={val.url} width="100%" className="image-news" />
+        </Radio>
+      );
     }
-  }
+  });
+  const getUrl = e => {
+    if (props.isThumbnail) {
+      dispatchSetUrlImageThumbnail(e.target.value)
+    } else {
+      dispatchSetUrlImage(e.target.value);
+    }
+
+  };
   const setIsAlbum = () => {
     setDetailAlbum({ isShow: true, albumId: null });
   };
-  const operations = <UploadImagesInNews />;
-  console.log(albumId, isShow);
+  const operations = <UploadImagesInNews isThumbnail={props.isThumbnail} />;
   return (
     <>
       <Modal
         visible={props.visible}
-        className="listImages_news"
+        className="listImages-news-modal"
         onOk={() => dispatchShowImagesNews(false)}
         onCancel={() => dispatchShowImagesNews(false)}
         footer={[
-          <span>
+          <span className={`isThumbnail-${props.isThumbnail}`}>
             {" "}
             URL:{" "}
             <input
@@ -79,15 +84,9 @@ function ListImagesForNews(props) {
         <Tabs type="card" tabBarExtraContent={operations}>
           <TabPane tab="Tất cả ảnh" key="1">
             <Row className="listImages_news">
-              <Col>
-                <ImagePicker
-                  images={dataImage.map((image, i) => ({
-                    src: image.url,
-                    value: image.url
-                  }))}
-                  onPick={onPickImages}
-                />
-              </Col>
+              <Radio.Group buttonStyle="solid" onChange={getUrl} value={null}>
+                {printListImages}
+              </Radio.Group>
             </Row>
           </TabPane>
           <TabPane
@@ -102,7 +101,7 @@ function ListImagesForNews(props) {
             {isShow ? (
               <AlbumImageInNews setDetailAlbum={setDetailAlbum} />
             ) : (
-                <AlbumDetailImages albumId={albumId} />
+                <AlbumDetailImages albumId={albumId} isThumbnail={props.isThumbnail} />
               )}
           </TabPane>
         </Tabs>
@@ -113,7 +112,7 @@ function ListImagesForNews(props) {
 function mapStateToProps(state) {
   return {
     visible: state.visibleModalNews,
-    urlImgNews: state.urlImgNews,
+    urlImgNews: state.urlImgNews
   };
 }
 export default connect(mapStateToProps, null)(ListImagesForNews);

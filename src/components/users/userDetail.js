@@ -106,6 +106,7 @@ function Detail(props) {
                           <p>Ngày cấp: <span className='detail-user'>{dateOfIssue}</span></p>
                           <p>Nơi cấp: <span className='detail-user'>{placeOfIssue}</span></p>
                         </div>
+                        <p>Địa chỉ: <span className='detail-user'>{address}</span></p>
                       </Row>
                       <Icon type="edit" style={{ fontSize: '24px' }} theme="filled" onClick={() => switchEdit(true)} className='edit-user' />
                     </div>

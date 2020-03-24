@@ -2,7 +2,7 @@ import { gql } from "apollo-boost";
 const queryGetNews = (currentPage, pageSize, searchValue, fromDate, toDate) => {
   return gql`
     query{
-        listNewsByType(currentPage: ${currentPage}, pageSize: ${pageSize}, search: "${searchValue}",fromDate:"${fromDate}",toDate:"${toDate}") {
+        listNewsByType(currentPage: ${currentPage}, pageSize: ${pageSize}, search: "${searchValue}") {
             count
             rows {
                 newsId
@@ -10,6 +10,7 @@ const queryGetNews = (currentPage, pageSize, searchValue, fromDate, toDate) => {
                 createAt
                 type
                 platform
+                status
                 partner {
                     partnerName
                   }

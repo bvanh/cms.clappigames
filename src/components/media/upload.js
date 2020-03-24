@@ -11,20 +11,11 @@ const { Dragger } = Upload;
 
 const apolloCache = new InMemoryCache();
 function UploadImages(props) {
-  const [fileImage, setFileImage] = useState(null);
+  const [fileImage, setFileImage] = useState([]);
   const [statusUploadBtn, setStatusUploadBtn] = useState(true);
-
-  const uploadLink = createUploadLink({
-    uri: "https://api.cms.cubegame.vn/graphql",
-    headers: {
-      Authorization: `Bearer ${props.token.accessToken}`
-    }
-  });
-  const client = new ApolloClient({
-    cache: apolloCache,
-    link: uploadLink
-  });
-  const configDrag = {
+  const [statusUploadList, setStatusUploadList] = useState(false)
+  const [config, setConfig] = useState({
+    fileList: fileImage,
     name: "file",
     accept: ".png, .jpg, .gif",
     multiple: true,
@@ -43,7 +34,46 @@ function UploadImages(props) {
         message.error(`${info.file.name} file upload failed.`);
       }
     },
-    onRemove(info){
+    onRemove(info) {
+      console.log(info)
+    },
+    beforeUpload: (fileList) => {
+      setFileImage([...fileImage, fileList])
+      return false;
+    },
+  })
+
+  const uploadLink = createUploadLink({
+    uri: "https://api.cms.cubegame.vn/graphql",
+    headers: {
+      Authorization: `Bearer ${props.token.accessToken}`
+    }
+  });
+  const client = new ApolloClient({
+    cache: apolloCache,
+    link: uploadLink
+  });
+  const configDrag = {
+    fileList: fileImage,
+    name: "file",
+    accept: ".png, .jpg, .gif",
+    multiple: true,
+    showUploadList: statusUploadList ? false : { showDownloadIcon: false },
+    action: "https://www.mocky.io/v2/5cc8019d300000980a055e76",
+    onChange(info) {
+      const { status } = info.file;
+      if (status !== "uploading") {
+        console.log("loading...");
+      }
+      if (status === "done") {
+        // message.success(`${info.file.name} file uploaded successfully.`);
+        setFileImage(info.fileList);
+        setStatusUploadBtn(false);
+      } else if (status === "error") {
+        message.error(`${info.file.name} file upload failed.`);
+      }
+    },
+    onRemove(info) {
       console.log(info)
     }
   };
@@ -56,13 +86,18 @@ function UploadImages(props) {
     });
     setFileImage(null)
   }
+  const demo = () => {
+    setFileImage([])
+  }
   return (
     <ApolloProvider client={client}>
       <Mutation mutation={UPLOAD_IMAGE}>
         {(singleUploadStream, { data, loading, error }) => {
           console.log(data, loading, error);
           return (
+
             <Col md={8} className='section-upload'>
+              <button onClick={demo}>dsf</button>
               <Dragger {...configDrag}>
                 <p className="ant-upload-drag-icon">
                   <Icon type="file-add" />

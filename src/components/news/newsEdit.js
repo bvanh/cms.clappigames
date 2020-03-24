@@ -8,11 +8,12 @@ import { Row, Col } from "antd";
 import JoditEditor from "jodit-react";
 import "jodit/build/jodit.min.css";
 import { connect } from 'react-redux'
+import {Link} from 'react-router-dom'
 import { useMutation, useQuery, useLazyQuery } from "@apollo/react-hooks";
 import { gql } from "apollo-boost";
 import buttonListToolbar from "../../utils/itemToolbar";
 import ListImagesForNews from "./modalImageUrl/imgsUrl";
-import { Input, Select, Button, Radio, DatePicker, TimePicker } from "antd";
+import { Input, Select, Button, Radio, DatePicker, TimePicker, Modal } from "antd";
 import moment from "moment";
 import SunEditor, { buttonList } from "suneditor-react";
 import { dispatchShowImagesNews, dispatchSetUrlImageThumbnail } from "../../redux/actions";
@@ -34,8 +35,10 @@ const NewsEditor = (props) => {
   const query = new URLSearchParams(window.location.search);
   const [isThumbnail, setIsThumbnail] = useState(false)
   const [listPlatform, setListPlatform] = useState([]);
+  const [visible,setVisible]=useState(false)
+  const [newContent, setNewContent] = useState('')
   const [newsIndex, setNewsIndex] = useState({
-    newsId: 100,
+    newsId: null,
     title: "",
     shortContent: "",
     status: "",
@@ -44,16 +47,18 @@ const NewsEditor = (props) => {
     type: "",
     platform: ""
   });
-  const [getData] = useLazyQuery(queryNewsDetail(query.get("newsId")), {
+  useQuery(queryNewsDetail(query.get("newsId")), {
+    fetchPolicy:"cache-and-network",
     onCompleted: data => {
-      console.log(data);
+      // console.log(data);
       setNewsIndex(data.listNews[0]);
+      setNewContent(data.listNews[0].content)
       dispatchSetUrlImageThumbnail(data.listNews[0].image)
     }
   });
-  useEffect(() => {
-    getData();
-  }, []);
+  // useEffect(() => {
+  //   getData();
+  // }, []);
   useQuery(queryGetPlatform(), {
     onCompleted: dataPartner => {
       setListPlatform(dataPartner.listPartners);
@@ -65,7 +70,7 @@ const NewsEditor = (props) => {
       newsId: Number(query.get("newsId")),
       req: {
         title: title,
-        content: content,
+        content: newContent,
         shortContent: shortContent,
         image: props.urlImgThumbnail,
         platform: platform,
@@ -73,7 +78,7 @@ const NewsEditor = (props) => {
         status: status,
         unity: 0
       }
-    },onCompleted:data=>console.log(data)
+    }, onCompleted: data => console.log(data)
   });
   const config = {
     readonly: false, // all options from https://xdsoft.net/jodit/doc/,
@@ -84,15 +89,20 @@ const NewsEditor = (props) => {
   };
   const submitUpdateNews = () => {
     let data = updateNews();
-    console.log(data);
+    data.then(val=>
+      setVisible(true)
+    )
   };
   const showUrlImagesNews = val => {
     setIsThumbnail(val);
     dispatchShowImagesNews(true);
   };
   const handleChangeSchedule = (e) => {
-    setNewsIndex({...newsIndex,status:e.target.value})
-   };
+    setNewsIndex({ ...newsIndex, status: e.target.value })
+  };
+  const handleCancel=()=>{
+    setVisible(false)
+  }
   const handleChangeDateSchedule = () => { };
   const printType = listType.type.map((val, index) => (
     <Option value={val} name="type" key={index}>
@@ -109,10 +119,9 @@ const NewsEditor = (props) => {
       {val.partnerName}
     </Option>
   ));
-console.log(shortContent)
   return (
     <Row>
-      <Col sm={18}>
+      <Col sm={18} className='section1-news'>
         <h3>Chỉnh sửa bài viết</h3>
         <Input
           placeholder=""
@@ -128,17 +137,15 @@ console.log(shortContent)
             setNewsIndex({ ...newsIndex, shortContent: e.target.value })
           }
         />
+
+        <JoditEditor
+          ref={editor}
+          value={newContent}
+          onBlur={newContent => setNewContent(newContent)} // preferred to use only this option to update the content for performance reasons
+        />
         <Button onClick={() => showUrlImagesNews(false)}>
           Lấy đường dẫn Image
         </Button>
-        <JoditEditor
-          ref={editor}
-          value={content}
-          // config={config}
-          // tabIndex={1} // tabIndex of textarea
-          onBlur={newContent => setNewsIndex({ ...newsIndex, content: newContent })} // preferred to use only this option to update the content for performance reasons
-        //         onChange={newContent => {}}
-        />
       </Col>
       <Col sm={6} style={{ padding: "0 1rem" }}>
         <div className="set-schedule-news">
@@ -186,12 +193,22 @@ console.log(shortContent)
         </div>
         <div className="set-thumbnail-news">
           <h3>Chọn ảnh thumbnail</h3>
-          <img src={props.urlImgThumbnail} />
+          <div style={{width:"70%",margin:"0 auto"}}>
+          <img src={props.urlImgThumbnail} style={{width:"100%"}}/>
+          </div>
           <a onClick={() => showUrlImagesNews(true)}>Thay đổi</a>
         </div>
         <Button onClick={submitUpdateNews}>Submit</Button>
       </Col>
       <ListImagesForNews isThumbnail={isThumbnail} />
+      <Modal
+          title="Cập nhật thành công !"
+          visible={visible}
+          okText={<Link to='/news'>Xem danh sách</Link>}
+          cancelText="Tiếp tục"
+          onCancel={handleCancel}
+        >
+        </Modal>
     </Row>
   );
 };
