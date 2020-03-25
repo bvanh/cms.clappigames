@@ -34,7 +34,7 @@ const listSelectDates = [
 function ListChargesDetail() {
   const [pageIndex, setPageIndex] = useState({
     currentPage: 1,
-    type: 1,
+    type: 4,
     pageSize: 10,
     search: "",
     fromDate: "",
@@ -47,8 +47,8 @@ function ListChargesDetail() {
   const [getDataCharges, { loading, data }] = useLazyQuery(
     queryGetListCharges,
     {
+      fetchPolicy: "cache-and-network",
       onCompleted: data => {
-        console.log(data);
         setDataCharges(data);
       }
     }
@@ -82,8 +82,10 @@ function ListChargesDetail() {
     // changeDates(value);
     console.log(dateString);
   };
-  const handleChangeType = () => {};
-  const getProductName = () => {};
+  const handleChangeType = () => { };
+  const getProductName = (e) => {
+    setPageIndex({ ...pageIndex, search: e.target.value })
+  };
   const rowSelection = {
     onChange: (selectRowsKeys, selectedRows) => {
       //   const itemsIdForDelete = selectedRows.map((val, index) => val.productId);
@@ -105,6 +107,30 @@ function ListChargesDetail() {
       }
     });
   };
+  const onSearch = () => {
+    getDataCharges({
+      variables: {
+        currentPage: currentPage,
+        type: 4,
+        pageSize: pageSize,
+        search: search,
+        fromDate: fromDate,
+        toDate: toDate
+      }
+    });
+  }
+  const reset = () => {
+    getDataCharges({
+      variables: {
+        currentPage: 1,
+        type: 4,
+        pageSize: 10,
+        search: '',
+        fromDate: '',
+        toDate: ''
+      }
+    });
+  }
   const columns = [
     {
       title: "Id",
@@ -157,31 +183,23 @@ function ListChargesDetail() {
   return (
     <Row>
       <div>
-        <Link className="btn-view-more">
+        <Link className="btn-view-more" to='/payment/coin'>
           <Icon type="double-left" />
           Quay lại
         </Link>
         <h2>Lịch sử giao dịch</h2>
         <div className="btn-search-charges">
+          <a onClick={reset} style={{display:"flex",alignItems:"center",paddingRight:".25rem"}}>reset</a>
           <Input
             placeholder="Tìm kiếm theo tên c.coin"
             onChange={getProductName}
             style={{ width: "55%" }}
           />
-          {/* <Select
-                        placeholder="Chọn kiểu thanh toán "
-                        style={{ width: 120 }}
-                        onChange={handleChangeType}
-                    >
-                        <Option value="jack">Jack</Option>
-                        <Option value="lucy">Lucy</Option>
-                        <Option value="Yiminghe">yiminghe</Option>
-                    </Select> */}
           <RangePicker
             onChange={handleChangeRangeDates}
             style={{ width: "25%" }}
           />
-          <Button style={{ width: "10%" }}>Search</Button>
+          <Button style={{ width: "10%" }} onClick={onSearch}>Search</Button>
           <ExcelFile
             style={{ width: "10%" }}
             element={
@@ -189,7 +207,7 @@ function ListChargesDetail() {
                 icon="file-excel"
                 type="primary"
                 id="btn_export_excel"
-                disabled={dataExport.length>0?false:true}
+                disabled={dataExport.length > 0 ? false : true}
               >
                 Export Excel
               </Button>
@@ -199,14 +217,14 @@ function ListChargesDetail() {
             <ExcelSheet data={dataExport} name="Lịch sử giao dịch C.coin">
               <ExcelColumn label="Id" value="chargeId" />
               <ExcelColumn label="C.coin" value="baseCoin" />
-              <ExcelColumn label="UserName"  value={user =>
-                  user.username
-                } />
+              <ExcelColumn label="UserName" value={user =>
+                user.user.username
+              } />
               <ExcelColumn label="PaymentType" value="paymentType" />
               <ExcelColumn
                 label="Time"
                 value={time =>
-                  moment.utc(Number(time)).format("HH:mm DD-MM-YYYY")
+                  moment.utc(Number(time.createAt)).format("HH:mm DD-MM-YYYY")
                 }
               />
               <ExcelColumn label="Status" value="status" />

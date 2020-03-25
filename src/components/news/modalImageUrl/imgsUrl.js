@@ -36,6 +36,7 @@ function ListImagesForNews(props) {
   });
   const { isShow, albumId } = isDetailAlbum;
   const { loading, error, data, refetch } = useQuery(queryListImages, {
+    fetchPolicy:'cache-and-network',
     onCompleted: data => setDataImage(data)
   });
   if (loading) return "Loading...";
@@ -62,6 +63,7 @@ function ListImagesForNews(props) {
     setDetailAlbum({ isShow: true, albumId: null });
   };
   const operations = <UploadImagesInNews isThumbnail={props.isThumbnail} />;
+  console.log(props.isThumbnail)
   return (
     <>
       <Modal

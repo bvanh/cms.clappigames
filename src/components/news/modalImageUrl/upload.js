@@ -27,15 +27,14 @@ function UploadImagesInNews(props) {
     cache: apolloCache,
     link: uploadLink
   });
-  console.log(props.isThumnail)
   return (
     <ApolloProvider client={client}>
       <Mutation mutation={UPLOAD_IMAGE}>
         {(singleUploadStream, { data, loading, error }) => {
-          if (data && props.isThumbnail==false) {
-            dispatchSetUrlImage(data.singleUploadImage.url);
-          } else if (data && props.isThumbnail) {
+          if (data && props.isThumbnail) {
             dispatchSetUrlImageThumbnail(data.singleUploadImage.url);
+          }else if (data && props.isThumbnail==false) {
+            dispatchSetUrlImage(data.singleUploadImage.url);
           }
           return (
             <>
