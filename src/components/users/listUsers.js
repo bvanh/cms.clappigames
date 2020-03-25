@@ -107,8 +107,8 @@ function Danhsach() {
       <div className="title">
         <h2>Tổng quan về người dùng</h2>
         <div className="btn-search-users">
-          <a onClick={resetSearch} style={{width:"100px"}}>Quay lại</a>
-          <Input onChange={e => getValueSearch(e)} value={search}/>
+          <a onClick={resetSearch} style={{width:"100px",textAlign:'center'}}>reset</a>
+          <Input onChange={e => getValueSearch(e)} value={search} onPressEnter={resetSearch}/>
           <Button onClick={onSearch}>Search</Button>
         </div>
       </div>

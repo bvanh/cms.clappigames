@@ -24,7 +24,7 @@ function CreateProductCoin(props) {
     type: "",
     sort: null,
     price: null,
-    status: ""
+    status: "INPUT"
   });
   const { productName, status, price, sort, type } = dataProduct;
   const [createCoin] = useMutation(createProduct, {
