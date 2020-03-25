@@ -1,11 +1,23 @@
 import React, { useState, useEffect } from "react";
-import { Table, Button, Radio, Input, Row, Col, Icon, Rate } from "antd";
+import {
+  Table,
+  Button,
+  Radio,
+  Input,
+  Row,
+  Col,
+  Icon,
+  Rate,
+  Select
+} from "antd";
 
 import { queryGetPaymentType } from "../../../../utils/queryPaymentAndPromoType";
 import { createProduct } from "../../../../utils/mutation/productCoin";
 import { useLazyQuery, useMutation, useQuery } from "@apollo/react-hooks";
 import { Link } from "react-router-dom";
 import "../../../../static/style/listProducts.css";
+
+const { Option } = Select;
 const radioStyle = {
   display: "block",
   height: "24px",
@@ -17,7 +29,13 @@ function CreateProductCoin(props) {
   const productId = query.get("productId");
   const [oldDataProduct, setOldDataProduct] = useState({
     statusBtnCancel: false,
-    oldData: { productName: "", type: "", sort: null, price: null, status: "" }
+    oldData: {
+      productName: "",
+      type: "",
+      sort: null,
+      price: null,
+      status: "INPUT"
+    }
   });
   const [dataProduct, setDataProduct] = useState({
     productName: "",
@@ -31,8 +49,9 @@ function CreateProductCoin(props) {
     variables: {
       req: {
         productName: productName,
-        sort: sort,
+        sort: Number(sort),
         price: Number(price),
+        baseCoin:Number(price),
         type: type,
         status: status
       }
@@ -51,12 +70,8 @@ function CreateProductCoin(props) {
       return true;
     }
   };
-  const getNameAndPrice = e => {
+  const getNameAndPriceAndSort = e => {
     setDataProduct({ ...dataProduct, [e.target.name]: e.target.value });
-    setOldDataProduct({ ...oldDataProduct, statusBtnCancel: false });
-  };
-  const getSort = value => {
-    setDataProduct({ ...dataProduct, sort: value });
     setOldDataProduct({ ...oldDataProduct, statusBtnCancel: false });
   };
   const getStatusAndType = e => {
@@ -71,14 +86,17 @@ function CreateProductCoin(props) {
       }
     });
   };
+  const getType = val => {
+    setDataProduct({ ...dataProduct, type: val });
+  };
   const cancelUpdate = () => {
     setDataProduct(oldDataProduct.oldData);
   };
   const { enumValues } = props.data.__type;
   const printPaymentTypes = enumValues.map((val, index) => (
-    <Radio value={val.name} key={index}>
+    <Option value={val.name} key={index}>
       {val.name}
-    </Radio>
+    </Option>
   ));
   return (
     <Row>
@@ -99,13 +117,15 @@ function CreateProductCoin(props) {
               >
                 Hủy
               </Button>
-              <Button onClick={submitUpdateCoin} disabled={checkStatusData()}>Tạo mới C.coin</Button>
+              <Button onClick={submitUpdateCoin} disabled={checkStatusData()}>
+                Tạo mới C.coin
+              </Button>
             </p>
           </div>
         </div>
       </div>
       <Row className="products-content">
-        <Col md={12} className="section1">
+        <Col md={12} className="section1-listcoin">
           <div>
             <div>
               <p className="edit-product-content-title">Mã C.coin</p>
@@ -122,7 +142,7 @@ function CreateProductCoin(props) {
             <span className="edit-product-content-title">Tên C.coin</span>
             <Input
               name="productName"
-              onChange={getNameAndPrice}
+              onChange={getNameAndPriceAndSort}
               value={productName}
             ></Input>
             <span className="edit-product-content-title">Giá (VNĐ)</span>
@@ -130,7 +150,7 @@ function CreateProductCoin(props) {
               type="number"
               max="9990000000"
               name="price"
-              onChange={getNameAndPrice}
+              onChange={getNameAndPriceAndSort}
               value={price}
             ></Input>
             <div>
@@ -138,27 +158,23 @@ function CreateProductCoin(props) {
                 <span className="edit-product-content-title">
                   Thứ tự ưu tiên
                 </span>
-                <Rate count={10} onChange={getSort} value={sort} />
-              </Col>
-              <Col>
-                <span
-                  className="edit-product-content-title"
-                  style={{ marginTop: "5px" }}
-                >
-                  Kiểu thanh toán
-                </span>
-                <Radio.Group
-                  name="type"
-                  onChange={getStatusAndType}
-                  value={type}
-                >
-                  {printPaymentTypes}
-                </Radio.Group>
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <Input
+                    style={{ width: "4rem" }}
+                    type="number"
+                    max="10"
+                    min="1"
+                    name="sort"
+                    onChange={getNameAndPriceAndSort}
+                    value={sort}
+                  ></Input>
+                  <span style={{ paddingLeft: ".2rem" }}>/10</span>
+                </div>
               </Col>
             </div>
           </div>
         </Col>
-        <Col md={8} className="section2">
+        <Col md={6} className="section2">
           <div>
             <p className="edit-product-content-title">Trạng thái</p>
             <Radio.Group
@@ -182,6 +198,14 @@ function CreateProductCoin(props) {
             <span>
               Người tạo: <span>{userName}</span>
             </span>
+          </div>
+        </Col>
+        <Col md={6} className="section2">
+          <div>
+            <p className="edit-product-content-title">Kiểu thanh toán</p>
+            <Select value={type} style={{ width: "100%" }} onChange={getType}>
+              {printPaymentTypes}
+            </Select>
           </div>
         </Col>
       </Row>

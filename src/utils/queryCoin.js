@@ -33,6 +33,7 @@ query listProducts( $productId: String){
     type
     sort
     price
+    status
   }
 }
 `;

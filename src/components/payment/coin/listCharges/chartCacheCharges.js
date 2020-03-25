@@ -164,7 +164,7 @@ const ChartCharges = props => {
           </Option>
         </Select>
         {isSelectDates && (
-          <div className="modal_datepicker">
+          <div className="modal_datepicker-chartCoin">
             <DatePicker
               allowClear={false}
               disabledDate={disabledDate}
@@ -178,7 +178,7 @@ const ChartCharges = props => {
               onChange={e => changeRangeDates(e)}
               className="input_date_chart"
               open={true}
-              dropdownClassName="calendar-select-stats"
+              dropdownClassName="calendar-select-chartsCoin"
               renderExtraFooter={() => (
                 <div className="datepicker_footer">
                   <span

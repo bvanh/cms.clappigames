@@ -10,12 +10,13 @@ import {
   Icon,
   Rate
 } from "antd";
-
+import { queryGetPaymentType } from "../../../../utils/queryPaymentAndPromoType";
 import { queryGetProductById } from "../../../../utils/queryCoin";
 import { updateProduct } from "../../../../utils/mutation/productCoin";
-import { useLazyQuery, useMutation } from "@apollo/react-hooks";
+import { useLazyQuery, useMutation, useQuery } from "@apollo/react-hooks";
 import { Link } from "react-router-dom";
 import "../../../../static/style/listProducts.css";
+const { Option } = Select;
 const radioStyle = {
   display: "block",
   height: "24px",
@@ -36,11 +37,18 @@ function EditProductCoin() {
     price: null,
     status: ""
   });
+  const [paymentType, setPaymentType] = useState([{ name: "" }])
   const [getData] = useLazyQuery(queryGetProductById, {
-    fetchPolicy:"cache-and-network",
+    fetchPolicy: "cache-and-network",
     onCompleted: data => {
+      console.log(data)
       setDataProduct(data.listProducts[0]);
       setOldDataProduct({ ...oldDataProduct, oldData: data.listProducts[0] });
+    }
+  });
+  const { data } = useQuery(queryGetPaymentType, {
+    onCompleted: data => {
+      setPaymentType(data.__type.enumValues);
     }
   });
   useEffect(() => {
@@ -56,19 +64,19 @@ function EditProductCoin() {
       productId: productId,
       req: {
         productName: productName,
-        sort: sort,
+        sort: Number(sort),
         price: Number(price),
+        baseCoin: Number(price),
         type: type,
         status: status
       }
     }
   });
-  const getNameAndPrice = e => {
-    setDataProduct({ ...dataProduct, [e.target.name]: e.target.value });
-    setOldDataProduct({ ...oldDataProduct, statusBtnCancel: false });
+  const getType = val => {
+    setDataProduct({ ...dataProduct, type: val });
   };
-  const getSort = value => {
-    setDataProduct({ ...dataProduct, sort: value });
+  const getNameAndPriceAndSort = e => {
+    setDataProduct({ ...dataProduct, [e.target.name]: e.target.value });
     setOldDataProduct({ ...oldDataProduct, statusBtnCancel: false });
   };
   const getStatus = e => {
@@ -86,6 +94,11 @@ function EditProductCoin() {
   const cancelUpdate = () => {
     setDataProduct(oldDataProduct.oldData);
   };
+  const printPaymentTypes = paymentType.map((val, index) => (
+    <Option value={val.name} key={index}>
+      {val.name}
+    </Option>
+  ));
   if (dataProduct !== null) {
     return (
       <Row>
@@ -118,19 +131,13 @@ function EditProductCoin() {
                 <p className="edit-product-content-title">Mã C.coin</p>
                 <span>Mã tự tạo: {productId} </span>
               </div>
-              <div>
-                <p className="edit-product-content-title">
-                  Đang trong khuyến mãi?
-                </p>
-                <span>Mã KM: Demo </span>
-              </div>
             </div>
             <div className="product-input-update">
               <span className="edit-product-content-title">Tên C.coin</span>
               <Input
                 value={productName}
                 name="productName"
-                onChange={getNameAndPrice}
+                onChange={getNameAndPriceAndSort}
               ></Input>
               <span className="edit-product-content-title">Giá (VNĐ)</span>
               <Input
@@ -138,13 +145,24 @@ function EditProductCoin() {
                 type="number"
                 max="9990000000"
                 name="price"
-                onChange={getNameAndPrice}
+                onChange={getNameAndPriceAndSort}
               ></Input>
               <span className="edit-product-content-title">Thứ tự ưu tiên</span>
-              <Rate value={sort} count={10} onChange={getSort} />
+              <div style={{ display: "flex", alignItems: "center" }}>
+                <Input
+                  style={{ width: "4rem" }}
+                  type="number"
+                  max="10"
+                  min="1"
+                  name="sort"
+                  onChange={getNameAndPriceAndSort}
+                  value={sort}
+                ></Input>
+                <span style={{ paddingLeft: ".2rem" }}>/10</span>
+              </div>
             </div>
           </Col>
-          <Col md={8} className="section2">
+          <Col md={6} className="section2">
             <div>
               <p className="edit-product-content-title">Trạng thái</p>
               <Radio.Group value={status} onChange={getStatus}>
@@ -164,6 +182,14 @@ function EditProductCoin() {
               <span>
                 Người tạo: <span>{userName}</span>
               </span>
+            </div>
+          </Col>
+          <Col md={6} className="section2">
+            <div>
+              <p className="edit-product-content-title">Kiểu thanh toán</p>
+              <Select value={type} style={{ width: "100%" }} onChange={getType}>
+                {printPaymentTypes}
+              </Select>
             </div>
           </Col>
         </Row>
