@@ -15,7 +15,7 @@ function DetailEvent(props) {
   const query = new URLSearchParams(window.location.search);
   const [isShowPromo, setIsShowPromo] = useState("1");
   const [isUpdate, setIsUpdate] = useState(false);
-  const [dataDetail,setDataDetail] = useState("");
+  const [dataDetail, setDataDetail] = useState("");
   const promoId = query.get("id");
   const showConfirm = () => {
     confirm({
@@ -47,49 +47,54 @@ function DetailEvent(props) {
       }
     });
   };
-  useQuery(getDetailEvent(promoId), {
+  const { refetch } = useQuery(getDetailEvent(promoId), {
+    fetchPolicy:"cache-and-network",
     onCompleted: data => {
       dispatchDetailPromoAndEvent(data.listEvents[0]);
-     setDataDetail(JSON.parse(data.listEvents[0].config));
+      setDataDetail(JSON.parse(data.listEvents[0].config));
     }
   });
+  const backToDetail = () => {
+    setIsUpdate(false);
+    refetch();
+  }
   const { name, status, eventTime, config } = props.detailPromo;
   return (
     <>
       {isUpdate ? (
-        <UpdateEvent isUpdate={isUpdate} />
+        <UpdateEvent isUpdate={isUpdate} backToDetail={backToDetail} />
       ) : (
-        <Row>
-          <Link to="/payment/promotion">
-            <span>
-              <Icon type="arrow-left" style={{ paddingRight: ".2rem" }} />
+          <Row>
+            <Link to="/payment/promotion">
+              <span>
+                <Icon type="arrow-left" style={{ paddingRight: ".2rem" }} />
               Quay lại
             </span>
-          </Link>
-          <div className="promo-title">
-            <div className="promo-title-name">
-              <h2>{name}</h2>
-              <Button onClick={showConfirm}>Edit</Button>
+            </Link>
+            <div className="promo-title">
+              <div className="promo-title-name">
+                <h2>{name}</h2>
+                <Button onClick={showConfirm}>Edit</Button>
+              </div>
+              <div>
+                <h3 style={{ margin: "0 1rem 0 0" }}>Trạng thái</h3>
+                <Radio.Group value={status}>
+                  <Radio value="COMPLETE">Kích hoạt</Radio>
+                  <Radio value="INPUT">Ngừng kích hoạt</Radio>
+                </Radio.Group>
+              </div>
             </div>
-            <div>
-              <h3 style={{ margin: "0 1rem 0 0" }}>Trạng thái</h3>
-              <Radio.Group value={status}>
-                <Radio value="COMPLETE">Kích hoạt</Radio>
-                <Radio value="INPUT">Chưa áp dụng</Radio>
-              </Radio.Group>
-            </div>
-          </div>
-          <Tabs activeKey={isShowPromo} onChange={key => setIsShowPromo(key)}>
-            <TabPane tab="Hình thức khuyến mãi" key="1">
-              <TypeEvent dataDetail={dataDetail} />
-            </TabPane>
-            <TabPane tab="Thời gian áp dụng" key="2">
-              <TimePromo />
-            </TabPane>
-            <TabPane tab="Lịch sử khuyến mãi" key="3"></TabPane>
-          </Tabs>
-        </Row>
-      )}
+            <Tabs activeKey={isShowPromo} onChange={key => setIsShowPromo(key)}>
+              <TabPane tab="Hình thức khuyến mãi" key="1">
+                <TypeEvent dataDetail={dataDetail} />
+              </TabPane>
+              <TabPane tab="Thời gian áp dụng" key="2">
+                <TimePromo />
+              </TabPane>
+              <TabPane tab="Lịch sử khuyến mãi" key="3"></TabPane>
+            </Tabs>
+          </Row>
+        )}
     </>
   );
 }

@@ -33,8 +33,10 @@ function UploadImagesInNews(props) {
         {(singleUploadStream, { data, loading, error }) => {
           if (data && props.isThumbnail) {
             dispatchSetUrlImageThumbnail(data.singleUploadImage.url);
+            props.refetch();
           }else if (data && props.isThumbnail==false) {
             dispatchSetUrlImage(data.singleUploadImage.url);
+            props.refetch()
           }
           return (
             <>
@@ -60,7 +62,7 @@ function UploadImagesInNews(props) {
                         }
                       });
                     }
-                    alert("tải thành công");
+                    // alert("tải thành công");
                   }}
                   multiple
                 />

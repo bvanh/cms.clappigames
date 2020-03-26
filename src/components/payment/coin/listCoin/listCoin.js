@@ -32,7 +32,7 @@ function ListCoin(props) {
     productName: "",
     listTypePayment: []
   });
-  const [isCreateCoin, setIsCreateCoin] = useState(false);
+  const [isCreateCoin, setIsCreateCoin] = useState(true);
   const [dataCoin, setDataCoin] = useState(null);
   const [itemsForDelete, setItemsForDelete] = useState([]);
   const {
@@ -197,7 +197,7 @@ function ListCoin(props) {
   ));
   const hasSelected = itemsForDelete.length > 0;
   if (loading) return "Loading...";
-  if (isCreateCoin)
+  if (isCreateCoin)  
     return <CreateProductCoin setIsCreateCoin={setIsCreateCoin} data={data} />;
   if (isCreateCoin === false)
     return (

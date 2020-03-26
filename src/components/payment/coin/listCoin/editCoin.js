@@ -41,7 +41,6 @@ function EditProductCoin() {
   const [getData] = useLazyQuery(queryGetProductById, {
     fetchPolicy: "cache-and-network",
     onCompleted: data => {
-      console.log(data)
       setDataProduct(data.listProducts[0]);
       setOldDataProduct({ ...oldDataProduct, oldData: data.listProducts[0] });
     }

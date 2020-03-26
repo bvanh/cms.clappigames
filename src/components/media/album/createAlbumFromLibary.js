@@ -27,10 +27,6 @@ function CreateAlbumFromLibary(props) {
       let newListImage = data.listUploadedImages.filter(
         (val, i) => val.status !== "INVISIBLE"
       );
-      // const idOldImage = imagesForCreateAlbum.map((val, i) =>
-      //   Number(JSON.parse(val).id)
-      // );
-      // newListImage = newListImage.filter(e => idOldImage.indexOf(e.id) < 0);
       setDataImage(newListImage);
     }
   });

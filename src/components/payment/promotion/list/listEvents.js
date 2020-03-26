@@ -47,7 +47,14 @@ function ListEvents(props) {
     {
       title: "Chi tiết",
       dataIndex: "name",
-      key: "name"
+      key: "name",
+      render: (text, record) => (
+        <span>
+          <Link to={`/payment/promotion/detail/event?id=${record.id}`}>
+            {text}
+          </Link>
+        </span>
+      )
     },
     {
       title: "Hình thức",
@@ -87,17 +94,6 @@ function ListEvents(props) {
       dataIndex: "eventTime",
       key: "endTime",
       render: index => <span>{JSON.parse(index).endTime}</span>
-    },
-    {
-      title: "Action",
-      key: "action",
-      render: (text, record) => (
-        <span>
-          <Link to={`/payment/promotion/detail/event?id=${record.id}`}>
-            Detail
-          </Link>
-        </span>
-      )
     }
   ];
   const onSelectListDelete = (selectedRowKeys, selectedRows) => {
@@ -108,7 +104,7 @@ function ListEvents(props) {
   };
   const handleChangeTypePromo = statusValue => {
     setPageIndex({ ...pageIndex, status: statusValue });
-     getData({
+    getData({
       variables: {
         currentPage: currentPage,
         pageSize: pageSize,
@@ -120,7 +116,7 @@ function ListEvents(props) {
   };
   const goPage = pageNumber => {
     setPageIndex({ ...pageIndex, currentPage: pageNumber });
-     getData({
+    getData({
       variables: {
         currentPage: currentPage,
         pageSize: pageSize,
@@ -134,7 +130,7 @@ function ListEvents(props) {
     setPageIndex({ ...pageIndex, name: e.target.value });
   };
   const onSearchPromo = () => {
-     getData({
+    getData({
       variables: {
         currentPage: currentPage,
         pageSize: pageSize,
@@ -146,7 +142,7 @@ function ListEvents(props) {
   };
   const submitDelete = async () => {
     await deleteEvent();
-     getData({
+    getData({
       variables: {
         currentPage: currentPage,
         pageSize: pageSize,

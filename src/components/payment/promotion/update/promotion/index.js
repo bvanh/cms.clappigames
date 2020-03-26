@@ -134,7 +134,7 @@ function UpdatePromotion(props) {
       }),
     [switchTypeEvent]
   );
-  const resetGameAndServer = () => {};
+  const resetGameAndServer = () => { };
 
   const handleChangePlatform = async e => {
     dispatchResetItemRewards();
@@ -253,6 +253,10 @@ function UpdatePromotion(props) {
     dispatchInititalIndexConfig();
     isCreateEvent ? deletePromo() : console.log(null);
   };
+  const viewDetail=()=>{
+    deleteEvent();
+    props.backToDetail();
+  }
   return (
     <Row className="container-promotion">
       <div>
@@ -263,7 +267,7 @@ function UpdatePromotion(props) {
               Quay lại
             </span>
           </Link>
-          <h2>Thêm mới khuyến mãi</h2>
+          <h2>Chỉnh sửa khuyến mãi</h2>
         </div>
       </div>
       <Col md={12} className="section1-promotion">
@@ -292,17 +296,17 @@ function UpdatePromotion(props) {
               isTimeInPromo={isTimeInPromo}
             />
           ) : (
-            <MenuRewardEventByMoney
-              indexPromoAndEvent={indexPromoAndEvent}
-              setIndexPromoAndEvent={setIndexPromoAndEvent}
-              indexEventByMoney={indexEventByMoney}
-              setIndexEventByMoney={setIndexEventByMoney}
-              server={indexPromoAndEvent.server}
-              listPartner={listPartner}
-              handleChangePlatform={handleChangePlatform}
-              handleChangeServer={handleChangeServer}
-            />
-          )}
+              <MenuRewardEventByMoney
+                indexPromoAndEvent={indexPromoAndEvent}
+                setIndexPromoAndEvent={setIndexPromoAndEvent}
+                indexEventByMoney={indexEventByMoney}
+                setIndexEventByMoney={setIndexEventByMoney}
+                server={indexPromoAndEvent.server}
+                listPartner={listPartner}
+                handleChangePlatform={handleChangePlatform}
+                handleChangeServer={handleChangeServer}
+              />
+            )}
         </div>
       </Col>
       <InputTimeArea
@@ -328,26 +332,26 @@ function UpdatePromotion(props) {
             isTimeInPromo={isTimeInPromo}
           />
         ) : (
-          <InputRewardForShowByMoney
-            successAlert={successAlert}
-            listPartner={listPartner}
-            listItems={listItems}
-            indexPromoAndEvent={indexPromoAndEvent}
-            setIndexPromoAndEvent={setIndexPromoAndEvent}
-            indexEventByMoney={indexEventByMoney}
-            setIndexEventByMoney={setIndexEventByMoney}
-            isUpdate={props.isUpdate}
-          />
-        )}
+            <InputRewardForShowByMoney
+              successAlert={successAlert}
+              listPartner={listPartner}
+              listItems={listItems}
+              indexPromoAndEvent={indexPromoAndEvent}
+              setIndexPromoAndEvent={setIndexPromoAndEvent}
+              indexEventByMoney={indexEventByMoney}
+              setIndexEventByMoney={setIndexEventByMoney}
+              isUpdate={props.isUpdate}
+            />
+          )}
       </Col>
       <Modal
         title={<Icon type="check-circle" />}
         visible={alertUpdateSuccess}
         onCancel={() => setAlertUpdateSuccess(false)}
         onOk={() => {
-          isCreateEvent ? deletePromo() : deleteEvent();
+          isCreateEvent ? deletePromo() : viewDetail();
         }}
-        okText={<Link to="/payment/promotion">Xem danh sách</Link>}
+        okText={isCreateEvent ? <Link to={`/payment/promotion/detail/event?id=${props.idCreatePromoAndEvent}`}>Xem chi tiết</Link> : <span>Xem chi tiết</span>}
         cancelText="Hủy bỏ"
       ></Modal>
     </Row>

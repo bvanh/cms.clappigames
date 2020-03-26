@@ -54,7 +54,14 @@ function ListPromo() {
     {
       title: "Chi tiết",
       dataIndex: "name",
-      key: "name"
+      key: "name",
+      render: (text, record) => (
+        <span>
+          <Link to={`/payment/promotion/detail/promotion?id=${record.id}`}>
+            {text}
+          </Link>
+        </span>
+      )
     },
     {
       title: "Hình thức",
@@ -85,18 +92,6 @@ function ListPromo() {
       dataIndex: "eventTime",
       key: "endTime",
       render: index => <span>{JSON.parse(index).endTime}</span>
-    }
-    ,
-    {
-      title: "Action",
-      key: "action",
-      render: (text, record) => (
-        <span>
-          <Link to={`/payment/promotion/detail/promotion?id=${record.id}`}>
-            Detail
-          </Link>
-        </span>
-      )
     }
   ];
   const handleChangeTypePromo = statusValue => {

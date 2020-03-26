@@ -27,5 +27,5 @@ tbody {
   display: block;
 }
 .reset-btn-hide{
-  display: none;
+  display: none !important;
 }

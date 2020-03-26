@@ -135,7 +135,14 @@ function ListChargesDetail() {
     });
   };
   const reset = () => {
-    setPageIndex({ ...pageIndex, search: "" });
+    setPageIndex({
+      currentPage: 1,
+      type: 4,
+      pageSize: 10,
+      search: "",
+      fromDate: "",
+      toDate: ""
+    });
     getDataCharges({
       variables: {
         currentPage: 1,
@@ -187,7 +194,7 @@ function ListChargesDetail() {
       title: "Status",
       dataIndex: "status",
       key: "status",
-      render: index => <span>{index === "INPUT" ? "NOT DONE" : "DONE"}</span>
+      render: index => <span>{index === "INPUT" ? "PENDING" : "DONE"}</span>
     }
   ];
   const printOptionDates = listSelectDates.map((val, i) => (
@@ -210,40 +217,56 @@ function ListChargesDetail() {
             onChange={getProductName}
             style={{ width: "50%", marginRight: "2%" }}
             suffix={
-              <Tooltip
-                title="reset"
+              <Icon
                 className={search !== "" ? "reset-btn-show" : "reset-btn-hide"}
-              >
-                <Icon
-                  type="close"
-                  style={{ color: "rgba(0,0,0,.45)" }}
-                  onClick={reset}
-                />
-              </Tooltip>
+                type="close"
+                style={{ color: "rgba(0,0,0,.45)" }}
+                onClick={reset}
+              />
             }
           />
-          <DatePicker
-            onChange={handleChangeFromDates}
-            disabledDate={disabledDate}
-            style={{ width: "12%", marginRight: ".5%" }}
-          />
-          <DatePicker
-            onChange={handleChangeToDates}
-            disabledDate={disabledEndDate}
-            style={{ width: "12%", marginRight: ".5%" }}
-            suffixIcon={
-              <Tooltip
-                title="reset"
-                className={search !== "" ? "reset-btn-show" : "reset-btn-hide"}
-              >
-                <Icon
-                  type="close"
-                  style={{ color: "rgba(0,0,0,.45)" }}
-                  onClick={reset}
-                />
-              </Tooltip>
-            }
-          />
+          <div
+            style={{ width: "12%", marginRight: ".5%", position: "relative" }}
+          >
+            <DatePicker
+              allowClear={false}
+              value={fromDate === "" ? null : moment(fromDate, "YYYY-MM-DD")}
+              onChange={handleChangeFromDates}
+              disabledDate={disabledDate}
+              style={{ width: "100%" }}
+              placeholder="FromDate"
+              className="date-picker-search"
+            />
+            <Icon
+              className={
+                toDate !== "" ? "icon-reset-date" : "icon-reset-date-hide"
+              }
+              type="close"
+              style={{ color: "rgba(0,0,0,.45)" }}
+              onClick={reset}
+            />
+          </div>
+          <div
+            style={{ width: "12%", marginRight: ".5%", position: "relative" }}
+          >
+            <DatePicker
+              allowClear={false}
+              value={toDate === "" ? null : moment(toDate, "YYYY-MM-DD")}
+              placeholder="ToDate"
+              onChange={handleChangeToDates}
+              disabledDate={disabledEndDate}
+              style={{ width: "100%" }}
+              className="date-picker-search"
+            />
+            <Icon
+              className={
+                toDate !== "" ? "icon-reset-date" : "icon-reset-date-hide"
+              }
+              type="close"
+              style={{ color: "rgba(0,0,0,.45)" }}
+              onClick={reset}
+            />
+          </div>
           <Button style={{ width: "10%", margin: "0 1.5%" }} onClick={onSearch}>
             Search
           </Button>

@@ -48,7 +48,7 @@ function AlbumDetailImages(props) {
   ));
   return (
     <Checkbox.Group className='list-album-news'>
-      <Radio.Group buttonStyle="solid" onChange={getUrl} value={null}>
+      <Radio.Group buttonStyle="solid" onChange={getUrl}>
         {printListImages}
       </Radio.Group>
     </Checkbox.Group>

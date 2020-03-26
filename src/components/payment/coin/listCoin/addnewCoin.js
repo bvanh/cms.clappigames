@@ -10,12 +10,15 @@ import {
   Rate,
   Select
 } from "antd";
-
+import { dispatchShowImagesNews, dispatchSetUrlImageThumbnail } from "../../../../redux/actions/index";
+import ListImagesForNews from "../../../news/modalImageUrl/imgsUrl";
+import { connect } from "react-redux";
 import { queryGetPaymentType } from "../../../../utils/queryPaymentAndPromoType";
 import { createProduct } from "../../../../utils/mutation/productCoin";
 import { useLazyQuery, useMutation, useQuery } from "@apollo/react-hooks";
 import { Link } from "react-router-dom";
 import "../../../../static/style/listProducts.css";
+
 
 const { Option } = Select;
 const radioStyle = {
@@ -27,6 +30,7 @@ function CreateProductCoin(props) {
   const userName = localStorage.getItem("userNameCMS");
   const query = new URLSearchParams(window.location.search);
   const productId = query.get("productId");
+
   const [oldDataProduct, setOldDataProduct] = useState({
     statusBtnCancel: false,
     oldData: {
@@ -44,6 +48,9 @@ function CreateProductCoin(props) {
     price: null,
     status: "INPUT"
   });
+  useEffect(() => {
+    dispatchSetUrlImageThumbnail(null);
+  }, [])
   const { productName, status, price, sort, type } = dataProduct;
   const [createCoin] = useMutation(createProduct, {
     variables: {
@@ -51,9 +58,10 @@ function CreateProductCoin(props) {
         productName: productName,
         sort: Number(sort),
         price: Number(price),
-        baseCoin:Number(price),
+        baseCoin: Number(price),
         type: type,
-        status: status
+        status: status,
+        image: props.urlImgThumbnail
       }
     }
   });
@@ -92,12 +100,12 @@ function CreateProductCoin(props) {
   const cancelUpdate = () => {
     setDataProduct(oldDataProduct.oldData);
   };
-  const { enumValues } = props.data.__type;
-  const printPaymentTypes = enumValues.map((val, index) => (
-    <Option value={val.name} key={index}>
-      {val.name}
-    </Option>
-  ));
+  // const { enumValues } = props.data.__type;
+  // const printPaymentTypes = enumValues.map((val, index) => (
+  //   <Option value={val.name} key={index}>
+  //     {val.name}
+  //   </Option>
+  // ));
   return (
     <Row>
       <Link to="/payment/coin" onClick={() => props.setIsCreateCoin(false)}>
@@ -130,12 +138,6 @@ function CreateProductCoin(props) {
             <div>
               <p className="edit-product-content-title">Mã C.coin</p>
               <span>Mã tự tạo: AUTO </span>
-            </div>
-            <div>
-              <p className="edit-product-content-title">
-                Đang trong khuyến mãi?
-              </p>
-              <span>Mã KM: Demo </span>
             </div>
           </div>
           <div className="product-input-update">
@@ -172,6 +174,15 @@ function CreateProductCoin(props) {
                 </div>
               </Col>
             </div>
+            <div>
+              <span className="edit-product-content-title">Ảnh</span>
+            </div>
+            <div style={{ width: "100px" }}>
+              <img src={props.urlImgThumbnail} width="100%" />
+            </div>
+            <div>
+              <a onClick={() => dispatchShowImagesNews(true)}>Chọn ảnh</a>
+            </div>
           </div>
         </Col>
         <Col md={6} className="section2">
@@ -204,13 +215,19 @@ function CreateProductCoin(props) {
           <div>
             <p className="edit-product-content-title">Kiểu thanh toán</p>
             <Select value={type} style={{ width: "100%" }} onChange={getType}>
-              {printPaymentTypes}
+              {/* {printPaymentTypes} */}
             </Select>
           </div>
         </Col>
+        <ListImagesForNews isThumbnail={true} />
       </Row>
     </Row>
   );
 }
-
-export default CreateProductCoin;
+function mapStateToProps(state) {
+  return {
+    visible: state.visibleModalNews,
+    urlImgThumbnail: state.urlImgThumbnail
+  };
+}
+export default connect(mapStateToProps, null)(CreateProductCoin);
