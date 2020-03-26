@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Table, Button, Pagination, Input } from "antd";
+import { Table, Button, Pagination, Input,Tooltip,Icon } from "antd";
 import { queryGetListUsers } from "../../utils/queryUsers";
 import { useLazyQuery, useQuery } from "@apollo/react-hooks";
 import { Link } from "react-router-dom";
@@ -107,8 +107,16 @@ function Danhsach() {
       <div className="title">
         <h2>Tổng quan về người dùng</h2>
         <div className="btn-search-users">
-          <a onClick={resetSearch} style={{width:"100px",textAlign:'center'}}>reset</a>
-          <Input onChange={e => getValueSearch(e)} value={search} onPressEnter={resetSearch}/>
+          <Input
+            onChange={e => getValueSearch(e)}
+            value={search}
+            onPressEnter={resetSearch}
+            suffix={
+              <Tooltip title="reset" className={search!==''?'reset-btn-show':'reset-btn-hide'}>
+                <Icon type="close" style={{ color: "rgba(0,0,0,.45)" }} onClick={resetSearch}/>
+              </Tooltip>
+            }
+          />
           <Button onClick={onSearch}>Search</Button>
         </div>
       </div>

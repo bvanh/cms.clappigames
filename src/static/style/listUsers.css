@@ -23,3 +23,9 @@ tbody {
     justify-content: space-between;
     align-items: center;
 }
+.reset-btn-show{
+  display: block;
+}
+.reset-btn-hide{
+  display: none;
+}

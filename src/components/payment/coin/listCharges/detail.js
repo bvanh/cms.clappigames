@@ -8,7 +8,8 @@ import {
   Col,
   Select,
   Icon,
-  DatePicker
+  DatePicker,
+  Tooltip
 } from "antd";
 import moment from "moment";
 import {
@@ -44,15 +45,12 @@ function ListChargesDetail() {
   const [dataExport, setDataExport] = useState([]);
   const { currentPage, pageSize, type, search, fromDate, toDate } = pageIndex;
   const { TODAY } = dates;
-  const [getDataCharges, { loading, data }] = useLazyQuery(
-    queryGetListCharges,
-    {
-      fetchPolicy: "cache-and-network",
-      onCompleted: data => {
-        setDataCharges(data);
-      }
+  const [getDataCharges] = useLazyQuery(queryGetListCharges, {
+    fetchPolicy: "cache-and-network",
+    onCompleted: data => {
+      setDataCharges(data);
     }
-  );
+  });
   useEffect(() => {
     getDataCharges({
       variables: {
@@ -78,19 +76,36 @@ function ListChargesDetail() {
       }
     });
   };
-  const handleChangeRangeDates = (value, dateString) => {
-    // changeDates(value);
-    console.log(dateString);
+  const disabledDate = current => {
+    return current && current > moment().endOf("day");
   };
-  const handleChangeType = () => { };
-  const getProductName = (e) => {
-    setPageIndex({ ...pageIndex, search: e.target.value })
+  const disabledEndDate = current => {
+    if (fromDate !== "") {
+      return (
+        (current &&
+          current <
+            moment(fromDate)
+              .subtract(1, "days")
+              .endOf("day")) ||
+        current > moment().endOf("day")
+      );
+    }
+  };
+  const handleChangeFromDates = (value, dateString) => {
+    setPageIndex({ ...pageIndex, fromDate: dateString });
+  };
+  const handleChangeToDates = (value, dateString) => {
+    setPageIndex({ ...pageIndex, toDate: dateString });
+  };
+  const handleChangeType = () => {};
+  const getProductName = e => {
+    setPageIndex({ ...pageIndex, search: e.target.value });
   };
   const rowSelection = {
     onChange: (selectRowsKeys, selectedRows) => {
       //   const itemsIdForDelete = selectedRows.map((val, index) => val.productId);
       //   setItemsForDelete(itemsIdForDelete);
-      console.log(selectedRows)
+      console.log(selectedRows);
       setDataExport(selectedRows);
     }
   };
@@ -118,19 +133,20 @@ function ListChargesDetail() {
         toDate: toDate
       }
     });
-  }
+  };
   const reset = () => {
+    setPageIndex({ ...pageIndex, search: "" });
     getDataCharges({
       variables: {
         currentPage: 1,
         type: 4,
         pageSize: 10,
-        search: '',
-        fromDate: '',
-        toDate: ''
+        search: "",
+        fromDate: "",
+        toDate: ""
       }
     });
-  }
+  };
   const columns = [
     {
       title: "Id",
@@ -179,29 +195,61 @@ function ListChargesDetail() {
       {val.days}
     </Option>
   ));
-  if (loading) return "Loading...";
   return (
     <Row>
       <div>
-        <Link className="btn-view-more" to='/payment/coin'>
+        <Link to="/payment/coin">
           <Icon type="double-left" />
           Quay lại
         </Link>
         <h2>Lịch sử giao dịch</h2>
         <div className="btn-search-charges">
-          <a onClick={reset} style={{display:"flex",alignItems:"center",paddingRight:".25rem"}}>reset</a>
           <Input
+            value={search}
             placeholder="Tìm kiếm theo tên c.coin"
             onChange={getProductName}
-            style={{ width: "55%" }}
+            style={{ width: "50%", marginRight: "2%" }}
+            suffix={
+              <Tooltip
+                title="reset"
+                className={search !== "" ? "reset-btn-show" : "reset-btn-hide"}
+              >
+                <Icon
+                  type="close"
+                  style={{ color: "rgba(0,0,0,.45)" }}
+                  onClick={reset}
+                />
+              </Tooltip>
+            }
           />
-          <RangePicker
-            onChange={handleChangeRangeDates}
-            style={{ width: "25%" }}
+          <DatePicker
+            onChange={handleChangeFromDates}
+            disabledDate={disabledDate}
+            style={{ width: "12%", marginRight: ".5%" }}
           />
-          <Button style={{ width: "10%" }} onClick={onSearch}>Search</Button>
+          <DatePicker
+            onChange={handleChangeToDates}
+            disabledDate={disabledEndDate}
+            style={{ width: "12%", marginRight: ".5%" }}
+            suffixIcon={
+              <Tooltip
+                title="reset"
+                className={search !== "" ? "reset-btn-show" : "reset-btn-hide"}
+              >
+                <Icon
+                  type="close"
+                  style={{ color: "rgba(0,0,0,.45)" }}
+                  onClick={reset}
+                />
+              </Tooltip>
+            }
+          />
+          <Button style={{ width: "10%", margin: "0 1.5%" }} onClick={onSearch}>
+            Search
+          </Button>
           <ExcelFile
-            style={{ width: "10%" }}
+            className="btn-export"
+            style={{ width: "8%", marginLeft: "2%" }}
             element={
               <Button
                 icon="file-excel"
@@ -217,9 +265,10 @@ function ListChargesDetail() {
             <ExcelSheet data={dataExport} name="Lịch sử giao dịch C.coin">
               <ExcelColumn label="Id" value="chargeId" />
               <ExcelColumn label="C.coin" value="baseCoin" />
-              <ExcelColumn label="UserName" value={user =>
-                user.user.username
-              } />
+              <ExcelColumn
+                label="UserName"
+                value={user => user.user.username}
+              />
               <ExcelColumn label="PaymentType" value="paymentType" />
               <ExcelColumn
                 label="Time"
