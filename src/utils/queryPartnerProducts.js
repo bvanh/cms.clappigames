@@ -17,9 +17,6 @@ const queryGetListPartnerProducts = gql`
         partnerProductId
         partnerId 
         productName
-        promotion {
-          id
-        }
         coin
         createAt
       }
@@ -85,7 +82,6 @@ const queryGetPartnerProductById = gql`
       productName
       partnerId
       partnerProductName
-      promotionId
       coin
       productId
     }

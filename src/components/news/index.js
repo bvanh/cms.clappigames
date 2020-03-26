@@ -19,6 +19,7 @@ function ListNews() {
   const [listNewsDelete, setItemsForDelete] = useState([]);
   const { currentPage, pageSize, search } = pageIndex;
   const [getData] = useLazyQuery(queryGetNews, {
+    fetchPolicy:"cache-and-network",
     onCompleted: data => setData(data.listNewsByType)
   });
   useEffect(() => {

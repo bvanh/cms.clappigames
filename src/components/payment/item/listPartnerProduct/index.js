@@ -58,12 +58,6 @@ function ListPartnerItems() {
       key: "coin"
     },
     {
-      title: "Promotion",
-      dataIndex: "promotion",
-      key: "discount",
-      render: index => <span>{index === null ? "NO" : "YES"}</span>
-    },
-    {
       title: "Game",
       dataIndex: "partnerId",
       key: "partnerId"

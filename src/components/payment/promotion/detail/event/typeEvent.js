@@ -127,7 +127,7 @@ function TypeEvent(props) {
                   mode="multiple"
                   value={val.rewards}
                   style={{ width: "70%" }}
-                  // onChange={value => handleChooseItem(index1, value)}
+                  dropdownClassName="dropdown-coin-event"
                 >
                   {printItemsEvent}
                 </Select>{" "}

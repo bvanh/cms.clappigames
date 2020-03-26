@@ -91,10 +91,23 @@
   top: 39px;
   right: 0;
 }
-.calendar-select-chartsCoin{
+.calendar-select-chartsCoin {
   top: 140px;
   left: 1027px;
 }
-.calendar-select-chartsCoin>div{
+.calendar-select-chartsCoin > div {
   width: 365px;
+}
+.icon-reset-date {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  z-index: 9999;
+  cursor: pointer;
+}
+.date-picker-search>div>i{
+  display: none;
+}
+.icon-reset-date-hide{
+  display: none;
 }

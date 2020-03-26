@@ -144,7 +144,7 @@ function UpdateEvent(props) {
       }
     });
   };
-  const resetGameAndServer = () => {};
+  const resetGameAndServer = () => { };
   const handleChangePlatformPromo = async e => {
     dispatchResetItemRewards();
     setIndexShop([
@@ -240,7 +240,10 @@ function UpdateEvent(props) {
     dispatchInititalIndexConfig();
     isCreatePromo ? deleteEvent() : console.log(null);
   };
-
+  const viewDetail=()=>{
+    deletePromo();
+    props.backToDetail();
+  }
   return (
     <Row className="container-promotion">
       <div>
@@ -251,7 +254,7 @@ function UpdateEvent(props) {
               Quay lại
             </span>
           </Link>
-          <h2>Thêm mới khuyến mãi</h2>
+          <h2>Chỉnh sửa khuyến mãi</h2>
         </div>
       </div>
       <Col md={12} className="section1-promotion">
@@ -277,18 +280,18 @@ function UpdateEvent(props) {
               handleChangeServerPromo={handleChangeServerPromo}
             />
           ) : (
-            <MenuRewardEventByMoney
-              indexPromoAndEvent={indexPromoAndEvent}
-              setIndexPromoAndEvent={setIndexPromoAndEvent}
-              indexEventByMoney={indexEventByMoney}
-              setIndexEventByMoney={setIndexEventByMoney}
-              server={server}
-              listPartner={listPartner}
-              handleChangePlatform={handleChangePlatform}
-              handleChangeServer={handleChangeServer}
-              isTimeInPromo={isTimeInPromo}
-            />
-          )}
+              <MenuRewardEventByMoney
+                indexPromoAndEvent={indexPromoAndEvent}
+                setIndexPromoAndEvent={setIndexPromoAndEvent}
+                indexEventByMoney={indexEventByMoney}
+                setIndexEventByMoney={setIndexEventByMoney}
+                server={server}
+                listPartner={listPartner}
+                handleChangePlatform={handleChangePlatform}
+                handleChangeServer={handleChangeServer}
+                isTimeInPromo={isTimeInPromo}
+              />
+            )}
         </div>
       </Col>
       <InputTimeArea
@@ -314,28 +317,28 @@ function UpdateEvent(props) {
             successAlert={successAlert}
           />
         ) : (
-          <InputRewardForShowByMoney
-            successAlert={successAlert}
-            listPartner={listPartner}
-            listItems={listItems}
-            switchTypeEvent={switchTypeEvent}
-            indexPromoAndEvent={indexPromoAndEvent}
-            setIndexPromoAndEvent={setIndexPromoAndEvent}
-            indexEventByMoney={indexEventByMoney}
-            setIndexEventByMoney={setIndexEventByMoney}
-            setIsCreatePromo={setIsCreatePromo}
-            isTimeInPromo={isTimeInPromo}
-          />
-        )}
+            <InputRewardForShowByMoney
+              successAlert={successAlert}
+              listPartner={listPartner}
+              listItems={listItems}
+              switchTypeEvent={switchTypeEvent}
+              indexPromoAndEvent={indexPromoAndEvent}
+              setIndexPromoAndEvent={setIndexPromoAndEvent}
+              indexEventByMoney={indexEventByMoney}
+              setIndexEventByMoney={setIndexEventByMoney}
+              setIsCreatePromo={setIsCreatePromo}
+              isTimeInPromo={isTimeInPromo}
+            />
+          )}
       </Col>
       <Modal
         title={<Icon type="check-circle" />}
         visible={alertUpdateSuccess}
         onCancel={() => setAlertUpdateSuccess(false)}
         onOk={() => {
-          isCreatePromo ? deleteEvent() : deletePromo();
+          isCreatePromo ? deleteEvent() : viewDetail();
         }}
-        okText={<Link to="/payment/promotion">Xem danh sách</Link>}
+        okText={isCreatePromo ? <Link to={`/payment/promotion/detail/promotion?id=${props.idCreatePromoAndEvent}`}>Xem chi tiết</Link> : <span >Xem chi tiết</span>}
         cancelText="Tiếp tục"
       ></Modal>
     </Row>

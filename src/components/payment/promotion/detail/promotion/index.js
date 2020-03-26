@@ -44,16 +44,21 @@ function DetailPromotion(props) {
       }
     });
   };
-  useQuery(getDetailPromotion(promoId), {
+  const { refetch } = useQuery(getDetailPromotion(promoId), {
+    fetchPolicy: "cache-and-network",
     onCompleted: data => {
       dispatchDetailPromoAndEvent(data.listPromotions[0]);
     }
   });
+  const backToDetail = () => {
+    setIsUpdate(false);
+    refetch();
+  }
   const { name, status, eventTime, type, shop } = props.detailPromo;
   return (
     <>
       {isUpdate ? (
-        <UpdatePromotion isUpdate={isUpdate} />
+        <UpdatePromotion isUpdate={isUpdate} backToDetail={backToDetail} />
       ) : (
           <Row>
             <Link to="/payment/promotion">
@@ -71,7 +76,7 @@ function DetailPromotion(props) {
                 <h3 style={{ margin: "0 1rem 0 0" }}>Trạng thái</h3>
                 <Radio.Group value={status}>
                   <Radio value="COMPLETE">Kích hoạt</Radio>
-                  <Radio value="INPUT">Chưa áp dụng</Radio>
+                  <Radio value="INPUT">Ngừng kích hoạt</Radio>
                 </Radio.Group>
               </div>
             </div>

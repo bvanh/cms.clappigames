@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Upload,
   Checkbox,
@@ -12,8 +12,8 @@ import {
   Radio,
   Tabs
 } from "antd";
-import UploadImagesInNews from './upload'
-import { useQuery, useMutation } from "@apollo/react-hooks";
+import UploadImagesInNews from "./upload";
+import { useQuery, useMutation, useLazyQuery } from "@apollo/react-hooks";
 import { queryListImages } from "../../../utils/queryMedia";
 import { connect } from "react-redux";
 import AlbumImageInNews from "./albumImageNews";
@@ -35,13 +35,16 @@ function ListImagesForNews(props) {
     albumId: null
   });
   const { isShow, albumId } = isDetailAlbum;
-  const { loading, error, data, refetch } = useQuery(queryListImages, {
-    fetchPolicy:'cache-and-network',
-    onCompleted: data => setDataImage(data)
+  const [getListImages] = useLazyQuery(queryListImages, {
+    fetchPolicy: "cache-and-network",
+    onCompleted: data => {
+      setDataImage(data.listUploadedImages);
+    }
   });
-  if (loading) return "Loading...";
-  if (error) return `Error! ${error.message}`;
-  const printListImages = data.listUploadedImages.map(function (val, index) {
+  useEffect(() => {
+    getListImages();
+  }, []);
+  const printListImages = dataImage.map(function(val, index) {
     if (val.status !== "INVISIBLE") {
       return (
         <Radio value={val.url} key={index} className="list-images-news">
@@ -53,17 +56,20 @@ function ListImagesForNews(props) {
   });
   const getUrl = e => {
     if (props.isThumbnail) {
-      dispatchSetUrlImageThumbnail(e.target.value)
+      dispatchSetUrlImageThumbnail(e.target.value);
     } else {
       dispatchSetUrlImage(e.target.value);
     }
-
   };
   const setIsAlbum = () => {
     setDetailAlbum({ isShow: true, albumId: null });
   };
-  const operations = <UploadImagesInNews isThumbnail={props.isThumbnail} />;
-  console.log(props.isThumbnail)
+  const operations = (
+    <UploadImagesInNews
+      isThumbnail={props.isThumbnail}
+      refetch={getListImages}
+    />
+  );
   return (
     <>
       <Modal
@@ -86,7 +92,13 @@ function ListImagesForNews(props) {
         <Tabs type="card" tabBarExtraContent={operations}>
           <TabPane tab="Tất cả ảnh" key="1">
             <Row className="listImages_news">
-              <Radio.Group buttonStyle="solid" onChange={getUrl} value={null}>
+              <Radio.Group
+                buttonStyle="solid"
+                onChange={getUrl}
+                value={
+                  props.isThumbnail ? props.urlImgThumbnail : props.urlImgNews
+                }
+              >
                 {printListImages}
               </Radio.Group>
             </Row>
@@ -103,8 +115,11 @@ function ListImagesForNews(props) {
             {isShow ? (
               <AlbumImageInNews setDetailAlbum={setDetailAlbum} />
             ) : (
-                <AlbumDetailImages albumId={albumId} isThumbnail={props.isThumbnail} />
-              )}
+              <AlbumDetailImages
+                albumId={albumId}
+                isThumbnail={props.isThumbnail}
+              />
+            )}
           </TabPane>
         </Tabs>
       </Modal>
@@ -114,7 +129,8 @@ function ListImagesForNews(props) {
 function mapStateToProps(state) {
   return {
     visible: state.visibleModalNews,
-    urlImgNews: state.urlImgNews
+    urlImgNews: state.urlImgNews,
+    urlImgThumbnail: state.urlImgThumbnail
   };
 }
 export default connect(mapStateToProps, null)(ListImagesForNews);
