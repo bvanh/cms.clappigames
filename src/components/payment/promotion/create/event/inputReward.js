@@ -266,7 +266,6 @@ function InputrewardForShowByMoney(props) {
             type="number"
             name="pucharseTimes"
             onChange={e => handleChooseNumbItem(index1, e)}
-            // style={{ width: "1%" }}
           ></Input>
           <span style={{ marginLeft: ".2rem" }}>
             {props.nameEventByMoney === "MONEY" ? "VNĐ" : "C.COIN"}

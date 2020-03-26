@@ -109,24 +109,28 @@ function InputTimeArea(props) {
         <h3 className="promotion-title-field">Thời gian áp dụng </h3>
         <div className="section2-promotion-pickTime">
           <h3>Thời gian: </h3>
-          <DatePicker
-            showTime={{ format: "HH:mm" }}
-            format="YYYY-MM-DD HH:mm"
-            defaultValue={moment(timeTotal[0], "YYYY-MM-DD HH:mm")}
-            placeholder="Start"
-            allowClear={false}
-            onChange={props.handleStartTimeTotal}
-            disabled={props.isTimeInPromo}
-          />
-          <DatePicker
-            disabledDate={disabledEndDate}
-            showTime={{ format: "HH:mm" }}
-            format="YYYY-MM-DD HH:mm"
-            defaultValue={moment(timeTotal[1], "YYYY-MM-DD HH:mm")}
-            placeholder="End"
-            allowClear={false}
-            onChange={props.handleEndTimeTotal}
-          />
+          <div style={{ width: "80%" }}>
+            <DatePicker
+              showTime={{ format: "HH:mm" }}
+              format="YYYY-MM-DD HH:mm"
+              defaultValue={moment(timeTotal[0], "YYYY-MM-DD HH:mm")}
+              placeholder="Start"
+              style={{ width: "49.5%", marginRight: ".5%", minWidth: "0" }}
+              allowClear={false}
+              onChange={props.handleStartTimeTotal}
+              disabled={props.isTimeInPromo}
+            />
+            <DatePicker
+              disabledDate={disabledEndDate}
+              style={{ width: "49.5%", marginLeft: ".5%", minWidth: "0" }}
+              showTime={{ format: "HH:mm" }}
+              format="YYYY-MM-DD HH:mm"
+              defaultValue={moment(timeTotal[1], "YYYY-MM-DD HH:mm")}
+              placeholder="End"
+              allowClear={false}
+              onChange={props.handleEndTimeTotal}
+            />
+          </div>
         </div>
         <div className="section2-promotion-pickTime">
           <h3>Theo ngày: </h3>
@@ -168,7 +172,7 @@ function InputTimeArea(props) {
                 props.setTimePromo(timeString, "startTime")
               }
               value={startTime === "" ? null : moment(startTime, "HH:mm")}
-              style={{ width: "50%" }}
+              style={{ width: "50%", marginLeft: ".5%" }}
               addon={() => (
                 <Button size="small" type="primary" onClick={pickAllDay}>
                   24h
@@ -180,7 +184,7 @@ function InputTimeArea(props) {
               allowClear={false}
               minuteStep={10}
               value={endTime === "" ? null : moment(endTime, "HH:mm")}
-              style={{ width: "50%" }}
+              style={{ width: "49.5%", marginLeft: ".5%" }}
               format={"HH:mm"}
               placeholder="- Giờ kết thúc"
               onOpenChange={openPickTime}
