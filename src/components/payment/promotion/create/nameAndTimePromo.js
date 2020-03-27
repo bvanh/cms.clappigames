@@ -172,7 +172,7 @@ function InputTimeArea(props) {
                 props.setTimePromo(timeString, "startTime")
               }
               value={startTime === "" ? null : moment(startTime, "HH:mm")}
-              style={{ width: "50%", marginLeft: ".5%" }}
+              style={{ width: "49.5%", marginLeft: ".5%" }}
               addon={() => (
                 <Button size="small" type="primary" onClick={pickAllDay}>
                   24h

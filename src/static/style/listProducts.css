@@ -23,6 +23,7 @@
 .products-content > .section1 > div > div {
   display: flex;
   flex-direction: column;
+  width: 100%;
 }
 .products-content > .section1 > div > div > span {
   padding-left: 1rem;

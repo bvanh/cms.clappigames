@@ -160,6 +160,7 @@ function CreatePartnerItems(props) {
               <Button
                 onClick={cancelUpdate}
                 disabled={oldDataPartnerProduct.statusBtnCancel}
+                style={{marginRight:".5rem"}}
               >
                 Hủy
               </Button>
@@ -184,30 +185,22 @@ function CreatePartnerItems(props) {
         </div>
       </div>
       <Row className="products-content">
-        <Col md={12} className="section1">
+        <Col md={12} className="section1-listcoin">
           <div>
             <div>
               <p className="edit-product-content-title">Mã C.coin</p>
               <span>Mã tự tạo: {partnerProductId} </span>
             </div>
-            <div>
-              <p className="edit-product-content-title">
-                Đang trong khuyến mãi?
-              </p>
-              <span>Mã KM: Demo </span>
-            </div>
           </div>
           <div className="product-input-update">
-            <div>
               <span className="edit-product-content-title">Tên Game</span>
               <Select
                 value={partnerId}
-                style={{ width: 120 }}
+                style={{ width: '100%' }}
                 onChange={changePartnerName}
               >
                 {printPlatform}
-              </Select>
-            </div>
+              </Select>       
             <span className="edit-product-content-title">ProductIdAndName</span>
             <Select
               value={
@@ -235,13 +228,13 @@ function CreatePartnerItems(props) {
               name="coin"
               onChange={getNewInfoItem}
             ></Input>
-            <span className="edit-product-content-title">Mã khuyến mãi</span>
+            {/*<span className="edit-product-content-title">Mã khuyến mãi</span>
             <Input
               value={promotionId}
               type="number"
               name="promotionId"
               onChange={getNewInfoItem}
-            ></Input>
+            ></Input>*/}
           </div>
         </Col>
         <Col md={8} className="section2">

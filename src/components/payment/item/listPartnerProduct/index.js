@@ -119,11 +119,8 @@ function ListPartnerItems() {
             <div>
               <h2>Quản lý Item</h2>
               <div className="view-more">
-                 {/*<a className="btn-view-more">
-                  Chi tiết <Icon type="double-right" />
-    </a>*/}
                 <Link to="/payment/items" onClick={() => setIsCreateItem(true)}>
-                  <Button icon="plus">Thêm gói C.coin</Button>
+                  <Button icon="plus">Thêm mới Item</Button>
                 </Link>
               </div>
             </div>

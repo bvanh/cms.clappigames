@@ -7,10 +7,13 @@ import {
   Row,
   Col,
   Icon,
-  Rate,
+  Modal,
   Select
 } from "antd";
-import { dispatchShowImagesNews, dispatchSetUrlImageThumbnail } from "../../../../redux/actions/index";
+import {
+  dispatchShowImagesNews,
+  dispatchSetUrlImageThumbnail
+} from "../../../../redux/actions/index";
 import ListImagesForNews from "../../../news/modalImageUrl/imgsUrl";
 import { connect } from "react-redux";
 import { queryGetPaymentType } from "../../../../utils/queryPaymentAndPromoType";
@@ -18,7 +21,6 @@ import { createProduct } from "../../../../utils/mutation/productCoin";
 import { useLazyQuery, useMutation, useQuery } from "@apollo/react-hooks";
 import { Link } from "react-router-dom";
 import "../../../../static/style/listProducts.css";
-
 
 const { Option } = Select;
 const radioStyle = {
@@ -50,7 +52,7 @@ function CreateProductCoin(props) {
   });
   useEffect(() => {
     dispatchSetUrlImageThumbnail(null);
-  }, [])
+  }, []);
   const { productName, status, price, sort, type } = dataProduct;
   const [createCoin] = useMutation(createProduct, {
     variables: {
@@ -97,15 +99,24 @@ function CreateProductCoin(props) {
   const getType = val => {
     setDataProduct({ ...dataProduct, type: val });
   };
-  const cancelUpdate = () => {
-    setDataProduct(oldDataProduct.oldData);
-  };
   // const { enumValues } = props.data.__type;
   // const printPaymentTypes = enumValues.map((val, index) => (
   //   <Option value={val.name} key={index}>
   //     {val.name}
   //   </Option>
   // ));
+
+  const showConfirm = () => {
+    Modal.confirm({
+      title: "Thêm mới không thành công !!!",
+      onOk() {
+        props.setIsCreateCoin(false);
+      },
+      onCancel() {
+        console.log("Cancel");
+      }
+    });
+  };
   return (
     <Row>
       <Link to="/payment/coin" onClick={() => props.setIsCreateCoin(false)}>
@@ -120,8 +131,9 @@ function CreateProductCoin(props) {
           <div>
             <p>
               <Button
-                onClick={cancelUpdate}
+                onClick={showConfirm}
                 disabled={oldDataProduct.statusBtnCancel}
+                style={{marginRight:".5rem"}}
               >
                 Hủy
               </Button>

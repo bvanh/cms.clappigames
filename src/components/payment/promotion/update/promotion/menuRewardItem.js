@@ -28,21 +28,22 @@ function MenuRewardByItem(props) {
       {val.description}
     </Option>
   ));
-    const printPlatform = props.listPartners.map((val, i) => (
-      <Option value={val.partnerId} key={i}>
-        {val.partnerName}
-      </Option>
-    ));
-    const printListServer = listServer.map((val, index) => (
-      <Option value={val.server} key={index}>
-        {val.serverName}
-      </Option>
-    ));
-    return (
-      <div className="promo-section2">
-        <div className="promo-choose-platform">
+  const printPlatform = props.listPartners.map((val, i) => (
+    <Option value={val.partnerId} key={i}>
+      {val.partnerName}
+    </Option>
+  ));
+  const printListServer = listServer.map((val, index) => (
+    <Option value={val.server} key={index}>
+      {val.serverName}
+    </Option>
+  ));
+  return (
+    <div className="promo-section2">
+      <div className="promo-choose-platform">
+        <div>
           <div className="promo-choose-platform-name">
-            <h3>Chọn game:</h3>
+            <p>Chọn game:</p>
             <Select
               style={{ width: "65%" }}
               onChange={props.handleChangePlatformPromo}
@@ -54,7 +55,7 @@ function MenuRewardByItem(props) {
             </Select>{" "}
           </div>
           <div className="promo-choose-platform-server">
-            <h3>Server:</h3>
+            <p>Server:</p>
             <Select
               placeholder="-Chọn server-"
               style={{ width: "65%" }}
@@ -68,7 +69,7 @@ function MenuRewardByItem(props) {
           </div>
         </div>
         <div className="promo-choose-platform-name">
-          <h3 style={{ marginRight: "1.5rem" }}>Hình thức:</h3>
+          <p>Hình thức:</p>
           <Select
             style={{ width: "65%" }}
             onChange={props.handleChangeTypePromo}
@@ -79,12 +80,13 @@ function MenuRewardByItem(props) {
           </Select>{" "}
         </div>
       </div>
-    );
+    </div>
+  );
 }
 function mapStateToProps(state) {
   return {
     detailPromo: state.detailPromo,
-    listPartners:state.listPartner
+    listPartners: state.listPartner
   };
 }
 export default connect(mapStateToProps, null)(MenuRewardByItem);

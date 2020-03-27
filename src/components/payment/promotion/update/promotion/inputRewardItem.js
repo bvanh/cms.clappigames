@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from "react";
-import { Button, Input, Row, Col, Select } from "antd";
+import { Button, Input, Row, Col, Select,Icon } from "antd";
 import { updatePromotion } from "../../../../../utils/mutation/promotion";
 import moment from "moment";
 import {
@@ -110,13 +110,15 @@ function EventByItems(props) {
     props.setIndexShop(newShop);
   };
   const reduceReward = async (numberItem, indexReward) => {
-    const newShop = [...indexShop];
-    if (newShop.length > 0) {
-      const newReward = await indexShop[numberItem].rewards.filter(
-        (value, i) => indexReward !== i
-      );
-      newShop[numberItem].rewards = newReward;
-      props.setIndexShop(newShop);
+    if(!props.isTimeInPromo){
+      const newShop = [...indexShop];
+      if (newShop.length > 0) {
+        const newReward = await indexShop[numberItem].rewards.filter(
+          (value, i) => indexReward !== i
+        );
+        newShop[numberItem].rewards = newReward;
+        props.setIndexShop(newShop);
+      }
     }
   };
   const handleChooseReward = (positionItem, positionReward, val) => {
@@ -149,30 +151,31 @@ function EventByItems(props) {
   ));
   const printItem = indexShop.map(function (val, index1) {
     const printReward = val.rewards.map((valReward, index2) => (
-      <div key={index2}>
+      <div key={index2} className="more-reward">
+      <Icon type="minus" onClick={() => reduceReward(index1, index2)} style={{fontSize:"16px",margin:'0 .25rem'}}/>
         <Input
           value={indexShop[index1].rewards[index2].numb}
           type="number"
           name="pucharseTimes"
           onChange={e => handleChooseNumbReward(index1, index2, e)}
-          style={{ width: "10%" }}
+          style={{ width: "20%" }}
           disabled={props.isTimeInPromo}
         ></Input>
         <Select
           mode="multiple"
           value={indexShop[index1].rewards[index2].itemId}
-          style={{ width: "60%" }}
+          style={{ width: "80%" }}
           onChange={value => handleChooseReward(index1, index2, value)}
           disabled={props.isTimeInPromo}
         >
           {printListItems}
         </Select>{" "}
-        <span onClick={() => reduceReward(index1, index2)}>Delete</span>
       </div>
     ));
     return (
       <div key={index1}>
-        <Col md={12}>
+        <Col md={12} className='more-items'>
+        <Icon type="close" onClick={() => reduceItem(index1)} style={{fontSize:"16px",margin:'0 .25rem'}} disabled={props.isTimeInPromo} />
           <Input
             value={indexShop[index1].purchaseTimes}
             type="number"
@@ -180,22 +183,21 @@ function EventByItems(props) {
             min={index1 > 0 ? indexShop[index1 - 1].purchaseTimes : 0}
             name="pucharseTimes"
             onChange={e => handleChooseNumbItem(index1, e)}
-            style={{ width: "10%" }}
+            style={{ width: "20%" }}
             disabled={props.isTimeInPromo}
           ></Input>
           <Select
             value={indexShop[index1].purchaseItemId}
-            style={{ width: "90%" }}
+            style={{ width: "80%" }}
             onChange={value => handleChooseItem(index1, value)}
             disabled={props.isTimeInPromo}
           >
             {printListItems}
           </Select>{" "}
-          <Button onClick={() => reduceItem(index1)} disabled={props.isTimeInPromo}>xóa item</Button>
         </Col>
-        <Col md={12}>
+        <Col md={12} style={{ padding: "1rem 1rem 1rem .25rem" }}>
           {printReward}
-          <Button onClick={() => addReward(index1)} disabled={props.isTimeInPromo}>Thêm quà</Button>
+          <Button onClick={() => addReward(index1)} disabled={props.isTimeInPromo} style={{marginLeft:'1.5rem'}}>Thêm quà</Button>
         </Col>
       </div>
     );
@@ -217,7 +219,7 @@ function EventByItems(props) {
       </div>
       <Row>
         {printItem}
-        <Button onClick={() => addItem()} disabled={props.isTimeInPromo}>Thêm điều kiện</Button>
+        <Button onClick={() => addItem()} disabled={props.isTimeInPromo} style={{margin:"1rem 1.5rem"}}>Thêm điều kiện</Button>
       </Row>
     </div>
   );

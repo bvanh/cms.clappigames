@@ -154,7 +154,6 @@ function EventByItems(props) {
         <Input
           value={indexShop[index1].rewards[index2].numb}
           type="number"
-          max="10"
           name="pucharseTimes"
           onChange={e => handleChooseNumbReward(index1, index2, e)}
           style={{ width: "20%" }}
