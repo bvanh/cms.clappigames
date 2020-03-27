@@ -211,6 +211,12 @@ function ListChargesDetail() {
       render:index=><span>{index===null?"":index.username}</span>
     },
     {
+      title: "Tên nhân vật",
+      dataIndex: "",
+      key: "gameUserName",
+      // render:index=><span>{index===null?"":index.username}</span>
+    },
+    {
       title: "Item",
       dataIndex: "",
       key: "item",
