@@ -32,7 +32,7 @@ function ListCoin(props) {
     productName: "",
     listTypePayment: []
   });
-  const [isCreateCoin, setIsCreateCoin] = useState(true);
+  const [isCreateCoin, setIsCreateCoin] = useState(false);
   const [dataCoin, setDataCoin] = useState(null);
   const [itemsForDelete, setItemsForDelete] = useState([]);
   const {
@@ -97,13 +97,14 @@ function ListCoin(props) {
       title: "Id",
       dataIndex: "productId",
       key: "productId",
-      width: "30%"
+      width: "15%",
+      render:index=><span className='convert-col'>{index}</span>
     },
     {
       title: "C.coin",
       dataIndex: "productName",
       key: "productName",
-      width: "15%"
+      width: "20%"
     },
     ,
     {
@@ -111,7 +112,7 @@ function ListCoin(props) {
       dataIndex: "price",
       key: "price",
       render: price => <span>{price.toLocaleString()} đ</span>,
-      width: "15%"
+      width: "20%"
     },
     {
       title: "promo",
@@ -157,7 +158,7 @@ function ListCoin(props) {
     {
       title: "Action",
       key: "action",
-      width: "10%",
+      width: "15%",
       render: (text, record) => (
         <span>
           <Link to={`/payment/coin/edit?productId=${record.productId}`}>

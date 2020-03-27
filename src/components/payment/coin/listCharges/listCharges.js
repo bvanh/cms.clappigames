@@ -72,13 +72,14 @@ function ListCharges() {
       title: "Id",
       dataIndex: "chargeId",
       key: "chargeId",
-      width:"30%"
+      width:"10%",
+      render:index=><span className='convert-col'>{index}</span>
     },
     {
       title: "C.coin",
       dataIndex: "baseCoin",
       key: "baseCoin",
-      width:"15%"
+      width:"10%"
     },
     {
       title: "UserName",
@@ -91,13 +92,13 @@ function ListCharges() {
       title: "Type",
       dataIndex: "paymentType",
       key: "paymenttype",
-      width:"17%"
+      width:"22%"
     },
     {
       title: "Time",
       dataIndex: "createAt",
       key: "createAt",
-      width:"20%",
+      width:"23%",
       render: time => (
         <span>{moment.utc(Number(time)).format("HH:mm DD-MM-YYYY")}</span>
       )
@@ -106,7 +107,7 @@ function ListCharges() {
       title: "Status",
       dataIndex: "status",
       key: "status",
-      width:"13%"
+      width:"15%"
     }
   ];
   const printOptionDates = listSelectDates.map((val, i) => (

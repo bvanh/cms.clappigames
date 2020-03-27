@@ -9,6 +9,11 @@
   padding: 1.3rem 1rem;
   border-bottom: 1px solid #bbb8b8;
 }
+.list-media{
+  height: 40rem;
+  overflow: hidden;
+  overflow-y: scroll;
+}
 .menu-images {
   display: flex;
   flex-direction: row;

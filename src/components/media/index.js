@@ -84,7 +84,7 @@ function Media() {
               </Link>
             </div>
           )}
-        <Checkbox.Group style={{ width: "100%" }} onChange={onChange}>
+        <Checkbox.Group style={{ width: "100%" }} className='list-media' onChange={onChange}>
           <Col>{printListImages}</Col>
         </Checkbox.Group>
       </Col>

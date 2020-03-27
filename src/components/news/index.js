@@ -126,10 +126,11 @@ function ListNews() {
     <div>
       <div style={{ marginBottom: 16 }} className="news-header">
         <Input onChange={handleSetSearchValue} value={search} />
-        <Button onClick={submitSearch} onPressEnter={submitSearch}>Search</Button>
+        <Button onClick={submitSearch} onPressEnter={submitSearch} style={{marginRight:".5rem"}}>Search</Button>
         <Button
           disabled={listNewsDelete.length > 0 ? false : true}
           onClick={submitDeleteNews}
+          style={{marginRight:".5rem"}}
         >
           Delete
         </Button>

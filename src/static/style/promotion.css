@@ -43,7 +43,7 @@
 }
 .btn-create-promo {
   position: absolute;
-  top: -400px;
+  top: -435px;
   right: 8px;
 }
 /*  */
@@ -202,5 +202,5 @@
   border-right: 1px solid #f1ecec;
 }
 .ant-select-selection {
-  border-radius: none;
+  border-radius: 0;
 }

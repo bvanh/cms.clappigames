@@ -32,6 +32,12 @@ const listSelectDates = [
   { days: "Last 14 days", variables: "FOURTEEN_DAY_AGO" },
   { days: "Last 30 days", variables: "THIRTY_DAY_AGO" }
 ];
+const listType = [
+  { nameType: "Theo tên", id: 4 },
+  { nameType: "Theo mã giao dịch", id: 1 },
+  { nameType: "Theo userId", id: 2 },
+  // { nameType: "Theo kiểu thanh toán", id: 3 }
+];
 function ListChargesDetail() {
   const [pageIndex, setPageIndex] = useState({
     currentPage: 1,
@@ -84,9 +90,9 @@ function ListChargesDetail() {
       return (
         (current &&
           current <
-            moment(fromDate)
-              .subtract(1, "days")
-              .endOf("day")) ||
+          moment(fromDate)
+            .subtract(1, "days")
+            .endOf("day")) ||
         current > moment().endOf("day")
       );
     }
@@ -97,7 +103,9 @@ function ListChargesDetail() {
   const handleChangeToDates = (value, dateString) => {
     setPageIndex({ ...pageIndex, toDate: dateString });
   };
-  const handleChangeType = () => {};
+  const handleChangeType = (val) => {
+    setPageIndex({ ...pageIndex, type: val })
+  };
   const getProductName = e => {
     setPageIndex({ ...pageIndex, search: e.target.value });
   };
@@ -126,7 +134,7 @@ function ListChargesDetail() {
     getDataCharges({
       variables: {
         currentPage: currentPage,
-        type: 4,
+        type: type,
         pageSize: pageSize,
         search: search,
         fromDate: fromDate,
@@ -202,6 +210,11 @@ function ListChargesDetail() {
       {val.days}
     </Option>
   ));
+  const printTypePayment = listType.map((val, i) => (
+    <Option value={val.id} key={i}>
+      {val.nameType}
+    </Option>
+  ))
   return (
     <Row>
       <div>
@@ -211,65 +224,76 @@ function ListChargesDetail() {
         </Link>
         <h2>Lịch sử giao dịch</h2>
         <div className="btn-search-charges">
-          <Input
-            value={search}
-            placeholder="Tìm kiếm theo tên c.coin"
-            onChange={getProductName}
-            style={{ width: "50%", marginRight: "2%" }}
-            suffix={
+          <div>
+            <Input
+              value={search}
+              placeholder="Tìm kiếm theo tên c.coin"
+              onChange={getProductName}
+              style={{ width: "30%", marginRight: "2%" }}
+              suffix={
+                <Icon
+                  className={
+                    search !== "" ? "reset-btn-show" : "reset-btn-hide"
+                  }
+                  type="close"
+                  style={{ color: "rgba(0,0,0,.45)" }}
+                  onClick={reset}
+                />
+              }
+            />
+            <Select
+              value={type}
+              style={{ width: "15%", marginRight: "2%" }}
+              onChange={handleChangeType}
+            >
+              {printTypePayment}
+            </Select>
+            <div
+              style={{ width: "15%", marginRight: "1%", position: "relative" }}
+            >
+              <DatePicker
+                allowClear={false}
+                value={fromDate === "" ? null : moment(fromDate, "YYYY-MM-DD")}
+                onChange={handleChangeFromDates}
+                disabledDate={disabledDate}
+                style={{ width: "100%" }}
+                placeholder="FromDate"
+                className="date-picker-search"
+              />
               <Icon
-                className={search !== "" ? "reset-btn-show" : "reset-btn-hide"}
+                className={
+                  toDate !== "" ? "icon-reset-date" : "icon-reset-date-hide"
+                }
                 type="close"
                 style={{ color: "rgba(0,0,0,.45)" }}
                 onClick={reset}
               />
-            }
-          />
-          <div
-            style={{ width: "12%", marginRight: ".5%", position: "relative" }}
-          >
-            <DatePicker
-              allowClear={false}
-              value={fromDate === "" ? null : moment(fromDate, "YYYY-MM-DD")}
-              onChange={handleChangeFromDates}
-              disabledDate={disabledDate}
-              style={{ width: "100%" }}
-              placeholder="FromDate"
-              className="date-picker-search"
-            />
-            <Icon
-              className={
-                toDate !== "" ? "icon-reset-date" : "icon-reset-date-hide"
-              }
-              type="close"
-              style={{ color: "rgba(0,0,0,.45)" }}
-              onClick={reset}
-            />
+            </div>
+            <div
+              style={{ width: "15%", marginRight: "2%", position: "relative" }}
+            >
+              <DatePicker
+                allowClear={false}
+                value={toDate === "" ? null : moment(toDate, "YYYY-MM-DD")}
+                placeholder="ToDate"
+                onChange={handleChangeToDates}
+                disabledDate={disabledEndDate}
+                style={{ width: "100%" }}
+                className="date-picker-search"
+              />
+              <Icon
+                className={
+                  toDate !== "" ? "icon-reset-date" : "icon-reset-date-hide"
+                }
+                type="close"
+                style={{ color: "rgba(0,0,0,.45)" }}
+                onClick={reset}
+              />
+            </div>
+            <Button style={{ width: "25%", margin: "" }} onClick={onSearch}>
+              Search
+            </Button>
           </div>
-          <div
-            style={{ width: "12%", marginRight: ".5%", position: "relative" }}
-          >
-            <DatePicker
-              allowClear={false}
-              value={toDate === "" ? null : moment(toDate, "YYYY-MM-DD")}
-              placeholder="ToDate"
-              onChange={handleChangeToDates}
-              disabledDate={disabledEndDate}
-              style={{ width: "100%" }}
-              className="date-picker-search"
-            />
-            <Icon
-              className={
-                toDate !== "" ? "icon-reset-date" : "icon-reset-date-hide"
-              }
-              type="close"
-              style={{ color: "rgba(0,0,0,.45)" }}
-              onClick={reset}
-            />
-          </div>
-          <Button style={{ width: "10%", margin: "0 1.5%" }} onClick={onSearch}>
-            Search
-          </Button>
           <ExcelFile
             className="btn-export"
             style={{ width: "8%", marginLeft: "2%" }}

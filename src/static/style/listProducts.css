@@ -80,10 +80,16 @@
   margin: 1.5rem 0 0.5rem;
 }
 /* detail-charges */
-.btn-search-charges {
+.btn-search-charges{
+  display: flex;
+  justify-content: space-between;
+
+}
+.btn-search-charges>div {
   display: flex;
   justify-content: space-between;
   margin-bottom: 1rem;
+  width: 80%;
 }
 .modal_datepicker-chartCoin {
   z-index: 9999;
@@ -106,9 +112,18 @@
   z-index: 9999;
   cursor: pointer;
 }
-.date-picker-search>div>i{
+.date-picker-search > div > i {
   display: none;
 }
-.icon-reset-date-hide{
+.icon-reset-date-hide {
   display: none;
+}
+.convert-col {
+  font-weight: lighter;
+  position: relative;
+  overflow: hidden !important;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
 }
