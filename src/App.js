@@ -20,6 +20,7 @@ import ListPromoAndEvent from "./components/payment/promotion/list/index";
 import DetailPromotion from "./components/payment/promotion/detail/promotion/index";
 import DetailEvent from "./components/payment/promotion/detail/event/index";
 import ListChargesDetail from "./components/payment/coin/listCharges/detail";
+import ListPartnerChargesDetail from './components/payment/item/partnerCharges/detail'
 import { ApolloProvider } from "@apollo/react-hooks";
 import ApolloClient from "apollo-boost";
 import { importImage } from "./utils/importImg";
@@ -202,6 +203,11 @@ function App(props) {
                 exact
                 path="/payment/coin/charges/detail"
                 render={() => <ListChargesDetail />}
+              />
+              <Route
+                exact
+                path="/payment/item/charges/detail"
+                render={() => <ListPartnerChargesDetail />}
               />
               <Route
                 path="/payment/promotion/create"

@@ -63,6 +63,7 @@ const queryGetListPartnerCharges = gql`
       count
       rows {
         partnerChargeId
+        payload
         user {
           username
           nickname
@@ -72,6 +73,7 @@ const queryGetListPartnerCharges = gql`
           partnerName
         }
         createAt
+        status
       }
     }
   }

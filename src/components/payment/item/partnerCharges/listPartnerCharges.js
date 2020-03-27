@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Table, Button, Pagination, Input, Row, Col, Select,Icon } from "antd";
+import { Table, Button, Pagination, Input, Row, Col, Select, Icon } from "antd";
 import {
   queryGetListPartnerCharges
 } from "../../../../utils/queryPartnerProducts";
@@ -40,7 +40,7 @@ function ListPartnerCharges() {
     fromDate,
     toDate
   } = pageIndex;
-  const {TODAY}=dates
+  const { TODAY } = dates
   const [getDataPartnerCharges, { loading, data }] = useLazyQuery(
     queryGetListPartnerCharges,
     {
@@ -133,18 +133,18 @@ function ListPartnerCharges() {
   if (loading) return "Loading...";
   return (
     <>
-        <div className="list-charges-title">
+      <div className="list-charges-title">
         <h2>Lịch sử giao dịch</h2>
         <div className='view-more'>
-                <a className='btn-view-more'>Chi tiết <Icon type="double-right" /></a>
-        <Select
-          defaultValue="SEVENT_DAY_AGO"
-          style={{ width: 120 }}
-          onChange={handleChangeRangeDates}
-          className="select-charges-date"
-        >
-          {printOptionDates}
-        </Select>
+          <Link to='/payment/item/charges/detail' className='btn-view-more'>Chi tiết <Icon type="double-right" /></Link>
+          <Select
+            defaultValue="SEVENT_DAY_AGO"
+            style={{ width: 120 }}
+            onChange={handleChangeRangeDates}
+            className="select-charges-date"
+          >
+            {printOptionDates}
+          </Select>
         </div>
       </div>
       {dataPartnerCharges && (

@@ -39,7 +39,7 @@ function Danhsach() {
       dataIndex: "username"
     },
     {
-      title: "Age",
+      title: "UserId",
       dataIndex: "userId"
     },
     {
