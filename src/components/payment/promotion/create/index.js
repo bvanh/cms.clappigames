@@ -44,10 +44,10 @@ function CreatePromotion(props) {
     type: "",
     typeEvent: "",
     timeTotal: [
+      moment()  
+        .format("YYYY-MM-DD HH:mm:ss"),
       moment()
-        .format("YYYY-MM-DD HH:mm"),
-      moment()
-        .format("YYYY-MM-DD HH:mm")
+        .format("YYYY-MM-DD HH:mm:ss")
     ],
     dates: [],
     daily: [],

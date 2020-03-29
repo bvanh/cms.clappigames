@@ -140,6 +140,12 @@ function App(props) {
                   <span className="nav-text">STATS</span>
                 </Link>
               </Menu.Item>
+              <Menu.Item key="partner">
+                <Link to="/partner">
+                  <Icon type="line-chart" />
+                  <span className="nav-text">Partner</span>
+                </Link>
+              </Menu.Item>
               <Menu.Item key="logout">
                 <Link to="/" onClick={() => dispatchSwitchLogin(false)}>
                   <Icon type="logout" />

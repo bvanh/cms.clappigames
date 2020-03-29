@@ -5,20 +5,12 @@ import {
   Pagination,
   Input,
   Row,
-  Col,
   Select,
   Icon,
-  DatePicker,
-  Tooltip
+  DatePicker
 } from "antd";
 import moment from "moment";
-import {
-  queryGetListPartnerCharges
-} from "../../../../utils/queryPartnerProducts";
-import {
-  queryGetListCoin,
-  queryGetListCharges
-} from "../../../../utils/queryCoin";
+import { queryGetListPartnerCharges } from "../../../../utils/queryPartnerProducts";
 import { useLazyQuery } from "@apollo/react-hooks";
 import { dates } from "../../../../utils/dateInfo";
 import ReactExport from "react-export-excel";
@@ -28,7 +20,6 @@ const ExcelFile = ReactExport.ExcelFile;
 const ExcelSheet = ReactExport.ExcelFile.ExcelSheet;
 const ExcelColumn = ReactExport.ExcelFile.ExcelColumn;
 const { Option } = Select;
-const { RangePicker } = DatePicker;
 const listSelectDates = [
   { days: "Last 3 days", variables: "THREE_DAY_AGO" },
   { days: "Last 7 days", variables: "SEVENT_DAY_AGO" },
@@ -38,7 +29,7 @@ const listSelectDates = [
 const listType = [
   { nameType: "Theo tên", id: 4 },
   { nameType: "Theo mã giao dịch", id: 1 },
-  { nameType: "Theo userId", id: 3 },
+  { nameType: "Theo userId", id: 3 }
   // { nameType: "Theo kiểu thanh toán", id: 3 }
 ];
 function ListChargesDetail() {
@@ -70,7 +61,7 @@ function ListChargesDetail() {
   const [getDataPartnerCharges] = useLazyQuery(queryGetListPartnerCharges, {
     fetchPolicy: "cache-and-network",
     onCompleted: data => {
-      console.log(data)
+      console.log(data);
       setDataCharges(data);
     }
   });
@@ -89,22 +80,6 @@ function ListChargesDetail() {
       }
     });
   }, []);
-  const changeDates = val => {
-    setPageIndex({ ...pageIndex, fromDate: dates[val], toDate: TODAY });
-    getDataPartnerCharges({
-      variables: {
-        currentPage: currentPage,
-        type: type,
-        pageSize: pageSize,
-        search: search,
-        fromDate: fromDate,
-        toDate: toDate,
-        userType: userType,
-        os: os,
-        partnerId: partnerId
-      }
-    });
-  };
   const disabledDate = current => {
     return current && current > moment().endOf("day");
   };
@@ -113,9 +88,9 @@ function ListChargesDetail() {
       return (
         (current &&
           current <
-          moment(fromDate)
-            .subtract(1, "days")
-            .endOf("day")) ||
+            moment(fromDate)
+              .subtract(1, "days")
+              .endOf("day")) ||
         current > moment().endOf("day")
       );
     }
@@ -126,8 +101,8 @@ function ListChargesDetail() {
   const handleChangeToDates = (value, dateString) => {
     setPageIndex({ ...pageIndex, toDate: dateString });
   };
-  const handleChangeType = (val) => {
-    setPageIndex({ ...pageIndex, type: val })
+  const handleChangeType = val => {
+    setPageIndex({ ...pageIndex, type: val });
   };
   const getProductName = e => {
     setPageIndex({ ...pageIndex, search: e.target.value });
@@ -202,45 +177,45 @@ function ListChargesDetail() {
       title: "Id",
       dataIndex: "partnerChargeId",
       key: "partnerChargeId",
-      render:index=><span className='convert-col'>{index}</span>
+      render: index => <span className="convert-col">{index}</span>
     },
     {
       title: "UserName",
       dataIndex: "user",
       key: "user",
-      render:index=><span>{index===null?"":index.username}</span>
+      render: index => <span>{index === null ? "" : index.username}</span>
     },
     {
       title: "Tên nhân vật",
       dataIndex: "",
-      key: "gameUserName",
+      key: "gameUserName"
       // render:index=><span>{index===null?"":index.username}</span>
     },
     {
       title: "Item",
       dataIndex: "",
-      key: "item",
+      key: "item"
     },
     {
       title: "C.Coin",
       dataIndex: "coin",
-      key: "coin",
+      key: "coin"
     },
     {
       title: "Server",
       dataIndex: "",
-      key: "server",
+      key: "server"
     },
     {
       title: "Game",
       dataIndex: "partner",
       key: "partnername",
-      render:index=><span>{index.partnerName}</span>
+      render: index => <span>{index.partnerName}</span>
     },
     {
       title: "Khuyến mãi",
       dataIndex: "",
-      key: "promotion",
+      key: "promotion"
       // render:index=><span>{index.partnerName}</span>
     },
     {
@@ -258,16 +233,11 @@ function ListChargesDetail() {
       render: index => <span>{index === "INPUT" ? "PENDING" : "DONE"}</span>
     }
   ];
-  const printOptionDates = listSelectDates.map((val, i) => (
-    <Option value={val.variables} key={i}>
-      {val.days}
-    </Option>
-  ));
   const printTypePayment = listType.map((val, i) => (
     <Option value={val.id} key={i}>
       {val.nameType}
     </Option>
-  ))
+  ));
   return (
     <Row>
       <div>
@@ -363,13 +333,19 @@ function ListChargesDetail() {
             filename="Lịch sử giao dịch C.COIN"
           >
             <ExcelSheet data={dataExport} name="Lịch sử giao dịch C.coin">
-              <ExcelColumn label="Id" value="chargeId" />
-              <ExcelColumn label="C.coin" value="baseCoin" />
+              <ExcelColumn label="Id" value="partnerChargeId" />
+              <ExcelColumn label="Username" value={user => user.user.username} />
               <ExcelColumn
-                label="UserName"
+                label="gameUserName"
                 value={user => user.user.username}
               />
-              <ExcelColumn label="PaymentType" value="paymentType" />
+              <ExcelColumn label="Item" value="item" />
+              <ExcelColumn label="C.coin" value="coin" />
+              <ExcelColumn label="Server" value="" />
+              <ExcelColumn label="Game" value={
+                index=>index.partner.partnerName
+              } />
+              <ExcelColumn label="Khuyen mai" value="" />
               <ExcelColumn
                 label="Time"
                 value={time =>

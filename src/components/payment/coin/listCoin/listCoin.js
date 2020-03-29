@@ -92,6 +92,7 @@ function ListCoin(props) {
       }
     });
   };
+  // eslint-disable-next-line no-sparse-arrays
   const columns = [
     {
       title: "Id",

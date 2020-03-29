@@ -157,15 +157,17 @@ function ListEvents(props) {
   return (
     <div>
       <div className="btn-search-promo">
-        <Input onChange={getValueSearch} />
-        <Button onClick={onSearchPromo}>Search</Button>
-      </div>
+        <Input onChange={getValueSearch} style={{marginRight:'.25rem'}}/>
+        <Button onClick={onSearchPromo} style={{marginRight:'.25rem'}}>Search</Button>
+      
+        <Button onClick={submitDelete} disabled={listDelete.length > 0 ? false : true}>Delete</Button>
+        </div>
       <Tabs activeKey={status} onChange={handleChangeTypePromo}>
         <TabPane tab="Tất cả khuyến mãi" key=""></TabPane>
         <TabPane tab="Đang áp dụng" key="COMPLETE"></TabPane>
         <TabPane tab="Chưa áp dụng" key="INPUT"></TabPane>
       </Tabs>
-      <Button onClick={submitDelete} disabled={listDelete.length > 0 ? false : true}>Delete</Button>
+      
       {dataListEvents && (
         <>
           <Table
