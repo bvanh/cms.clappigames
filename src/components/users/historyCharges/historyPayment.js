@@ -13,42 +13,52 @@ const HistoryPayment = props => {
   if (error) return `Error! ${error.message}`;
   const columns = [
     {
-      title: "id",
+      title: "Id",
       dataIndex: "payload",
       key: "gameUserId",
       render: index => <span>{JSON.parse(index).gameUserId}</span>
     },
     {
-      title: "discount",
+      title: "Character",
       dataIndex: "payload",
       key: "chargeId",
       render: index => <span>{JSON.parse(index).discount}</span>
     },
-    ,
     {
-      title: "createTime",
+      title: "Item",
+      dataIndex: "payload",
+      key: "item",
+      render: index => <span>{JSON.parse(index).discount}</span>
+    },
+    {
+      title: "C.coin",
+      dataIndex: "payload",
+      key: "coin",
+      render: index => <span>{JSON.parse(index).discount}</span>
+    },
+    {
+      title: "Server",
+      dataIndex: "payload",
+      key: "server",
+      render: index => <span>{JSON.parse(index).discount}</span>
+    },
+    {
+      title: "Game",
+      dataIndex: "payload",
+      key: "game",
+      render: index => <span>{JSON.parse(index).discount}</span>
+    },
+    {
+      title: "Promotion",
+      dataIndex: "payload",
+      key: "game",
+      render: index => <span>{JSON.parse(index).discount}</span>
+    },
+    {
+      title: "Time",
       dataIndex: "payload",
       key: "createtime",
       render: index => <span>{JSON.parse(index).createAt}</span>
-    },
-    ,
-    {
-      title: "endTime",
-      dataIndex: "payload",
-      key: "endtime",
-      render: index => <span>{JSON.parse(index).endAt}</span>
-    },
-    ,
-    {
-      title: "coin",
-      dataIndex: "payload",
-      key: "coin",
-      render: index => <span>{JSON.parse(index).coin}</span>
-    },
-    {
-      title: "trạng thái",
-      dataIndex: "status",
-      key: "status"
     }
   ];
   const { currentPage, pageSize } = pageIndex;

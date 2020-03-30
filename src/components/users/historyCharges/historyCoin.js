@@ -18,12 +18,12 @@ const HistoryCharges = props => {
   if (error) return `Error! ${error.message}`;
   const columns = [
     {
-      title: "id",
+      title: "Id",
       dataIndex: "chargeId",
       key: "chargeId"
     },
     {
-      title: "Phương thức nạp",
+      title: "PaymentType",
       dataIndex: "paymentType",
       key: "paymentType"
     },
@@ -33,13 +33,13 @@ const HistoryCharges = props => {
       key: "coin"
     },
     {
-      title: "Vnđ",
+      title: "Vnd",
       dataIndex: "price",
       key: "vnd",
       render: price => <span>{price.toLocaleString()}</span>
     },
     {
-      title: "thời gian",
+      title: "Time",
       dataIndex: "createAt",
       key: "time",
       render: time => (
@@ -47,7 +47,7 @@ const HistoryCharges = props => {
       )
     },
     {
-      title: "trạng thái",
+      title: "Status",
       dataIndex: "status",
       key: "status"
     }

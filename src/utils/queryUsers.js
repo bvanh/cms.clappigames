@@ -11,6 +11,8 @@ const queryGetListUsers = gql`
           fakeId,
           mobile
           emailStatus
+          verifyEmail
+          status
         }
       }
     }
