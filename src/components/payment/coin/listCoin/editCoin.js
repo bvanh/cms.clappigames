@@ -10,10 +10,16 @@ import {
   Icon,
   Rate
 } from "antd";
+import {
+  dispatchShowImagesNews,
+  dispatchSetUrlImageThumbnail
+} from "../../../../redux/actions/index";
+import ListImagesForNews from "../../../news/modalImageUrl/imgsUrl";  
 import { queryGetPaymentType } from "../../../../utils/queryPaymentAndPromoType";
 import { queryGetProductById } from "../../../../utils/queryCoin";
 import { updateProduct } from "../../../../utils/mutation/productCoin";
 import { useLazyQuery, useMutation, useQuery } from "@apollo/react-hooks";
+import {connect} from 'react-redux'
 import { Link } from "react-router-dom";
 import "../../../../static/style/listProducts.css";
 const { Option } = Select;
@@ -22,7 +28,7 @@ const radioStyle = {
   height: "24px",
   lineHeight: "30px"
 };
-function EditProductCoin() {
+function EditProductCoin(props) {
   const userName = localStorage.getItem("userNameCMS");
   const query = new URLSearchParams(window.location.search);
   const productId = query.get("productId");
@@ -35,7 +41,8 @@ function EditProductCoin() {
     type: "",
     sort: null,
     price: null,
-    status: ""
+    status: "",
+    image: ""
   });
   const [paymentType, setPaymentType] = useState([{ name: "" }])
   const [getData] = useLazyQuery(queryGetProductById, {
@@ -57,7 +64,7 @@ function EditProductCoin() {
       }
     });
   }, []);
-  const { productName, status, price, sort, type } = dataProduct;
+  const { productName, status, price, sort, type, image } = dataProduct;
   const [updateCoin] = useMutation(updateProduct, {
     variables: {
       productId: productId,
@@ -67,7 +74,8 @@ function EditProductCoin() {
         price: Number(price),
         baseCoin: Number(price),
         type: type,
-        status: status
+        status: status,
+        image: props.urlImgThumbnail
       }
     }
   });
@@ -115,6 +123,7 @@ function EditProductCoin() {
                 <Button
                   onClick={cancelUpdate}
                   disabled={oldDataProduct.statusBtnCancel}
+                  style={{marginRight:".5rem"}}
                 >
                   Hủy
                 </Button>
@@ -146,18 +155,31 @@ function EditProductCoin() {
                 name="price"
                 onChange={getNameAndPriceAndSort}
               ></Input>
-              <span className="edit-product-content-title">Thứ tự ưu tiên</span>
-              <div style={{ display: "flex", alignItems: "center" }}>
-                <Input
-                  style={{ width: "4rem" }}
-                  type="number"
-                  max="10"
-                  min="1"
-                  name="sort"
-                  onChange={getNameAndPriceAndSort}
-                  value={sort}
-                ></Input>
-                <span style={{ paddingLeft: ".2rem" }}>/10</span>
+              <div>
+                <Col>
+                  <span className="edit-product-content-title">Thứ tự ưu tiên</span>
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    <Input
+                      style={{ width: "4rem" }}
+                      type="number"
+                      max="10"
+                      min="1"
+                      name="sort"
+                      onChange={getNameAndPriceAndSort}
+                      value={sort}
+                    ></Input>
+                    <span style={{ paddingLeft: ".2rem" }}>/10</span>
+                  </div>
+                </Col>
+              </div>
+              <div>
+                <span className="edit-product-content-title">Ảnh</span>
+              </div>
+              <div style={{ width: "100px" }}>
+                <img src={props.urlImgThumbnail} width="100%" />
+              </div>
+              <div>
+                <a onClick={() => dispatchShowImagesNews(true)}>Chọn ảnh</a>
               </div>
             </div>
           </Col>
@@ -191,11 +213,17 @@ function EditProductCoin() {
               </Select>
             </div>
           </Col>
+          <ListImagesForNews isThumbnail={true} />
         </Row>
       </Row>
     );
   }
   return <p>Loading...</p>;
 }
-
-export default EditProductCoin;
+function mapStateToProps(state) {
+  return {
+    visible: state.visibleModalNews,
+    urlImgThumbnail: state.urlImgThumbnail
+  };
+}
+export default connect(mapStateToProps, null)(EditProductCoin);

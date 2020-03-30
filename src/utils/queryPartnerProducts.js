@@ -62,7 +62,7 @@ const queryGetListPartnerCharges = gql`
     ) {
       count
       rows {
-        partnerChargeId
+        partnerChargeCode
         payload
         user {
           username
@@ -71,6 +71,9 @@ const queryGetListPartnerCharges = gql`
         coin
         partner {
           partnerName
+        }
+        partnerProduct{
+          productName
         }
         createAt
         status
@@ -81,11 +84,13 @@ const queryGetListPartnerCharges = gql`
 const queryGetPartnerProductById = gql`
   query listPartnerProducts($partnerProductId: String) {
     listPartnerProducts(partnerProductId: $partnerProductId) {
+      status
       productName
       partnerId
       partnerProductName
       coin
       productId
+      image
     }
   }
 `;

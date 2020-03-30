@@ -16,6 +16,7 @@ import EditProductCoin from "./components/payment/coin/listCoin/editCoin";
 import EditPartnerProductItem from "./components/payment/item/listPartnerProduct/editItems";
 import CreatePromotion from "./components/payment/promotion/create/index";
 import Stats from "./components/stats/index";
+import Partner from './components/partner/index'
 import ListPromoAndEvent from "./components/payment/promotion/list/index";
 import DetailPromotion from "./components/payment/promotion/detail/promotion/index";
 import DetailEvent from "./components/payment/promotion/detail/event/index";
@@ -95,7 +96,7 @@ function App(props) {
             <div className="logo">
               <img src={importImage["logoclappigames.png"]} width="100%" />
             </div>
-            <Menu theme="dark" mode="inline" defaultSelectedKeys={isMenu===''?['users']:[isMenu]}>
+            <Menu theme="dark" mode="inline" defaultSelectedKeys={isMenu === '' ? ['users'] : [isMenu]}>
               <Menu.Item key="users">
                 <Link to="/">
                   <Icon type="idcard" />
@@ -142,8 +143,8 @@ function App(props) {
               </Menu.Item>
               <Menu.Item key="partner">
                 <Link to="/partner">
-                  <Icon type="line-chart" />
-                  <span className="nav-text">Partner</span>
+                  <Icon type="cluster" />
+                  <span className="nav-text">PARTNER</span>
                 </Link>
               </Menu.Item>
               <Menu.Item key="logout">
@@ -233,6 +234,7 @@ function App(props) {
                 render={() => <DetailEvent />}
               />
               <Route path="/stats" render={() => <Stats />} />
+              <Route path="/partner" render={() => <Partner />} />
             </Content>
             <Footer style={{ textAlign: "center", bottom: "0", width: "100%" }}>
               LUSSOM ©2020

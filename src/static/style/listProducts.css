@@ -26,7 +26,6 @@
   width: 100%;
 }
 .products-content > .section1 > div > div > span {
-  padding-left: 1rem;
   font-size: 14px;
   margin-top: 0.5rem;
 }
@@ -58,6 +57,7 @@
 .product-input-update > div > div {
   display: flex;
   flex-direction: column;
+  width: 100%;
 }
 .view-more {
   display: flex;

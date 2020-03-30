@@ -99,16 +99,18 @@ function CreateProductCoin(props) {
   const getType = val => {
     setDataProduct({ ...dataProduct, type: val });
   };
-  // const { enumValues } = props.data.__type;
-  // const printPaymentTypes = enumValues.map((val, index) => (
-  //   <Option value={val.name} key={index}>
-  //     {val.name}
-  //   </Option>
-  // ));
+  const { enumValues } = props.data.__type;
+  const printPaymentTypes = enumValues.map((val, index) => (
+    <Option value={val.name} key={index}>
+      {val.name}
+    </Option>
+  ));
 
   const showConfirm = () => {
     Modal.confirm({
-      title: "Thêm mới không thành công !!!",
+      title: "Bạn có muốn tiếp tục tạo bản ghi không ?",
+      okText:"Xem danh sách",
+      cancelText:"Tiếp tục",
       onOk() {
         props.setIsCreateCoin(false);
       },
@@ -119,7 +121,7 @@ function CreateProductCoin(props) {
   };
   return (
     <Row>
-      <Link to="/payment/coin" onClick={() => props.setIsCreateCoin(false)}>
+      <Link to="/payment/coin" onClick={showConfirm}>
         <span>
           <Icon type="arrow-left" style={{ paddingRight: ".2rem" }} />
           Danh sách Coin
@@ -227,7 +229,7 @@ function CreateProductCoin(props) {
           <div>
             <p className="edit-product-content-title">Kiểu thanh toán</p>
             <Select value={type} style={{ width: "100%" }} onChange={getType}>
-              {/* {printPaymentTypes} */}
+              {printPaymentTypes}
             </Select>
           </div>
         </Col>

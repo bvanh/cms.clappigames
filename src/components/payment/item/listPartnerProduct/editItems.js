@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   Table,
   Button,
@@ -11,6 +11,12 @@ import {
   Rate
 } from "antd";
 import { queryGetPlatform } from "../../../../utils/queryNews";
+import {
+  dispatchShowImagesNews,
+  dispatchSetUrlImageThumbnail
+} from "../../../../redux/actions/index";
+import { connect } from 'react-redux'
+import ListImagesForNews from "../../../news/modalImageUrl/imgsUrl";
 import {
   queryGetPartnerProductById,
   queryGetRefPartnerProducts
@@ -25,7 +31,7 @@ const radioStyle = {
   height: "24px",
   lineHeight: "30px"
 };
-function EditPartnerProductItem() {
+function EditPartnerProductItem(props) {
   const userName = localStorage.getItem("userNameCMS");
   const query = new URLSearchParams(window.location.search);
   const partnerProductId = query.get("partnerProductId");
@@ -41,8 +47,9 @@ function EditPartnerProductItem() {
     productId: "",
     coin: 0,
     partnerProductName: "",
-    promotionId: 0,
-    status: ""
+    // promotionId: 0,
+    status: "",
+    image: ''
   });
   useQuery(queryGetPlatform(), {
     onCompleted: dataPartner => {
@@ -56,6 +63,7 @@ function EditPartnerProductItem() {
         partnerProductId: partnerProductId
       },
       onCompleted: data => {
+        console.log(data)
         setDataPartnerProduct(data.listPartnerProducts[0]);
         setOldDataPartnerProduct({
           ...oldDataPartnerProduct,
@@ -71,7 +79,6 @@ function EditPartnerProductItem() {
     coin,
     partnerProductName,
     partnerId,
-    promotionId
   } = dataPartnerProduct;
   const [getRefPartnerProduct] = useLazyQuery(
     queryGetRefPartnerProducts(partnerId),
@@ -84,7 +91,7 @@ function EditPartnerProductItem() {
   useEffect(() => {
     getRefPartnerProduct();
   }, []);
-  const [updateCoin] = useMutation(updatePartnerProductItem, {
+  const [updateItem] = useMutation(updatePartnerProductItem, {
     variables: {
       partnerProductId: partnerProductId,
       req: {
@@ -94,7 +101,8 @@ function EditPartnerProductItem() {
         productId: productId,
         coin: Number(coin),
         partnerProductName: partnerProductName,
-        promotionId: Number(promotionId)
+        // promotionId: Number(promotionId),
+        image: props.urlImgThumbnail
       }
     }
   });
@@ -111,8 +119,8 @@ function EditPartnerProductItem() {
   const getStatus = e => {
     setDataPartnerProduct({ ...dataPartnerProduct, status: e.target.value });
   };
-  const submitUpdateCoin = () => {
-    let result = updateCoin();
+  const submitupdateItem = () => {
+    let result = updateItem();
     result.then(val => {
       if (val) {
         alert("update thành công!");
@@ -127,7 +135,7 @@ function EditPartnerProductItem() {
   const cancelUpdate = () => {
     setDataPartnerProduct(oldDataPartnerProduct.oldData);
   };
-  function changePartnerName(value) {
+  const changePartnerName = (value) => {
     setDataPartnerProduct({ ...dataPartnerProduct, partnerId: value });
   }
   const changePartnerProductName = async val => {
@@ -142,7 +150,7 @@ function EditPartnerProductItem() {
       {val.partnerName}
     </Option>
   ));
-  const printRefProduct = dataListRefProduct.map(function(val, index) {
+  const printRefProduct = dataListRefProduct.map(function (val, index) {
     if (index = 0) {
       return (
         <Option
@@ -183,7 +191,7 @@ function EditPartnerProductItem() {
                 >
                   Hủy
                 </Button>
-                <Button onClick={submitUpdateCoin}>Lưu mới C.coin</Button>
+                <Button onClick={submitupdateItem}>Lưu mới C.coin</Button>
               </p>
             </div>
           </div>
@@ -193,13 +201,7 @@ function EditPartnerProductItem() {
             <div>
               <div>
                 <p className="edit-product-content-title">Mã C.coin</p>
-                <span>Mã tự tạo: {partnerProductId} </span>
-              </div>
-              <div>
-                <p className="edit-product-content-title">
-                  Đang trong khuyến mãi?
-                </p>
-                <span>Mã KM: Demo </span>
+                <span style={{paddingLeft:"1rem"}}>Mã tự tạo: {partnerProductId} </span>
               </div>
             </div>
             <div className="product-input-update">
@@ -207,7 +209,7 @@ function EditPartnerProductItem() {
                 <span className="edit-product-content-title">Tên Game</span>
                 <Select
                   value={partnerId}
-                  style={{ width: 120 }}
+                  style={{ width: "100%" }}
                   onChange={changePartnerName}
                 >
                   {printPlatform}
@@ -242,13 +244,15 @@ function EditPartnerProductItem() {
                 name="coin"
                 onChange={getNewInfoItem}
               ></Input>
-              <span className="edit-product-content-title">Mã khuyến mãi</span>
-              <Input
-                value={promotionId}
-                type="number"
-                name="promotionId"
-                onChange={getNewInfoItem}
-              ></Input>
+              <div>
+                <span className="edit-product-content-title">Ảnh</span>
+              </div>
+              <div style={{ width: "100px" }}>
+                <img src={props.urlImgThumbnail} width="100%" />
+              </div>
+              <div>
+                <a onClick={() => dispatchShowImagesNews(true)}>Chọn ảnh</a>
+              </div>
             </div>
           </Col>
           <Col md={8} className="section2">
@@ -273,11 +277,18 @@ function EditPartnerProductItem() {
               </span>
             </div>
           </Col>
+          <ListImagesForNews isThumbnail={true} />
         </Row>
       </Row>
     );
   }
   return <p>Loading...</p>;
 }
+function mapStateToProps(state) {
+  return {
+    visible: state.visibleModalNews,
+    urlImgThumbnail: state.urlImgThumbnail
+  };
+}
+export default connect(mapStateToProps, null)(EditPartnerProductItem);
 
-export default EditPartnerProductItem;

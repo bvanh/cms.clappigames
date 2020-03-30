@@ -8,7 +8,9 @@ const queryGetListUsers = gql`
           username
           coin
           email,
-          fakeId
+          fakeId,
+          mobile
+          emailStatus
         }
       }
     }

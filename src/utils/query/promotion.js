@@ -11,6 +11,17 @@ query{
   }
 `;
 };
+const getListServerByPartner=gql`
+query listPartnerServersByPartner($partnerId:String!){
+  listPartnerServersByPartner(partnerId:$partnerId){
+    id
+    status
+    server
+    serverName
+    createdDate
+  }
+}
+`
 const getListItemsForEvent = gql`
   query {
     listProducts(type: EVENT) {
@@ -111,5 +122,6 @@ export {
   getListPromotionByType,
   getListEventsByType,
   getDetailPromotion,
-  getDetailEvent
+  getDetailEvent,
+  getListServerByPartner
 };

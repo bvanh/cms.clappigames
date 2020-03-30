@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { Upload, Checkbox, Row, Col, Card, Icon, Button } from "antd";
 import { UPDATE_ALBUM } from "../../../utils/mutation/media";
-import ImagePicker from "react-image-picker";
+import Lightbox from "react-image-lightbox";
+import "react-image-lightbox/style.css";
 import CreateAlbumFromComp from "./createAlbumFromComp";
 import CreateAlbumFromLibary from "./createAlbumFromLibary";
 import { useQuery, useMutation } from "@apollo/react-hooks";
@@ -30,6 +31,8 @@ function UpdateAlbum() {
   const [selectedImage, setSelectedImage] = useState([]);
   const [isCreateAlbum, setIsCreateAlbum] = useState(false);
   const [imagesForAlbum, setImagesForAlbum] = useState([]);
+  const [isOpenImage, setIsOpenImage] = useState(false);
+  const [photoIndex, setPhotoIndex] = useState(0);
   const [pickDataImages, setPickDataImages] = useState({
     fromComp: "",
     fromLibary: ""
@@ -95,7 +98,7 @@ function UpdateAlbum() {
   const backScreenUpdate = () => {
     setPickDataImages({ fromComp: "", fromLibary: "" });
   };
-  const resetAlbumName = () => {};
+  const resetAlbumName = () => { };
   const printListImages = imagesForAlbum.map((val, index) => (
     <Card.Grid style={gridStyle} key={index}>
       <Checkbox value={val} className="checkbox-image">
@@ -112,31 +115,53 @@ function UpdateAlbum() {
         {selectedImage.length > 0 ? (
           <div className="btn-media-options">
             <span>
-              <Icon type="close" style={{ marginRight: "5px" }} />
+              <Icon type="close" style={{ marginRight: "5px" }} onClick={()=>setSelectedImage([])} />
               <span>{selectedImage.length}</span> items đã được chọn
             </span>
             <div>
+              <Icon type="eye" style={{ fontSize: "18px", margin: "0 5px" }} onClick={() => setIsOpenImage(true)} />
               <Icon
                 type="delete"
                 style={{ fontSize: "18px", margin: "0 5px" }}
                 onClick={submitDelete}
               />
-              <Icon type="download" style={{ fontSize: "18px" }} />
+              {/* <Icon type="download" style={{ fontSize: "18px" }} /> */}
             </div>
           </div>
         ) : (
-          <div className="menu-images">
-            <Link to="/media" style={{ marginRight: "3rem" }}>
-              <h3>Images</h3>
-            </Link>
-            <Link to="/media/album">
-              <h3>Album</h3>
-            </Link>
-          </div>
-        )}
-        <Checkbox.Group style={{ width: "100%" }} onChange={onChange}>
+            <div className="menu-images">
+              <Link to="/media" style={{ marginRight: "3rem" }}>
+                <h3>Images</h3>
+              </Link>
+              <Link to="/media/album">
+                <h3>Album</h3>
+              </Link>
+            </div>
+          )}
+        <Checkbox.Group style={{ width: "100%" }} onChange={onChange}value={selectedImage}>
           <div>{printListImages}</div>
         </Checkbox.Group>
+        {isOpenImage && (
+          <Lightbox
+            mainSrc={JSON.parse(selectedImage[photoIndex]).url}
+            nextSrc={JSON.parse(selectedImage[(photoIndex + 1) % selectedImage.length]).url}
+            prevSrc={
+              JSON.parse(
+                selectedImage[
+                (photoIndex + selectedImage.length - 1) % selectedImage.length
+                ]).url
+            }
+            onCloseRequest={() => setIsOpenImage(false)}
+            onMovePrevRequest={() =>
+              setPhotoIndex(
+                (photoIndex + selectedImage.length - 1) % selectedImage.length
+              )
+            }
+            onMoveNextRequest={() =>
+              setPhotoIndex((photoIndex + 1) % selectedImage.length)
+            }
+          />
+        )}
       </Col>
       <Col md={8} className="create-album">
         <div>

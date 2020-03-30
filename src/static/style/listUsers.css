@@ -29,3 +29,6 @@ tbody {
 .reset-btn-hide{
   display: none !important;
 }
+.email-verify{
+  color: red;
+}

@@ -34,6 +34,7 @@ query listProducts( $productId: String){
     sort
     price
     status
+    image
   }
 }
 `;

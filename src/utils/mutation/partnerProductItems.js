@@ -6,14 +6,10 @@ const updatePartnerProductItem = gql`
       partnerProductId
       partnerId
       productName
-      promotion{
-        type
-      }
       coin
       createAt
       status
       partnerProductName
-      promotionId
       productId
     }
   }
@@ -24,15 +20,12 @@ const createPartnerProduct = gql`
       partnerProductId
       partnerId
       productName
-      promotion{
-        type
-      }
       coin
       createAt
       status
       partnerProductName
-      promotionId
       productId
+      image
     }
   }
 `;

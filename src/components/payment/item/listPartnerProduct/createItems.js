@@ -8,8 +8,14 @@ import {
   Col,
   Select,
   Icon,
-  Rate
+  Modal
 } from "antd";
+import {
+  dispatchShowImagesNews,
+  dispatchSetUrlImageThumbnail
+} from "../../../../redux/actions/index";
+import {connect} from 'react-redux'
+import ListImagesForNews from "../../../news/modalImageUrl/imgsUrl";
 import { queryGetPlatform } from "../../../../utils/queryNews";
 import { queryGetRefPartnerProducts } from "../../../../utils/queryPartnerProducts";
 import { createPartnerProduct } from "../../../../utils/mutation/partnerProductItems";
@@ -49,7 +55,9 @@ function CreatePartnerItems(props) {
     promotionId: "",
     status: ""
   });
-
+  useEffect(() => {
+    dispatchSetUrlImageThumbnail(null);
+  }, []);
   const { loading, error, data } = useQuery(queryGetPlatform(), {
     onCompleted: dataPartner => {
       setListPlatform(dataPartner.listPartners);
@@ -81,7 +89,8 @@ function CreatePartnerItems(props) {
         productId: productId,
         coin: Number(coin),
         partnerProductName: partnerProductName,
-        promotionId: Number(promotionId)
+        promotionId: Number(promotionId),
+        image:props.urlImgThumbnail
       }
     }
   });
@@ -144,9 +153,22 @@ function CreatePartnerItems(props) {
       );
     }
   });
+  const showConfirm = () => {
+    Modal.confirm({
+      title: "Bạn có muốn tiếp tục tạo bản ghi không ?",
+      okText:"Xem danh sách",
+      cancelText:"Tiếp tục",
+      onOk() {
+        props.setIsCreateItem(false);
+      },
+      onCancel() {
+        console.log("Cancel");
+      }
+    });
+  };
   return (
     <Row>
-      <Link to="/payment/items" onClick={() => props.setIsCreateItem(false)}>
+      <Link to="/payment/items" onClick={showConfirm}>
         <span>
           <Icon type="arrow-left" style={{ paddingRight: ".2rem" }} />
           Danh sách Items
@@ -158,7 +180,7 @@ function CreatePartnerItems(props) {
           <div>
             <p>
               <Button
-                onClick={cancelUpdate}
+                onClick={showConfirm}
                 disabled={oldDataPartnerProduct.statusBtnCancel}
                 style={{marginRight:".5rem"}}
               >
@@ -189,14 +211,14 @@ function CreatePartnerItems(props) {
           <div>
             <div>
               <p className="edit-product-content-title">Mã C.coin</p>
-              <span>Mã tự tạo: {partnerProductId} </span>
+              <span>Mã tự tạo: AUTO {partnerProductId} </span>
             </div>
           </div>
           <div className="product-input-update">
               <span className="edit-product-content-title">Tên Game</span>
               <Select
                 value={partnerId}
-                style={{ width: '100%' }}
+                style={{ width: '100% !important' }}
                 onChange={changePartnerName}
               >
                 {printPlatform}
@@ -235,6 +257,15 @@ function CreatePartnerItems(props) {
               name="promotionId"
               onChange={getNewInfoItem}
             ></Input>*/}
+             <div>
+              <span className="edit-product-content-title">Ảnh</span>
+            </div>
+            <div style={{ width: "100px" }}>
+              <img src={props.urlImgThumbnail} width="100%" />
+            </div>
+            <div>
+              <a onClick={() => dispatchShowImagesNews(true)}>Chọn ảnh</a>
+            </div>
           </div>
         </Col>
         <Col md={8} className="section2">
@@ -259,9 +290,16 @@ function CreatePartnerItems(props) {
             </span>
           </div>
         </Col>
+        <ListImagesForNews isThumbnail={true} />
       </Row>
     </Row>
   );
 }
+function mapStateToProps(state) {
+  return {
+    visible: state.visibleModalNews,
+    urlImgThumbnail: state.urlImgThumbnail
+  };
+}
+export default connect(mapStateToProps, null)(CreatePartnerItems);
 
-export default CreatePartnerItems;

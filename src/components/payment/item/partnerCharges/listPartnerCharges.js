@@ -86,7 +86,7 @@ function ListPartnerCharges() {
   const columns = [
     {
       title: "Id",
-      dataIndex: "partnerChargeId",
+      dataIndex: "partnerChargeCode",
       key: "chargeId",
       // fixed:'left'
     },

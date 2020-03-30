@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Table, Button, Pagination, Input,Tooltip,Icon } from "antd";
+import { Table, Button, Pagination, Input, Tooltip, Icon } from "antd";
 import { queryGetListUsers } from "../../utils/queryUsers";
 import { useLazyQuery, useQuery } from "@apollo/react-hooks";
 import { Link } from "react-router-dom";
@@ -14,11 +14,12 @@ function Danhsach() {
     count: null
   });
   const [dataUsers, setData] = useState([
-    { username: "", userId: "", coin: "", emai: "" }
+    { username: "", userId: "", coin: "", emai: "", mobile: "" }
   ]);
   const { currentPage, search, type, pageSize } = pageIndex;
   const [getData, { loading, data }] = useLazyQuery(queryGetListUsers, {
     onCompleted: data => {
+      console.log(data)
       setData(data.listUsersByType.rows);
       setPageIndex({ ...pageIndex, count: data.listUsersByType.count });
     }
@@ -48,7 +49,14 @@ function Danhsach() {
     },
     {
       title: "Email",
-      dataIndex: "email"
+      dataIndex: "email",
+      render: (index, record) => (
+        <span className={record.emailStatus === 'COMPLETE' ? 'email-verify' : ''}>{index}</span>
+      )
+    },
+    {
+      title: "Mobile",
+      dataIndex: "mobile"
     },
     {
       title: "Action",
@@ -112,12 +120,12 @@ function Danhsach() {
             value={search}
             onPressEnter={resetSearch}
             suffix={
-              <Tooltip title="reset" className={search!==''?'reset-btn-show':'reset-btn-hide'}>
-                <Icon type="close" style={{ color: "rgba(0,0,0,.45)" }} onClick={resetSearch}/>
+              <Tooltip title="reset" className={search !== '' ? 'reset-btn-show' : 'reset-btn-hide'}>
+                <Icon type="close" style={{ color: "rgba(0,0,0,.45)" }} onClick={resetSearch} />
               </Tooltip>
             }
           />
-          <Button onClick={onSearch}>Search</Button>
+          <Button onClick={onSearch} style={{ marginLeft: '.25rem' }}>Search</Button>
         </div>
       </div>
 

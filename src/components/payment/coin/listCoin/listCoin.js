@@ -215,7 +215,7 @@ function ListCoin(props) {
                 <Link to="/payment/coin" onClick={() => setIsCreateCoin(true)}>
                   <Button icon="plus">Thêm gói C.coin</Button>
                 </Link>
-                <Button disabled={!hasSelected} onClick={submitDeleteProduct}>
+                <Button disabled={!hasSelected} onClick={submitDeleteProduct} style={{marginLeft:".25rem"}}>
                   Delete
                 </Button>
               </div>

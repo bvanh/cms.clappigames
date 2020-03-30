@@ -153,7 +153,7 @@ const Album = () => {
                 style={{ fontSize: "18px", margin: "0 5px" }}
                 onClick={submitDelete}
               />
-              <Icon type="download" style={{ fontSize: "18px" }} />
+              {/* <Icon type="download" style={{ fontSize: "18px" }} /> */}
             </div>
           </div>
         ) : (
