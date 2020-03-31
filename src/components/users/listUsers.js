@@ -59,8 +59,8 @@ function Danhsach() {
       width: "20%"
     },
     {
-      title: "UserId",
-      dataIndex: "userId",
+      title: "User Id",
+      dataIndex: "fakeId",
       width: "10%",
       render: index => <span className="convert-col">{index}</span>
     },
@@ -73,9 +73,9 @@ function Danhsach() {
       title: "Email",
       dataIndex: "email",
       width: "23%",
-      render: (index, record) => (
-        <Fragment>
-          {record.emailStatus === "COMPLETE" || record.verifyEmail !== null ? (
+      render: (index, record) =>  (
+        <Fragment>      
+          {index !=="" ? (
             <span className="email-verify">
               <img src={importImage["tick-email.png"]} alt="tick-email" />
               {index}
@@ -159,7 +159,7 @@ function Danhsach() {
   ));
   return (
     <div className="container-listUser">
-      <h2>Tổng quan về người dùng</h2>
+      <h2>Users</h2>
       <div className="btn-search-charges">
         <div>
           <Input

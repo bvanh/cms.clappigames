@@ -2,6 +2,9 @@ import React, { useState, useEffect } from "react";
 import moment from "moment";
 import { Line } from "react-chartjs-2";
 import { Link } from "react-router-dom";
+import {
+  queryGetListCharges
+} from "../../../../utils/queryCoin";
 import { useQuery, useLazyQuery } from "@apollo/react-hooks";
 import { getListChartCharges } from "../../../../utils/query/chart";
 import { optionLine } from "../../../../utils/configCharts";
@@ -27,12 +30,32 @@ const ChartCharges = props => {
   const { fromDate, toDate, fromDateCustom, toDateCustom } = timeValue;
   const { TODAY } = dates;
   const [getData] = useLazyQuery(getListChartCharges, {
-    onCompleted: data =>
+    onCompleted: data => {
       setDataCharts({
         xAxis: JSON.parse(data.listCacheChargesByDate.xAxis),
         yAxis: JSON.parse(data.listCacheChargesByDate.yAxis)
       })
+      let demo = JSON.parse(data.listCacheChargesByDate.yAxis).map((val, i) => val[0].money);
+      const demo2 = demo.reduce((a, b) => a + b)
+      props.setTotalIndex({ ...props.totalIndex, totalMoney: demo2 })
+    }
   });
+  const [getDataCharges] = useLazyQuery(
+    queryGetListCharges,
+    { 
+      variables: {
+        currentPage: 1,
+        type: 1,
+        pageSize: 10,
+        search: '',
+        fromDate: fromDate,
+        toDate: toDate
+      },
+      onCompleted: data => {
+        props.setTotalIndex({ ...props.totalIndex, totalPurchase: data.listChargesByType.count })
+      }
+    }
+  );
   useEffect(() => {
     getData({
       variables: {
@@ -40,6 +63,7 @@ const ChartCharges = props => {
         toDate: toDate
       }
     });
+    getDataCharges();
   }, []);
   const disabledDate = current => {
     if (fromDateCustom != null) {
@@ -87,7 +111,7 @@ const ChartCharges = props => {
     });
     setIsSelectDates(!isSelectDates);
   };
-  const converData = paymentType => {
+  const convertData = paymentType => {
     const demo = [];
     const dataAll = dataCharts.yAxis.map((val, i) =>
       val.map((val2, i) => {
@@ -109,7 +133,7 @@ const ChartCharges = props => {
         borderWidth: 2,
         hoverBackgroundColor: "rgba(255,99,132,0.4)",
         hoverBorderColor: "rgba(255,99,132,1)",
-        data: converData("ALL")
+        data: convertData("ALL")
       },
       {
         label: "GATE",
@@ -119,7 +143,7 @@ const ChartCharges = props => {
         borderWidth: 2,
         hoverBackgroundColor: "rgba(255,99,132,0.4)",
         hoverBorderColor: "rgba(255,99,132,1)",
-        data: converData("GATE")
+        data: convertData("GATE")
       },
       {
         label: "MOMO",
@@ -129,7 +153,7 @@ const ChartCharges = props => {
         borderWidth: 2,
         hoverBackgroundColor: "rgba(255,99,132,0.4)",
         hoverBorderColor: "rgba(255,99,132,1)",
-        data: converData("MOMO")
+        data: convertData("MOMO")
       },
       {
         label: "NGANLUONG",
@@ -139,7 +163,7 @@ const ChartCharges = props => {
         borderWidth: 2,
         hoverBackgroundColor: "rgba(255,99,132,0.4)",
         hoverBorderColor: "rgba(255,99,132,1)",
-        data: converData("NGANLUONG")
+        data: convertData("NGANLUONG")
       }
     ]
   };
@@ -154,7 +178,7 @@ const ChartCharges = props => {
         <h2>Doanh thu</h2>
         <Select
           defaultValue="SEVENT_DAY_AGO"
-          style={{ width: 120}}
+          style={{ width: 120 }}
           onChange={handleChangeRangeDates}
           className="select-charges-date"
         >

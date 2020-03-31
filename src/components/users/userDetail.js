@@ -57,10 +57,10 @@ function Detail(props) {
         <Link to='/'>
           <span>
             <Icon type="arrow-left" style={{paddingRight:'.2rem'}}/>
-            Danh sách người dùng
+            Back
         </span>
         </Link>
-        <h2>Thông tin chi tiết</h2>
+        <h2>Profile user</h2>
         <Col md={17}>
           <Row>
             <Row className='section1'>
@@ -87,26 +87,26 @@ function Detail(props) {
                   <Col md={16}>
                     <div className="info-detail">
                       <Row className='info-detail-title'>
-                        <h3>Thông tin tài khoản</h3>
+                        <h3>Account</h3>
                         <p>Email: <b>{email}</b></p>
                         <div className='mobile-status-detail'>
-                          <p>Sdt : <b>{mobile}</b></p>
-                          <p>Trang thai liên kết : <b>{statusSocial}</b></p>
+                          <p>Phone number : <b>{mobile}</b></p>
+                          <p>Type connection : <b>{statusSocial}</b></p>
                         </div>
                       </Row>
                       <Row className='info-detail-content'>
-                        <h3>Thông tin cá nhân</h3>
+                        <h3>User Information</h3>
                         <div>
-                          <p>Họ và Tên: <span className='detail-user'>{nickname}</span></p>
-                          <p>Giới tính : <span className='detail-user'>{gender}</span></p>
-                          <p>Ngày sinh : <span className='detail-user'>{dateOfBirth}</span></p>
+                          <p>Full name: <span className='detail-user'>{nickname}</span></p>
+                          <p>Gender : <span className='detail-user'>{gender}</span></p>
+                          <p>Birth : <span className='detail-user'>{dateOfBirth}</span></p>
                         </div>
                         <div>
-                          <p>CMND: <span className='detail-user'>{identifyCard}</span></p>
-                          <p>Ngày cấp: <span className='detail-user'>{dateOfIssue}</span></p>
-                          <p>Nơi cấp: <span className='detail-user'>{placeOfIssue}</span></p>
+                          <p>ID card: <span className='detail-user'>{identifyCard}</span></p>
+                          <p>Date: <span className='detail-user'>{dateOfIssue}</span></p>
+                          <p>Where: <span className='detail-user'>{placeOfIssue}</span></p>
                         </div>
-                        <p>Địa chỉ: <span className='detail-user'>{address}</span></p>
+                        <p>Address: <span className='detail-user'>{address}</span></p>
                       </Row>
                       <Icon type="edit" style={{ fontSize: '24px' }} theme="filled" onClick={() => switchEdit(true)} className='edit-user' />
                     </div>
@@ -119,7 +119,7 @@ function Detail(props) {
           </Row>
         </Col>
         <Col md={7} className='user-status'>
-          <h3>Trạng thái hoạt động</h3>
+          <h3>Acitvity Status</h3>
         </Col>
       </Row>
     </>

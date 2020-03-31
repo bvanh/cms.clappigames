@@ -16,7 +16,8 @@ const gridStyle = {
   textAlign: "center",
   padding: "2px",
   margin: ".5%",
-  position: "relative"
+  position: "relative",
+  height:"100px"
 };
 function UpdateAlbum() {
   const query = new URLSearchParams(window.location.search);
@@ -99,11 +100,17 @@ function UpdateAlbum() {
     setPickDataImages({ fromComp: "", fromLibary: "" });
   };
   const resetAlbumName = () => { };
+  const showImage = val => {
+    setPhotoIndex(val);
+    setIsOpenImage(true)
+  }
   const printListImages = imagesForAlbum.map((val, index) => (
-    <Card.Grid style={gridStyle} key={index}>
+    <Card.Grid style={gridStyle} key={index} className="checkbox-image-container">
       <Checkbox value={val} className="checkbox-image">
-        <img src={JSON.parse(val).url} width="100%" />
       </Checkbox>
+      <div style={{ height: "100%", cursor: "pointer" }} onClick={() => showImage(index)}>
+        <img src={JSON.parse(val).url} style={{ maxHeight: "100%", maxWidth: "100%" }} />
+      </div>
     </Card.Grid>
   ));
   return (
@@ -143,36 +150,39 @@ function UpdateAlbum() {
         </Checkbox.Group>
         {isOpenImage && (
           <Lightbox
-            mainSrc={JSON.parse(selectedImage[photoIndex]).url}
-            nextSrc={JSON.parse(selectedImage[(photoIndex + 1) % selectedImage.length]).url}
+            mainSrc={JSON.parse(imagesForAlbum[photoIndex]).url}
+            nextSrc={JSON.parse(imagesForAlbum[(photoIndex + 1) % imagesForAlbum.length]).url}
             prevSrc={
               JSON.parse(
-                selectedImage[
-                (photoIndex + selectedImage.length - 1) % selectedImage.length
+                imagesForAlbum[
+                (photoIndex + imagesForAlbum.length - 1) % imagesForAlbum.length
                 ]).url
             }
             onCloseRequest={() => setIsOpenImage(false)}
             onMovePrevRequest={() =>
               setPhotoIndex(
-                (photoIndex + selectedImage.length - 1) % selectedImage.length
+                (photoIndex + imagesForAlbum.length - 1) % imagesForAlbum.length
               )
             }
             onMoveNextRequest={() =>
-              setPhotoIndex((photoIndex + 1) % selectedImage.length)
+              setPhotoIndex((photoIndex + 1) % imagesForAlbum.length)
             }
           />
         )}
       </Col>
       <Col md={8} className="create-album">
         <div>
-          <h3>
-            <Icon
-              onClick={() => setIsCreateAlbum(false)}
-              type="close"
-              style={{ marginRight: "5px", fontSize: "15px" }}
-            />
+          <div>
+            <h3>
+              <Icon
+                onClick={() => setIsCreateAlbum(false)}
+                type="close"
+                style={{ marginRight: "5px", fontSize: "15px" }}
+              />
             Update Album
           </h3>
+            {/* <span>Delete</span> */}
+          </div>
           <input
             className="input-album-name"
             placeholder="Nhập tên album"
@@ -230,8 +240,8 @@ function UpdateAlbum() {
             </>
           ) : null}
           {fromComp === "" && fromLibary === "" ? (
-            <div style={{margin:"0 2rem"}}>
-              <Button onClick={submitUpdateAlbum} style={{width:"100%"}}>
+            <div style={{ margin: "0 2rem" }}>
+              <Button onClick={submitUpdateAlbum} style={{ width: "100%" }}>
                 Submit
             </Button>
             </div>

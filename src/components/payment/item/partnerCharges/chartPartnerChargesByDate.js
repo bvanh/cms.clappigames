@@ -8,10 +8,14 @@ import {
   getListChartCharges,
   getListPartnerCharges
 } from "../../../../utils/query/chart";
+import {
+  queryGetListPartnerCharges
+} from "../../../../utils/queryPartnerProducts";
 import { optionLine } from "../../../../utils/configCharts";
 import { connect } from "react-redux";
 import { Icon, DatePicker, Input, Select } from "antd";
 import { dates } from "../../../../utils/dateInfo";
+import { platform } from "chart.js";
 const { Option } = Select;
 
 const listSelectDates = [
@@ -27,39 +31,52 @@ const ChartPartnerCharges = props => {
     fromDateCustom: null,
     toDateCustom: null
   });
-  const [listPartner, setListPartner] = useState({
-    list: [{ partnerId: "", partnerName: "" }],
-    id: `{"id":"469D8A83-2F3D-48DF-927B-7F40B602FCA3","name":"lqmt"}`
-  });
   const [isSelectDates, setIsSelectDates] = useState(false);
   const [dataCharts, setDataCharts] = useState({
     xAxis: [],
     yAxis: []
   });
   const { fromDate, toDate, fromDateCustom, toDateCustom } = timeValue;
-  const { list, id } = listPartner;
   const { TODAY } = dates;
-  useQuery(queryGetPlatform, {
-    onCompleted: data =>
-      setListPartner({ ...listPartner, list: data.listPartners })
-  });
   const [getData] = useLazyQuery(getListPartnerCharges, {
     onCompleted: data => {
-      console.log(data);
       setDataCharts({
-        xAxis: JSON.parse(data.listCachePartnerChargesByDate.xAxis),
-        yAxis: JSON.parse(data.listCachePartnerChargesByDate.yAxis)
+        xAxis: JSON.parse(data.chartCachePartnerChargeByDates.xAxis),
+        yAxis: JSON.parse(data.chartCachePartnerChargeByDates.yAxis)
       });
+      let arrCoin = JSON.parse(data.chartCachePartnerChargeByDates.yAxis).map((val, i) => val[0].coin);
+      const totalCoin = arrCoin.reduce((a, b) => a + b)
+      props.setTotalIndex({ ...props.totalIndex, totalMoney: totalCoin })
     }
   });
+  const [getDataPartnerCharges] = useLazyQuery(
+    queryGetListPartnerCharges, {
+    onCompleted: data => {
+      console.log(data)
+      props.setTotalIndex({ ...props.totalIndex, totalPurchase: data.listPartnerChargesByType.count })
+    }
+  }
+  );
   useEffect(() => {
     getData({
       variables: {
         fromDate: fromDate,
         toDate: toDate,
-        partnerId: JSON.parse(id).id
       }
     });
+    getDataPartnerCharges({
+      variables: {
+        currentPage: 1,
+        type: 1,
+        pageSize: 10,
+        search: '',
+        fromDate: fromDate,
+        toDate: toDate,
+        userType: '',
+        os: '',
+        partnerId: ''
+      }
+    })
   }, []);
   const disabledDate = current => {
     if (fromDateCustom != null) {
@@ -79,12 +96,26 @@ const ChartPartnerCharges = props => {
       variables: {
         fromDate: dates[val],
         toDate: TODAY,
-        partnerId: JSON.parse(id).id
       }
     });
+    getDataPartnerCharges({
+      variables: {
+        currentPage: 1,
+        type: 1,
+        pageSize: 10,
+        search: '',
+        fromDate: dates[val],
+        toDate: TODAY,
+        userType: '',
+        os: '',
+        partnerId: ''
+      }
+    })
   };
   const handleChangeRangeDates = value => {
-    changeDates(value);
+    if(value!=="5"){
+      changeDates(value);
+    }
   };
   const showDateSelect = () => {
     setIsSelectDates(!isSelectDates);
@@ -104,57 +135,79 @@ const ChartPartnerCharges = props => {
       variables: {
         fromDate: fromDateCustom,
         toDate: toDateCustom,
-        partnerId: JSON.parse(id).id
       }
     });
+    getDataPartnerCharges({
+      variables: {
+        currentPage: 1,
+        type: 1,
+        pageSize: 10,
+        search: '',
+        fromDate: fromDateCustom,
+        toDate: toDateCustom,
+        userType: '',
+        os: '',
+        partnerId: ''
+      }
+    })
     setIsSelectDates(!isSelectDates);
   };
-  const converData = () => {
+  const convertData = platform => {
     const demo = [];
     const dataAll = dataCharts.yAxis.map((val, i) =>
       val.map((val2, i) => {
-        demo.push(val2.coin);
+        if (val2.partner === platform) {
+          demo.push(val2.coin);
+        }
       })
     );
     return demo;
-  };
-  const handleChangeParnterCharges = val => {
-    const newValue = JSON.parse(val);
-    setListPartner({
-      ...listPartner,
-      id: `{"id":"${newValue.id}","name":"${newValue.name}"}`
-    });
-    getData({
-      variables: {
-        fromDate: fromDate,
-        toDate: toDate,
-        partnerId: newValue.id
-      }
-    });
   };
   const dataChart = {
     labels: dataCharts.xAxis,
     datasets: [
       {
-        label: ` Game ${JSON.parse(id).name}`,
+        label: 'Total',
         fill: false,
         backgroundColor: "rgba(75,192,192,0.4)",
         borderColor: "rgba(75,192,192,0.4)",
         borderWidth: 2,
         hoverBackgroundColor: "rgba(255,99,132,0.4)",
         hoverBorderColor: "rgba(255,99,132,1)",
-        data: converData()
+        data: convertData("Total")
+      },
+      {
+        label: "3Q Zombie",
+        fill: false,
+        backgroundColor: "#ffd54f",
+        borderColor: "#ffd54f",
+        borderWidth: 2,
+        hoverBackgroundColor: "rgba(255,99,132,0.4)",
+        hoverBorderColor: "rgba(255,99,132,1)",
+        data: convertData("3Q Zombie")
+      },
+      {
+        label: "Liên Quân Ma Thuật",
+        fill: false,
+        backgroundColor: "#fcaf18",
+        borderColor: "#fcaf18",
+        borderWidth: 2,
+        hoverBackgroundColor: "rgba(255,99,132,0.4)",
+        hoverBorderColor: "rgba(255,99,132,1)",
+        data: convertData("Liên Quân Ma Thuật")
+      },
+      {
+        label: "Wara Store",
+        fill: false,
+        backgroundColor: "#4280ad",
+        borderColor: "#4280ad",
+        borderWidth: 2,
+        hoverBackgroundColor: "rgba(255,99,132,0.4)",
+        hoverBorderColor: "rgba(255,99,132,1)",
+        data: convertData("Wara Store")
       }
     ]
   };
-  const printOptionPartner = list.map((val, i) => (
-    <Option
-      value={`{"id":"${val.partnerId}","name":"${val.partnerName}"}`}
-      key={i}
-    >
-      {val.partnerName}
-    </Option>
-  ));
   const printOptionDates = listSelectDates.map((val, i) => (
     <Option value={val.variables} key={i}>
       {val.days}
@@ -166,16 +219,8 @@ const ChartPartnerCharges = props => {
         <h2>Xu hướng Item</h2>
         <div>
           <Select
-            // value={id}
-            placeholder='Chọn game'
-            style={{ width: 120,marginRight:"1rem" }}
-            onChange={handleChangeParnterCharges}
-          >
-            {printOptionPartner}
-          </Select>
-          <Select
             defaultValue="SEVENT_DAY_AGO"
-            style={{ width: 120}}
+            style={{ width: 120 }}
             onChange={handleChangeRangeDates}
             className="select_dates-stats"
           >

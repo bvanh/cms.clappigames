@@ -9,15 +9,13 @@ const getListChartCharges = gql`
   }
 `;
 const getListPartnerCharges = gql`
-  query listCachePartnerChargesByDate(
+  query chartCachePartnerChargeByDates(
     $fromDate: String!
     $toDate: String!
-    $partnerId: String!
   ) {
-    listCachePartnerChargesByDate(
+    chartCachePartnerChargeByDates(
       fromDate: $fromDate
       toDate: $toDate
-      partnerId: $partnerId
     ) {
       xAxis
       yAxis

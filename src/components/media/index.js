@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Upload, Checkbox, Row, Col, Card, Icon, Button } from "antd";
 import UploadImages from "./upload";
 import Lightbox from "react-image-lightbox";
 import "react-image-lightbox/style.css";
 import "react-image-picker/dist/index.css";
-import { useQuery, useMutation } from "@apollo/react-hooks";
+import { useQuery, useMutation, useLazyQuery } from "@apollo/react-hooks";
 import { queryListImages } from "../../utils/queryMedia";
 import { DELETE_IMAGE, CREATE_ALBUM } from "../../utils/mutation/media";
 import "../../static/style/media.css";
@@ -15,8 +15,8 @@ const gridStyle = {
   textAlign: "center",
   padding: "2px",
   margin: ".5%",
-  position: "relative"
-  // height:"100px"
+  position: "relative",
+  height:"100px"
 };
 function Media() {
   const [selectedImage, setSelectedImage] = useState([]);
@@ -30,33 +30,13 @@ function Media() {
   });
   const [isOpenImage, setIsOpenImage] = useState(false);
   const [photoIndex, setPhotoIndex] = useState(0);
-  const { loading, error, data, refetch } = useQuery(queryListImages, {
+  const [getListImages] = useLazyQuery(queryListImages, {
+    fetchPolicy:"cache-and-network",
     onCompleted: data => {
-      const newListImage = data.listUploadedImages.filter(
-        (val, i) => val.status !== "INVISIBLE"
-      );
-      setDataImage(newListImage);
+      setDataImage(data.listUploadedImages);
     }
   });
-  if (loading) return "Loading...";
-  if (error) return `Error! ${error.message}`;
-  const printListImages = data.listUploadedImages.map(function (val, index) {
-    if (val.status !== "INVISIBLE") {
-      return (
-        <Card.Grid
-          style={gridStyle}
-          key={index}
-          className="checkbox-image-container"
-        >
-          <Checkbox value={`{"id":${val.id},"url":"${val.url}"}`} className="checkbox-image">
-            <div style={{ width: "100%" }}>
-              <img src={val.url} alt={val.name} width="100%" />
-            </div>
-          </Checkbox>
-        </Card.Grid>
-      );
-    }
-  });
+  useEffect(() => { getListImages() }, [])
   const onChange = val => {
     console.log(val)
     const newVal = val.map((val, i) => JSON.parse(val))
@@ -64,9 +44,28 @@ function Media() {
   };
   const submitDelete = async () => {
     await deleteImages();
-    await refetch();
+    await getListImages();
     setSelectedImage([]);
   };
+  const showImage = val => {
+    setPhotoIndex(val);
+    setIsOpenImage(true)
+  }
+  const printListImages = dataImage.map(function (val, index) {
+    return (
+      <Card.Grid
+        style={gridStyle}
+        key={index}
+        className="checkbox-image-container"
+      >
+        <Checkbox value={`{"id":${val.id},"url":"${val.url}"}`} className="checkbox-image">
+        </Checkbox>
+        <div style={{ height: "100%",cursor:"pointer" }} onClick={() => showImage(index)}>
+          <img src={val.url} alt={val.name} style={{maxHeight:"100%",maxWidth:"100%"}} />
+        </div>
+      </Card.Grid>
+    );
+  });
   return (
     <Row>
       <Link to="/media">
@@ -80,7 +79,6 @@ function Media() {
               <span>{selectedImage.length}</span> items đã được chọn
             </span>
             <div>
-              <Icon type="eye" style={{ fontSize: "18px", margin: "0 5px" }} onClick={() => setIsOpenImage(true)} />
               <Icon
                 type="delete"
                 style={{ fontSize: "18px", margin: "0 5px" }}
@@ -109,26 +107,26 @@ function Media() {
         </Checkbox.Group>
         {isOpenImage && (
           <Lightbox
-            mainSrc={selectedImage[photoIndex].url}
-            nextSrc={selectedImage[(photoIndex + 1) % selectedImage.length].url}
+            mainSrc={dataImage[photoIndex].url}
+            nextSrc={dataImage[(photoIndex + 1) % dataImage.length].url}
             prevSrc={
-              selectedImage[
-                (photoIndex + selectedImage.length - 1) % selectedImage.length
+              dataImage[
+                (photoIndex + dataImage.length - 1) % dataImage.length
               ].url
             }
             onCloseRequest={() => setIsOpenImage(false)}
             onMovePrevRequest={() =>
               setPhotoIndex(
-                (photoIndex + selectedImage.length - 1) % selectedImage.length
+                (photoIndex + dataImage.length - 1) % dataImage.length
               )
             }
             onMoveNextRequest={() =>
-              setPhotoIndex((photoIndex + 1) % selectedImage.length)
+              setPhotoIndex((photoIndex + 1) % dataImage.length)
             }
           />
         )}
       </Col>
-      <UploadImages refetch={refetch} />
+      <UploadImages refetch={getListImages} />
     </Row>
   );
 }

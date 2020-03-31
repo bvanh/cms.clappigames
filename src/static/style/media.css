@@ -109,6 +109,8 @@
 }
 .checkbox-image {
   padding: 0.3rem;
+  position: absolute;
+  left: 0;
 }
 .checkbox-image > span > span {
   border-radius: 100% !important;
@@ -119,7 +121,7 @@
 .checkbox-image > .ant-checkbox {
   display: none;
 }
-.checkbox-image:hover .ant-checkbox {
+.checkbox-image-container:hover .checkbox-image>.ant-checkbox {
   display: block;
 }
 .checkbox-image > .ant-checkbox-checked {

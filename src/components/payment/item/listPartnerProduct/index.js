@@ -19,6 +19,10 @@ function ListPartnerItems() {
   const [isCreateItem, setIsCreateItem] = useState(false);
   const [dataProducts, setData] = useState(null);
   const [itemsForDelete, setItemsForDelete] = useState([]);
+  const [totalIndex, setTotalIndex] = useState({
+    totalMoney: 0,
+    totalPurchase: 0
+  })
   const { currentPage, pageSize, partnerId, partnerProductName } = pageIndex;
   const [getData] = useLazyQuery(queryGetListPartnerProducts, {
     fetchPolicy: "cache-and-network",
@@ -114,6 +118,15 @@ function ListPartnerItems() {
   if (isCreateItem === false)
     return (
       <Row>
+        <Col md={24}>
+          <Col md={12}>
+            Revenue {totalIndex.totalMoney}
+            TotalPurchase {totalIndex.totalPurchase}
+          </Col>
+          <Col md={12}>
+            <ChartPartnerChages totalIndex={totalIndex} setTotalIndex={setTotalIndex} />
+          </Col>
+        </Col>
         <Col md={12}>
           <div className="products-title">
             <div>
@@ -147,7 +160,7 @@ function ListPartnerItems() {
                 rowSelection={rowSelection}
                 columns={columns}
                 dataSource={dataProducts.listPartnerProductsByPartner.rows}
-                // scroll={{ x: 1000 }}
+              // scroll={{ x: 1000 }}
               />
               {/* <Pagination
             current={pageIndex.currentPage}
@@ -160,7 +173,6 @@ function ListPartnerItems() {
           )}
         </Col>
         <Col md={12} style={{ padding: "0 1rem" }}>
-          <ChartPartnerChages />
           <ListPartnerChages />
         </Col>
       </Row>

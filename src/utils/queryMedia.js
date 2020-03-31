@@ -1,7 +1,7 @@
 import { gql } from "apollo-boost";
 const queryListImages = gql`
   query {
-    listUploadedImages {
+    listUploadedImages(status:"AVAILABLE") {
       url
       id
       name

@@ -34,6 +34,10 @@ function ListCoin(props) {
   });
   const [isCreateCoin, setIsCreateCoin] = useState(false);
   const [dataCoin, setDataCoin] = useState(null);
+  const [totalIndex, setTotalIndex] = useState({
+    totalMoney: 0,
+    totalPurchase: 0
+  })
   const [itemsForDelete, setItemsForDelete] = useState([]);
   const {
     currentPage,
@@ -99,7 +103,7 @@ function ListCoin(props) {
       dataIndex: "productId",
       key: "productId",
       width: "15%",
-      render:index=><span className='convert-col'>{index}</span>
+      render: index => <span className='convert-col'>{index}</span>
     },
     {
       title: "C.coin",
@@ -169,19 +173,6 @@ function ListCoin(props) {
       )
     }
   ];
-  // const getValueSearch = e => {
-  //   setPageIndex({ ...pageIndex, productName: e.target.value });
-  // };
-  // const onSearch = () => {
-  //   getDataCoin({
-  //     variables: {
-  //       currentPage: currentPage,
-  //       type: type,
-  //       pageSize: pageSize,
-  //       productName: productName
-  //     }
-  //   });
-  // };
   const rowSelection = {
     onChange: (selectRowsKeys, selectedRows) => {
       const itemsIdForDelete = selectedRows.map((val, index) => val.productId);
@@ -199,33 +190,32 @@ function ListCoin(props) {
   ));
   const hasSelected = itemsForDelete.length > 0;
   if (loading) return "Loading...";
-  if (isCreateCoin)  
+  if (isCreateCoin)
     return <CreateProductCoin setIsCreateCoin={setIsCreateCoin} data={data} />;
   if (isCreateCoin === false)
     return (
       <Row>
+        <Col md={24}>
+          <Col md={12}>
+            Doanh thu {totalIndex.totalMoney}
+            Giao dịch: {totalIndex.totalPurchase}
+          </Col>
+          <Col md={12}>
+            <ChartCharges setTotalIndex={setTotalIndex} totalIndex={totalIndex}/>
+          </Col>
+        </Col>
         <Col md={12}>
           <div className="products-title">
             <div>
               <h2>Quản lý C.coin</h2>
               <div className="view-more">
-                {/*<a className="btn-view-more">
-                  Chi tiết <Icon type="double-right" />
-    </a>*/}
                 <Link to="/payment/coin" onClick={() => setIsCreateCoin(true)}>
                   <Button icon="plus">Thêm gói C.coin</Button>
                 </Link>
-                <Button disabled={!hasSelected} onClick={submitDeleteProduct} style={{marginLeft:".25rem"}}>
+                <Button disabled={!hasSelected} onClick={submitDeleteProduct} style={{ marginLeft: ".25rem" }}>
                   Delete
                 </Button>
               </div>
-            </div>
-            <div className="btn-search-users">
-              {/*<Button disabled={!hasSelected} onClick={submitDeleteProduct}>
-                Delete
-              </Button>
-              {/* <Input onChange={e => getValueSearch(e)} onPressEnter={onSearch} prefix={<Icon type="search" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder='Tìm kiếm tên c.coin' />
-              {/* <Button onClick={onSearch}>Search</Button> */}
             </div>
           </div>
           {dataCoin && (
@@ -235,21 +225,11 @@ function ListCoin(props) {
                 columns={columns}
                 dataSource={dataCoin.listProductsByPaymentType.rows}
               />
-              {/* <Pagination
-            current={pageIndex.currentPage}
-            total={dataProducts.listProductsByPaymentType.count}
-            pageSize={10}
-            onChange={goPage}
-            className="pagination-listUser"
-          /> */}
             </>
           )}
         </Col>
         <Col md={12} style={{ padding: "0 1rem" }}>
-          <Col>
-            <ChartCharges />
-          </Col>
-          <ListCharges />
+          <ListCharges setTotalIndex={setTotalIndex} totalIndex={totalIndex}/>
         </Col>
       </Row>
     );

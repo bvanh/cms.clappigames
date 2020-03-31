@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import {
   Upload,
   Checkbox,
@@ -43,6 +43,9 @@ const Album = () => {
       ids: selectedAlbumId
     }
   });
+  useMemo(() => {
+    setImagesForAlbumByComp([])
+  }, [fromComp])
   const [createAlbumByComp] = useMutation(CREATE_ALBUM, {
     variables: {
       req: {
@@ -91,8 +94,8 @@ const Album = () => {
     setSelectedAlbumId([]);
   };
   const submitCreateAlbumByComp = () => {
-    createAlbumByComp();
-    refetch();
+      createAlbumByComp();
+      refetch();
   };
   const submitCreateAlbumByLi = () => {
     createAlbumByLi();
@@ -120,7 +123,7 @@ const Album = () => {
                   <img
                     alt={val.name}
                     src={JSON.parse(JSON.parse(val.data).listImages[0]).url}
-                    width="100%"
+                    style={{maxHeight:"100%",maxWidth:"100%"}}
                   />
                 </div>
               }

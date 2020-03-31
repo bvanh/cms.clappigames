@@ -89,38 +89,38 @@ function UpdateInforUser(props) {
     <Col md={16}>
       <div className="info-detail">
         <Row className='info-detail-title'>
-          <h3>Thông tin tài khoản</h3>
+          <h3>Account</h3>
           <p>Email: <b>{email}</b></p>
           <div className='mobile-status-detail'>
-            <p className='user-mobile'>Sdt:  <input
+            <p className='user-mobile'>Phone number:  <input
               className='input-update'
               placeholder=""
               value={userInfor.sdt}
               name="sdt"
               onChange={getInforUser}
             /></p>
-            <p>Trang thai liên kết : <b>{props.statusSocial}</b></p>
+            <p>Type connection : <b>{props.statusSocial}</b></p>
           </div>
         </Row>
         <Row className='info-detail-content'>
-          <h3>Thông tin cá nhân</h3>
+          <h3>User Information</h3>
           <div>
-            <p>Họ và Tên:  <input
+            <p>Full name:  <input
               className='input-update'
               placeholder=""
               value={userInfor.name}
               name="name"
               onChange={getInforUser}
             /></p>
-            <p>Giới tính : <Select defaultValue={gender} onChange={getInforSelect} className='select-infor' showArrow={false}>
+            <p>Gender : <Select defaultValue={gender} onChange={getInforSelect} className='select-infor' showArrow={false}>
               <Option value="MALE">MALE</Option>
               <Option value="FEMALE">FEMALE</Option>
               <Option value="OHTER">OTHER</Option>
             </Select></p>
-            <p>Ngày sinh : <DatePicker defaultValue={moment(userInfor.dateBirth, dateFormat)} format={dateFormat} className='datePicker-user' onChange={(date, dateString) => handleChangeDateBirth(dateString)} /></p>
+            <p>Birth : <DatePicker defaultValue={moment(userInfor.dateBirth, dateFormat)} format={dateFormat} className='datePicker-user' onChange={(date, dateString) => handleChangeDateBirth(dateString)} /></p>
           </div>
           <div className='input-update-identifyCard'>
-            <p>CMND: <input
+            <p>ID card: <input
               className='input-update'
               type='number'
               placeholder=""
@@ -128,10 +128,10 @@ function UpdateInforUser(props) {
               name="identifyCard"
               onChange={getInforUser}
             /></p>
-            <p>Ngày cấp:
+            <p>Date:
             <DatePicker defaultValue={moment(userInfor.dateOfIssue, dateFormat)} format={dateFormat} className='datePicker-user' onChange={(date, dateString) => handleChangeDateOfIssue(dateString)} />
             </p>
-            <p style={{ width: "33%" }}>Nơi cấp: <input
+            <p style={{ width: "33%" }}>Where: <input
               className='input-update'
               style={{ width: '100%' }}
               placeholder=""
@@ -140,7 +140,7 @@ function UpdateInforUser(props) {
               onChange={getInforUser}
             /></p>
           </div>
-          <p>Địa chỉ: <span className='detail-user'>{address}</span></p>
+          <p>Address: <span className='detail-user'>{address}</span></p>
         </Row>
         <div className='btn-update-gr'><Button onClick={submitUpdate} type='link'>Update</Button>
           <Button onClick={() => props.switchEdit(false)} type='link'>Back</Button></div>

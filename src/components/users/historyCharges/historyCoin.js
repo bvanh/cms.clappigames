@@ -23,7 +23,7 @@ const HistoryCharges = props => {
       key: "chargeId"
     },
     {
-      title: "PaymentType",
+      title: "Method",
       dataIndex: "paymentType",
       key: "paymentType"
     },
@@ -62,7 +62,7 @@ const HistoryCharges = props => {
   return (
     <>
       <Tabs onChange={callback} type="card">
-        <TabPane tab="Lịch sử nạp Coin" key="1">
+        <TabPane tab="History to top up C.coin" key="1">
           <Table
             dataSource={data.listChargesByUser.rows}
             columns={columns}
@@ -76,14 +76,16 @@ const HistoryCharges = props => {
             className="pagination-listUser"
           />
         </TabPane>
-        <TabPane tab="Lịch sử mua vật phẩm" key="2">
+        <TabPane tab="History to buy item" key="2">
           <HistoryPayment userId={props.userId} />
         </TabPane>
-        <TabPane tab="Lịch sử hoạt động" key="3">
+        <TabPane tab="Activity" key="3">
           <HistoryLogin userId={props.userId} />
         </TabPane>
+        <TabPane tab="Feedback" key="4">
+          {/* <HistoryLogin userId={props.userId} /> */}
+        </TabPane>
       </Tabs>
-      ,
     </>
   );
 };
