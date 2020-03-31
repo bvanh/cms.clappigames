@@ -115,7 +115,7 @@ function UpdateAlbum() {
         {selectedImage.length > 0 ? (
           <div className="btn-media-options">
             <span>
-              <Icon type="close" style={{ marginRight: "5px" }} onClick={()=>setSelectedImage([])} />
+              <Icon type="close" style={{ marginRight: "5px" }} onClick={() => setSelectedImage([])} />
               <span>{selectedImage.length}</span> items đã được chọn
             </span>
             <div>
@@ -138,7 +138,7 @@ function UpdateAlbum() {
               </Link>
             </div>
           )}
-        <Checkbox.Group style={{ width: "100%" }} onChange={onChange}value={selectedImage}>
+        <Checkbox.Group style={{ width: "100%" }} onChange={onChange} value={selectedImage}>
           <div>{printListImages}</div>
         </Checkbox.Group>
         {isOpenImage && (
@@ -230,9 +230,11 @@ function UpdateAlbum() {
             </>
           ) : null}
           {fromComp === "" && fromLibary === "" ? (
-            <Button className="btn-submit-album" onClick={submitUpdateAlbum}>
-              Submit
+            <div style={{margin:"0 2rem"}}>
+              <Button onClick={submitUpdateAlbum} style={{width:"100%"}}>
+                Submit
             </Button>
+            </div>
           ) : null}
         </div>
       </Col>

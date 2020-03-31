@@ -88,8 +88,15 @@ const queryHistotyPayment = (currentPage, pageSize, userId) => {
     listPartnerChargesByUser(currentPage: ${currentPage}, pageSize: ${pageSize}, userId:"${userId}"){
       count
       rows {
+        partnerChargeCode
         payload
         status
+        partnerProduct{
+          partnerProductName
+        }
+        partner{
+          partnerName
+        }
       }
     }
   }

@@ -213,12 +213,12 @@ function ListChargesDetail() {
       key: "partnername",
       render: index => <span>{index.partnerName}</span>
     },
-    {
-      title: "Khuyến mãi",
-      dataIndex: "promotion",
-      key: "promotion",
-      render: index => <span>{index === null ? 'NONE' : index.name}</span>
-    },
+    // {
+    //   title: "Khuyến mãi",
+    //   dataIndex: "promotion",
+    //   key: "promotion",
+    //   render: index => <span>{index === null ? 'NONE' : index.name}</span>
+    // },
     {
       title: "Time",
       dataIndex: "createAt",

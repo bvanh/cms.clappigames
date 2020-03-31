@@ -7,34 +7,35 @@ const HistoryPayment = props => {
   const [pageIndex, setPageIndex] = useState({ currentPage: 1, pageSize: 5 });
   const [currentMenu, setCurrentMenu] = useState("historyCoin");
   const { loading, error, data } = useQuery(
-    queryHistotyPayment(pageIndex.currentPage, pageIndex.pageSize, props.userId)
+    queryHistotyPayment(pageIndex.currentPage, pageIndex.pageSize, props.userId),{
+      onCompleted:data=>console.log(data)
+    }
   );
   if (loading) return `loading...`;
   if (error) return `Error! ${error.message}`;
   const columns = [
     {
       title: "Id",
-      dataIndex: "payload",
-      key: "gameUserId",
-      render: index => <span>{JSON.parse(index).gameUserId}</span>
+      dataIndex: "partnerChargeCode",
+      key: "partnerChargeCode",
     },
     {
       title: "Character",
       dataIndex: "payload",
-      key: "chargeId",
-      render: index => <span>{JSON.parse(index).discount}</span>
+      key: "character",
+      render: index => <span>{JSON.parse(index).gameUserName}</span>
     },
     {
       title: "Item",
-      dataIndex: "payload",
+      dataIndex: "partnerProduct",
       key: "item",
-      render: index => <span>{JSON.parse(index).discount}</span>
+      render: index => <span>{index.partnerProductName}</span>
     },
     {
       title: "C.coin",
       dataIndex: "payload",
       key: "coin",
-      render: index => <span>{JSON.parse(index).discount}</span>
+      render: index => <span>{JSON.parse(index).coin}</span>
     },
     {
       title: "Server",
@@ -44,14 +45,14 @@ const HistoryPayment = props => {
     },
     {
       title: "Game",
-      dataIndex: "payload",
+      dataIndex: "partner",
       key: "game",
-      render: index => <span>{JSON.parse(index).discount}</span>
+      render: index => <span>{index.partnerName}</span>
     },
     {
       title: "Promotion",
       dataIndex: "payload",
-      key: "game",
+      key: "promotion",
       render: index => <span>{JSON.parse(index).discount}</span>
     },
     {
