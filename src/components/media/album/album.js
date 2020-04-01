@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import {
   Upload,
   Checkbox,
@@ -11,7 +11,7 @@ import {
 } from "antd";
 import CreateAlbumFromComp from "./createAlbumFromComp";
 import CreateAlbumFromLibary from "./createAlbumFromLibary";
-import { useQuery, useMutation } from "@apollo/react-hooks";
+import { useQuery, useMutation,useLazyQuery } from "@apollo/react-hooks";
 import { queryGetListAlbumByAdmin } from "../../../utils/queryMedia";
 import { DELETE_ALBUM, CREATE_ALBUM } from "../../../utils/mutation/media";
 import "../../../static/style/media.css";
@@ -70,7 +70,7 @@ const Album = () => {
       console.log(JSON.parse(data.createAdminAlbum.data));
     }
   });
-  const { loading, error, data, refetch } = useQuery(
+  const [getListAlbum] = useLazyQuery(
     queryGetListAlbumByAdmin(currentPage, pageSize, userAdmin),
     {
       fetchPolicy: "cache-and-network",
@@ -80,26 +80,23 @@ const Album = () => {
       }
     }
   );
-
-  if (loading) return "Loading...";
-  if (error) return `Error! ${error.message}`;
-
+  useEffect(() => { getListAlbum() }, [])
   const getAlbumName = e => {
     console.log(e.target.value);
     setPageIndex({ ...pageIndex, albumName: e.target.value });
   };
   const submitDelete = async () => {
     await deleteAlbum();
-    await refetch();
+    await getListAlbum();
     setSelectedAlbumId([]);
   };
   const submitCreateAlbumByComp = () => {
     createAlbumByComp();
-    refetch();
+    getListAlbum();
   };
   const submitCreateAlbumByLi = () => {
     createAlbumByLi();
-    refetch();
+    getListAlbum();
   };
   const backScreenUpdate = () => {
     setPickDataImages({ fromComp: "", fromLibary: "" });
@@ -110,7 +107,7 @@ const Album = () => {
   const resetAlbumName = () => {
     setPageIndex({ ...pageIndex, albumName: "" });
   };
-  const printListAlbum = imagesAlbum.map(function(val, index) {
+  const printListAlbum = imagesAlbum.map(function (val, index) {
     if (val.id >= 1) {
       return (
         <Col sm={6} key={index} style={{ padding: "0 .5rem .5rem .5rem" }}>
@@ -160,15 +157,15 @@ const Album = () => {
             </div>
           </div>
         ) : (
-          <div className="menu-images">
-            <Link to="/media" style={{ marginRight: "3rem" }}>
-              <h3>Images</h3>
-            </Link>
-            <Link to="/media/album">
-              <h3>Album</h3>
-            </Link>
-          </div>
-        )}
+            <div className="menu-images">
+              <Link to="/media" style={{ marginRight: "3rem" }}>
+                <h3>Images</h3>
+              </Link>
+              <Link to="/media/album">
+                <h3>Album</h3>
+              </Link>
+            </div>
+          )}
         <Row style={{ padding: "1rem .5rem" }}>{printListAlbum}</Row>
         <Pagination
           current={currentPage}
@@ -185,75 +182,75 @@ const Album = () => {
             <p>Tạo album mới</p>
           </div>
         ) : (
-          <div>
-            <h3>
-              <Icon
-                onClick={() => setIsCreateAlbum(false)}
-                type="close"
-                style={{ marginRight: "5px", fontSize: "15px" }}
-              />
+            <div>
+              <h3>
+                <Icon
+                  onClick={() => setIsCreateAlbum(false)}
+                  type="close"
+                  style={{ marginRight: "5px", fontSize: "15px" }}
+                />
               Creat new album
             </h3>
-            <input
-              className="input-album-name"
-              placeholder="Name album"
-              value={albumName}
-              name="name"
-              onChange={e => getAlbumName(e)}
-            />
-            <p className="add-images">Add image</p>
-            {fromComp === "pickFromComp" && (
-              <CreateAlbumFromComp
-                setImagesForAlbum={setImagesForAlbumByComp}
-                submitCreateAndUpdateAlbum={submitCreateAlbumByComp}
-                albumName={albumName}
-                refetch={refetch}
-                imagesForAlbum={imagesForAlbumByComp}
-                setPickDataImages={backScreenUpdate}
-                removeAlbumName={resetAlbumName}
+              <input
+                className="input-album-name"
+                placeholder="Name album"
+                value={albumName}
+                name="name"
+                onChange={e => getAlbumName(e)}
               />
-            )}
-            {fromLibary === "pickFromLibary" && (
-              <CreateAlbumFromLibary
-                setImagesForAlbum={setImagesForAlbumByLi}
-                submitCreateAndUpdateAlbum={submitCreateAlbumByLi}
-                refetch={refetch}
-                albumName={albumName}
-                imagesForAlbum={imagesForAlbumByLi}
-                setPickDataImages={backScreenUpdate}
-                removeAlbumName={resetAlbumName}
-              />
-            )}
-            {fromLibary === "" ? (
-              <>
-                <div
-                  className="create-album-pick"
-                  onClick={() =>
-                    setPickDataImages({
-                      fromComp: "f",
-                      fromComp: "pickFromComp"
-                    })
-                  }
-                >
-                  <Icon type="plus" />
+              <p className="add-images">Add image</p>
+              {fromComp === "pickFromComp" && (
+                <CreateAlbumFromComp
+                  setImagesForAlbum={setImagesForAlbumByComp}
+                  submitCreateAndUpdateAlbum={submitCreateAlbumByComp}
+                  albumName={albumName}
+                  refetch={getListAlbum}
+                  imagesForAlbum={imagesForAlbumByComp}
+                  setPickDataImages={backScreenUpdate}
+                  removeAlbumName={resetAlbumName}
+                />
+              )}
+              {fromLibary === "pickFromLibary" && (
+                <CreateAlbumFromLibary
+                  setImagesForAlbum={setImagesForAlbumByLi}
+                  submitCreateAndUpdateAlbum={submitCreateAlbumByLi}
+                  refetch={getListAlbum}
+                  albumName={albumName}
+                  imagesForAlbum={imagesForAlbumByLi}
+                  setPickDataImages={backScreenUpdate}
+                  removeAlbumName={resetAlbumName}
+                />
+              )}
+              {fromLibary === "" ? (
+                <>
+                  <div
+                    className="create-album-pick"
+                    onClick={() =>
+                      setPickDataImages({
+                        fromComp: "f",
+                        fromComp: "pickFromComp"
+                      })
+                    }
+                  >
+                    <Icon type="plus" style={{marginRight:".5rem"}}/>
                   Choose from your computer
                 </div>
-                <div
-                  className="create-album-pick"
-                  onClick={() =>
-                    setPickDataImages({
-                      ...pickDataImages,
-                      fromLibary: "pickFromLibary"
-                    })
-                  }
-                >
-                  <Icon type="search" />
+                  <div
+                    className="create-album-pick"
+                    onClick={() =>
+                      setPickDataImages({
+                        ...pickDataImages,
+                        fromLibary: "pickFromLibary"
+                      })
+                    }
+                  >
+                    <Icon type="search" style={{marginRight:".5rem"}}/>
                   Choose from library
                 </div>
-              </>
-            ) : null}
-          </div>
-        )}
+                </>
+              ) : null}
+            </div>
+          )}
       </Col>
     </Row>
   );

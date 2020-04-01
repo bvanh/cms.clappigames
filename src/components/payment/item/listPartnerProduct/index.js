@@ -1,14 +1,18 @@
 import React, { useState, useEffect } from "react";
-import { Table, Button, Pagination, Input, Row, Col, Icon } from "antd";
+import { Table, Button, Pagination, Input, Row, Col, Icon, Radio } from "antd";
 import CreatePartnerItems from "./createItems";
 import { deletePartnerProducts } from "../../../../utils/mutation/partnerProductItems";
 import { queryGetListPartnerProducts } from "../../../../utils/queryPartnerProducts";
+import { queryGetPlatform } from "../../../../utils/queryPlatform";
 import { useLazyQuery, useMutation, useQuery } from "@apollo/react-hooks";
 import { Link } from "react-router-dom";
 import ListPartnerChages from "../partnerCharges/listPartnerCharges";
 import ChartPartnerChages from "../partnerCharges/chartPartnerChargesByDate";
-// import "../../static/style/listUsers.css";
-
+const radioStyle = {
+  display: "block",
+  height: "30px",
+  lineHeight: "30px"
+};
 function ListPartnerItems() {
   const [pageIndex, setPageIndex] = useState({
     currentPage: 1,
@@ -17,12 +21,15 @@ function ListPartnerItems() {
     partnerProductName: ""
   });
   const [isCreateItem, setIsCreateItem] = useState(false);
+  const [listGame, setListGame] = useState([
+    { partnerId: "", partnerName: "" }
+  ]);
   const [dataProducts, setData] = useState(null);
   const [itemsForDelete, setItemsForDelete] = useState([]);
   const [totalIndex, setTotalIndex] = useState({
     totalMoney: 0,
     totalPurchase: 0
-  })
+  });
   const { currentPage, pageSize, partnerId, partnerProductName } = pageIndex;
   const [getData] = useLazyQuery(queryGetListPartnerProducts, {
     fetchPolicy: "cache-and-network",
@@ -30,12 +37,17 @@ function ListPartnerItems() {
       setData(data);
     }
   });
+  const [getListGame] = useLazyQuery(queryGetPlatform, {
+    fetchPolicy: "cache-and-network",
+    onCompleted: data => setListGame(data.listPartners)
+  });
   const [deletePartnerProduct] = useMutation(deletePartnerProducts, {
     variables: {
       ids: itemsForDelete
     }
   });
   useEffect(() => {
+    getListGame();
     getData({
       variables: {
         currentPage: currentPage,
@@ -45,6 +57,26 @@ function ListPartnerItems() {
       }
     });
   }, []);
+  const handleFilter = () => {
+    getData({
+      variables: {
+        currentPage: 1,
+        pageSize: 10,
+        partnerId: partnerId,
+        partnerProductName: partnerProductName
+      }
+    });
+  };
+  const handleResetFilter = () => {
+    getData({
+      variables: {
+        currentPage: 1,
+        pageSize: 10,
+        partnerId: "",
+        partnerProductName: ""
+      }
+    });
+  }
   const columns = [
     {
       title: "Item Id",
@@ -57,14 +89,48 @@ function ListPartnerItems() {
       key: "productName"
     },
     {
-      title: "Giá (C.coin)",
+      title: "Price (C.coin)",
       dataIndex: "coin",
       key: "coin"
     },
     {
       title: "Game",
       dataIndex: "partnerId",
-      key: "partnerId"
+      key: "partnerId",
+      filterDropdown: () => (
+        <div style={{ padding: 8 }}>
+          <Radio.Group
+            onChange={e =>
+              setPageIndex({ ...pageIndex, partnerId: e.target.value })
+            }
+            value={pageIndex.partnerId}
+          >
+            {printOptionsGame}
+          </Radio.Group>
+          <Button
+            type="primary"
+            onClick={handleFilter}
+            size="small"
+            style={{ width: 90, marginRight: 8 }}
+          >
+            Filter
+          </Button>
+          <Button
+            onClick={handleResetFilter}
+            size="small"
+            style={{ width: 90 }}
+          >
+            Reset
+          </Button>
+        </div>
+      ),
+      filterIcon: filtered => (
+        <Icon
+          type="filter"
+          theme="filled"
+          style={{ color: filtered ? "#1890ff" : "#fafafa" }}
+        />
+      )
     },
     {
       title: "Action",
@@ -113,6 +179,22 @@ function ListPartnerItems() {
       }
     });
   };
+  const goPage = val => {
+    setPageIndex({ ...pageIndex, currentPage: val });
+    getData({
+      variables: {
+        currentPage: val,
+        pageSize: pageSize,
+        partnerId: partnerId,
+        partnerProductName: partnerProductName
+      }
+    });
+  };
+  const printOptionsGame = listGame.map((val, index) => (
+    <Radio style={radioStyle} value={val.partnerId} key={index}>
+      {val.partnerName}
+    </Radio>
+  ));
   if (isCreateItem)
     return <CreatePartnerItems setIsCreateItem={setIsCreateItem} />;
   if (isCreateItem === false)
@@ -120,11 +202,23 @@ function ListPartnerItems() {
       <Row>
         <Col md={24}>
           <Col md={12}>
-            Revenue {totalIndex.totalMoney}
-            TotalPurchase {totalIndex.totalPurchase}
+            <Col md={12}>
+              <h2>C.coin exchange Total</h2>
+              <div className='total-revenue'>
+                <p>{totalIndex.totalMoney}</p>
+              </div>
+            </Col>
+            <Col md={12}>
+              <h2>Total Purchase</h2>
+              {totalIndex.totalPurchase}
+            </Col>
+
           </Col>
           <Col md={12}>
-            <ChartPartnerChages totalIndex={totalIndex} setTotalIndex={setTotalIndex} />
+            <ChartPartnerChages
+              totalIndex={totalIndex}
+              setTotalIndex={setTotalIndex}
+            />
           </Col>
         </Col>
         <Col md={12}>
@@ -160,15 +254,17 @@ function ListPartnerItems() {
                 rowSelection={rowSelection}
                 columns={columns}
                 dataSource={dataProducts.listPartnerProductsByPartner.rows}
+                pagination={false}
               // scroll={{ x: 1000 }}
               />
-              {/* <Pagination
-            current={pageIndex.currentPage}
-            total={dataProducts.listProductsByPaymentType.count}
-            pageSize={10}
-            onChange={goPage}
-            className="pagination-listUser"
-          /> */}
+
+              <Pagination
+                current={pageIndex.currentPage}
+                total={dataProducts.listPartnerProductsByPartner.count}
+                pageSize={10}
+                onChange={goPage}
+                className="pagination-listUser"
+              />
             </>
           )}
         </Col>

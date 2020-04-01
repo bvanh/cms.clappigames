@@ -257,7 +257,7 @@ const NewsEditor = props => {
         visible={alertIndex.isShow}
         okText={<Link to="/news">{alertIndex.confirmBtn}</Link>}
         onOk={submitUpdateAndDelete}
-        cancelText="Go ahead"
+        cancelText="Next"
         onCancel={handleCancel}
       ></Modal>
     </Row>

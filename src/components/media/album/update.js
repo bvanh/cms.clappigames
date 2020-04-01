@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { Upload, Checkbox, Row, Col, Card, Icon, Button } from "antd";
-import { UPDATE_ALBUM } from "../../../utils/mutation/media";
+import { Modal, Checkbox, Row, Col, Card, Icon, Button } from "antd";
+import { UPDATE_ALBUM, DELETE_ALBUM } from "../../../utils/mutation/media";
 import Lightbox from "react-image-lightbox";
 import "react-image-lightbox/style.css";
 import CreateAlbumFromComp from "./createAlbumFromComp";
@@ -17,7 +17,7 @@ const gridStyle = {
   padding: "2px",
   margin: ".5%",
   position: "relative",
-  height:"100px"
+  height: "100px"
 };
 function UpdateAlbum() {
   const query = new URLSearchParams(window.location.search);
@@ -31,6 +31,7 @@ function UpdateAlbum() {
   });
   const [selectedImage, setSelectedImage] = useState([]);
   const [isCreateAlbum, setIsCreateAlbum] = useState(false);
+  const [isShowAlert, setIsShowAlert] = useState(false)
   const [imagesForAlbum, setImagesForAlbum] = useState([]);
   const [isOpenImage, setIsOpenImage] = useState(false);
   const [photoIndex, setPhotoIndex] = useState(0);
@@ -40,11 +41,11 @@ function UpdateAlbum() {
   });
   const { albumName } = pageIndex;
   const { fromComp, fromLibary } = pickDataImages;
-  //   const [deleteImages] = useMutation(DELETE_IMAGE, {
-  //     variables: {
-  //       ids: selectedImage
-  //     }
-  //   });
+  const [deleteAlbum] = useMutation(DELETE_ALBUM, {
+    variables: {
+      ids: [Number(albumId)]
+    }
+  });
   const { loading, error, data, refetch } = useQuery(
     queryGetImagesFromAlbumByType(albumId, userAdmin),
     {
@@ -126,7 +127,6 @@ function UpdateAlbum() {
               <span>{selectedImage.length}</span> items is chosen.
             </span>
             <div>
-              <Icon type="eye" style={{ fontSize: "18px", margin: "0 5px" }} onClick={() => setIsOpenImage(true)} />
               <Icon
                 type="delete"
                 style={{ fontSize: "18px", margin: "0 5px" }}
@@ -136,13 +136,11 @@ function UpdateAlbum() {
             </div>
           </div>
         ) : (
-            <div className="menu-images">
-              <Link to="/media" style={{ marginRight: "3rem" }}>
-                <h3>Images</h3>
-              </Link>
+            <div className="menu-images" style={{justifyContent:"space-between",alignItems:"center"}}>
               <Link to="/media/album">
-                <h3>Album</h3>
+                <h3><Icon type="arrow-left" style={{marginRight:".5rem"}}/>List album</h3>
               </Link>
+              <span style={{ color: "red", cursor: "pointer" }} onClick={() => setIsShowAlert(true)}>Xóa Album</span>
             </div>
           )}
         <Checkbox.Group style={{ width: "100%" }} onChange={onChange} value={selectedImage}>
@@ -222,7 +220,7 @@ function UpdateAlbum() {
                   })
                 }
               >
-                <Icon type="plus" />
+                <Icon type="plus" style={{marginRight:".5rem"}}/>
                 Chọn ảnh từ máy tính
               </div>
               <div
@@ -234,7 +232,7 @@ function UpdateAlbum() {
                   })
                 }
               >
-                <Icon type="search" />
+                <Icon type="search" style={{marginRight:".5rem"}}/>
                 Chọn ảnh từ thư viện
               </div>
             </>
@@ -248,6 +246,14 @@ function UpdateAlbum() {
           ) : null}
         </div>
       </Col>
+      <Modal
+        title='Do you want to delete this album?'
+        visible={isShowAlert}
+        onCancel={() => setIsShowAlert(false)}
+        onOk={() => deleteAlbum()}
+        okText={<Link to='/media/album'>Ok</Link>}
+        cancelText='Cancel'
+      ></Modal>
     </Row>
   );
 }

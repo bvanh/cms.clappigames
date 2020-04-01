@@ -129,29 +129,36 @@ const MenuRewardEventByMoney = props => {
     </Option>
   ));
   return (
-    <div>
-      <p className="promotion-title-field">Chọn loại hóa đơn</p>
-      <Select
-        value={props.nameEventByMoney}
-        style={{ width: 120 }}
-        onChange={handleChangePaymentType}
-        placeholder="-Chọn game-"
-        disabled={props.isTimeInPromo}
-      >
-        {printEventType}
-      </Select>
-      <span>Hình thức</span>
-      <Select
-        value={value}
-        style={{ width: 120 }}
-        onChange={handleChanePaymentTypeByMoney}
-        disabled={props.isTimeInPromo}
-      >
-        {printEventMoneyType}
-      </Select>
+    <div className="promo-section2">
+      <div className="promo-choose-platform">
+      <div>
+        <div className="promo-choose-platform-name">
+          <p>Type of Purchase</p>
+          <Select
+            value={props.nameEventByMoney}
+            style={{ width: 120 }}
+            onChange={handleChangePaymentType}
+            placeholder="-Chọn game-"
+            disabled={props.isTimeInPromo}
+          >
+            {printEventType}
+          </Select>
+        </div>
+        <div className="promo-choose-platform-server">
+          <span>Type of present: </span>
+          <Select
+            value={value}
+            style={{ width: 120 }}
+            onChange={handleChanePaymentTypeByMoney}
+            disabled={props.isTimeInPromo}
+          >
+            {printEventMoneyType}
+          </Select>
+        </div>
+      </div>
       {props.nameEventByMoney === "COIN" && (
         <div>
-          <p className="promotion-title-field">Chọn game</p>
+          <p className="promotion-title-field">Platform</p>
           <Select
             style={{ width: 120 }}
             onChange={props.handleChangePlatform}
@@ -173,6 +180,7 @@ const MenuRewardEventByMoney = props => {
           </Select>{" "}
         </div>
       )}
+      </div>
     </div>
   );
 };
@@ -181,7 +189,7 @@ function mapStateToProps(state) {
     typeEventByMoney: state.typeEventByMoney,
     nameEventByMoney: state.nameEventByMoney,
     detailPromo: state.detailPromo,
-    listPartners:state.listPartner
+    listPartners: state.listPartner
   };
 }
 export default connect(mapStateToProps, null)(MenuRewardEventByMoney);

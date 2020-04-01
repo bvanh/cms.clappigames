@@ -56,12 +56,17 @@ function Danhsach() {
     {
       title: "Name",
       dataIndex: "username",
-      width: "20%"
+      width: "20%",
+      render: (text, record) => (
+        <span>
+          <Link to={`users/detail?userId=${record.userId}`}>{text}</Link>
+        </span>
+      )
     },
     {
       title: "User Id",
       dataIndex: "fakeId",
-      width: "10%",
+      width: "15%",
       render: index => <span className="convert-col">{index}</span>
     },
     {
@@ -94,18 +99,8 @@ function Danhsach() {
     {
       title: "Status",
       dataIndex: "status",
-      width: "10%",
+      width: "15%",
       render: index => <span>{index === "INPUT" ? "Inactive" : "Active"}</span>
-    },
-    {
-      title: "Action",
-      key: "action",
-      width: "10%",
-      render: (text, record) => (
-        <span>
-          <Link to={`users/detail?userId=${record.userId}`}>Detail</Link>
-        </span>
-      )
     }
   ];
   const goPage = pageNumber => {

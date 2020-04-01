@@ -7,6 +7,7 @@ import { useQuery } from "@apollo/react-hooks";
 import "../../static/style/stats.css";
 import ChartStats from "./chartStats";
 import ChartStatsMau from "./chartStatsMau";
+import ChartPaidUsersStats from './chartPaidUser'
 const { SubMenu } = Menu;
 
 function Stats() {
@@ -31,7 +32,7 @@ function Stats() {
       nameStats: "DAU"
     });
   }, []);
-  const printMenuStats = listPartnersByGame.map(function(value1, i) {
+  const printMenuStats = listPartnersByGame.map(function (value1, i) {
     const printListStats = listNameStats.map((value2, i) => (
       <Menu.Item
         key={`{"partnerId":"${value1.partnerId}","nameStats":"${value2}"}`}
@@ -52,25 +53,46 @@ function Stats() {
       </SubMenu>
     );
   });
-  return (
-    <div className="stats">
-      <Menu
-        onClick={handleClick}
-        style={{ width: "15%" }}
-        mode="inline"
-        defaultSelectedKeys={[
-          `{"partnerId":"1BA3F861-D4F2-4D97-9F78-38633155EC27","nameStats":"DAU"}`
-        ]}
-        defaultOpenKeys={["3qzombie"]}
-      >
-        {printMenuStats}
-      </Menu>
-      {nameStats === "MAU" ? (
-        <ChartStatsMau nameStats={nameStats} partnerId={partnerId} />
-      ) : (
-        <ChartStats nameStats={nameStats} partnerId={partnerId} />
-      )}
-    </div>
-  );
+  const menuStats = (
+    <Menu
+      onClick={handleClick}
+      style={{ width: "15%" }}
+      mode="inline"
+      defaultSelectedKeys={[
+        `{"partnerId":"1BA3F861-D4F2-4D97-9F78-38633155EC27","nameStats":"DAU"}`
+      ]}
+      defaultOpenKeys={["3qzombie"]}
+    >
+      {printMenuStats}
+    </Menu>
+  )
+  switch (nameStats) {
+    case 'MAU':
+      return (
+        <div className="stats">
+          {menuStats}
+          <ChartStatsMau nameStats={nameStats} partnerId={partnerId} />
+        </div>
+      )
+    case "DPU":
+    case 'NPU':
+    case 'PR':
+    case 'ARPDAU':
+    case 'ARPPDAU':
+    case 'MPU':
+      return (
+        <div className="stats">
+          {menuStats}
+          <ChartPaidUsersStats nameStats={nameStats} partnerId={partnerId} />
+        </div>
+      )
+    default:
+      return (
+        <div className="stats">
+          {menuStats}
+          <ChartStats nameStats={nameStats} partnerId={partnerId} />
+        </div>
+      )
+  }
 }
 export default Stats;

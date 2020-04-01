@@ -1,15 +1,4 @@
 import { gql } from "apollo-boost";
-
-// const getListChartCharges = (fromDate, toDate) => {
-//     return gql`
-//   query {
-//     listCacheChargesByDate(fromDate:"${fromDate}",toDate:"${toDate}"){
-//       xAxis,
-//       yAxis
-//     }
-//   }
-// `;
-// };
 const getDataDAU = gql`
   query chartDau(
     $fromDate: String!
@@ -26,6 +15,38 @@ const getDataDAU = gql`
     }
   }
 `;
+const getDataNRU = gql`
+query chartNruByOs(
+  $fromDate: String!
+  $toDate: String!
+  $game: String!
+){
+  chartNruByOs(
+    fromDate: $fromDate
+    toDate: $toDate
+    game: $game
+  ){
+    xAxis
+    yAxis
+  }
+}
+`
+const getDataPaidUsers = gql`
+query chartPaidUserByDate(
+  $fromDate: String!
+  $toDate: String!
+  $game: String!
+){
+  chartPaidUserByDate(
+    fromDate: $fromDate
+    toDate: $toDate
+    game: $game
+  ){
+    xAxis
+    yAxis
+  }
+}
+`
 const getDataMAU = gql`
   query chartMau(
     $fromMonth: String!
@@ -52,4 +73,4 @@ const getListPartnerByGame = gql`
   }
 `;
 
-export { getListPartnerByGame, getDataDAU, getDataMAU };
+export { getListPartnerByGame, getDataDAU, getDataMAU, getDataNRU, getDataPaidUsers };

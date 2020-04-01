@@ -45,7 +45,7 @@ function ListEvents(props) {
   }, []);
   const columns = [
     {
-      title: "Chi tiết",
+      title: "Name",
       dataIndex: "name",
       key: "name",
       render: (text, record) => (
@@ -57,7 +57,7 @@ function ListEvents(props) {
       )
     },
     {
-      title: "Hình thức",
+      title: "Method",
       dataIndex: "config",
       key: "type",
       render: index => {
@@ -71,11 +71,11 @@ function ListEvents(props) {
       }
     },
     {
-      title: "Trạng thái",
+      title: "Status",
       dataIndex: "status",
       key: "status",
       render: index => (
-        <span>{index === "INPUT" ? "Ngừng hoạt động" : "Hoạt động"}</span>
+        <span>{index === "INPUT" ? "Plan" : "Active"}</span>
       )
     },
     {
@@ -84,13 +84,13 @@ function ListEvents(props) {
       key: "demo"
     },
     {
-      title: "Bắt đầu",
+      title: "Start Time",
       dataIndex: "eventTime",
       key: "startTime",
       render: index => <span>{JSON.parse(index).startTime}</span>
     },
     {
-      title: "Kết thúc",
+      title: "End Time",
       dataIndex: "eventTime",
       key: "endTime",
       render: index => <span>{JSON.parse(index).endTime}</span>

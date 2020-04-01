@@ -74,7 +74,7 @@ function InputTimeArea(props) {
     timeTotal
   } = props.indexPromoAndEvent;
   const alertDaily = printAlertDailyPromo(daily);
-  const printAlertDates = dates.map((val, i) => <>ngày mùng {val}, </>);
+  const printAlertDates = dates.map((val, i) => <>{val}rd, </>);
   // const printAlertTimeTotalPromo = timeTotalAlert.map((val, i) => <>{val}</>);
   const childrenDates = [];
   for (let i = 1; i <= 31; i++) {
@@ -108,8 +108,8 @@ function InputTimeArea(props) {
       <div>
         <h3 className="promotion-title-field">Set timeline </h3>
         <div className="section2-promotion-pickTime">
-          <h3>Time: </h3>
-          <div style={{ width: "80%" }}>
+          <h3 style={{ width: "25%" }}>Time: </h3>
+          <div style={{ width: "75%" }}>
             <DatePicker
               showTime={{ format: "HH:mm" }}
               format="YYYY-MM-DD HH:mm"
@@ -133,11 +133,11 @@ function InputTimeArea(props) {
           </div>
         </div>
         <div className="section2-promotion-pickTime">
-          <h3>By day of the month: </h3>
+          <h3 style={{ width: "25%" }}>By day of the month: </h3>
           <Select
             mode="multiple"
-            style={{ width: "80%" }}
-            placeholder="- Chọn ngày trong tháng diễn ra khuyến mãi"
+            style={{ width: "75%" }}
+            placeholder="- Choose what day of the month the promotion is..."
             onChange={props.handleChangeDates}
             disabled={daily.length !== 0 ? true : false}
             value={dates}
@@ -146,11 +146,11 @@ function InputTimeArea(props) {
           </Select>
         </div>
         <div className="section2-promotion-pickTime">
-          <h3>By day of the week:</h3>
+          <h3 style={{ width: "25%" }}>By day of the week:</h3>
           <Select
             mode="multiple"
-            style={{ width: "80%" }}
-            placeholder="- Chọn thứ trong tuần diễn ra khuyến mãi"
+            style={{ width: "75%" }}
+            placeholder="- Choose what day of the week the promotion is..."
             onChange={props.handleChangeDaily}
             disabled={dates.length !== 0 ? true : false}
             value={daily}
@@ -159,8 +159,8 @@ function InputTimeArea(props) {
           </Select>
         </div>
         <div className="section2-promotion-pickTime">
-          <h3>By hours of the day:</h3>
-          <div style={{ width: "80%" }}>
+          <h3 style={{ width: "25%" }}>By hours of the day:</h3>
+          <div style={{ width: "75%" }}>
             <TimePicker
               allowClear={false}
               open={isOpenTimePicker}
@@ -172,7 +172,7 @@ function InputTimeArea(props) {
                 props.setTimePromo(timeString, "startTime")
               }
               value={startTime === "" ? null : moment(startTime, "HH:mm")}
-              style={{ width: "49.5%", marginLeft: ".5%" }}
+              style={{ width: "49.5%", marginRight: ".5%" }}
               addon={() => (
                 <Button size="small" type="primary" onClick={pickAllDay}>
                   24h
@@ -204,10 +204,9 @@ function InputTimeArea(props) {
         </div>
       </div>
       <div className="section2-promotion-footer">
-      Promotion's timeline will be on ...{" "}
-        {endTime === "00:00:00" ? "" : `lúc ${startTime} đến ${endTime}`} vào
-        các ngày {alertDaily}
-        {printAlertDates} từ {timeTotal[0]} đến {timeTotal[1]}
+       Promotion's timeline will be on {" "}
+        {endTime === "00:00:00" ? "" : `${startTime} to ${endTime}`}{alertDaily}
+        {printAlertDates} from {timeTotal[0]} to {timeTotal[1]}
       </div>
     </Col>
   );

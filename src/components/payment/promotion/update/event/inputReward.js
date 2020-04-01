@@ -257,7 +257,7 @@ function InputRewardForShowByMoney(props) {
         key={index1}
       >
         <div style={{ width: "15%", display: "flex", alignItems: "center" }}>
-          <span style={{ marginRight: ".2rem" }}>TỪ</span>
+          <span style={{ marginRight: ".2rem" }}>From</span>
           <Input
             value={val.point}
             min={index1 > 0 ? inkind[index1 - 1].point : 0}
@@ -272,7 +272,7 @@ function InputRewardForShowByMoney(props) {
         <div className="promo-input-coin-event">
           <Input
             value={val.rewards[0]}
-            placeholder="-Điền quà out game-"
+            placeholder="-Input name of gift out game-"
             name="pucharseTimes"
             onChange={e => handleChooseInKind(index1, e)}
             style={{ width: "45%" }}
@@ -293,7 +293,7 @@ function InputRewardForShowByMoney(props) {
       key={index1}
     >
       <div style={{ width: "15%", display: "flex", alignItems: "center" }}>
-        <span style={{ marginRight: ".2rem" }}>TỪ</span>
+        <span style={{ marginRight: ".2rem" }}>From</span>
         <Input
           value={val.point}
           min={index1 > 0 ? coin[index1 - 1].point : 0}
@@ -314,12 +314,14 @@ function InputRewardForShowByMoney(props) {
             showArrow={false}
             style={{ width: "90%" }}
             className="select-coin-event"
+            disabled={props.isTimeInPromo}
           >
             {printItemsEvent}
           </Select>{" "}
           <Icon
             type="menu"
             onClick={() => showModal(index1)}
+            
             style={{ fontSize: "24px", margin: "0 .25rem" }}
           />
         </div>
@@ -348,7 +350,7 @@ function InputRewardForShowByMoney(props) {
       key={index1}
     >
       <div style={{ width: "15%", display: "flex", alignItems: "center" }}>
-        <span style={{ marginRight: ".2rem" }}>TỪ</span>
+        <span style={{ marginRight: ".2rem" }}>From</span>
         <Input
           value={val.point}
           min={index1 > 0 ? item[index1 - 1].point : 0}
@@ -384,14 +386,14 @@ function InputRewardForShowByMoney(props) {
     <div className="section4-promotion">
       <div style={{ width: "100%" }} className="section4-promotion-title">
         <div className="promo-input-title-numb">
-          <span>Tổng hóa đơn</span>
+          <span>Total price of purchase from</span>
         </div>
         <div className="promo-input-title-item">
-          <span>Khuyến mãi</span>
+          <span>Present</span>
         </div>
       </div>
       <div className="btn-create-promo">
-        <Button onClick={() => submitUpdateEvent()}>Xác nhận</Button>
+        <Button onClick={() => submitUpdateEvent()}>Submit</Button>
       </div>
       <Row>
         {props.typeEventByMoney === "COIN" && (
@@ -402,7 +404,7 @@ function InputRewardForShowByMoney(props) {
               disabled={props.isTimeInPromo}
               className='btn-more-item'
             >
-              Thêm điều kiện
+              Add more conditions
             </Button>
           </>
         )}
@@ -414,7 +416,7 @@ function InputRewardForShowByMoney(props) {
               disabled={props.isTimeInPromo}
               className='btn-more-item'
             >
-              Thêm điều kiện
+              Add more conditions
             </Button>
           </>
         )}
@@ -426,7 +428,7 @@ function InputRewardForShowByMoney(props) {
               disabled={props.isTimeInPromo}
               className='btn-more-item'
             >
-              Thêm điều kiện
+              Add more conditions
             </Button>
           </div>
         )}

@@ -197,7 +197,7 @@ function EventByItems(props) {
         </Col>
         <Col md={12} style={{ padding: "1rem 1rem 1rem .25rem" }}>
           {printReward}
-          <Button onClick={() => addReward(index1)} disabled={props.isTimeInPromo} style={{marginLeft:'1.5rem'}}>Thêm quà</Button>
+          <Button onClick={() => addReward(index1)} disabled={props.isTimeInPromo} style={{marginLeft:'1.5rem'}}>Add more present</Button>
         </Col>
       </div>
     );
@@ -206,20 +206,20 @@ function EventByItems(props) {
     <div className="section4-promotion">
       <div style={{ width: "100%" }} className="section4-promotion-title">
         <div style={{ width: "50%", display: "flex" }}>
-          <div style={{ width: "20%" }}>Số lần</div>
-          <div style={{ width: "80%" }}>Item mua</div>
+          <div style={{ width: "20%" }}>The mount of item</div>
+          <div style={{ width: "80%" }}>Item</div>
         </div>
         <div style={{ width: "50%", display: "flex" }}>
-          <div style={{ width: "20%" }}>Số lượng</div>
-          <div style={{ width: "80%" }}>Tặng quà</div>
+          <div style={{ width: "20%" }}>Amount</div>
+          <div style={{ width: "80%" }}>Present</div>
         </div>
       </div>
       <div className="btn-create-promo">
-        <Button onClick={submitUpdatePromo}>Xác nhận</Button>
+        <Button onClick={submitUpdatePromo}>Submit</Button>
       </div>
       <Row>
         {printItem}
-        <Button onClick={() => addItem()} disabled={props.isTimeInPromo} style={{margin:"1rem 1.5rem"}}>Thêm điều kiện</Button>
+        <Button onClick={() => addItem()} disabled={props.isTimeInPromo} style={{margin:"1rem 1.5rem"}}>Add more conditions</Button>
       </Row>
     </div>
   );

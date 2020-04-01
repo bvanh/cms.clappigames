@@ -76,7 +76,7 @@ function ListNews() {
       key: "type"
     },
     {
-      title: "ID",
+      title: "News ID",
       dataIndex: "newsId",
       key: "newsId"
     },
@@ -150,6 +150,7 @@ function ListNews() {
 
   return (
     <div>
+      <h2>News</h2>
       <div style={{ marginBottom: 16 }} className="news-header">
         <div>
           <span>

@@ -155,9 +155,9 @@ function CreatePartnerItems(props) {
   });
   const showConfirm = () => {
     Modal.confirm({
-      title: "Bạn có muốn tiếp tục tạo bản ghi không ?",
+      title: "Do you want to countinue creating a new Item?",
       okText:"Back",
-      cancelText:"Go ahead",
+      cancelText:"Next",
       onOk() {
         props.setIsCreateItem(false);
       },

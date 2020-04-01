@@ -259,7 +259,7 @@ function InputrewardForShowByMoney(props) {
         style={{ display: "flex", alignItems: "center", marginBottom: "1rem" }}
       >
         <div style={{ width: "15%", display: "flex", alignItems: "center" }}>
-          <span style={{ marginRight: ".2rem" }}>TỪ</span>
+          <span style={{ marginRight: ".2rem" }}>From</span>
           <Input
             value={indexShop[index1].point}
             min={index1 > 0 ? indexShop[index1 - 1].point : 0}
@@ -276,7 +276,7 @@ function InputrewardForShowByMoney(props) {
             <div className='promo-input-coin-event'>
               <Input
                 value={indexShop[index1].rewards[0]}
-                placeholder="-Điền quà out game-"
+                placeholder="-Input name of gift out game-"
                 name="pucharseTimes"
                 onChange={e => handleChooseIsKind(index1, e)}
                 style={{ width: "45%" }}
@@ -334,19 +334,19 @@ function InputrewardForShowByMoney(props) {
     <div className="section4-promotion">
      <div style={{ width: "100%" }} className="section4-promotion-title">
         <div className="promo-input-title-numb">
-          <span>Tổng hóa đơn</span>
+          <span>Total price of purchase from</span>
         </div>
         <div className="promo-input-title-item">
-          <span>Khuyến mãi</span>
+          <span>Gift's out game</span>
         </div>
       </div>
       <div className="btn-create-promo">
-        <Button>Hủy</Button>
-        <Button onClick={submitCreateEvent}>Xác nhận</Button>
+        <Button>Cancel</Button>
+        <Button onClick={submitCreateEvent}>Submit</Button>
       </div>
       <Row className="promo-input-item">
         {printItem}
-        <Button onClick={() => addItem()}>Thêm điều kiện</Button>
+        <Button onClick={() => addItem()}>Add more conditions</Button>
       </Row>
       <Modal
         title="Chọn gói C.coin"

@@ -251,10 +251,10 @@ function UpdateEvent(props) {
           <Link to="/payment/promotion" onClick={backToList}>
             <span>
               <Icon type="arrow-left" style={{ paddingRight: ".2rem" }} />
-              Quay lại
+              Back
             </span>
           </Link>
-          <h2>Chỉnh sửa khuyến mãi</h2>
+          <h2>Update promotion</h2>
         </div>
       </div>
       <Col md={12} className="section1-promotion">
@@ -338,8 +338,8 @@ function UpdateEvent(props) {
         onOk={() => {
           isCreatePromo ? deleteEvent() : viewDetail();
         }}
-        okText={isCreatePromo ? <Link to={`/payment/promotion/detail/promotion?id=${props.idCreatePromoAndEvent}`}>Xem chi tiết</Link> : <span >Xem chi tiết</span>}
-        cancelText="Tiếp tục"
+        okText={isCreatePromo ? <Link to={`/payment/promotion/detail/promotion?id=${props.idCreatePromoAndEvent}`}>Back</Link> : <span >Back</span>}
+        cancelText="Next"
       ></Modal>
     </Row>
   );

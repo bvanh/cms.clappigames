@@ -23,19 +23,13 @@ function DetailEvent(props) {
       content: (
         <div>
           <p>
-            - Hệ thống chỉ cho phép cập nhật khuyến mãi khi chưa phát sinh giao
-            dịch có khuyến mãi
+          - System allow to update information of promotion when promotion don't have any purchase 
           </p>
           <p>
-            - Nếu chương trình khuyến mãi chưa phát sinh giao dịch nào có thể
-            sửa được toàn bộ
+          - If in promotion actived and doesn't have any purchase, you can update conditions, name of promotion and timeline, status
           </p>
           <p>
-            - Nếu chương trình khuyến mãi đã phát sinh giao dịch thì có thể sửa
-            1 số thông tin nhưng không thay đổi được hình thưc khuyến mãi
-          </p>
-          <p>
-            + Các tt có thể sửa: Tên chương trình, trạng thái, thời gian áp dụng
+          - Other way, if Promotion have purchase, just update name of promotion, status, timeline
           </p>
         </div>
       ),
@@ -68,7 +62,7 @@ function DetailEvent(props) {
             <Link to="/payment/promotion">
               <span>
                 <Icon type="arrow-left" style={{ paddingRight: ".2rem" }} />
-              Quay lại
+              Back
             </span>
             </Link>
             <div className="promo-title">
@@ -77,21 +71,21 @@ function DetailEvent(props) {
                 <Button onClick={showConfirm}>Edit</Button>
               </div>
               <div>
-                <h3 style={{ margin: "0 1rem 0 0" }}>Trạng thái</h3>
+                <h3 style={{ margin: "0 1rem 0 0" }}>Status</h3>
                 <Radio.Group value={status}>
-                  <Radio value="COMPLETE">Kích hoạt</Radio>
-                  <Radio value="INPUT">Ngừng kích hoạt</Radio>
+                  <Radio value="COMPLETE">Active</Radio>
+                  <Radio value="INPUT">Plan</Radio>
                 </Radio.Group>
               </div>
             </div>
             <Tabs activeKey={isShowPromo} onChange={key => setIsShowPromo(key)}>
-              <TabPane tab="Hình thức khuyến mãi" key="1">
+              <TabPane tab="Method" key="1">
                 <TypeEvent dataDetail={dataDetail} />
               </TabPane>
-              <TabPane tab="Thời gian áp dụng" key="2">
+              <TabPane tab="Timeline" key="2">
                 <TimePromo />
               </TabPane>
-              <TabPane tab="Lịch sử khuyến mãi" key="3"></TabPane>
+              <TabPane tab="History of purchase in Promotion" key="3"></TabPane>
             </Tabs>
           </Row>
         )}

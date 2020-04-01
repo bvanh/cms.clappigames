@@ -113,11 +113,11 @@ function TypePromotion(props) {
     ));
     return (
       <Row>
-        <h3>Khuyến mãi theo hàng hóa (Item)</h3>
-        <p>Hình thức : {type}</p>
+        <h3>Promotion for Item</h3>
+        <p>Type of present : {type}</p>
         <div className="detail-game">
           <span style={{ marginRight: "1rem" }}>
-            Game:{" "}
+            Platform:{" "}
             <Select
               value={game}
               dropdownClassName="dropdown-coin-event"
@@ -144,12 +144,12 @@ function TypePromotion(props) {
         </div>
         <div style={{ width: "100%" }} className="section4-promotion-title">
           <div style={{ width: "50%", display: "flex" }}>
-            <div style={{ width: "22%" }}>Số lần</div>
-            <div style={{ width: "78%" }}>Item mua</div>
+            <div style={{ width: "22%" }}>The mount of item</div>
+            <div style={{ width: "78%" }}>Item</div>
           </div>
           <div style={{ width: "50%", display: "flex", paddingLeft: "1.5rem" }}>
-            <div style={{ width: "22%" }}>Số lượng</div>
-            <div style={{ width: "78%" }}>Qùa tặng</div>
+            <div style={{ width: "22%" }}>Amount</div>
+            <div style={{ width: "78%" }}>Present</div>
           </div>
         </div>
         {printItem}

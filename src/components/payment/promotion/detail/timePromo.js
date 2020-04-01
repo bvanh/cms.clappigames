@@ -19,7 +19,7 @@ function TimePromo(props) {
   if (eventTime) {
     const { startTime, endTime, hour, dates, daily } = JSON.parse(eventTime);
     const printAlertDatesPromo = dates.map((val, i) => (
-      <Fragment key={i}> Ngày mùng {val},</Fragment>
+      <Fragment key={i}> {val}rd,</Fragment>
     ));
     const alertDailyPromo = printAlertDailyPromo(daily);
     console.log(eventTime);
@@ -37,9 +37,9 @@ function TimePromo(props) {
     return (
       <Col md={12} className="section2-promotion">
         <div>
-          <p className="promotion-title-field">Thời gian áp dụng </p>
+          <p className="promotion-title-field">Timeline </p>
           <div className="section2-promotion-pickTime">
-            <h3>Thời gian:</h3>
+            <h3>Date:</h3>
             <RangePicker
               showTime={{ format: "HH:mm" }}
               format="DD-MM-YYYY HH:mm"
@@ -50,7 +50,7 @@ function TimePromo(props) {
             />
           </div>
           <div className="section2-promotion-pickTime">
-            <h3>Theo ngày:</h3>
+            <h3>By day of the month:</h3>
             <Select
               mode="multiple"
               style={{ width: "80%" }}
@@ -63,7 +63,7 @@ function TimePromo(props) {
             </Select>
           </div>
           <div className="section2-promotion-pickTime">
-            <h3>Theo thứ:</h3>
+            <h3>By day of the week:</h3>
             <Select
               mode="multiple"
               style={{ width: "80%" }}
@@ -76,7 +76,7 @@ function TimePromo(props) {
             </Select>
           </div>
           <div className="section2-promotion-pickTime">
-            <h3>Theo giờ:</h3>
+            <h3>Time:</h3>
             <div style={{width:"80%"}}>
             <TimePicker
               format={"HH:mm"}
@@ -96,8 +96,8 @@ function TimePromo(props) {
           </div>
         </div>
         <div style={{ background: "whitesmoke", color: "red" }}>
-          Khuyến mãi diễn ra vào {hour[0]} {hour[1]} {alertDailyPromo}
-          {printAlertDatesPromo} từ {startTime} đến {endTime}
+         Promotion's timeline will be on {hour[0]==='00:00:00'?"":`${hour[0]} 'to' ${hour[1]}`} {alertDailyPromo}
+          {printAlertDatesPromo} from {startTime} to {endTime}
         </div>
       </Col>
     );

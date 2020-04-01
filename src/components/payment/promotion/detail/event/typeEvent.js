@@ -103,7 +103,7 @@ function TypeEvent(props) {
                 marginRight: "2%"
               }}
             >
-              <span style={{ marginRight: "1%" }}>TỪ</span>
+              <span style={{ marginRight: "1%" }}>From</span>
               <Input
                 value={val.point}
                 type="number"
@@ -151,14 +151,14 @@ function TypeEvent(props) {
     });
     return (
       <Row>
-        <h3>Khuyến mãi theo hóa đơn</h3>
+        <h3>Promotion for purchase</h3>
         {/* <p>Hình thức : {type}</p> */}
         <div className="detail-game">
           <span style={{ marginRight: "1rem" }}>
-            Loại hóa đơn: {paymentType}
+          Type of purchase: By {paymentType} ( {paymentType} exchange)
           </span>
           <span style={{ marginRight: "1rem" }}>
-            Hình thức : {isTypeEvent(indexShop.type)}
+          Type of present : {isTypeEvent(indexShop.type)}
           </span>
         </div>
         <div>
@@ -195,8 +195,8 @@ function TypeEvent(props) {
           style={{ width: "100%", marginTop: "1rem" }}
           className="section4-promotion-title"
         >
-          <h3 style={{ width: "30%" }}>Số lượng Item mua</h3>
-          <h3 style={{ width: "70%" }}>Quà Item</h3>
+          <h3 style={{ width: "30%" }}>The mount of item</h3>
+          <h3 style={{ width: "70%" }}>Present</h3>
         </div>
         <div>{printItem}</div>
       </Row>

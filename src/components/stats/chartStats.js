@@ -3,7 +3,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import { Line } from "react-chartjs-2";
 import { Link } from "react-router-dom";
 import { useQuery, useLazyQuery } from "@apollo/react-hooks";
-import { getDataDAU, getDataMAU } from "../../utils/query/stats";
+import { getDataDAU, getDataMAU, getDataNRU } from "../../utils/query/stats";
 import { optionLineForStats } from "../../utils/configCharts";
 import { connect } from "react-redux";
 import { Icon, DatePicker, Input, Select } from "antd";
@@ -24,6 +24,7 @@ const ChartStats = props => {
         toDateCustom: null
     });
     const [isSelectDates, setIsSelectDates] = useState(false);
+    const [valueDate, setValueDate] = useState("SEVENT_DAY_AGO")
     const { nameStats, partnerId } = props;
     // console.log(nameStats,partnerId)
     const { fromDate, toDate, fromDateCustom, toDateCustom } = timeValue;
@@ -33,6 +34,7 @@ const ChartStats = props => {
     });
     const { TODAY } = dates;
     const [getData] = useLazyQuery(getDataDAU, {
+        fetchPolicy: "cache-and-network",
         onCompleted: data => {
             setDataCharts({
                 xAxis: JSON.parse(data.chartDau.xAxis),
@@ -40,14 +42,34 @@ const ChartStats = props => {
             });
         }
     });
+    const [getDataNru] = useLazyQuery(getDataNRU, {
+        fetchPolicy: "cache-and-network",
+        onCompleted: data => {
+            console.log(data)
+            setDataCharts({
+                xAxis: JSON.parse(data.chartNruByOs.xAxis),
+                yAxis: JSON.parse(data.chartNruByOs.yAxis)
+            });
+        }
+    })
     useMemo(
         () => {
+            setValueDate("SEVENT_DAY_AGO")
             switch (nameStats) {
                 case 'DAU':
                     getData({
                         variables: {
-                            fromDate: fromDate,
-                            toDate: toDate,
+                            fromDate: dates.SEVENT_DAY_AGO,
+                            toDate: TODAY,
+                            game: partnerId
+                        }
+                    })
+                    break;
+                case 'NRU':
+                    getDataNru({
+                        variables: {
+                            fromDate: dates.SEVENT_DAY_AGO,
+                            toDate: TODAY,
                             game: partnerId
                         }
                     })
@@ -56,7 +78,7 @@ const ChartStats = props => {
                     break;
             }
         },
-        [partnerId]
+        [partnerId, nameStats]
     );
     const disabledDate = current => {
         if (fromDateCustom != null) {
@@ -73,30 +95,58 @@ const ChartStats = props => {
 
     const changeDates = val => {
         setTimeValue({ fromDate: dates[val], toDate: TODAY });
-        getData({
-            variables: {
-                fromDate: dates[val],
-                toDate: TODAY,
-                game: partnerId
-            }
-        });
+        switch (nameStats) {
+            case 'DAU':
+                getData({
+                    variables: {
+                        fromDate: dates[val],
+                        toDate: TODAY,
+                        game: partnerId
+                    }
+                })
+                break;
+            case 'NRU':
+                getDataNru({
+                    variables: {
+                        fromDate: dates[val],
+                        toDate: TODAY,
+                        game: partnerId
+                    }
+                })
+                break;
+            default:
+                break;
+        }
     };
     const handleChangeRangeDates = value => {
         changeDates(value);
+        setValueDate(value)
     };
     const showDateSelect = () => {
         setIsSelectDates(!isSelectDates);
     };
     const convertData = typeOs => {
-        const demo = [];
-        const dataAll = dataCharts.yAxis.map((val, i) =>
-            val.map((val2, i) => {
-                if (val2.os === typeOs) {
-                    demo.push(val2.dau);
-                }
-            })
-        );
-        return demo;
+        if (nameStats === 'NRU') {
+            const demo = [];
+            const dataAll = dataCharts.yAxis.map((val, i) =>
+                val.map((val2, i) => {
+                    if (val2.os === typeOs) {
+                        demo.push(val2.count);
+                    }
+                })
+            );
+            return demo;
+        } else {
+            const demo = [];
+            const dataAll = dataCharts.yAxis.map((val, i) =>
+                val.map((val2, i) => {
+                    if (val2.os === typeOs) {
+                        demo.push(val2.dau);
+                    }
+                })
+            );
+            return demo;
+        }
     };
     const changeRangeDates = value => {
         if (fromDateCustom == null) {
@@ -109,13 +159,28 @@ const ChartStats = props => {
         }
     };
     const submitDateCustom = () => {
-        getData({
-            variables: {
-                fromDate: fromDateCustom,
-                toDate: toDateCustom,
-                game: partnerId
-            }
-        });
+        switch (nameStats) {
+            case 'DAU':
+                getData({
+                    variables: {
+                        fromDate: fromDateCustom,
+                        toDate: toDateCustom,
+                        game: partnerId
+                    }
+                })
+                break;
+            case 'NRU':
+                getDataNru({
+                    variables: {
+                        fromDate: fromDateCustom,
+                        toDate: toDateCustom,
+                        game: partnerId
+                    }
+                })
+                break;
+            default:
+                break;
+        }
         setIsSelectDates(!isSelectDates);
     };
     const dataChart = {
@@ -176,7 +241,7 @@ const ChartStats = props => {
             </div>
             <div className="chart-select-dates">
                 <Select
-                    defaultValue="SEVENT_DAY_AGO"
+                    value={valueDate}
                     style={{ width: 120, marginTop: '1.5rem' }}
                     onChange={handleChangeRangeDates}
                     className='select_dates-stats'

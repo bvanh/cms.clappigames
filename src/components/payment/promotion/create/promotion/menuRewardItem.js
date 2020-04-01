@@ -51,7 +51,7 @@ function MenuRewardByItem(props) {
       <div className="promo-choose-platform">
         <div>
           <div className="promo-choose-platform-name">
-            <p>Chọn game:</p>
+            <p>Platform:</p>
             <Select
               style={{ width: "65%" }}
               onChange={props.handleChangePlatformPromo}
@@ -75,7 +75,7 @@ function MenuRewardByItem(props) {
           </div>
         </div>
         <div className="promo-choose-platform-name">
-          <p>Hình thức:</p>
+          <p>Type of present :</p>
           <Select
             style={{ width: "65%" }}
             onChange={props.handleChangeTypePromo}

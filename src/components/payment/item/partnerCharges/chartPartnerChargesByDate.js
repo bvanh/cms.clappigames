@@ -216,7 +216,7 @@ const ChartPartnerCharges = props => {
   return (
     <div className="line_chart">
       <div className="chart-charges-title">
-        <h2>Xu hướng Item</h2>
+        <h2>Trend</h2>
         <div>
           <Select
             defaultValue="SEVENT_DAY_AGO"
@@ -279,7 +279,7 @@ const ChartPartnerCharges = props => {
           )}
         </div>
       </div>
-      <Line data={dataChart} width={100} height={40} options={optionLine} />
+      <Line data={dataChart} width={100} height={35} options={optionLine} />
     </div>
   );
 };

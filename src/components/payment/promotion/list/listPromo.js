@@ -52,7 +52,7 @@ function ListPromo() {
   }, []);
   const columns = [
     {
-      title: "Chi tiết",
+      title: "Name",
       dataIndex: "name",
       key: "name",
       render: (text, record) => (
@@ -64,12 +64,12 @@ function ListPromo() {
       )
     },
     {
-      title: "Hình thức",
+      title: "Method",
       dataIndex: "type",
       key: "type"
     },
     {
-      title: "Trạng thái",
+      title: "Status",
       dataIndex: "status",
       key: "status",
       render: index => (
@@ -82,13 +82,13 @@ function ListPromo() {
       key: "demo"
     },
     {
-      title: "Bắt đầu",
+      title: "Start Time",
       dataIndex: "eventTime",
       key: "startTime",
       render: index => <span>{JSON.parse(index).startTime}</span>
     },
     {
-      title: "Kết thúc",
+      title: "End Time",
       dataIndex: "eventTime",
       key: "endTime",
       render: index => <span>{JSON.parse(index).endTime}</span>

@@ -33,17 +33,17 @@ const { RangePicker } = DatePicker;
 const eventMoneyType = [
   {
     value: "COIN",
-    description: "Tặng C.Coin"
+    description: "C.Coin"
   },
   {
     value: "INKIND",
-    description: "Tặng quà out game"
+    description: "Gift's out game"
   }
 ];
 const eventCointype = [
   {
     value: "ITEM",
-    description: "Tặng bằng vật phẩm trong game"
+    description: "Gift's in game"
   }
 ];
 const MenuRewardEventByMoney = props => {
@@ -123,7 +123,7 @@ const MenuRewardEventByMoney = props => {
   ));
   const printEventType = eventType.map((val, index) => (
     <Option key={index} value={val.name}>
-      {val.name}
+      By {val.name} ( {val.name} exchange)
     </Option>
   ));
   const printPlatform = props.listPartners.map((val, i) => (
@@ -141,7 +141,7 @@ const MenuRewardEventByMoney = props => {
       <div className="promo-choose-platform">
         <div>
           <div className="promo-choose-platform-name">
-            <p>Loại hóa đơn</p>
+            <p>Type of Purchase</p>
             <Select
               style={{ width: "64%" }}
               onChange={handleChangePaymentType}
@@ -152,7 +152,7 @@ const MenuRewardEventByMoney = props => {
             </Select>{" "}
           </div>
           <div className="promo-choose-platform-server">
-            <span>Hình thức</span>
+            <span>Type of present: </span>
             <Select
               value={value}
               style={{ width: "65%" }}
@@ -165,11 +165,11 @@ const MenuRewardEventByMoney = props => {
         {props.indexEventByMoney.isPaymentTypeByCoin && (
           <div style={{ width: "100%" }}>
             <div className="promo-choose-platform-name">
-              <p className="promotion-title-field">Chọn game</p>
+              <p className="promotion-title-field">Platform</p>
               <Select
                 style={{ width: "65%" }}
                 onChange={props.handleChangePlatform}
-                placeholder="-Chọn game-"
+                placeholder="-Choose Platform-"
               >
                 {printPlatform}
               </Select>{" "}

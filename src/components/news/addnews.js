@@ -228,7 +228,7 @@ const AddNews = props => {
         title="Task is completed !"
         visible={visible}
         okText={<Link to="/news">Back</Link>}
-        cancelText="Go ahead"
+        cancelText="Next"
         onCancel={handleCancel}
       ></Modal>
     </Row>
