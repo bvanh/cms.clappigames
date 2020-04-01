@@ -34,8 +34,8 @@ const { Option } = Select;
 const listType = {
   type: ["NEWS", "EVENT", "SLIDER", "NOTICE", "GUIDE"],
   status: [
-    { value: "COMPLETE", status: "Đăng ngay" },
-    { value: "INPUT", status: "Lưu nháp" }
+    { value: "COMPLETE", status: "Public" },
+    { value: "INPUT", status: "Draff" }
   ]
 };
 const radioStyle = {
@@ -129,22 +129,22 @@ const AddNews = props => {
     <Row>
       <Col sm={18} className="section1-news">
         <h3>
-          <Link to='/news'>
-          <Icon
-            type="close"
-            style={{ color: "rgba(0,0,0,.45)",paddingRight:".5rem" }}
-          />
+          <Link to="/news">
+            <Icon
+              type="close"
+              style={{ color: "rgba(0,0,0,.45)", paddingRight: ".5rem" }}
+            />
           </Link>
-          Thêm bài viết mới
+          Add News
         </h3>
         <Input
-          placeholder="Thêm tiêu đề bài viết"
+          placeholder="Title..."
           value={title}
           name="title"
           onChange={e => setNewsIndex({ ...newsIndex, title: e.target.value })}
         />
         <Input
-          placeholder="Thêm subtitle..."
+          placeholder="Subtitle..."
           value={subTitle}
           name="subTitle"
           onChange={e =>
@@ -163,32 +163,33 @@ const AddNews = props => {
           onClick={() => showUrlImagesNews(false)}
           style={{ marginTop: ".5rem" }}
         >
-          Lấy đường dẫn Image
+          Get image link
         </Button>
       </Col>
       <Col sm={6} style={{ padding: "0 1rem" }}>
         <div className="set-schedule-news">
-          <h3>Chế độ đăng</h3>
+          <h3>Public status</h3>
           <Radio.Group onChange={handleChangeSchedule}>
             {printStatus}
             <Radio style={radioStyle} value={3} disabled>
-              Lên lịch đăng bài
+              Set timeline to public
             </Radio>
           </Radio.Group>
 
           <p>
-            Chọn thời gian<span>(chọn thời gian trước 15' so với mốc)</span>
+            When you set the timeline, Timeline must have soon 15 minutes from
+            public time.
           </p>
           <div style={{ display: "flex" }}>
             <div style={{ width: "50%" }}>
-              <p>Ngày</p>
+              <p>Date</p>
               <DatePicker
                 onChange={handleChangeDateSchedule}
                 style={{ width: "99%", marginRight: "1%" }}
               />
             </div>
             <div style={{ width: "50%" }} className="timePick-schedule-news">
-              <p>Thời điểm</p>
+              <p>Time</p>
               <TimePicker style={{ width: "99%", marginLeft: "1%" }} />
             </div>
           </div>
@@ -204,7 +205,7 @@ const AddNews = props => {
           </Select>
         </div>
         <div className="set-type-news">
-          <h3>Loại bài viết</h3>
+          <h3>Type</h3>
           <Select
             value={type}
             style={{ width: "100%" }}
@@ -214,20 +215,20 @@ const AddNews = props => {
           </Select>
         </div>
         <div className="set-thumbnail-news">
-          <h3>Chọn ảnh thumbnail</h3>
+          <h3>Thumbnail image</h3>
           <div style={{ width: "70%", margin: "0 auto" }}>
             <img src={props.urlImgThumbnail} style={{ width: "100%" }} />
           </div>
-          <a onClick={() => showUrlImagesNews(true)}>Chọn ảnh</a>
+          <a onClick={() => showUrlImagesNews(true)}>Select</a>
         </div>
         <Button onClick={submitUpdateNews}>Submit</Button>
       </Col>
       <ListImagesForNews isThumbnail={isThumbnail} />
       <Modal
-        title="Cập nhật thành công !"
+        title="Task is completed !"
         visible={visible}
-        okText={<Link to="/news">Xem danh sách</Link>}
-        cancelText="Tiếp tục"
+        okText={<Link to="/news">Back</Link>}
+        cancelText="Go ahead"
         onCancel={handleCancel}
       ></Modal>
     </Row>

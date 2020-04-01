@@ -111,7 +111,7 @@ function CreatePartnerItems(props) {
     let result = createItem();
     result.then(val => {
       if (val) {
-        alert("Tạo item thành công!");
+        alert("Task is completed !");
         setOldDataPartnerProduct({
           ...oldDataPartnerProduct,
           statusBtnCancel: true
@@ -156,8 +156,8 @@ function CreatePartnerItems(props) {
   const showConfirm = () => {
     Modal.confirm({
       title: "Bạn có muốn tiếp tục tạo bản ghi không ?",
-      okText:"Xem danh sách",
-      cancelText:"Tiếp tục",
+      okText:"Back",
+      cancelText:"Go ahead",
       onOk() {
         props.setIsCreateItem(false);
       },
@@ -170,8 +170,8 @@ function CreatePartnerItems(props) {
     <Row>
       <Link to="/payment/items" onClick={showConfirm}>
         <span>
-          <Icon type="arrow-left" style={{ paddingRight: ".2rem" }} />
-          Danh sách Items
+        <Icon type="arrow-left" style={{ paddingRight: ".2rem" }} />
+        Back  
         </span>
       </Link>
       <div className="products-title">
@@ -184,7 +184,7 @@ function CreatePartnerItems(props) {
                 disabled={oldDataPartnerProduct.statusBtnCancel}
                 style={{marginRight:".5rem"}}
               >
-                Hủy
+                Cancel
               </Button>
               <Button
                 onClick={submitCreateItem}
@@ -200,7 +200,7 @@ function CreatePartnerItems(props) {
                     : false
                 }
               >
-                Thêm mới C.coin
+                Add new Item
               </Button>
             </p>
           </div>
@@ -210,12 +210,12 @@ function CreatePartnerItems(props) {
         <Col md={12} className="section1-listcoin">
           <div>
             <div>
-              <p className="edit-product-content-title">Mã C.coin</p>
-              <span>Mã tự tạo: AUTO {partnerProductId} </span>
+              <p className="edit-product-content-title">Item Id</p>
+              <span>Id: AUTO {partnerProductId} </span>
             </div>
           </div>
           <div className="product-input-update">
-              <span className="edit-product-content-title">Tên Game</span>
+              <span className="edit-product-content-title">Platform</span>
               <Select
                 value={partnerId}
                 style={{ width: '100% !important' }}
@@ -236,13 +236,13 @@ function CreatePartnerItems(props) {
             >
               {printRefProduct}
             </Select>
-            <span className="edit-product-content-title">Tên Item</span>
+            <span className="edit-product-content-title">Item name</span>
             <Input
               value={productName}
               name="productName"
               onChange={getNewInfoItem}
             ></Input>
-            <span className="edit-product-content-title">Giá (C.coin)</span>
+            <span className="edit-product-content-title">Price (C.coin)</span>
             <Input
               value={coin}
               type="number"
@@ -258,19 +258,19 @@ function CreatePartnerItems(props) {
               onChange={getNewInfoItem}
             ></Input>*/}
              <div>
-              <span className="edit-product-content-title">Ảnh</span>
+              <span className="edit-product-content-title">Image</span>
             </div>
             <div style={{ width: "100px" }}>
               <img src={props.urlImgThumbnail} width="100%" />
             </div>
             <div>
-              <a onClick={() => dispatchShowImagesNews(true)}>Chọn ảnh</a>
+              <a onClick={() => dispatchShowImagesNews(true)}>Select</a>
             </div>
           </div>
         </Col>
         <Col md={8} className="section2">
           <div>
-            <p className="edit-product-content-title">Trạng thái</p>
+            <p className="edit-product-content-title">Status</p>
             <Radio.Group value={status} onChange={getStatus}>
               <Radio style={radioStyle} value="INPUT">
                 INPUT
@@ -284,9 +284,9 @@ function CreatePartnerItems(props) {
             </Radio.Group>
           </div>
           <div style={{ marginTop: "1rem" }}>
-            <p className="edit-product-content-title">Khởi tạo</p>
+            <p className="edit-product-content-title">Admin</p>
             <span>
-              Người tạo: <span>{userName}</span>
+              Admin: <span>{userName}</span>
             </span>
           </div>
         </Col>

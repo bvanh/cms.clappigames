@@ -7,9 +7,12 @@ import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 import CreatePromotion from "../create/index";
 import { queryGetPlatform } from "../../../../utils/queryPlatform";
-import { dispatchSwitchCreatePromo,dispatchListPartner} from "../../../../redux/actions/index";
+import {
+  dispatchSwitchCreatePromo,
+  dispatchListPartner
+} from "../../../../redux/actions/index";
 import "../../../../static/style/listUsers.css";
-import moment from 'moment'
+import moment from "moment";
 function ListPromoAndEvent(props) {
   const [isTypePromo, setIsTypePromo] = useState("promo");
   // const [isCreatePromo, setIsCreatePromo] = useState(false);
@@ -18,7 +21,7 @@ function ListPromoAndEvent(props) {
   };
   useQuery(queryGetPlatform, {
     onCompleted: data => {
-      dispatchListPartner(data.listPartners)
+      dispatchListPartner(data.listPartners);
     }
   });
   return (
@@ -27,12 +30,12 @@ function ListPromoAndEvent(props) {
         <div className="container-listPromo">
           <div className="title">
             <h2>
-              Quản lý khuyến mãi{" "}
+              Promotion managerment{" "}
               <Button
                 size="small"
                 onClick={() => dispatchSwitchCreatePromo(false)}
               >
-                Tạo mới
+                Creat new promotion
               </Button>
             </h2>
           </div>
@@ -47,15 +50,15 @@ function ListPromoAndEvent(props) {
                 className="btn-switch-listPromo"
                 style={{ marginRight: ".5rem" }}
               >
-                Khuyến mãi theo hàng hóa (Item)
+                Promotion for Item
               </Radio.Button>
               <Radio.Button value="event" className="btn-switch-listPromo">
-                Khuyến mãi theo hóa đơn (VNĐ)
+                Promotion for purchase
               </Radio.Button>
             </Radio.Group>
           </div>
           {isTypePromo === "promo" ? (
-            <ListPromo isCreatePromo={props.isCreatePromo}/>
+            <ListPromo isCreatePromo={props.isCreatePromo} />
           ) : (
             <ListEvents isPromo={isTypePromo} />
           )}

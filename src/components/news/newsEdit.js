@@ -33,8 +33,8 @@ const { Option } = Select;
 const listType = {
   type: ["NEWS", "EVENT", "SLIDER", "NOTICE", "GUIDE"],
   status: [
-    { value: "COMPLETE", status: "Đăng ngay" },
-    { value: "INPUT", status: "Lưu nháp" }
+    { value: "COMPLETE", status: "Public" },
+    { value: "INPUT", status: "Draff" }
   ]
 };
 const radioStyle = {
@@ -49,9 +49,9 @@ const NewsEditor = props => {
   const [listPlatform, setListPlatform] = useState([]);
   const [alertIndex, setAlertIndex] = useState({
     isShow: false,
-    content: "Cập nhật thành công !",
+    content: "Task is completed !",
     isDelete: false,
-    confirmBtn: "Xem danh sách"
+    confirmBtn: "Back"
   });
   const [newContent, setNewContent] = useState("");
   const [newsIndex, setNewsIndex] = useState({
@@ -127,8 +127,8 @@ const NewsEditor = props => {
       ...alertIndex,
       isShow: false,
       isDelete: false,
-      content: "Cập nhật thành công !",
-      confirmBtn: "Xem danh sách"
+      content: "Task is completed !",
+      confirmBtn: "Back"
     });
   };
   const submitUpdateAndDelete = () => {
@@ -140,8 +140,8 @@ const NewsEditor = props => {
     setAlertIndex({
       ...alertIndex,
       isShow: true,
-      content: "Xác nhận xóa bài viết ?",
-      confirmBtn: "Xác nhận !",
+      content: "Confirm delete news?",
+      confirmBtn: "Ok !",
       isDelete: true
     });
   };
@@ -165,8 +165,8 @@ const NewsEditor = props => {
     <Row>
       <Col sm={18} className="section1-news">
         <div style={{ display: "flex", justifyContent: "space-between" }}>
-          <h3>Chỉnh sửa bài viết</h3>
-          <Link to="/news">Quay lại</Link>
+          <h3>Update</h3>
+          <Link to="/news">Back</Link>
         </div>
         <Input
           placeholder=""
@@ -175,7 +175,7 @@ const NewsEditor = props => {
           onChange={e => setNewsIndex({ ...newsIndex, title: e.target.value })}
         />
         <Input
-          placeholder="Thêm subtitle..."
+          placeholder="Subtitle..."
           value={shortContent}
           name="title"
           onChange={e =>
@@ -189,32 +189,32 @@ const NewsEditor = props => {
           onBlur={newContent => setNewContent(newContent)} // preferred to use only this option to update the content for performance reasons
         />
         <Button onClick={() => showUrlImagesNews(false)}>
-          Lấy đường dẫn Image
+          Get image link
         </Button>
       </Col>
       <Col sm={6} style={{ padding: "0 1rem" }}>
         <div className="set-schedule-news">
-          <h3>Chế độ đăng</h3>
+          <h3>Public status</h3>
           <Radio.Group onChange={handleChangeSchedule} value={status}>
             {printStatus}
             <Radio style={radioStyle} disabled>
-              Lên lịch đăng bài
+            Set timeline to public
             </Radio>
           </Radio.Group>
 
           <p>
-            Chọn thời gian<span>(chọn thời gian trước 15' so với mốc)</span>
+          When you set the timeline, Timeline must have soon 15 minutes from public time.
           </p>
           <div style={{ display: "flex" }}>
             <div style={{ width: "50%" }}>
-              <p>Ngày</p>
+              <p>Date</p>
               <DatePicker
                 onChange={handleChangeDateSchedule}
                 style={{ width: "100%" }}
               />
             </div>
             <div style={{ width: "50%" }}>
-              <p>Thời điểm</p>
+              <p>Time</p>
               <TimePicker style={{ width: "100%" }} />
             </div>
           </div>
@@ -230,7 +230,7 @@ const NewsEditor = props => {
           </Select>
         </div>
         <div className="set-type-news">
-          <h3>Loại bài viết</h3>
+          <h3>Type</h3>
           <Select
             value={type}
             style={{ width: "100%" }}
@@ -240,15 +240,15 @@ const NewsEditor = props => {
           </Select>
         </div>
         <div className="set-thumbnail-news">
-          <h3>Chọn ảnh thumbnail</h3>
+          <h3>Thumbnail image</h3>
           <div style={{ width: "70%", margin: "0 auto" }}>
             <img src={props.urlImgThumbnail} style={{ width: "100%" }} />
           </div>
-          <a onClick={() => showUrlImagesNews(true)}>Thay đổi</a>
+          <a onClick={() => showUrlImagesNews(true)}>Change</a>
         </div>
         <div className="btn-submit">
-          <p onClick={showConfirm} style={{color:'red',cursor:"pointer"}}>Xóa bài viết</p>
-          <a onClick={submitUpdateNews}>Cập nhật</a>
+          <p onClick={showConfirm} style={{color:'red',cursor:"pointer"}}>Delete news</p>
+          <a onClick={submitUpdateNews}>Update</a>
         </div>
       </Col>
       <ListImagesForNews isThumbnail={isThumbnail} />
@@ -257,7 +257,7 @@ const NewsEditor = props => {
         visible={alertIndex.isShow}
         okText={<Link to="/news">{alertIndex.confirmBtn}</Link>}
         onOk={submitUpdateAndDelete}
-        cancelText="Kiểm tra"
+        cancelText="Go ahead"
         onCancel={handleCancel}
       ></Modal>
     </Row>

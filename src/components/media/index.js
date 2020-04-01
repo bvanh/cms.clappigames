@@ -76,7 +76,7 @@ function Media() {
           <div className="btn-media-options">
             <span>
               <Icon type="close" style={{ marginRight: "5px" }} onClick={() => setSelectedImage([])} />
-              <span>{selectedImage.length}</span> items đã được chọn
+              <span>{selectedImage.length}</span> items is chosen
             </span>
             <div>
               <Icon

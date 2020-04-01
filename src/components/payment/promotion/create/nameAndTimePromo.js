@@ -31,21 +31,21 @@ function InputNameAndTypeArea(props) {
   const { name, status } = props.indexPromoAndEvent;
   return (
     <div>
-      <h3 className="promotion-title-field">Tên chương trình khuyến mãi</h3>
+      <h3 className="promotion-title-field">Promotion Name</h3>
       <Input
-        placeholder="Vd: Chương trìn khuyến mãi mở server"
+        placeholder="Ex: Promotion for open new server..."
         onChange={props.setInfoPromo}
         name="name"
         value={name}
       ></Input>
       <div className="promotion-title-status">
-        <h3>Trạng thái</h3>
+        <h3>Status</h3>
         <Radio.Group onChange={props.setInfoPromo} value={status} name="status">
-          <Radio value="COMPLETE">Kích hoạt</Radio>
-          <Radio value="INPUT">Chưa áp dụng</Radio>
+          <Radio value="COMPLETE">Active</Radio>
+          <Radio value="INPUT">Plan</Radio>
         </Radio.Group>
       </div>
-      <h3>Hình thức khuyến mãi</h3>
+      <h3>Method</h3>
       <Radio.Group
         disabled={props.isTimeInPromo ? props.isTimeInPromo : false}
         value={switchTypeEvent}
@@ -56,8 +56,8 @@ function InputNameAndTypeArea(props) {
         }}
         className="promotion-choose-typeEvent"
       >
-        <Radio.Button value={false}>Khuyến mãi theo hóa đơn</Radio.Button>
-        <Radio.Button value={true}>Khuyến mãi theo Item</Radio.Button>
+        <Radio.Button value={false}>Promotion for purchase</Radio.Button>
+        <Radio.Button value={true}>Promotion for Item</Radio.Button>
       </Radio.Group>
     </div>
   );
@@ -106,9 +106,9 @@ function InputTimeArea(props) {
   return (
     <Col md={12} className="section2-promotion">
       <div>
-        <h3 className="promotion-title-field">Thời gian áp dụng </h3>
+        <h3 className="promotion-title-field">Set timeline </h3>
         <div className="section2-promotion-pickTime">
-          <h3>Thời gian: </h3>
+          <h3>Time: </h3>
           <div style={{ width: "80%" }}>
             <DatePicker
               showTime={{ format: "HH:mm" }}
@@ -133,7 +133,7 @@ function InputTimeArea(props) {
           </div>
         </div>
         <div className="section2-promotion-pickTime">
-          <h3>Theo ngày: </h3>
+          <h3>By day of the month: </h3>
           <Select
             mode="multiple"
             style={{ width: "80%" }}
@@ -146,7 +146,7 @@ function InputTimeArea(props) {
           </Select>
         </div>
         <div className="section2-promotion-pickTime">
-          <h3>Theo thứ:</h3>
+          <h3>By day of the week:</h3>
           <Select
             mode="multiple"
             style={{ width: "80%" }}
@@ -159,7 +159,7 @@ function InputTimeArea(props) {
           </Select>
         </div>
         <div className="section2-promotion-pickTime">
-          <h3>Theo giờ:</h3>
+          <h3>By hours of the day:</h3>
           <div style={{ width: "80%" }}>
             <TimePicker
               allowClear={false}
@@ -204,7 +204,7 @@ function InputTimeArea(props) {
         </div>
       </div>
       <div className="section2-promotion-footer">
-        Khuyến mãi diễn ra{" "}
+      Promotion's timeline will be on ...{" "}
         {endTime === "00:00:00" ? "" : `lúc ${startTime} đến ${endTime}`} vào
         các ngày {alertDaily}
         {printAlertDates} từ {timeTotal[0]} đến {timeTotal[1]}

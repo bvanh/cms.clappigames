@@ -47,7 +47,7 @@ function ListPartnerItems() {
   }, []);
   const columns = [
     {
-      title: "Id",
+      title: "Item Id",
       dataIndex: "partnerProductId",
       key: "productId"
     },
@@ -130,10 +130,10 @@ function ListPartnerItems() {
         <Col md={12}>
           <div className="products-title">
             <div>
-              <h2>Quản lý Item</h2>
+              <h2>Item managerment</h2>
               <div className="view-more">
                 <Link to="/payment/items" onClick={() => setIsCreateItem(true)}>
-                  <Button icon="plus">Thêm mới Item</Button>
+                  <Button icon="plus">Add new Item</Button>
                 </Link>
               </div>
             </div>
@@ -150,7 +150,7 @@ function ListPartnerItems() {
                 prefix={
                   <Icon type="search" style={{ color: "rgba(0,0,0,.25)" }} />
                 }
-                placeholder="Tìm kiếm theo tên Item"
+                placeholder="Search by name Item"
               />
             </div>
           </div>

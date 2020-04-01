@@ -112,7 +112,7 @@ function EditProductCoin(props) {
         <Link to="/payment/coin">
           <span>
             <Icon type="arrow-left" style={{ paddingRight: ".2rem" }} />
-            Danh sách Coin
+            Back
           </span>
         </Link>
         <div className="products-title">
@@ -125,9 +125,9 @@ function EditProductCoin(props) {
                   disabled={oldDataProduct.statusBtnCancel}
                   style={{marginRight:".5rem"}}
                 >
-                  Hủy
+                  Cancel
                 </Button>
-                <Button onClick={submitUpdateCoin}>Lưu mới C.coin</Button>
+                <Button onClick={submitUpdateCoin}>Update C.coin</Button>
               </p>
             </div>
           </div>
@@ -136,18 +136,18 @@ function EditProductCoin(props) {
           <Col md={12} className="section1">
             <div>
               <div>
-                <p className="edit-product-content-title">Mã C.coin</p>
-                <span>Mã tự tạo: {productId} </span>
+                <p className="edit-product-content-title">C.coin Id</p>
+                <span>Id: {productId} </span>
               </div>
             </div>
             <div className="product-input-update">
-              <span className="edit-product-content-title">Tên C.coin</span>
+              <span className="edit-product-content-title">C.coin name</span>
               <Input
                 value={productName}
                 name="productName"
                 onChange={getNameAndPriceAndSort}
               ></Input>
-              <span className="edit-product-content-title">Giá (VNĐ)</span>
+              <span className="edit-product-content-title">Price (VNĐ)</span>
               <Input
                 value={price}
                 type="number"
@@ -157,7 +157,7 @@ function EditProductCoin(props) {
               ></Input>
               <div>
                 <Col>
-                  <span className="edit-product-content-title">Thứ tự ưu tiên</span>
+                  <span className="edit-product-content-title">Sort</span>
                   <div style={{ display: "flex", alignItems: "center" }}>
                     <Input
                       style={{ width: "4rem" }}
@@ -173,19 +173,19 @@ function EditProductCoin(props) {
                 </Col>
               </div>
               <div>
-                <span className="edit-product-content-title">Ảnh</span>
+                <span className="edit-product-content-title">Image</span>
               </div>
               <div style={{ width: "100px" }}>
                 <img src={props.urlImgThumbnail} width="100%" />
               </div>
               <div>
-                <a onClick={() => dispatchShowImagesNews(true)}>Chọn ảnh</a>
+                <a onClick={() => dispatchShowImagesNews(true)}>Select</a>
               </div>
             </div>
           </Col>
           <Col md={6} className="section2">
             <div>
-              <p className="edit-product-content-title">Trạng thái</p>
+              <p className="edit-product-content-title">Status</p>
               <Radio.Group value={status} onChange={getStatus}>
                 <Radio style={radioStyle} value="INPUT">
                   INPUT
@@ -199,15 +199,15 @@ function EditProductCoin(props) {
               </Radio.Group>
             </div>
             <div style={{ marginTop: "1rem" }}>
-              <p className="edit-product-content-title">Khởi tạo</p>
+              <p className="edit-product-content-title">Create</p>
               <span>
-                Người tạo: <span>{userName}</span>
+                Admin: <span>{userName}</span>
               </span>
             </div>
           </Col>
           <Col md={6} className="section2">
             <div>
-              <p className="edit-product-content-title">Kiểu thanh toán</p>
+              <p className="edit-product-content-title">Payment Type</p>
               <Select value={type} style={{ width: "100%" }} onChange={getType}>
                 {printPaymentTypes}
               </Select>

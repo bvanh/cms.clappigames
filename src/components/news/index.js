@@ -88,7 +88,7 @@ function ListNews() {
     },
 
     {
-      title: "Thời gian",
+      title: "Time",
       dataIndex: "createAt",
       key: "time",
       render: time => (
@@ -96,7 +96,7 @@ function ListNews() {
       )
     },
     {
-      title: "Trạng thái",
+      title: "Status",
       dataIndex: "status",
       key: "status"
     }

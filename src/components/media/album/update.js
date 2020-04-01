@@ -123,7 +123,7 @@ function UpdateAlbum() {
           <div className="btn-media-options">
             <span>
               <Icon type="close" style={{ marginRight: "5px" }} onClick={() => setSelectedImage([])} />
-              <span>{selectedImage.length}</span> items đã được chọn
+              <span>{selectedImage.length}</span> items is chosen.
             </span>
             <div>
               <Icon type="eye" style={{ fontSize: "18px", margin: "0 5px" }} onClick={() => setIsOpenImage(true)} />

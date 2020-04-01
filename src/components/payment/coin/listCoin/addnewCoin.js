@@ -109,8 +109,8 @@ function CreateProductCoin(props) {
   const showConfirm = () => {
     Modal.confirm({
       title: "Bạn có muốn tiếp tục tạo bản ghi không ?",
-      okText:"Xem danh sách",
-      cancelText:"Tiếp tục",
+      okText:"Back",
+      cancelText:"Go ahead",
       onOk() {
         props.setIsCreateCoin(false);
       },
@@ -124,12 +124,12 @@ function CreateProductCoin(props) {
       <Link to="/payment/coin" onClick={showConfirm}>
         <span>
           <Icon type="arrow-left" style={{ paddingRight: ".2rem" }} />
-          Danh sách Coin
+          Back
         </span>
       </Link>
       <div className="products-title">
         <div>
-          <h2>Tạo mới C.coin</h2>
+          <h2>Create new C.coin</h2>
           <div>
             <p>
               <Button
@@ -137,10 +137,10 @@ function CreateProductCoin(props) {
                 disabled={oldDataProduct.statusBtnCancel}
                 style={{marginRight:".5rem"}}
               >
-                Hủy
+                Cancel
               </Button>
               <Button onClick={submitUpdateCoin} disabled={checkStatusData()}>
-                Tạo mới C.coin
+                Create C.coin
               </Button>
             </p>
           </div>
@@ -150,18 +150,18 @@ function CreateProductCoin(props) {
         <Col md={12} className="section1-listcoin">
           <div>
             <div>
-              <p className="edit-product-content-title">Mã C.coin</p>
-              <span>Mã tự tạo: AUTO </span>
+              <p className="edit-product-content-title">C.coin Id</p>
+              <span>Id: AUTO </span>
             </div>
           </div>
           <div className="product-input-update">
-            <span className="edit-product-content-title">Tên C.coin</span>
+            <span className="edit-product-content-title">C.coin name</span>
             <Input
               name="productName"
               onChange={getNameAndPriceAndSort}
               value={productName}
             ></Input>
-            <span className="edit-product-content-title">Giá (VNĐ)</span>
+            <span className="edit-product-content-title">Price (VNĐ)</span>
             <Input
               type="number"
               max="9990000000"
@@ -172,7 +172,7 @@ function CreateProductCoin(props) {
             <div>
               <Col>
                 <span className="edit-product-content-title">
-                  Thứ tự ưu tiên
+                  Sort
                 </span>
                 <div style={{ display: "flex", alignItems: "center" }}>
                   <Input
@@ -189,19 +189,19 @@ function CreateProductCoin(props) {
               </Col>
             </div>
             <div>
-              <span className="edit-product-content-title">Ảnh</span>
+              <span className="edit-product-content-title">Image</span>
             </div>
             <div style={{ width: "100px" }}>
               <img src={props.urlImgThumbnail} width="100%" />
             </div>
             <div>
-              <a onClick={() => dispatchShowImagesNews(true)}>Chọn ảnh</a>
+              <a onClick={() => dispatchShowImagesNews(true)}>Image</a>
             </div>
           </div>
         </Col>
         <Col md={6} className="section2">
           <div>
-            <p className="edit-product-content-title">Trạng thái</p>
+            <p className="edit-product-content-title">Status</p>
             <Radio.Group
               onChange={getStatusAndType}
               name="status"
@@ -219,15 +219,15 @@ function CreateProductCoin(props) {
             </Radio.Group>
           </div>
           <div style={{ marginTop: "1rem" }}>
-            <p className="edit-product-content-title">Khởi tạo</p>
+            <p className="edit-product-content-title">Create</p>
             <span>
-              Người tạo: <span>{userName}</span>
+              Admin: <span>{userName}</span>
             </span>
           </div>
         </Col>
         <Col md={6} className="section2">
           <div>
-            <p className="edit-product-content-title">Kiểu thanh toán</p>
+            <p className="edit-product-content-title">Payment Type</p>
             <Select value={type} style={{ width: "100%" }} onChange={getType}>
               {printPaymentTypes}
             </Select>

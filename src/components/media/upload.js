@@ -46,7 +46,7 @@ function UploadImages(props) {
   };
   const success = () => {
     Modal.success({
-      content: "Tải ảnh thành công...!"
+      content: "Upload successful...!"
     });
     setFileImage([]);
   };

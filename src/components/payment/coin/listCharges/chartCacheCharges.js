@@ -175,7 +175,7 @@ const ChartCharges = props => {
   return (
     <div className="line_chart">
       <div className="chart-charges-title">
-        <h2>Doanh thu</h2>
+        <h2>Trend</h2>
         <Select
           defaultValue="SEVENT_DAY_AGO"
           style={{ width: 120 }}

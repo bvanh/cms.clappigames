@@ -168,9 +168,9 @@ function ListPromo() {
         <Button onClick={submitDelete} disabled={listDelete.length > 0 ? false : true}>Delete</Button>
       </div>
       <Tabs activeKey={status} onChange={handleChangeTypePromo}>
-        <TabPane tab="Tất cả khuyến mãi" key=""></TabPane>
-        <TabPane tab="Đang áp dụng" key="COMPLETE"></TabPane>
-        <TabPane tab="Chưa áp dụng" key="INPUT"></TabPane>
+        <TabPane tab="Total Purchase" key=""></TabPane>
+        <TabPane tab="Active" key="COMPLETE"></TabPane>
+        <TabPane tab="Plan" key="INPUT"></TabPane>
       </Tabs>
       {dataListPromo && (
         <>

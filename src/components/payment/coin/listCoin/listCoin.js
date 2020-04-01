@@ -99,28 +99,28 @@ function ListCoin(props) {
   // eslint-disable-next-line no-sparse-arrays
   const columns = [
     {
-      title: "Id",
+      title: "C.coin Id",
       dataIndex: "productId",
       key: "productId",
       width: "15%",
       render: index => <span className='convert-col'>{index}</span>
     },
     {
-      title: "C.coin",
+      title: "C.coin Name",
       dataIndex: "productName",
       key: "productName",
       width: "20%"
     },
     ,
     {
-      title: "Giá (VND)",
+      title: "Price (VND)",
       dataIndex: "price",
       key: "price",
       render: price => <span>{price.toLocaleString()} đ</span>,
       width: "20%"
     },
     {
-      title: "promo",
+      title: "Promotion",
       dataIndex: "discount",
       key: "discount",
       width: "10%"
@@ -197,8 +197,8 @@ function ListCoin(props) {
       <Row>
         <Col md={24}>
           <Col md={12}>
-            Doanh thu {totalIndex.totalMoney}
-            Giao dịch: {totalIndex.totalPurchase}
+            C.coin exchange Total {totalIndex.totalMoney}
+            Total Purchase times: {totalIndex.totalPurchase}
           </Col>
           <Col md={12}>
             <ChartCharges setTotalIndex={setTotalIndex} totalIndex={totalIndex}/>
@@ -207,10 +207,10 @@ function ListCoin(props) {
         <Col md={12}>
           <div className="products-title">
             <div>
-              <h2>Quản lý C.coin</h2>
+              <h2>C.coin managerment</h2>
               <div className="view-more">
                 <Link to="/payment/coin" onClick={() => setIsCreateCoin(true)}>
-                  <Button icon="plus">Thêm gói C.coin</Button>
+                  <Button icon="plus">Add new C.coin package</Button>
                 </Link>
                 <Button disabled={!hasSelected} onClick={submitDeleteProduct} style={{ marginLeft: ".25rem" }}>
                   Delete

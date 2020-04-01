@@ -33,9 +33,9 @@ const listSelectDates = [
   { days: "Last 30 days", variables: "THIRTY_DAY_AGO" }
 ];
 const listType = [
-  { nameType: "Theo tên", id: 4 },
-  { nameType: "Theo mã giao dịch", id: 1 },
-  { nameType: "Theo userId", id: 2 },
+  { nameType: "By C.coin", id: 4 },
+  { nameType: "By Purchase ID", id: 1 },
+  { nameType: "By User ID", id: 2 },
   // { nameType: "Theo kiểu thanh toán", id: 3 }
 ];
 function ListChargesDetail() {
@@ -164,7 +164,7 @@ function ListChargesDetail() {
   };
   const columns = [
     {
-      title: "Id",
+      title: "Purchase Id",
       dataIndex: "chargeId",
       key: "chargeId"
     },
@@ -220,14 +220,14 @@ function ListChargesDetail() {
       <div>
         <Link to="/payment/coin">
           <Icon type="double-left" />
-          Quay lại
+          Back
         </Link>
-        <h2>Lịch sử giao dịch</h2>
+        <h2>History purchase</h2>
         <div className="btn-search-charges">
           <div>
             <Input
               value={search}
-              placeholder="Tìm kiếm theo tên c.coin"
+              placeholder="Search by C.coin package name"
               onChange={getProductName}
               style={{ width: "30%", marginRight: "2%" }}
               suffix={

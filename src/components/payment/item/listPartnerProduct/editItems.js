@@ -189,9 +189,9 @@ function EditPartnerProductItem(props) {
                   onClick={cancelUpdate}
                   disabled={oldDataPartnerProduct.statusBtnCancel}
                 >
-                  Hủy
+                  Cancel
                 </Button>
-                <Button onClick={submitupdateItem}>Lưu mới C.coin</Button>
+                <Button onClick={submitupdateItem}>Update Item</Button>
               </p>
             </div>
           </div>
@@ -200,13 +200,13 @@ function EditPartnerProductItem(props) {
           <Col md={12} className="section1">
             <div>
               <div>
-                <p className="edit-product-content-title">Mã C.coin</p>
-                <span style={{paddingLeft:"1rem"}}>Mã tự tạo: {partnerProductId} </span>
+                <p className="edit-product-content-title">Item Id</p>
+                <span style={{paddingLeft:"1rem"}}>Id: {partnerProductId} </span>
               </div>
             </div>
             <div className="product-input-update">
               <div>
-                <span className="edit-product-content-title">Tên Game</span>
+                <span className="edit-product-content-title">Platform</span>
                 <Select
                   value={partnerId}
                   style={{ width: "100%" }}
@@ -215,7 +215,7 @@ function EditPartnerProductItem(props) {
                   {printPlatform}
                 </Select>
                 <span className="edit-product-content-title">
-                  ProductIdAndName
+                  ProductId And Name
                 </span>
                 <Select
                   value={
@@ -230,13 +230,13 @@ function EditPartnerProductItem(props) {
                   {printRefProduct}
                 </Select>
               </div>
-              <span className="edit-product-content-title">Tên Item</span>
+              <span className="edit-product-content-title">Name</span>
               <Input
                 value={productName}
                 name="productName"
                 onChange={getNewInfoItem}
               ></Input>
-              <span className="edit-product-content-title">Giá (C.coin)</span>
+              <span className="edit-product-content-title">Price (C.coin)</span>
               <Input
                 value={coin}
                 type="number"
@@ -245,19 +245,21 @@ function EditPartnerProductItem(props) {
                 onChange={getNewInfoItem}
               ></Input>
               <div>
-                <span className="edit-product-content-title">Ảnh</span>
+                <span className="edit-product-content-title">Image</span>
               </div>
               <div style={{ width: "100px" }}>
                 <img src={props.urlImgThumbnail} width="100%" />
               </div>
               <div>
-                <a onClick={() => dispatchShowImagesNews(true)}>Chọn ảnh</a>
+                <a onClick={() => dispatchShowImagesNews(true)}>
+                
+                Select</a>
               </div>
             </div>
           </Col>
           <Col md={8} className="section2">
             <div>
-              <p className="edit-product-content-title">Trạng thái</p>
+              <p className="edit-product-content-title">Status</p>
               <Radio.Group value={status} onChange={getStatus}>
                 <Radio style={radioStyle} value="INPUT">
                   INPUT
@@ -271,9 +273,9 @@ function EditPartnerProductItem(props) {
               </Radio.Group>
             </div>
             <div style={{ marginTop: "1rem" }}>
-              <p className="edit-product-content-title">Khởi tạo</p>
+              <p className="edit-product-content-title">Create</p>
               <span>
-                Người tạo: <span>{userName}</span>
+                Admin: <span>{userName}</span>
               </span>
             </div>
           </Col>
