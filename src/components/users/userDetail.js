@@ -39,13 +39,13 @@ function Detail(props) {
   } = data.listUsers[0];
   let statusSocial = "";
   if (guest === 1) {
-    statusSocial = "Tài khoản khách";
+    statusSocial = "Guest Account";
   } else if (facebook !== null) {
-    statusSocial = "Liên kết Facebook";
+    statusSocial = "Facebook Account";
   } else if (google !== null) {
-    statusSocial = "Liên kết Google";
+    statusSocial = "Google Account";
   } else {
-    statusSocial = "Tài khoản Clappigames";
+    statusSocial = "Clappigames Account";
   }
   const switchEdit = val => {
     switchUpdate(val);

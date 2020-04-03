@@ -165,7 +165,7 @@ function App(props) {
             <Content
               style={{
                 overflow: "initial",
-                padding: "2.5rem 2rem",
+                padding: "2rem 2rem",
                 background: "white"
               }}
             >

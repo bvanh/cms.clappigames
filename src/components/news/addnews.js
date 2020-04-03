@@ -28,13 +28,15 @@ import "suneditor/dist/css/suneditor.min.css"; // Import Sun Editor's CSS File
 import JoditEditor from "jodit-react";
 import "jodit/build/jodit.min.css";
 import moment from "moment";
+import { alertError } from './newsAlert'
 // import ListNews from ".";
 const { Option } = Select;
 const listType = {
   type: ["NEWS", "EVENT", "SLIDER", "NOTICE", "GUIDE"],
   status: [
     { value: "COMPLETE", status: "Public" },
-    { value: "INPUT", status: "Draff" }
+    { value: "INPUT", status: "Draff" },
+    // { value: "SCHEDULE", status: "Set timeline to public" }
   ]
 };
 const radioStyle = {
@@ -45,19 +47,23 @@ const radioStyle = {
 const AddNews = props => {
   // const editor = useRef(null);
   const [isThumbnail, setIsThumbnail] = useState(false);
-  const [visible, setVisible] = useState(false);
   const [listPlatform, setListPlatform] = useState([]);
   const [newContent, setNewContent] = useState("");
+  const [isSetSchedule, setIsSchedule] = useState(false);
+  const [isPostNow, setIsPostNow] = useState(true)
   const [newsIndex, setNewsIndex] = useState({
     title: "",
     subTitle: "",
     type: "NEWS",
     status: "INPUT",
     platform: "5A6DC0B0-B02B-40FB-BA2C-3C42EC442B89",
-    startPost: {
-      date: "",
-      time: ""
-    }
+    startPost: moment().format('YYYY-MM-DD HH:mm:ss')
+  });
+  const [alertIndex, setAlertIndex] = useState({
+    isShow: false,
+    content: "Updating successful post !",
+    isDelete: false,
+    confirmBtn: "Back"
   });
   useQuery(queryGetPlatform(), {
     onCompleted: dataPartner => {
@@ -76,7 +82,7 @@ const AddNews = props => {
         status: status,
         image: props.urlImgThumbnail,
         unity: 0,
-        startPost: JSON.stringify(startPost)
+        startPost: startPost
       }
     },
     onCompleted: data => console.log(data)
@@ -92,7 +98,7 @@ const AddNews = props => {
     if (title !== "" && newContent !== "" && subTitle !== "" && status !== "") {
       let data = updateNews();
       data.then(val => {
-        setVisible(true);
+        setAlertIndex({ ...alertIndex, isShow: true, content: "Create new post successful!" })
         setNewsIndex({
           ...newsIndex,
           title: "",
@@ -105,7 +111,7 @@ const AddNews = props => {
         dispatchSetUrlImageThumbnail(null);
       });
     } else {
-      alert("thieu thong tin!");
+      alertError();
     }
   };
   const showUrlImagesNews = val => {
@@ -113,23 +119,28 @@ const AddNews = props => {
     dispatchShowImagesNews(true);
   };
   const handleCancel = () => {
-    setVisible(false);
+    setAlertIndex({ ...alertIndex, isShow: false })
   };
-  const handleChangeSchedule=(val)=>{
-
+  const handleChangeSchedule = (e) => {
+    setNewsIndex({ ...newsIndex, status: e.target.value, startPost: moment().format('YYYY-MM-DD hh:mm:ss') })
   }
-  const handleChangeTimeSchedule = val => {
-    setNewsIndex({
-      ...newsIndex,
-      startPost: { date: startPost.date, time: val }
-    });
-  };
   const handleChangeDateSchedule = val => {
+    setIsPostNow(false);
     setNewsIndex({
       ...newsIndex,
-      startPost: { date: val, time: startPost.time }
+      startPost: val
     });
   };
+  const setStartPostNow = () => {
+    // moment.unix(value).format("MM/DD/YYYY")
+    const now = moment().format("YYYY-MM-DD hh:mm:ss")
+    setIsSchedule(false);
+    setIsPostNow(true);
+    setNewsIndex({ ...newsIndex, startPost: now })
+  }
+  const backToNews = () => {
+    setAlertIndex({ ...alertIndex, isShow: true, content: "Do you want to countinue creating a new post?" })
+  }
   const printType = listType.type.map((val, index) => (
     <Option value={val} name="type" key={index}>
       {val}
@@ -149,12 +160,11 @@ const AddNews = props => {
     <Row>
       <Col sm={18} className="section1-news">
         <h3>
-          <Link to="/news">
             <Icon
               type="close"
               style={{ color: "rgba(0,0,0,.45)", paddingRight: ".5rem" }}
+              onClick={backToNews}
             />
-          </Link>
           Add News
         </h3>
         <Input
@@ -191,38 +201,36 @@ const AddNews = props => {
           <h3>Public status</h3>
           <Radio.Group onChange={handleChangeSchedule}>
             {printStatus}
-            <Radio style={radioStyle} value={3} disabled>
-              Set timeline to public
-            </Radio>
           </Radio.Group>
-          <p>
-            When you set the timeline, Timeline must have soon 15 minutes from
-            public time.
-          </p>
-          <div style={{ display: "flex" }}>
-            <div style={{ width: "50%" }}>
-              <p>Date</p>
-              <DatePicker
-                onChange={(time, timeString) => {
-                  handleChangeDateSchedule(timeString);
-                }}
-                style={{ width: "99%", marginRight: "1%" }}
-                disabledDate={disabledDate}
-                format="YYYY-MM-DD"
-                allowClear={false}
-              />
-            </div>
-            <div style={{ width: "50%" }} className="timePick-schedule-news">
-              <p>Time</p>
-              <TimePicker
-                style={{ width: "99%", marginLeft: "1%" }}
-                allowClear={false}
-                format={"hh:mm:ss"}
-                placeholder="Select time"
-                onChange={(time, timeString) => {
-                  handleChangeTimeSchedule(timeString);
-                }}
-              />
+          {/* <div>
+            <a>Set</a>
+          </div> */}
+          <div className={status === 'COMPLETE' ? 'option-settimeline' : "hide-options-settimeline"}>
+            <p style={{ margin: ".5rem 0" }}>
+              * Set timeline
+           </p>
+            <div style={{ display: "flex" }}>
+              <div style={{ width: "100%" }}>
+                {/* <p>Date</p> */}
+                <DatePicker
+                  showTime={{ format: 'HH:mm:ss' }}
+                  placeholder="Set timeline"
+                  onChange={(time, timeString) => {
+                    handleChangeDateSchedule(timeString);
+                  }}
+                  style={{ width: "99%", marginRight: "1%" }}
+                  disabledDate={disabledDate}
+                  format="YYYY-MM-DD HH:mm:ss"
+                  allowClear={false}
+                  defaultValue={moment(startPost, "YYYY-MM-DD HH:mm:ss")}
+                  disabled={status === 'COMPLETE' ? false : true}
+                  open={isSetSchedule}
+                  dropdownClassName='setTimeline-news'
+                  renderExtraFooter={() => <Button size='small' onClick={setStartPostNow}>Post Now</Button>}
+                  onOk={() => console.log(false)}
+                  onFocus={() => setIsSchedule(true)}
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -257,12 +265,14 @@ const AddNews = props => {
       </Col>
       <ListImagesForNews isThumbnail={isThumbnail} />
       <Modal
-        title="Task is completed !"
-        visible={visible}
+        title="Confirm !"
+        visible={alertIndex.isShow}
         okText={<Link to="/news">Back</Link>}
         cancelText="Next"
         onCancel={handleCancel}
-      ></Modal>
+      >
+        <p>{alertIndex.content}</p>
+      </Modal>
     </Row>
   );
 };

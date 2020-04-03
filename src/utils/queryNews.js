@@ -44,6 +44,7 @@ const queryNewsDetail = newsId => {
         createAt
         type
         platform
+        startPost
       }
     }
   `;

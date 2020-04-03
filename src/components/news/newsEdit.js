@@ -11,8 +11,6 @@ import "jodit/build/jodit.min.css";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import { useMutation, useQuery, useLazyQuery } from "@apollo/react-hooks";
-import { gql } from "apollo-boost";
-import buttonListToolbar from "../../utils/itemToolbar";
 import ListImagesForNews from "./modalImageUrl/imgsUrl";
 import {
   Input,
@@ -34,7 +32,7 @@ const listType = {
   type: ["NEWS", "EVENT", "SLIDER", "NOTICE", "GUIDE"],
   status: [
     { value: "COMPLETE", status: "Public" },
-    { value: "INPUT", status: "Draff" }
+    { value: "INPUT", status: "Draff" },
   ]
 };
 const radioStyle = {
@@ -54,6 +52,8 @@ const NewsEditor = props => {
     confirmBtn: "Back"
   });
   const [newContent, setNewContent] = useState("");
+  const [isPostNow, setIsPostNow] = useState(true)
+  const [isSetSchedule, setIsSchedule] = useState(false)
   const [newsIndex, setNewsIndex] = useState({
     newsId: null,
     title: "",
@@ -63,15 +63,12 @@ const NewsEditor = props => {
     createAt: "",
     type: "",
     platform: "",
-    startPost: {
-      date: "",
-      time: ""
-    }
+    startPost: null
   });
-  useQuery(queryNewsDetail(query.get("newsId")), {
+  const [getNewsById] = useLazyQuery(queryNewsDetail(query.get("newsId")), {
     fetchPolicy: "cache-and-network",
     onCompleted: data => {
-      // console.log(data);
+      console.log(data);
       setNewsIndex(data.listNews[0]);
       setNewContent(data.listNews[0].content);
       dispatchSetUrlImageThumbnail(data.listNews[0].image);
@@ -82,8 +79,10 @@ const NewsEditor = props => {
       setListPlatform(dataPartner.listPartners);
     }
   });
+  useEffect(() => {
+    getNewsById();
+  }, [])
   const {
-    content,
     title,
     status,
     type,
@@ -105,18 +104,14 @@ const NewsEditor = props => {
         type: type,
         status: status,
         unity: 0,
-        startPost:JSON.stringify(startPost)
+        startPost: startPost
       }
     },
     onCompleted: data => console.log(data)
   });
-  const config = {
-    readonly: false, // all options from https://xdsoft.net/jodit/doc/,
-    height: 500
-  };
-  const disabledDate = current => {
-    return current && current < moment().endOf("day");
-  };
+  // const disabledDate = current => {
+  //   return current && current < moment().endOf("day");
+  // };
   const handleChangeType = (e, val) => {
     setNewsIndex({ ...newsIndex, [val.props.name]: e });
   };
@@ -127,9 +122,6 @@ const NewsEditor = props => {
   const showUrlImagesNews = val => {
     setIsThumbnail(val);
     dispatchShowImagesNews(true);
-  };
-  const handleChangeSchedule = e => {
-    setNewsIndex({ ...newsIndex, status: e.target.value });
   };
   const handleCancel = () => {
     setAlertIndex({
@@ -154,18 +146,23 @@ const NewsEditor = props => {
       isDelete: true
     });
   };
-  const handleChangeTimeSchedule = val => {
-    setNewsIndex({
-      ...newsIndex,
-      startPost: { date: startPost.date, time: val }
-    });
-  };
+  const handleChangeSchedule = (e) => {
+    setNewsIndex({ ...newsIndex, status: e.target.value })
+  }
   const handleChangeDateSchedule = val => {
+    setIsPostNow(false);
     setNewsIndex({
       ...newsIndex,
-      startPost: { date: val, time: startPost.time }
+      startPost: val
     });
   };
+  const setStartPostNow = () => {
+    // moment.unix(value).format("MM/DD/YYYY")
+    const now = moment().format("YYYY-MM-DD hh:mm:ss")
+    setIsSchedule(false);
+    setIsPostNow(true);
+    setNewsIndex({ ...newsIndex, startPost: now })
+  }
   const printType = listType.type.map((val, index) => (
     <Option value={val} name="type" key={index}>
       {val}
@@ -215,39 +212,32 @@ const NewsEditor = props => {
           <h3>Public status</h3>
           <Radio.Group onChange={handleChangeSchedule} value={status}>
             {printStatus}
-            <Radio style={radioStyle} disabled>
-              Set timeline to public
-            </Radio>
           </Radio.Group>
-
-          <p>
-            When you set the timeline, Timeline must have soon 15 minutes from
-            public time.
-          </p>
-          <div style={{ display: "flex" }}>
-            <div style={{ width: "50%" }}>
-              <p>Date</p>
-              <DatePicker
-                onChange={(time, timeString) => {
-                  handleChangeDateSchedule(timeString);
-                }}
-                style={{ width: "99%", marginRight: "1%" }}
-                disabledDate={disabledDate}
-                format="YYYY-MM-DD"
-                allowClear={false}
-              />
-            </div>
-            <div style={{ width: "50%" }}>
-              <p>Time</p>
-              <TimePicker
-                style={{ width: "99%", marginLeft: "1%" }}
-                allowClear={false}
-                format={"hh:mm:ss"}
-                placeholder="Select time"
-                onChange={(time, timeString) => {
-                  handleChangeTimeSchedule(timeString);
-                }}
-              />
+          <div className={status === 'COMPLETE' ? 'option-settimeline' : "hide-options-settimeline"}>
+            <p style={{margin:".5rem 0"}}>
+              * Set timeline
+           </p>
+            <div style={{ display: "flex" }}>
+              <div style={{ width: "100%" }}>
+                <DatePicker
+                  showTime
+                  placeholder="Set timeline"
+                  onChange={(time, timeString) => {
+                    handleChangeDateSchedule(timeString);
+                  }}
+                  style={{ width: "99%", marginRight: "1%" }}
+                  // disabledDate={disabledDate}
+                  format="YYYY-MM-DD HH:mm:ss"
+                  allowClear={true}
+                  value={Number.isInteger(Number(startPost)) ? moment(moment(Number(startPost)).format("YYYY-MM-DD hh:mm:ss"),"YYYY-MM-DD hh:mm:ss") : moment(startPost, "YYYY-MM-DD hh:mm:ss")}
+                  disabled={status === 'COMPLETE' ? false : true}
+                  open={isSetSchedule}
+                  dropdownClassName='setTimeline-news'
+                  renderExtraFooter={() => <Button size='small' onClick={setStartPostNow}>Post Now</Button>}
+                  onOk={() => setIsSchedule(false)}
+                  onFocus={() => setIsSchedule(true)}
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -287,13 +277,15 @@ const NewsEditor = props => {
       </Col>
       <ListImagesForNews isThumbnail={isThumbnail} />
       <Modal
-        title={alertIndex.content}
+        title='Confirm!'
         visible={alertIndex.isShow}
         okText={<Link to="/news">{alertIndex.confirmBtn}</Link>}
         onOk={submitUpdateAndDelete}
         cancelText="Next"
         onCancel={handleCancel}
-      ></Modal>
+      >
+        <p>{alertIndex.content}</p>
+      </Modal>
     </Row>
   );
 };

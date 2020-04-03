@@ -93,3 +93,17 @@
   display: flex;
   justify-content: space-between;
 }
+.setTimeline-news>div>div>div>.ant-calendar-footer>span{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+/* .setTimeline-news>div>div>div>.ant-calendar-footer>span>.ant-calendar-ok-btn{
+  display:none;
+} */
+.hide-options-settimeline{
+  display: none;
+}
+.hide-settimeline-container{
+  display: none;
+}

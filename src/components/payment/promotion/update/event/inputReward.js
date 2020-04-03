@@ -446,7 +446,7 @@ function InputRewardForShowByMoney(props) {
           <Input
             type="number"
             min="0"
-            placeholder="Input volume coin"
+            placeholder="Input volume c.coin package..."
             value={itemNumb}
             onChange={e => setItemNumb(e.target.value)}
           ></Input>
