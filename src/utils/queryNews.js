@@ -52,12 +52,14 @@ const queryNewsDetail = newsId => {
 const UpdateNews = gql`
   mutation UpdateNews($newsId: Int!, $req: NewsRequest!) {
     updateNews(newsId: $newsId, req: $req) {
+      newsId
       title
       content
       platform
       type
       shortContent
       image
+      startPost
     }
   }
 `;

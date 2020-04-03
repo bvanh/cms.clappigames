@@ -78,6 +78,7 @@ const queryGetListPartnerCharges = gql`
         partnerProduct {
           productName
         }
+        promotionRef
         createAt
         status
       }

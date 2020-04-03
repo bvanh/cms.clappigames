@@ -38,6 +38,7 @@ const ChartPartnerCharges = props => {
   const { TODAY } = dates;
   const [getData] = useLazyQuery(getListPartnerCharges, {
     onCompleted: data => {
+      // console.log(JSON.parse(data.chartCachePartnerChargeByDates.yAxis))
       setDataCharts({
         xAxis: JSON.parse(data.chartCachePartnerChargeByDates.xAxis),
         yAxis: JSON.parse(data.chartCachePartnerChargeByDates.yAxis)
@@ -45,7 +46,7 @@ const ChartPartnerCharges = props => {
       let arrCoin = JSON.parse(data.chartCachePartnerChargeByDates.yAxis).map(
         (val, i) => val[0].coin
       );
-      const totalCoin = arrCoin.reduce((a, b) => a + b);
+      const totalCoin = arrCoin.reduce(function (a, b) { return a + b }, 0);
       props.setTotalIndex({ ...props.totalIndex, totalMoney: totalCoin });
     }
   });
@@ -84,9 +85,9 @@ const ChartPartnerCharges = props => {
       return (
         (current &&
           current <
-            moment(fromDateCustom)
-              .subtract(1, "days")
-              .endOf("day")) ||
+          moment(fromDateCustom)
+            .subtract(1, "days")
+            .endOf("day")) ||
         current > moment().endOf("day")
       );
     }

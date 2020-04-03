@@ -210,7 +210,8 @@ function ListChargesDetail() {
     {
       title: "Server",
       dataIndex: "",
-      key: "server"
+      key: "server",
+      render:index=><span>Rừng gió </span>
     },
     {
       title: "Game",
@@ -220,7 +221,7 @@ function ListChargesDetail() {
     },
     {
       title: "Promotion",
-      dataIndex: "",
+      dataIndex: "promotionRef",
       key: "promotion"
       // render: index => <span>{index === null ? 'NONE' : index.name}</span>
     },

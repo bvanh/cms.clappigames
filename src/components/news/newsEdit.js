@@ -112,6 +112,7 @@ const NewsEditor = props => {
   // const disabledDate = current => {
   //   return current && current < moment().endOf("day");
   // };
+
   const handleChangeType = (e, val) => {
     setNewsIndex({ ...newsIndex, [val.props.name]: e });
   };
@@ -150,6 +151,7 @@ const NewsEditor = props => {
     setNewsIndex({ ...newsIndex, status: e.target.value })
   }
   const handleChangeDateSchedule = val => {
+    console.log(val)
     setIsPostNow(false);
     setNewsIndex({
       ...newsIndex,
@@ -178,6 +180,7 @@ const NewsEditor = props => {
       {val.partnerName}
     </Option>
   ));
+  console.log(moment(Number(startPost)).format("YYYY-MM-DD hh:mm:ss"))
   return (
     <Row>
       <Col sm={18} className="section1-news">

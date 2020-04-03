@@ -97,6 +97,7 @@ const queryHistotyPayment = (currentPage, pageSize, userId) => {
         partner{
           partnerName
         }
+        promotionRef
       }
     }
   }

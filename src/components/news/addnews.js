@@ -227,7 +227,7 @@ const AddNews = props => {
                   open={isSetSchedule}
                   dropdownClassName='setTimeline-news'
                   renderExtraFooter={() => <Button size='small' onClick={setStartPostNow}>Post Now</Button>}
-                  onOk={() => console.log(false)}
+                  onOk={() =>setIsSchedule(false)}
                   onFocus={() => setIsSchedule(true)}
                 />
               </div>
