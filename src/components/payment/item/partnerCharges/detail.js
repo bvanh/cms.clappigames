@@ -27,9 +27,8 @@ const listSelectDates = [
   { days: "Last 30 days", variables: "THIRTY_DAY_AGO" }
 ];
 const listType = [
-  { nameType: "Theo tên", id: 3 },
-  { nameType: "Theo mã giao dịch", id: 1 },
-  { nameType: "Theo userId", id: 2 }
+  { nameType: "By UserName", id: 3 },
+  { nameType: "By Purchase Item ID", id: 1 }
   // { nameType: "Theo kiểu thanh toán", id: 3 }
 ];
 function ListChargesDetail() {
@@ -88,9 +87,9 @@ function ListChargesDetail() {
       return (
         (current &&
           current <
-          moment(fromDate)
-            .subtract(1, "days")
-            .endOf("day")) ||
+            moment(fromDate)
+              .subtract(1, "days")
+              .endOf("day")) ||
         current > moment().endOf("day")
       );
     }
@@ -174,7 +173,7 @@ function ListChargesDetail() {
   };
   const columns = [
     {
-      title: "Id",
+      title: "Purchase Item ID",
       dataIndex: "partnerChargeCode",
       key: "partnerChargeId",
       render: index => <span className="convert-col">{index}</span>
@@ -186,10 +185,16 @@ function ListChargesDetail() {
       render: index => <span>{index === null ? "" : index.username}</span>
     },
     {
-      title: "Tên nhân vật",
+      title: "Character",
       dataIndex: "payload",
       key: "gameUserName",
-      render: index => <span>{JSON.parse(index).gameUserName === null ? "" : JSON.parse(index).gameUserName}</span>
+      render: index => (
+        <span>
+          {JSON.parse(index).gameUserName === null
+            ? ""
+            : JSON.parse(index).gameUserName}
+        </span>
+      )
     },
     {
       title: "Item",
@@ -213,12 +218,12 @@ function ListChargesDetail() {
       key: "partnername",
       render: index => <span>{index.partnerName}</span>
     },
-    // {
-    //   title: "Khuyến mãi",
-    //   dataIndex: "promotion",
-    //   key: "promotion",
-    //   render: index => <span>{index === null ? 'NONE' : index.name}</span>
-    // },
+    {
+      title: "Promotion",
+      dataIndex: "",
+      key: "promotion"
+      // render: index => <span>{index === null ? 'NONE' : index.name}</span>
+    },
     {
       title: "Time",
       dataIndex: "createAt",
@@ -331,22 +336,39 @@ function ListChargesDetail() {
                 Export Excel
               </Button>
             }
-            filename="Lịch sử giao dịch C.COIN"
+            filename="History Purchase Item"
           >
-            <ExcelSheet data={dataExport} name="Lịch sử giao dịch C.coin">
-              <ExcelColumn label="Id" value="partnerChargeId" />
-              <ExcelColumn label="Username" value={user => user.user.username} />
+            <ExcelSheet data={dataExport} name="History Purchase Item">
+              <ExcelColumn label="Purchase Item Id" value="partnerChargeCode" />
               <ExcelColumn
-                label="gameUserName"
-                value={user => user.user.username}
+                label="Username"
+                value={index =>
+                  index.user === null ? "" : index.user.username
+                }
               />
-              <ExcelColumn label="Item" value="item" />
+              <ExcelColumn
+                label="Character"
+                value={index =>
+                  JSON.parse(index.payload).gameUserName === null
+                    ? ""
+                    : JSON.parse(index.payload).gameUserName
+                }
+              />
+              <ExcelColumn
+                label="Item"
+                value={index =>
+                  index.partnerProduct === null
+                    ? ""
+                    : index.partnerProduct.productName
+                }
+              />
               <ExcelColumn label="C.coin" value="coin" />
               <ExcelColumn label="Server" value="" />
-              <ExcelColumn label="Game" value={
-                index => index.partner.partnerName
-              } />
-              <ExcelColumn label="Khuyen mai" value="" />
+              <ExcelColumn
+                label="Game"
+                value={index => index.partner.partnerName}
+              />
+              <ExcelColumn label="Promotion" value="" />
               <ExcelColumn
                 label="Time"
                 value={time =>

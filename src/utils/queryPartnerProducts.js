@@ -15,10 +15,13 @@ const queryGetListPartnerProducts = gql`
       count
       rows {
         partnerProductId
-        partnerId 
+        partnerId
         productName
         coin
         createAt
+        partner {
+          partnerName
+        }
       }
     }
   }
@@ -72,7 +75,7 @@ const queryGetListPartnerCharges = gql`
         partner {
           partnerName
         }
-        partnerProduct{
+        partnerProduct {
           productName
         }
         createAt

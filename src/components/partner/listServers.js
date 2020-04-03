@@ -1,11 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
-
-import { Line } from "react-chartjs-2";
-import { Link } from "react-router-dom";
 import { getListServerByPartner } from '../../utils/query/promotion'
 import { useQuery, useLazyQuery } from "@apollo/react-hooks";
-import { getDataDAU, getDataMAU } from "../../utils/query/stats";
-import { optionLineForStats } from "../../utils/configCharts";
 import { connect } from "react-redux";
 import { Icon, DatePicker, Input, Select, Table } from "antd";
 import { dates } from "../../utils/dateInfo";
@@ -52,16 +47,6 @@ const ListServers = props => {
         {
             title: "Status",
             dataIndex: "status"
-        },
-        {
-            title: "Delete         ",
-            key: "action",
-            render: (text, record) => (
-                <span>
-                    <Icon type="delete" />
-                    {/* <Link to={`users/detail?userId=${record.userId}`}>Chi tiết</Link> */}
-                </span>
-            )
         }
     ];
     return (

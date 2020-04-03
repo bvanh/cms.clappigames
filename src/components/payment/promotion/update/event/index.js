@@ -144,7 +144,7 @@ function UpdateEvent(props) {
       }
     });
   };
-  const resetGameAndServer = () => { };
+  const resetGameAndServer = () => {};
   const handleChangePlatformPromo = async e => {
     dispatchResetItemRewards();
     setIndexShop([
@@ -238,22 +238,29 @@ function UpdateEvent(props) {
   };
   const backToList = () => {
     dispatchInititalIndexConfig();
-    isCreatePromo ? deleteEvent() : console.log(null);
+    isCreatePromo ? deleteEvent() : viewDetail();
   };
-  const viewDetail=()=>{
+  const viewDetail = () => {
     deletePromo();
     props.backToDetail();
-  }
+  };
   return (
     <Row className="container-promotion">
       <div>
         <div>
-          <Link to="/payment/promotion" onClick={backToList}>
-            <span>
+          {isCreatePromo ? (
+            <Link
+              to={`/payment/promotion/detail/promotion?id=${props.idCreatePromoAndEvent}`}
+              onClick={backToList}
+            >
+              Back
+            </Link>
+          ) : (
+            <a onClick={backToList}>
               <Icon type="arrow-left" style={{ paddingRight: ".2rem" }} />
               Back
-            </span>
-          </Link>
+            </a>
+          )}
           <h2>Update promotion</h2>
         </div>
       </div>
@@ -280,18 +287,18 @@ function UpdateEvent(props) {
               handleChangeServerPromo={handleChangeServerPromo}
             />
           ) : (
-              <MenuRewardEventByMoney
-                indexPromoAndEvent={indexPromoAndEvent}
-                setIndexPromoAndEvent={setIndexPromoAndEvent}
-                indexEventByMoney={indexEventByMoney}
-                setIndexEventByMoney={setIndexEventByMoney}
-                server={server}
-                listPartner={listPartner}
-                handleChangePlatform={handleChangePlatform}
-                handleChangeServer={handleChangeServer}
-                isTimeInPromo={isTimeInPromo}
-              />
-            )}
+            <MenuRewardEventByMoney
+              indexPromoAndEvent={indexPromoAndEvent}
+              setIndexPromoAndEvent={setIndexPromoAndEvent}
+              indexEventByMoney={indexEventByMoney}
+              setIndexEventByMoney={setIndexEventByMoney}
+              server={server}
+              listPartner={listPartner}
+              handleChangePlatform={handleChangePlatform}
+              handleChangeServer={handleChangeServer}
+              isTimeInPromo={isTimeInPromo}
+            />
+          )}
         </div>
       </Col>
       <InputTimeArea
@@ -317,19 +324,19 @@ function UpdateEvent(props) {
             successAlert={successAlert}
           />
         ) : (
-            <InputRewardForShowByMoney
-              successAlert={successAlert}
-              listPartner={listPartner}
-              listItems={listItems}
-              switchTypeEvent={switchTypeEvent}
-              indexPromoAndEvent={indexPromoAndEvent}
-              setIndexPromoAndEvent={setIndexPromoAndEvent}
-              indexEventByMoney={indexEventByMoney}
-              setIndexEventByMoney={setIndexEventByMoney}
-              setIsCreatePromo={setIsCreatePromo}
-              isTimeInPromo={isTimeInPromo}
-            />
-          )}
+          <InputRewardForShowByMoney
+            successAlert={successAlert}
+            listPartner={listPartner}
+            listItems={listItems}
+            switchTypeEvent={switchTypeEvent}
+            indexPromoAndEvent={indexPromoAndEvent}
+            setIndexPromoAndEvent={setIndexPromoAndEvent}
+            indexEventByMoney={indexEventByMoney}
+            setIndexEventByMoney={setIndexEventByMoney}
+            setIsCreatePromo={setIsCreatePromo}
+            isTimeInPromo={isTimeInPromo}
+          />
+        )}
       </Col>
       <Modal
         title={<Icon type="check-circle" />}
@@ -338,7 +345,17 @@ function UpdateEvent(props) {
         onOk={() => {
           isCreatePromo ? deleteEvent() : viewDetail();
         }}
-        okText={isCreatePromo ? <Link to={`/payment/promotion/detail/promotion?id=${props.idCreatePromoAndEvent}`}>Back</Link> : <span >Back</span>}
+        okText={
+          isCreatePromo ? (
+            <Link
+              to={`/payment/promotion/detail/promotion?id=${props.idCreatePromoAndEvent}`}
+            >
+              Back
+            </Link>
+          ) : (
+            <span>Back</span>
+          )
+        }
         cancelText="Next"
       ></Modal>
     </Row>

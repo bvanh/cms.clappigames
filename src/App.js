@@ -10,8 +10,8 @@ import AddNews from "./components/news/addnews";
 import ListImages from "./components/media/index";
 import Album from "./components/media/album/album";
 import UpdateAlbum from "./components/media/album/update";
-import ListCoin from "./components/payment/coin/listCoin/listCoin";
-import ListPartnerItems from "./components/payment/item/listPartnerProduct/index";
+import CoinsContainer from "./components/payment/coin/index";
+import ItemsContainer from "./components/payment/item/index";
 import EditProductCoin from "./components/payment/coin/listCoin/editCoin";
 import EditPartnerProductItem from "./components/payment/item/listPartnerProduct/editItems";
 import CreatePromotion from "./components/payment/promotion/create/index";
@@ -28,7 +28,6 @@ import { importImage } from "./utils/importImg";
 import checkTokenFinal from "./utils/checkToken";
 import {
   dispatchSwitchLogin,
-  dispatchListPartner
 } from "./redux/actions/index";
 import { Layout, Menu, Icon, Dropdown } from "antd";
 import "./static/style/menu.css";
@@ -38,7 +37,7 @@ const { Header, Content, Footer, Sider } = Layout;
 checkTokenFinal();
 function App(props) {
   checkTokenFinal();
-  const checkToken = setInterval(checkTokenFinal, 3300000);
+  setInterval(checkTokenFinal, 3300000);
   const userName = localStorage.getItem("userNameCMS");
   if (props.isLogin === false || props.isLogin === null) {
     return (
@@ -193,14 +192,14 @@ function App(props) {
               <Route
                 exact
                 path="/payment/items"
-                render={() => <ListPartnerItems />}
+                render={() => <ItemsContainer />}
               />
               <Route
                 exact
                 path="/payment/items/edit"
                 render={() => <EditPartnerProductItem />}
               />
-              <Route exact path="/payment/coin" render={() => <ListCoin />} />
+              <Route exact path="/payment/coin" render={() => <CoinsContainer />} />
               <Route
                 exact
                 path="/payment/coin/edit"

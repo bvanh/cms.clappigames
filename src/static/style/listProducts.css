@@ -8,6 +8,10 @@
   display: flex;
   justify-content: space-between;
 }
+.items-section {
+  padding: 0 0.5rem;
+  margin-bottom: 1rem;
+}
 .section1-listcoin {
   border: 1px solid #f3f3f3;
   padding: 1rem;
@@ -80,12 +84,11 @@
   margin: 1.5rem 0 0.5rem;
 }
 /* detail-charges */
-.btn-search-charges{
+.btn-search-charges {
   display: flex;
   justify-content: space-between;
-
 }
-.btn-search-charges>div {
+.btn-search-charges > div {
   display: flex;
   justify-content: space-between;
   margin-bottom: 1rem;
@@ -126,4 +129,25 @@
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 1;
+}
+.total-revenue {
+  border: 1px solid #1890ff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding: 25% 0;
+}
+@media only screen and (max-width: 1600px) {
+  .total-revenue {
+    padding: 22% 0 !important;
+  }
+}
+.total-revenue span {
+  font-size: 3.5rem;
+}
+.total-revenue p {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.42);
 }

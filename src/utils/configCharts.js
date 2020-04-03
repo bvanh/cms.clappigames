@@ -1,12 +1,12 @@
 function nFormatter(num) {
   if (num >= 1000000000) {
-    return (num / 1000000000).toFixed(1).replace(/\.0$/, '') + 'G';
+    return (num / 1000000000).toFixed(1).replace(/\.0$/, "") + "G";
   }
   if (num >= 1000000) {
-    return (num / 1000000).toFixed(1).replace(/\.0$/, '') + 'M';
+    return (num / 1000000).toFixed(1).replace(/\.0$/, "") + "M";
   }
   if (num >= 1000) {
-    return (num / 1000).toFixed(1).replace(/\.0$/, '') + 'K';
+    return (num / 1000).toFixed(1).replace(/\.0$/, "") + "K";
   }
   return num;
 }
@@ -14,7 +14,7 @@ const optionLine = {
   // maintainAspectRatio: false,
   scaleStartValue: 0,
   tooltips: {
-    callback: function (tooltipItem) {
+    callback: function(tooltipItem) {
       return nFormatter(tooltipItem);
     }
   },
@@ -29,7 +29,7 @@ const optionLine = {
           gridLines: {
             drawTicks: true
           },
-          callback: function (value, index) {
+          callback: function(value, index) {
             return nFormatter(value);
           }
         },
@@ -49,7 +49,7 @@ const optionLineForStats = {
   // maintainAspectRatio: false,
   scaleStartValue: 0,
   tooltips: {
-    callback: function (tooltipItem) {
+    callback: function(tooltipItem) {
       return nFormatter(tooltipItem);
     }
   },
@@ -64,10 +64,10 @@ const optionLineForStats = {
           gridLines: {
             drawTicks: true
           },
-          callback: function (value, index) {
+          callback: function(value, index) {
             return nFormatter(value);
           }
-        },
+        }
         // scaleLabel: {
         //   display: true,
         //   labelString: "Users Active"
@@ -80,4 +80,4 @@ const optionLineForStats = {
     display: true
   }
 };
-export { optionLine, optionLineForStats };
+export { optionLine, optionLineForStats, nFormatter };

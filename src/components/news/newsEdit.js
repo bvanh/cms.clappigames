@@ -49,7 +49,7 @@ const NewsEditor = props => {
   const [listPlatform, setListPlatform] = useState([]);
   const [alertIndex, setAlertIndex] = useState({
     isShow: false,
-    content: "Task is completed !",
+    content: "Updating successful post !",
     isDelete: false,
     confirmBtn: "Back"
   });
@@ -62,7 +62,11 @@ const NewsEditor = props => {
     content: "",
     createAt: "",
     type: "",
-    platform: ""
+    platform: "",
+    startPost: {
+      date: "",
+      time: ""
+    }
   });
   useQuery(queryNewsDetail(query.get("newsId")), {
     fetchPolicy: "cache-and-network",
@@ -85,7 +89,8 @@ const NewsEditor = props => {
     type,
     platform,
     shortContent,
-    newsId
+    newsId,
+    startPost
   } = newsIndex;
   const [deleteNews] = useMutation(queryDeleteNews);
   const [updateNews] = useMutation(UpdateNews, {
@@ -99,7 +104,8 @@ const NewsEditor = props => {
         platform: platform,
         type: type,
         status: status,
-        unity: 0
+        unity: 0,
+        startPost:JSON.stringify(startPost)
       }
     },
     onCompleted: data => console.log(data)
@@ -107,6 +113,9 @@ const NewsEditor = props => {
   const config = {
     readonly: false, // all options from https://xdsoft.net/jodit/doc/,
     height: 500
+  };
+  const disabledDate = current => {
+    return current && current < moment().endOf("day");
   };
   const handleChangeType = (e, val) => {
     setNewsIndex({ ...newsIndex, [val.props.name]: e });
@@ -127,7 +136,7 @@ const NewsEditor = props => {
       ...alertIndex,
       isShow: false,
       isDelete: false,
-      content: "Task is completed !",
+      content: "Updating successful post!",
       confirmBtn: "Back"
     });
   };
@@ -140,12 +149,23 @@ const NewsEditor = props => {
     setAlertIndex({
       ...alertIndex,
       isShow: true,
-      content: "Confirm delete news?",
+      content: "Do you want to countinue delete this post??",
       confirmBtn: "Ok !",
       isDelete: true
     });
   };
-  const handleChangeDateSchedule = () => {};
+  const handleChangeTimeSchedule = val => {
+    setNewsIndex({
+      ...newsIndex,
+      startPost: { date: startPost.date, time: val }
+    });
+  };
+  const handleChangeDateSchedule = val => {
+    setNewsIndex({
+      ...newsIndex,
+      startPost: { date: val, time: startPost.time }
+    });
+  };
   const printType = listType.type.map((val, index) => (
     <Option value={val} name="type" key={index}>
       {val}
@@ -188,9 +208,7 @@ const NewsEditor = props => {
           value={newContent}
           onBlur={newContent => setNewContent(newContent)} // preferred to use only this option to update the content for performance reasons
         />
-        <Button onClick={() => showUrlImagesNews(false)}>
-          Get image link
-        </Button>
+        <Button onClick={() => showUrlImagesNews(false)}>Get image link</Button>
       </Col>
       <Col sm={6} style={{ padding: "0 1rem" }}>
         <div className="set-schedule-news">
@@ -198,24 +216,38 @@ const NewsEditor = props => {
           <Radio.Group onChange={handleChangeSchedule} value={status}>
             {printStatus}
             <Radio style={radioStyle} disabled>
-            Set timeline to public
+              Set timeline to public
             </Radio>
           </Radio.Group>
 
           <p>
-          When you set the timeline, Timeline must have soon 15 minutes from public time.
+            When you set the timeline, Timeline must have soon 15 minutes from
+            public time.
           </p>
           <div style={{ display: "flex" }}>
             <div style={{ width: "50%" }}>
               <p>Date</p>
               <DatePicker
-                onChange={handleChangeDateSchedule}
-                style={{ width: "100%" }}
+                onChange={(time, timeString) => {
+                  handleChangeDateSchedule(timeString);
+                }}
+                style={{ width: "99%", marginRight: "1%" }}
+                disabledDate={disabledDate}
+                format="YYYY-MM-DD"
+                allowClear={false}
               />
             </div>
             <div style={{ width: "50%" }}>
               <p>Time</p>
-              <TimePicker style={{ width: "100%" }} />
+              <TimePicker
+                style={{ width: "99%", marginLeft: "1%" }}
+                allowClear={false}
+                format={"hh:mm:ss"}
+                placeholder="Select time"
+                onChange={(time, timeString) => {
+                  handleChangeTimeSchedule(timeString);
+                }}
+              />
             </div>
           </div>
         </div>
@@ -247,7 +279,9 @@ const NewsEditor = props => {
           <a onClick={() => showUrlImagesNews(true)}>Change</a>
         </div>
         <div className="btn-submit">
-          <p onClick={showConfirm} style={{color:'red',cursor:"pointer"}}>Delete news</p>
+          <p onClick={showConfirm} style={{ color: "red", cursor: "pointer" }}>
+            Delete news
+          </p>
           <a onClick={submitUpdateNews}>Update</a>
         </div>
       </Col>

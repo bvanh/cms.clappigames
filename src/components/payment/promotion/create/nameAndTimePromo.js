@@ -205,7 +205,7 @@ function InputTimeArea(props) {
       </div>
       <div className="section2-promotion-footer">
        Promotion's timeline will be on {" "}
-        {endTime === "00:00:00" ? "" : `${startTime} to ${endTime}`}{alertDaily}
+        {endTime === "00:00:00" ? "" : `${startTime} to ${endTime}`} {alertDaily}
         {printAlertDates} from {timeTotal[0]} to {timeTotal[1]}
       </div>
     </Col>

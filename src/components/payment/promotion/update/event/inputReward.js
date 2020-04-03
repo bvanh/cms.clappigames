@@ -434,7 +434,7 @@ function InputRewardForShowByMoney(props) {
         )}
       </Row>
       <Modal
-        title="Chọn gói C.coin"
+        title="Choose C.coin package"
         centered
         visible={isShow}
         onOk={() => setListItemForEvent({ ...listItemForEvent, isShow: false })}
@@ -446,7 +446,7 @@ function InputRewardForShowByMoney(props) {
           <Input
             type="number"
             min="0"
-            placeholder="Nhập số lượng coin"
+            placeholder="Input volume coin"
             value={itemNumb}
             onChange={e => setItemNumb(e.target.value)}
           ></Input>

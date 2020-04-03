@@ -8,9 +8,7 @@ import {
   getListChartCharges,
   getListPartnerCharges
 } from "../../../../utils/query/chart";
-import {
-  queryGetListPartnerCharges
-} from "../../../../utils/queryPartnerProducts";
+import { queryGetListPartnerCharges } from "../../../../utils/queryPartnerProducts";
 import { optionLine } from "../../../../utils/configCharts";
 import { connect } from "react-redux";
 import { Icon, DatePicker, Input, Select } from "antd";
@@ -44,24 +42,27 @@ const ChartPartnerCharges = props => {
         xAxis: JSON.parse(data.chartCachePartnerChargeByDates.xAxis),
         yAxis: JSON.parse(data.chartCachePartnerChargeByDates.yAxis)
       });
-      let arrCoin = JSON.parse(data.chartCachePartnerChargeByDates.yAxis).map((val, i) => val[0].coin);
-      const totalCoin = arrCoin.reduce((a, b) => a + b)
-      props.setTotalIndex({ ...props.totalIndex, totalMoney: totalCoin })
+      let arrCoin = JSON.parse(data.chartCachePartnerChargeByDates.yAxis).map(
+        (val, i) => val[0].coin
+      );
+      const totalCoin = arrCoin.reduce((a, b) => a + b);
+      props.setTotalIndex({ ...props.totalIndex, totalMoney: totalCoin });
     }
   });
-  const [getDataPartnerCharges] = useLazyQuery(
-    queryGetListPartnerCharges, {
+  const [getDataPartnerCharges] = useLazyQuery(queryGetListPartnerCharges, {
     onCompleted: data => {
-      console.log(data)
-      props.setTotalIndex({ ...props.totalIndex, totalPurchase: data.listPartnerChargesByType.count })
+      console.log(data);
+      props.setTotalIndex({
+        ...props.totalIndex,
+        totalPurchase: data.listPartnerChargesByType.count
+      });
     }
-  }
-  );
+  });
   useEffect(() => {
     getData({
       variables: {
         fromDate: fromDate,
-        toDate: toDate,
+        toDate: toDate
       }
     });
     getDataPartnerCharges({
@@ -69,23 +70,23 @@ const ChartPartnerCharges = props => {
         currentPage: 1,
         type: 1,
         pageSize: 10,
-        search: '',
+        search: "",
         fromDate: fromDate,
         toDate: toDate,
-        userType: '',
-        os: '',
-        partnerId: ''
+        userType: "",
+        os: "",
+        partnerId: ""
       }
-    })
+    });
   }, []);
   const disabledDate = current => {
     if (fromDateCustom != null) {
       return (
         (current &&
           current <
-          moment(fromDateCustom)
-            .subtract(1, "days")
-            .endOf("day")) ||
+            moment(fromDateCustom)
+              .subtract(1, "days")
+              .endOf("day")) ||
         current > moment().endOf("day")
       );
     }
@@ -95,7 +96,7 @@ const ChartPartnerCharges = props => {
     getData({
       variables: {
         fromDate: dates[val],
-        toDate: TODAY,
+        toDate: TODAY
       }
     });
     getDataPartnerCharges({
@@ -103,17 +104,17 @@ const ChartPartnerCharges = props => {
         currentPage: 1,
         type: 1,
         pageSize: 10,
-        search: '',
+        search: "",
         fromDate: dates[val],
         toDate: TODAY,
-        userType: '',
-        os: '',
-        partnerId: ''
+        userType: "",
+        os: "",
+        partnerId: ""
       }
-    })
+    });
   };
   const handleChangeRangeDates = value => {
-    if(value!=="5"){
+    if (value !== "5") {
       changeDates(value);
     }
   };
@@ -134,7 +135,7 @@ const ChartPartnerCharges = props => {
     getData({
       variables: {
         fromDate: fromDateCustom,
-        toDate: toDateCustom,
+        toDate: toDateCustom
       }
     });
     getDataPartnerCharges({
@@ -142,14 +143,14 @@ const ChartPartnerCharges = props => {
         currentPage: 1,
         type: 1,
         pageSize: 10,
-        search: '',
+        search: "",
         fromDate: fromDateCustom,
         toDate: toDateCustom,
-        userType: '',
-        os: '',
-        partnerId: ''
+        userType: "",
+        os: "",
+        partnerId: ""
       }
-    })
+    });
     setIsSelectDates(!isSelectDates);
   };
   const convertData = platform => {
@@ -167,7 +168,7 @@ const ChartPartnerCharges = props => {
     labels: dataCharts.xAxis,
     datasets: [
       {
-        label: 'Total',
+        label: "Total",
         fill: false,
         backgroundColor: "rgba(75,192,192,0.4)",
         borderColor: "rgba(75,192,192,0.4)",
@@ -279,7 +280,7 @@ const ChartPartnerCharges = props => {
           )}
         </div>
       </div>
-      <Line data={dataChart} width={100} height={35} options={optionLine} />
+      <Line data={dataChart} width={100} height={40} options={optionLine} />
     </div>
   );
 };

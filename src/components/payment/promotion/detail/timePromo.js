@@ -54,7 +54,7 @@ function TimePromo(props) {
             <Select
               mode="multiple"
               style={{ width: "80%" }}
-              placeholder="- Ngày diễn ra khuyến mãi"
+              placeholder="- Choose what day of the month the promotion is..."
               value={dates}
               dropdownClassName="dropdown-coin-event"
               disabled={daily.length !== 0 ? true : false}
@@ -67,7 +67,7 @@ function TimePromo(props) {
             <Select
               mode="multiple"
               style={{ width: "80%" }}
-              placeholder="- Chọn thứ trong tuần diễn ra khuyến mãi"
+              placeholder="- Choose what day of the week the promotion is..."
               value={daily}
               dropdownClassName="dropdown-coin-event"
               disabled={dates.length !== 0 ? true : false}

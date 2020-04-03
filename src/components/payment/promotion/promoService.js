@@ -36,13 +36,13 @@ const daily0 = [
 const isTypeEvent = val => {
   switch (val) {
     case "INKIND":
-      return "Tặng vật phẩm out game";
+      return "Gift's out game";
       break;
     case "COIN":
-      return "Tặng C.COIN";
+      return "C.COIN";
       break;
     default:
-      return "Tặng Item in Game";
+      return "Gift's in Game";
       break;
   }
 };

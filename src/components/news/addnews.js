@@ -23,12 +23,11 @@ import {
   dispatchShowImagesNews,
   dispatchSetUrlImageThumbnail
 } from "../../redux/actions";
-import { gql } from "apollo-boost";
 import { Link } from "react-router-dom";
 import "suneditor/dist/css/suneditor.min.css"; // Import Sun Editor's CSS File
 import JoditEditor from "jodit-react";
 import "jodit/build/jodit.min.css";
-import { set } from "immutable";
+import moment from "moment";
 // import ListNews from ".";
 const { Option } = Select;
 const listType = {
@@ -54,14 +53,18 @@ const AddNews = props => {
     subTitle: "",
     type: "NEWS",
     status: "INPUT",
-    platform: "5A6DC0B0-B02B-40FB-BA2C-3C42EC442B89"
+    platform: "5A6DC0B0-B02B-40FB-BA2C-3C42EC442B89",
+    startPost: {
+      date: "",
+      time: ""
+    }
   });
   useQuery(queryGetPlatform(), {
     onCompleted: dataPartner => {
       setListPlatform(dataPartner.listPartners);
     }
   });
-  const { title, status, type, platform, subTitle } = newsIndex;
+  const { title, status, type, platform, subTitle, startPost } = newsIndex;
   const [updateNews] = useMutation(createNews, {
     variables: {
       req: {
@@ -72,11 +75,15 @@ const AddNews = props => {
         type: type,
         status: status,
         image: props.urlImgThumbnail,
-        unity: 0
+        unity: 0,
+        startPost: JSON.stringify(startPost)
       }
     },
     onCompleted: data => console.log(data)
   });
+  const disabledDate = current => {
+    return current && current < moment().endOf("day");
+  };
   const handleChangeType = (e, val) => {
     setNewsIndex({ ...newsIndex, [val.props.name]: e });
     console.log(newsIndex);
@@ -108,13 +115,26 @@ const AddNews = props => {
   const handleCancel = () => {
     setVisible(false);
   };
+  const handleChangeSchedule=(val)=>{
+
+  }
+  const handleChangeTimeSchedule = val => {
+    setNewsIndex({
+      ...newsIndex,
+      startPost: { date: startPost.date, time: val }
+    });
+  };
+  const handleChangeDateSchedule = val => {
+    setNewsIndex({
+      ...newsIndex,
+      startPost: { date: val, time: startPost.time }
+    });
+  };
   const printType = listType.type.map((val, index) => (
     <Option value={val} name="type" key={index}>
       {val}
     </Option>
   ));
-  const handleChangeSchedule = () => {};
-  const handleChangeDateSchedule = () => {};
   const printStatus = listType.status.map((val, index) => (
     <Radio style={radioStyle} value={val.value} key={index}>
       {val.status}
@@ -175,7 +195,6 @@ const AddNews = props => {
               Set timeline to public
             </Radio>
           </Radio.Group>
-
           <p>
             When you set the timeline, Timeline must have soon 15 minutes from
             public time.
@@ -184,13 +203,26 @@ const AddNews = props => {
             <div style={{ width: "50%" }}>
               <p>Date</p>
               <DatePicker
-                onChange={handleChangeDateSchedule}
+                onChange={(time, timeString) => {
+                  handleChangeDateSchedule(timeString);
+                }}
                 style={{ width: "99%", marginRight: "1%" }}
+                disabledDate={disabledDate}
+                format="YYYY-MM-DD"
+                allowClear={false}
               />
             </div>
             <div style={{ width: "50%" }} className="timePick-schedule-news">
               <p>Time</p>
-              <TimePicker style={{ width: "99%", marginLeft: "1%" }} />
+              <TimePicker
+                style={{ width: "99%", marginLeft: "1%" }}
+                allowClear={false}
+                format={"hh:mm:ss"}
+                placeholder="Select time"
+                onChange={(time, timeString) => {
+                  handleChangeTimeSchedule(timeString);
+                }}
+              />
             </div>
           </div>
         </div>

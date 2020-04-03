@@ -33,9 +33,9 @@ const listSelectDates = [
   { days: "Last 30 days", variables: "THIRTY_DAY_AGO" }
 ];
 const listType = [
-  { nameType: "By C.coin", id: 4 },
-  { nameType: "By Purchase ID", id: 1 },
-  { nameType: "By User ID", id: 2 },
+  { nameType: "By UserName", id: 4 },
+  { nameType: "By Purchase Coin ID", id: 1 },
+  { nameType: "By Payment Type", id: 3 }
   // { nameType: "Theo kiểu thanh toán", id: 3 }
 ];
 function ListChargesDetail() {
@@ -90,9 +90,9 @@ function ListChargesDetail() {
       return (
         (current &&
           current <
-          moment(fromDate)
-            .subtract(1, "days")
-            .endOf("day")) ||
+            moment(fromDate)
+              .subtract(1, "days")
+              .endOf("day")) ||
         current > moment().endOf("day")
       );
     }
@@ -103,8 +103,8 @@ function ListChargesDetail() {
   const handleChangeToDates = (value, dateString) => {
     setPageIndex({ ...pageIndex, toDate: dateString });
   };
-  const handleChangeType = (val) => {
-    setPageIndex({ ...pageIndex, type: val })
+  const handleChangeType = val => {
+    setPageIndex({ ...pageIndex, type: val });
   };
   const getProductName = e => {
     setPageIndex({ ...pageIndex, search: e.target.value });
@@ -164,20 +164,9 @@ function ListChargesDetail() {
   };
   const columns = [
     {
-      title: "Purchase Id",
+      title: "Purchase Coin Id",
       dataIndex: "chargeId",
       key: "chargeId"
-    },
-    {
-      title: "C.coin",
-      dataIndex: "baseCoin",
-      key: "baseCoin"
-    },
-    {
-      title: "Price",
-      dataIndex: "price",
-      key: "price",
-      render: index => <span>{index.toLocaleString()} đ</span>
     },
     {
       title: "UserName",
@@ -186,9 +175,20 @@ function ListChargesDetail() {
       render: val => <span>{val !== null ? val.username : null}</span>
     },
     {
-      title: "Type",
+      title: "C.coin",
+      dataIndex: "baseCoin",
+      key: "baseCoin"
+    },
+    {
+      title: "Payment Type",
       dataIndex: "paymentType",
       key: "paymenttype"
+    },
+    {
+      title: "Promotion",
+      dataIndex: "promotion",
+      key: "price"
+      // render: index => <span>{index.toLocaleString()} đ</span>
     },
     {
       title: "Time",
@@ -214,7 +214,7 @@ function ListChargesDetail() {
     <Option value={val.id} key={i}>
       {val.nameType}
     </Option>
-  ))
+  ));
   return (
     <Row>
       <div>
@@ -307,16 +307,18 @@ function ListChargesDetail() {
                 Export Excel
               </Button>
             }
-            filename="Lịch sử giao dịch C.COIN"
+            filename="History Purchase C.coin"
           >
-            <ExcelSheet data={dataExport} name="Lịch sử giao dịch C.coin">
+            <ExcelSheet data={dataExport} name="History Purchase C.coin">
               <ExcelColumn label="Id" value="chargeId" />
-              <ExcelColumn label="C.coin" value="baseCoin" />
+
               <ExcelColumn
                 label="UserName"
                 value={user => user.user.username}
               />
+              <ExcelColumn label="C.coin" value="baseCoin" />
               <ExcelColumn label="PaymentType" value="paymentType" />
+              <ExcelColumn label="Promotion" value="promotion" />
               <ExcelColumn
                 label="Time"
                 value={time =>
@@ -330,6 +332,12 @@ function ListChargesDetail() {
       </div>
       {dataCharges && (
         <>
+          <h3>
+            Purchase Times:{" "}
+            <span style={{ color: "#1890ff" }}>
+              {dataCharges.listChargesByType.count}
+            </span>
+          </h3>
           <Table
             columns={columns}
             dataSource={dataCharges.listChargesByType.rows}

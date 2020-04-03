@@ -19,7 +19,7 @@ function DetailPromotion(props) {
   const promoId = query.get("id");
   const showConfirm = () => {
     confirm({
-      title: "Chỉnh sửa khuyến mãi",
+      title: "Promotion edit?",
       content: (
         <div>
           <p>

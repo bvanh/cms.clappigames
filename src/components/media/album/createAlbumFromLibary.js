@@ -3,11 +3,7 @@ import { Upload, Checkbox, Row, Col, Card, Icon, Button, Modal } from "antd";
 import UploadImages from "../upload";
 import { useQuery, useMutation } from "@apollo/react-hooks";
 import { queryListImages } from "../../../utils/queryMedia";
-import ImagePicker from "react-image-picker";
-import { DELETE_IMAGE, CREATE_ALBUM } from "../../../utils/mutation/media";
-import "../../../static/style/media.css";
-import { Link } from "react-router-dom";
-import createAlbumFromComp from "./createAlbumFromComp";
+import {errorAlert} from '../mediaService'
 
 const gridStyle = {
   width: "24%",
@@ -48,19 +44,20 @@ function CreateAlbumFromLibary(props) {
         src={JSON.parse(val).url}
         style={{ height: "100%", width: "100%" }}
         key={index}
+        alt="img"
       />
     </Col>
   ));
 
   const getImagesForAlbum = valImg => {
     props.setImagesForAlbum(valImg);
-    console.log(valImg)
+    console.log(valImg);
   };
 
   const updateAlbum = () => {
     setVisible(false);
-    if (props.albumName == "") {
-      alert("thieu ten");
+    if (props.albumName === "") {
+      errorAlert();
     } else {
       props.submitCreateAndUpdateAlbum();
       props.setPickDataImages();
@@ -93,6 +90,7 @@ function CreateAlbumFromLibary(props) {
         <Button
           onClick={updateAlbum}
           style={{ width: "100%", marginBottom: ".5rem" }}
+          disabled={props.imagesForAlbum.length > 0 ? false : true}
         >
           Submit
         </Button>

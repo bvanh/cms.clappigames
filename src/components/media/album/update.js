@@ -7,7 +7,7 @@ import CreateAlbumFromComp from "./createAlbumFromComp";
 import CreateAlbumFromLibary from "./createAlbumFromLibary";
 import { useQuery, useMutation } from "@apollo/react-hooks";
 import { queryGetImagesFromAlbumByType } from "../../../utils/queryMedia";
-// import { DELETE_IMAGE, CREATE_ALBUM } from "../../utils/mutation/media";
+import { successAlert, errorAlert } from "../mediaService";
 import "../../../static/style/media.css";
 import { Link } from "react-router-dom";
 
@@ -31,7 +31,7 @@ function UpdateAlbum() {
   });
   const [selectedImage, setSelectedImage] = useState([]);
   const [isCreateAlbum, setIsCreateAlbum] = useState(false);
-  const [isShowAlert, setIsShowAlert] = useState(false)
+  const [isShowAlert, setIsShowAlert] = useState(false);
   const [imagesForAlbum, setImagesForAlbum] = useState([]);
   const [isOpenImage, setIsOpenImage] = useState(false);
   const [photoIndex, setPhotoIndex] = useState(0);
@@ -76,23 +76,23 @@ function UpdateAlbum() {
   const getAlbumName = e => {
     setPageIndex({ ...pageIndex, albumName: e.target.value });
   };
-  //   const submitDelete = async () => {
-  //     await deleteAlbum();
-  //     await refetch();
-  //     setSelectedAlbumId([]);
-  //   };
+  const submitDeleteAlbum = async () => {
+    await deleteAlbum();
+    successAlert("deleted");
+  };
   const submitUpdateAlbum = async () => {
-    if (albumName === "" || imagesForAlbum.length === 0) {
-      alert("thieu noi dung");
+    if (albumName === "") {
+      errorAlert();
     } else {
       await updateAlbum();
       refetch();
+      successAlert("updated");
       setSelectedImage([]);
     }
   };
   const submitDelete = async () => {
     const newImages = imagesForAlbum.filter(
-      (val, i) => selectedImage.indexOf(val) == -1
+      (val, i) => selectedImage.indexOf(val) === -1
     );
     await setImagesForAlbum(newImages);
     submitUpdateAlbum();
@@ -100,17 +100,26 @@ function UpdateAlbum() {
   const backScreenUpdate = () => {
     setPickDataImages({ fromComp: "", fromLibary: "" });
   };
-  const resetAlbumName = () => { };
+  const resetAlbumName = () => {};
   const showImage = val => {
     setPhotoIndex(val);
-    setIsOpenImage(true)
-  }
+    setIsOpenImage(true);
+  };
   const printListImages = imagesForAlbum.map((val, index) => (
-    <Card.Grid style={gridStyle} key={index} className="checkbox-image-container">
-      <Checkbox value={val} className="checkbox-image">
-      </Checkbox>
-      <div style={{ height: "100%", cursor: "pointer" }} onClick={() => showImage(index)}>
-        <img src={JSON.parse(val).url} style={{ maxHeight: "100%", maxWidth: "100%" }} />
+    <Card.Grid
+      style={gridStyle}
+      key={index}
+      className="checkbox-image-container"
+    >
+      <Checkbox value={val} className="checkbox-image"></Checkbox>
+      <div
+        style={{ height: "100%", cursor: "pointer" }}
+        onClick={() => showImage(index)}
+      >
+        <img
+          src={JSON.parse(val).url}
+          style={{ maxHeight: "100%", maxWidth: "100%" }}
+        />
       </div>
     </Card.Grid>
   ));
@@ -123,7 +132,11 @@ function UpdateAlbum() {
         {selectedImage.length > 0 ? (
           <div className="btn-media-options">
             <span>
-              <Icon type="close" style={{ marginRight: "5px" }} onClick={() => setSelectedImage([])} />
+              <Icon
+                type="close"
+                style={{ marginRight: "5px" }}
+                onClick={() => setSelectedImage([])}
+              />
               <span>{selectedImage.length}</span> items is chosen.
             </span>
             <div>
@@ -136,25 +149,46 @@ function UpdateAlbum() {
             </div>
           </div>
         ) : (
-            <div className="menu-images" style={{justifyContent:"space-between",alignItems:"center"}}>
-              <Link to="/media/album">
-                <h3><Icon type="arrow-left" style={{marginRight:".5rem"}}/>List album</h3>
-              </Link>
-              <span style={{ color: "red", cursor: "pointer" }} onClick={() => setIsShowAlert(true)}>Xóa Album</span>
-            </div>
-          )}
-        <Checkbox.Group style={{ width: "100%" }} onChange={onChange} value={selectedImage}>
+          <div
+            className="menu-images"
+            style={{ justifyContent: "space-between", alignItems: "center" }}
+          >
+            <Link to="/media/album">
+              <h3>
+                <Icon type="arrow-left" style={{ marginRight: ".5rem" }} />
+                List album
+              </h3>
+            </Link>
+            <span
+              style={{ color: "red", cursor: "pointer" }}
+              onClick={() => setIsShowAlert(true)}
+            >
+              Xóa Album
+            </span>
+          </div>
+        )}
+        <Checkbox.Group
+          style={{ width: "100%" }}
+          onChange={onChange}
+          value={selectedImage}
+        >
           <div>{printListImages}</div>
         </Checkbox.Group>
         {isOpenImage && (
           <Lightbox
             mainSrc={JSON.parse(imagesForAlbum[photoIndex]).url}
-            nextSrc={JSON.parse(imagesForAlbum[(photoIndex + 1) % imagesForAlbum.length]).url}
+            nextSrc={
+              JSON.parse(
+                imagesForAlbum[(photoIndex + 1) % imagesForAlbum.length]
+              ).url
+            }
             prevSrc={
               JSON.parse(
                 imagesForAlbum[
-                (photoIndex + imagesForAlbum.length - 1) % imagesForAlbum.length
-                ]).url
+                  (photoIndex + imagesForAlbum.length - 1) %
+                    imagesForAlbum.length
+                ]
+              ).url
             }
             onCloseRequest={() => setIsOpenImage(false)}
             onMovePrevRequest={() =>
@@ -177,8 +211,8 @@ function UpdateAlbum() {
                 type="close"
                 style={{ marginRight: "5px", fontSize: "15px" }}
               />
-            Update Album
-          </h3>
+              Update Album
+            </h3>
             {/* <span>Delete</span> */}
           </div>
           <input
@@ -220,7 +254,7 @@ function UpdateAlbum() {
                   })
                 }
               >
-                <Icon type="plus" style={{marginRight:".5rem"}}/>
+                <Icon type="plus" style={{ marginRight: ".5rem" }} />
                 Chọn ảnh từ máy tính
               </div>
               <div
@@ -232,7 +266,7 @@ function UpdateAlbum() {
                   })
                 }
               >
-                <Icon type="search" style={{marginRight:".5rem"}}/>
+                <Icon type="search" style={{ marginRight: ".5rem" }} />
                 Chọn ảnh từ thư viện
               </div>
             </>
@@ -241,19 +275,21 @@ function UpdateAlbum() {
             <div style={{ margin: "0 2rem" }}>
               <Button onClick={submitUpdateAlbum} style={{ width: "100%" }}>
                 Submit
-            </Button>
+              </Button>
             </div>
           ) : null}
         </div>
       </Col>
       <Modal
-        title='Do you want to delete this album?'
+        title="Confirm !"
         visible={isShowAlert}
         onCancel={() => setIsShowAlert(false)}
-        onOk={() => deleteAlbum()}
-        okText={<Link to='/media/album'>Ok</Link>}
-        cancelText='Cancel'
-      ></Modal>
+        onOk={() => submitDeleteAlbum()}
+        okText={<Link to="/media/album">Ok</Link>}
+        cancelText="Cancel"
+      >
+        <p>Do you want to delete this album ?</p>
+      </Modal>
     </Row>
   );
 }

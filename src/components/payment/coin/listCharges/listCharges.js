@@ -22,7 +22,7 @@ function ListCharges() {
   const [pageIndex, setPageIndex] = useState({
     currentPage: 1,
     type: 1,
-    pageSize: 5,
+    pageSize: 10,
     search: "",
     fromDate: "",
     toDate: ""
@@ -69,7 +69,7 @@ function ListCharges() {
   };
   const columns = [
     {
-      title: "Purchase Id",
+      title: "Purchase Coin ID",
       dataIndex: "chargeId",
       key: "chargeId",
       width: "10%",
@@ -118,20 +118,22 @@ function ListCharges() {
   if (loading) return "Loading...";
   return (
     <>
-      <div className="list-charges-title">
-        <h2>History Purchase</h2>
-        <div className="view-more">
-          <Link className="btn-view-more" to="/payment/coin/charges/detail">
-            Detail <Icon type="double-right" />
-          </Link>
-          <Select
-            defaultValue="SEVENT_DAY_AGO"
-            style={{ width: 120 }}
-            onChange={handleChangeRangeDates}
-            className="select-charges-date"
-          >
-            {printOptionDates}
-          </Select>
+      <div className="products-title">
+        <div>
+          <h2>History Purchase</h2>
+          <div className="view-more">
+            <Link className="btn-view-more" to="/payment/coin/charges/detail">
+              Detail <Icon type="double-right" />
+            </Link>
+            <Select
+              defaultValue="SEVENT_DAY_AGO"
+              style={{ width: 120 }}
+              onChange={handleChangeRangeDates}
+              className="select-charges-date"
+            >
+              {printOptionDates}
+            </Select>
+          </div>
         </div>
       </div>
       {dataCharges && (

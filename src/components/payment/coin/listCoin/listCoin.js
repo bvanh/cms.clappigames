@@ -32,12 +32,7 @@ function ListCoin(props) {
     productName: "",
     listTypePayment: []
   });
-  const [isCreateCoin, setIsCreateCoin] = useState(false);
   const [dataCoin, setDataCoin] = useState(null);
-  const [totalIndex, setTotalIndex] = useState({
-    totalMoney: 0,
-    totalPurchase: 0
-  })
   const [itemsForDelete, setItemsForDelete] = useState([]);
   const {
     currentPage,
@@ -103,7 +98,7 @@ function ListCoin(props) {
       dataIndex: "productId",
       key: "productId",
       width: "15%",
-      render: index => <span className='convert-col'>{index}</span>
+      render: index => <span className="convert-col">{index}</span>
     },
     {
       title: "C.coin Name",
@@ -189,50 +184,45 @@ function ListCoin(props) {
     </Radio>
   ));
   const hasSelected = itemsForDelete.length > 0;
-  if (loading) return "Loading...";
-  if (isCreateCoin)
-    return <CreateProductCoin setIsCreateCoin={setIsCreateCoin} data={data} />;
-  if (isCreateCoin === false)
+  if (loading)
     return (
-      <Row>
-        <Col md={24}>
-          <Col md={12}>
-            C.coin exchange Total {totalIndex.totalMoney}
-            Total Purchase times: {totalIndex.totalPurchase}
-          </Col>
-          <Col md={12}>
-            <ChartCharges setTotalIndex={setTotalIndex} totalIndex={totalIndex}/>
-          </Col>
-        </Col>
-        <Col md={12}>
-          <div className="products-title">
-            <div>
-              <h2>C.coin managerment</h2>
-              <div className="view-more">
-                <Link to="/payment/coin" onClick={() => setIsCreateCoin(true)}>
-                  <Button icon="plus">Add new C.coin package</Button>
-                </Link>
-                <Button disabled={!hasSelected} onClick={submitDeleteProduct} style={{ marginLeft: ".25rem" }}>
-                  Delete
-                </Button>
-              </div>
-            </div>
-          </div>
-          {dataCoin && (
-            <>
-              <Table
-                rowSelection={rowSelection}
-                columns={columns}
-                dataSource={dataCoin.listProductsByPaymentType.rows}
-              />
-            </>
-          )}
-        </Col>
-        <Col md={12} style={{ padding: "0 1rem" }}>
-          <ListCharges setTotalIndex={setTotalIndex} totalIndex={totalIndex}/>
-        </Col>
-      </Row>
+      <Col md={12}>
+        <p>loading...</p>
+      </Col>
     );
+  return (
+    <>
+      <div className="products-title">
+        <div>
+          <h2>C.coin managerment</h2>
+          <div className="view-more">
+            <Link
+              to="/payment/coin"
+              onClick={() => props.setIsCreateCoin(true)}
+            >
+              <Button icon="plus">Add new C.coin package</Button>
+            </Link>
+            <Button
+              disabled={!hasSelected}
+              onClick={submitDeleteProduct}
+              style={{ marginLeft: ".25rem" }}
+            >
+              Delete
+            </Button>
+          </div>
+        </div>
+      </div>
+      {dataCoin && (
+        <>
+          <Table
+            rowSelection={rowSelection}
+            columns={columns}
+            dataSource={dataCoin.listProductsByPaymentType.rows}
+          />
+        </>
+      )}
+    </>
+  );
 }
 
 export default ListCoin;

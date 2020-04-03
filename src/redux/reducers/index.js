@@ -23,7 +23,7 @@ const initialState = {
   listPartner: [],
   // detail promo
   detailPromo: [],
-  isCreatePromo: false,
+  isCreatePromo: true,
   //
   indexConfig: {
     item: newItem,

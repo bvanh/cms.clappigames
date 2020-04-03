@@ -134,7 +134,7 @@ function UpdatePromotion(props) {
       }),
     [switchTypeEvent]
   );
-  const resetGameAndServer = () => { };
+  const resetGameAndServer = () => {};
 
   const handleChangePlatform = async e => {
     dispatchResetItemRewards();
@@ -253,20 +253,24 @@ function UpdatePromotion(props) {
     dispatchInititalIndexConfig();
     isCreateEvent ? deletePromo() : console.log(null);
   };
-  const viewDetail=()=>{
+  const viewDetail = () => {
     deleteEvent();
     props.backToDetail();
-  }
+  };
   return (
     <Row className="container-promotion">
       <div>
         <div>
-          <Link to="/payment/promotion" onClick={backToList}>
-            <span>
-              <Icon type="arrow-left" style={{ paddingRight: ".2rem" }} />
+          {isCreateEvent ? (
+            <Link
+              to={`/payment/promotion/detail/event?id=${props.idCreatePromoAndEvent}`}
+              onClick={backToList}
+            >
               Back
-            </span>
-          </Link>
+            </Link>
+          ) : (
+            <a onClick={backToList}><Icon type="arrow-left" style={{ paddingRight: ".2rem" }} />Back</a>
+          )}
           <h2>Update promotion</h2>
         </div>
       </div>
@@ -296,17 +300,17 @@ function UpdatePromotion(props) {
               isTimeInPromo={isTimeInPromo}
             />
           ) : (
-              <MenuRewardEventByMoney
-                indexPromoAndEvent={indexPromoAndEvent}
-                setIndexPromoAndEvent={setIndexPromoAndEvent}
-                indexEventByMoney={indexEventByMoney}
-                setIndexEventByMoney={setIndexEventByMoney}
-                server={indexPromoAndEvent.server}
-                listPartner={listPartner}
-                handleChangePlatform={handleChangePlatform}
-                handleChangeServer={handleChangeServer}
-              />
-            )}
+            <MenuRewardEventByMoney
+              indexPromoAndEvent={indexPromoAndEvent}
+              setIndexPromoAndEvent={setIndexPromoAndEvent}
+              indexEventByMoney={indexEventByMoney}
+              setIndexEventByMoney={setIndexEventByMoney}
+              server={indexPromoAndEvent.server}
+              listPartner={listPartner}
+              handleChangePlatform={handleChangePlatform}
+              handleChangeServer={handleChangeServer}
+            />
+          )}
         </div>
       </Col>
       <InputTimeArea
@@ -332,17 +336,17 @@ function UpdatePromotion(props) {
             isTimeInPromo={isTimeInPromo}
           />
         ) : (
-            <InputRewardForShowByMoney
-              successAlert={successAlert}
-              listPartner={listPartner}
-              listItems={listItems}
-              indexPromoAndEvent={indexPromoAndEvent}
-              setIndexPromoAndEvent={setIndexPromoAndEvent}
-              indexEventByMoney={indexEventByMoney}
-              setIndexEventByMoney={setIndexEventByMoney}
-              isUpdate={props.isUpdate}
-            />
-          )}
+          <InputRewardForShowByMoney
+            successAlert={successAlert}
+            listPartner={listPartner}
+            listItems={listItems}
+            indexPromoAndEvent={indexPromoAndEvent}
+            setIndexPromoAndEvent={setIndexPromoAndEvent}
+            indexEventByMoney={indexEventByMoney}
+            setIndexEventByMoney={setIndexEventByMoney}
+            isUpdate={props.isUpdate}
+          />
+        )}
       </Col>
       <Modal
         title={<Icon type="check-circle" />}
@@ -351,8 +355,18 @@ function UpdatePromotion(props) {
         onOk={() => {
           isCreateEvent ? deletePromo() : viewDetail();
         }}
-        okText={isCreateEvent ? <Link to={`/payment/promotion/detail/event?id=${props.idCreatePromoAndEvent}`}>Back</Link> : <span>Back</span>}
-        cancelText='Next'
+        okText={
+          isCreateEvent ? (
+            <Link
+              to={`/payment/promotion/detail/event?id=${props.idCreatePromoAndEvent}`}
+            >
+              Back
+            </Link>
+          ) : (
+            <span>Back</span>
+          )
+        }
+        cancelText="Next"
       ></Modal>
     </Row>
   );

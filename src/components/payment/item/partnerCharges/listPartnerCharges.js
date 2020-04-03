@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { Table, Button, Pagination, Input, Row, Col, Select, Icon } from "antd";
-import {
-  queryGetListPartnerCharges
-} from "../../../../utils/queryPartnerProducts";
-import moment from 'moment'
+import { Table, Tooltip, Select, Icon } from "antd";
+import { queryGetListPartnerCharges } from "../../../../utils/queryPartnerProducts";
+import moment from "moment";
 import { useLazyQuery } from "@apollo/react-hooks";
 import { Link } from "react-router-dom";
 
@@ -40,7 +38,7 @@ function ListPartnerCharges() {
     fromDate,
     toDate
   } = pageIndex;
-  const { TODAY } = dates
+  const { TODAY } = dates;
   const [getDataPartnerCharges, { loading, data }] = useLazyQuery(
     queryGetListPartnerCharges,
     {
@@ -85,41 +83,49 @@ function ListPartnerCharges() {
   };
   const columns = [
     {
-      title: "Id",
+      title: "Purchase Item ID",
       dataIndex: "partnerChargeCode",
       key: "chargeId",
-      // fixed:'left'
+      width: "15%",
+      render: index => <span className="convert-col">{index}</span>
     },
     {
       title: "UserName",
       dataIndex: "user",
       key: "userName",
+      width: "15%",
       render: val => <span>{val !== null ? val.username : null}</span>
     },
-    ,
     {
       title: "C.coin",
       dataIndex: "coin",
-      key: "coin"
+      key: "coin",
+      width: "15%"
     },
     {
       title: "Game",
       dataIndex: "partner",
       key: "partner",
+      width: "18%",
       render: partner => <span>{partner.partnerName}</span>
     },
     {
       title: "Time",
       dataIndex: "createAt",
       key: "createAt",
+      width: "20%",
       render: time => (
-        <span>{moment.utc(Number(time)).format("HH:mm DD-MM-YYYY")}</span>
+        <Tooltip title={moment.utc(Number(time)).format("HH:mm DD-MM-YYYY")}>
+          <span className="convert-col">{moment.utc(Number(time)).format("HH:mm DD-MM-YYYY")}</span>
+        </Tooltip>
       )
     },
     {
       title: "Status",
       dataIndex: "status",
-      key: "status"
+      key: "status",
+      width: "17%",
+      render: index => <span className="convert-col">{index === "INPUT" ? "PENDING" : "DONE"}</span>
     }
   ];
   const getValueSearch = e => {
@@ -133,18 +139,22 @@ function ListPartnerCharges() {
   if (loading) return "Loading...";
   return (
     <>
-      <div className="list-charges-title">
-        <h2>Lịch sử giao dịch</h2>
-        <div className='view-more'>
-          <Link to='/payment/item/charges/detail' className='btn-view-more'>Chi tiết <Icon type="double-right" /></Link>
-          <Select
-            defaultValue="SEVENT_DAY_AGO"
-            style={{ width: 120 }}
-            onChange={handleChangeRangeDates}
-            className="select-charges-date"
-          >
-            {printOptionDates}
-          </Select>
+      <div className="products-title">
+        <div>
+          <h2>History purchase</h2>
+          <div className="view-more">
+            <Link to="/payment/item/charges/detail" className="btn-view-more">
+              Detail <Icon type="double-right" />
+            </Link>
+            <Select
+              defaultValue="SEVENT_DAY_AGO"
+              style={{ width: 120 }}
+              onChange={handleChangeRangeDates}
+              className="select-charges-date"
+            >
+              {printOptionDates}
+            </Select>
+          </div>
         </div>
       </div>
       {dataPartnerCharges && (
@@ -152,8 +162,9 @@ function ListPartnerCharges() {
           columns={columns}
           dataSource={dataPartnerCharges.listPartnerChargesByType.rows}
           pagination={false}
-        //  
-        />)}
+          //
+        />
+      )}
     </>
   );
 }

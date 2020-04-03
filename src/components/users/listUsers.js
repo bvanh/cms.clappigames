@@ -12,9 +12,9 @@ const ExcelSheet = ReactExport.ExcelFile.ExcelSheet;
 const ExcelColumn = ReactExport.ExcelFile.ExcelColumn;
 const { Option } = Select;
 const listType = [
-  { nameType: "By UserName", id: 4 },
-  { nameType: "By chargeId", id: 1 },
-  { nameType: "By UserId", id: 2 }
+  { nameType: "By UserName", id: 1 },
+  { nameType: "By Email", id: 4 },
+  { nameType: "By UserId", id: 3 }
   // { nameType: "Theo kiểu thanh toán", id: 3 }
 ];
 function Danhsach() {
@@ -77,10 +77,10 @@ function Danhsach() {
     {
       title: "Email",
       dataIndex: "email",
-      width: "23%",
-      render: (index, record) =>  (
-        <Fragment>      
-          {index !=="" ? (
+      width: "25%",
+      render: (index, record) => (
+        <Fragment>
+          {index !== null ? (
             <span className="email-verify">
               <img src={importImage["tick-email.png"]} alt="tick-email" />
               {index}
@@ -94,7 +94,7 @@ function Danhsach() {
     {
       title: "Mobile",
       dataIndex: "mobile",
-      width: "17%"
+      width: "15%"
     },
     {
       title: "Status",
@@ -202,14 +202,15 @@ function Danhsach() {
               Export Excel
             </Button>
           }
-          filename="Lịch sử giao dịch C.COIN"
+          filename="List Users"
         >
-          <ExcelSheet data={dataExport} name="Lịch sử giao dịch C.coin">
+          <ExcelSheet data={dataExport} name="List Users">
             <ExcelColumn label="Name" value="username" />
-            <ExcelColumn label="Id" value="userId" />
+            <ExcelColumn label="Id" value="fakeId" />
             <ExcelColumn label="C.coin" value="coin" />
             <ExcelColumn label="Email" value="email" />
-            <ExcelColumn label="mobile" value="mobile" />
+            <ExcelColumn label="Mobile" value="mobile" />
+            <ExcelColumn label="Status" value="status" />
           </ExcelSheet>
         </ExcelFile>
       </div>

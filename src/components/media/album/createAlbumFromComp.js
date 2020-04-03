@@ -6,7 +6,7 @@ import { ApolloProvider, Mutation } from "react-apollo";
 import { UPLOAD_IMAGE } from "../../../utils/mutation/media";
 import { connect } from "react-redux";
 import { Upload, Icon, message, Button } from "antd";
-import { undefinedVarMessage } from "graphql/validation/rules/NoUndefinedVariables";
+import {errorAlert} from '../mediaService'
 
 const { Dragger } = Upload;
 
@@ -41,12 +41,6 @@ function CreateAlbumFromComp(props) {
       setFileImage(fileList);
     },
     fileList
-    // async onRemove(file) {
-    //   const imagesAfterRemove = await fileImage.filter((val, index) => {
-    //     return val !== file;
-    //   });
-    //   setFileImage(imagesAfterRemove);
-    // }
   };
   const getImagesForAlbum = async data => {
      delete data.singleUploadImage['path'];
@@ -81,7 +75,7 @@ function CreateAlbumFromComp(props) {
               <Button
                 onClick={async () => {
                   if (props.albumName === "") {
-                    console.log("thieu tên album");
+                    errorAlert();
                   } else {
                     for (var key of fileList) {
                       await singleUploadStream({
@@ -94,6 +88,7 @@ function CreateAlbumFromComp(props) {
                     await props.submitCreateAndUpdateAlbum();
                     props.setPickDataImages();
                     props.removeAlbumName();
+                    props.refetch();
                   }
                 }}
                 disabled={fileList.length === 0 ? true : false}

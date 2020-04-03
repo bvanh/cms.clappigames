@@ -13,25 +13,20 @@ const radioStyle = {
   height: "30px",
   lineHeight: "30px"
 };
-function ListPartnerItems() {
+function ListItems(props) {
   const [pageIndex, setPageIndex] = useState({
     currentPage: 1,
     pageSize: 10,
     partnerId: "",
     partnerProductName: ""
   });
-  const [isCreateItem, setIsCreateItem] = useState(false);
   const [listGame, setListGame] = useState([
     { partnerId: "", partnerName: "" }
   ]);
   const [dataProducts, setData] = useState(null);
   const [itemsForDelete, setItemsForDelete] = useState([]);
-  const [totalIndex, setTotalIndex] = useState({
-    totalMoney: 0,
-    totalPurchase: 0
-  });
   const { currentPage, pageSize, partnerId, partnerProductName } = pageIndex;
-  const [getData] = useLazyQuery(queryGetListPartnerProducts, {
+  const [getData, { loading }] = useLazyQuery(queryGetListPartnerProducts, {
     fetchPolicy: "cache-and-network",
     onCompleted: data => {
       setData(data);
@@ -76,27 +71,34 @@ function ListPartnerItems() {
         partnerProductName: ""
       }
     });
-  }
+  };
   const columns = [
     {
       title: "Item Id",
       dataIndex: "partnerProductId",
-      key: "productId"
+      key: "productId",
+      width: "23%",
+      render: index => <span className="convert-col">{index}</span>
     },
     {
       title: "Name",
       dataIndex: "productName",
-      key: "productName"
+      key: "productName",
+      width:"20%"
     },
     {
       title: "Price (C.coin)",
       dataIndex: "coin",
-      key: "coin"
+      key: "coin",
+      width:"20%",
+      render: index => <span className="convert-col">{index}</span>
     },
     {
       title: "Game",
-      dataIndex: "partnerId",
-      key: "partnerId",
+      dataIndex: "partner",
+      key: "partner",
+      width:"20%",
+      render: index => <span>{index.partnerName}</span>,
       filterDropdown: () => (
         <div style={{ padding: 8 }}>
           <Radio.Group
@@ -135,6 +137,7 @@ function ListPartnerItems() {
     {
       title: "Action",
       key: "action",
+      width:"17%",
       render: (text, record) => (
         <span>
           <Link
@@ -195,84 +198,63 @@ function ListPartnerItems() {
       {val.partnerName}
     </Radio>
   ));
-  if (isCreateItem)
-    return <CreatePartnerItems setIsCreateItem={setIsCreateItem} />;
-  if (isCreateItem === false)
+  if (loading)
     return (
-      <Row>
-        <Col md={24}>
-          <Col md={12}>
-            <Col md={12}>
-              <h2>C.coin exchange Total</h2>
-              <div className='total-revenue'>
-                <p>{totalIndex.totalMoney}</p>
-              </div>
-            </Col>
-            <Col md={12}>
-              <h2>Total Purchase</h2>
-              {totalIndex.totalPurchase}
-            </Col>
-
-          </Col>
-          <Col md={12}>
-            <ChartPartnerChages
-              totalIndex={totalIndex}
-              setTotalIndex={setTotalIndex}
-            />
-          </Col>
-        </Col>
-        <Col md={12}>
-          <div className="products-title">
-            <div>
-              <h2>Item managerment</h2>
-              <div className="view-more">
-                <Link to="/payment/items" onClick={() => setIsCreateItem(true)}>
-                  <Button icon="plus">Add new Item</Button>
-                </Link>
-              </div>
-            </div>
-            <div className="btn-search-users">
+      <Col md={12}>
+        <p>loading...</p>
+      </Col>
+    );
+  return (
+    <>
+      <div className="products-title">
+        <div>
+          <h2>Item managerment</h2>
+          <div className="view-more">
+            <Link
+              to="/payment/items"
+              onClick={() => props.setIsCreateItem(true)}
+            >
+              <Button icon="plus">Add new Item</Button>
               <Button
                 disabled={!hasSelected}
                 onClick={submitDeletePartnerProduct}
               >
                 Delete
               </Button>
-              <Input
-                onChange={e => getValueSearch(e)}
-                onPressEnter={onSearch}
-                prefix={
-                  <Icon type="search" style={{ color: "rgba(0,0,0,.25)" }} />
-                }
-                placeholder="Search by name Item"
-              />
-            </div>
+            </Link>
           </div>
-          {dataProducts && (
-            <>
-              <Table
-                rowSelection={rowSelection}
-                columns={columns}
-                dataSource={dataProducts.listPartnerProductsByPartner.rows}
-                pagination={false}
-              // scroll={{ x: 1000 }}
-              />
-
-              <Pagination
-                current={pageIndex.currentPage}
-                total={dataProducts.listPartnerProductsByPartner.count}
-                pageSize={10}
-                onChange={goPage}
-                className="pagination-listUser"
-              />
-            </>
-          )}
-        </Col>
-        <Col md={12} style={{ padding: "0 1rem" }}>
-          <ListPartnerChages />
-        </Col>
-      </Row>
-    );
+        </div>
+        {/* <div className="btn-search-users">
+          <Button disabled={!hasSelected} onClick={submitDeletePartnerProduct}>
+            Delete
+          </Button>
+          <Input
+            onChange={e => getValueSearch(e)}
+            onPressEnter={onSearch}
+            prefix={<Icon type="search" style={{ color: "rgba(0,0,0,.25)" }} />}
+            placeholder="Search by name Item"/>
+        </div>*/}
+      </div>
+      {dataProducts && (
+        <>
+          <Table
+            rowSelection={rowSelection}
+            columns={columns}
+            dataSource={dataProducts.listPartnerProductsByPartner.rows}
+            pagination={false}
+            // scroll={{ x: 1000 }}
+          />
+          <Pagination
+            current={pageIndex.currentPage}
+            total={dataProducts.listPartnerProductsByPartner.count}
+            pageSize={10}
+            onChange={goPage}
+            className="pagination-listUser"
+          />
+        </>
+      )}
+    </>
+  );
 }
 
-export default ListPartnerItems;
+export default ListItems;
