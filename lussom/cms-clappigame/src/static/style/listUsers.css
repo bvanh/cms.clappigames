@@ -1,0 +1,38 @@
+h2 {
+  font-family: "Roboto", sans-serif;
+  font-size: 1.5rem;
+}
+.ant-table-thead > tr > th {
+  background: rgb(185, 185, 185);
+}
+tbody {
+  background: #fafafa;
+}
+.pagination-listUser {
+  display: flex;
+  justify-content: center;
+  margin-top: 2.5rem;
+}
+.title{
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: space-between;
+}
+.btn-search-users{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.reset-btn-show{
+  display: block;
+}
+.reset-btn-hide{
+  display: none !important;
+}
+.email-verify{
+  color: #10d991;
+}
+.email-verify>img{
+  margin-bottom: .2rem;
+  margin-right: .3rem;
+}
