@@ -14,12 +14,13 @@ import {
   dispatchShowImagesNews,
   dispatchSetUrlImageThumbnail
 } from "../../../../redux/actions/index";
-import ListImagesForNews from "../../../news/modalImageUrl/imgsUrl";  
+import { alertErrorServer } from '../../../../utils/alertErrorAll'
+import ListImagesForNews from "../../../news/modalImageUrl/imgsUrl";
 import { queryGetPaymentType } from "../../../../utils/queryPaymentAndPromoType";
 import { queryGetProductById } from "../../../../utils/queryCoin";
 import { updateProduct } from "../../../../utils/mutation/productCoin";
 import { useLazyQuery, useMutation, useQuery } from "@apollo/react-hooks";
-import {connect} from 'react-redux'
+import { connect } from 'react-redux'
 import { Link } from "react-router-dom";
 import "../../../../static/style/listProducts.css";
 const { Option } = Select;
@@ -50,12 +51,15 @@ function EditProductCoin(props) {
     onCompleted: data => {
       setDataProduct(data.listProducts[0]);
       setOldDataProduct({ ...oldDataProduct, oldData: data.listProducts[0] });
-    }
+      dispatchSetUrlImageThumbnail(data.listProducts[0].image)
+    },
+    onError: index => alertErrorServer(index.networkError.result.errors[0].message)
   });
   const { data } = useQuery(queryGetPaymentType, {
     onCompleted: data => {
       setPaymentType(data.__type.enumValues);
-    }
+    },
+    onError: index => alertErrorServer(index.networkError.result.errors[0].message)
   });
   useEffect(() => {
     getData({
@@ -77,7 +81,8 @@ function EditProductCoin(props) {
         status: status,
         image: props.urlImgThumbnail
       }
-    }
+    },
+    onError: index => alertErrorServer(index.networkError.result.errors[0].message)
   });
   const getType = val => {
     setDataProduct({ ...dataProduct, type: val });
@@ -103,7 +108,7 @@ function EditProductCoin(props) {
   };
   const printPaymentTypes = paymentType.map((val, index) => (
     <Option value={val.name} key={index}>
-      {val.name}
+      {val.description}
     </Option>
   ));
   if (dataProduct !== null) {
@@ -123,7 +128,7 @@ function EditProductCoin(props) {
                 <Button
                   onClick={cancelUpdate}
                   disabled={oldDataProduct.statusBtnCancel}
-                  style={{marginRight:".5rem"}}
+                  style={{ marginRight: ".5rem" }}
                 >
                   Cancel
                 </Button>

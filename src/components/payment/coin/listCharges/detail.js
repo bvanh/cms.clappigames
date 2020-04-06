@@ -5,17 +5,19 @@ import {
   Pagination,
   Input,
   Row,
-  Col,
   Select,
   Icon,
   DatePicker,
-  Tooltip
 } from "antd";
 import moment from "moment";
 import {
-  queryGetListCoin,
   queryGetListCharges
 } from "../../../../utils/queryCoin";
+import { queryGetPaymentType } from "../../../../utils/queryPaymentAndPromoType";
+import { dispatchSetListPaymentType } from '../../../../redux/actions/index'
+import { connect } from 'react-redux';
+import { convertPaymentType } from '../service';
+import { alertErrorServer } from '../../../../utils/alertErrorAll'
 import { useLazyQuery } from "@apollo/react-hooks";
 import { dates } from "../../../../utils/dateInfo";
 import ReactExport from "react-export-excel";
@@ -35,10 +37,10 @@ const listSelectDates = [
 const listType = [
   { nameType: "By UserName", id: 4 },
   { nameType: "By Purchase Coin ID", id: 1 },
-  { nameType: "By Payment Type", id: 3 }
+  // { nameType: "By Payment Type", id: 3 }
   // { nameType: "Theo kiểu thanh toán", id: 3 }
 ];
-function ListChargesDetail() {
+function ListChargesDetail(props) {
   const [pageIndex, setPageIndex] = useState({
     currentPage: 1,
     type: 4,
@@ -51,13 +53,21 @@ function ListChargesDetail() {
   const [dataExport, setDataExport] = useState([]);
   const { currentPage, pageSize, type, search, fromDate, toDate } = pageIndex;
   const { TODAY } = dates;
+  const [getListPaymentType] = useLazyQuery(queryGetPaymentType, {
+    onCompleted: data => {
+      dispatchSetListPaymentType(data.__type.enumValues);
+    },
+    onError: index => alertErrorServer(index.networkError.result.errors[0].message)
+  });
   const [getDataCharges] = useLazyQuery(queryGetListCharges, {
     fetchPolicy: "cache-and-network",
     onCompleted: data => {
       setDataCharges(data);
-    }
+    },
+    onError: index => alertErrorServer(index.networkError.result.errors[0].message)
   });
   useEffect(() => {
+    getListPaymentType();
     getDataCharges({
       variables: {
         currentPage: currentPage,
@@ -90,9 +100,9 @@ function ListChargesDetail() {
       return (
         (current &&
           current <
-            moment(fromDate)
-              .subtract(1, "days")
-              .endOf("day")) ||
+          moment(fromDate)
+            .subtract(1, "days")
+            .endOf("day")) ||
         current > moment().endOf("day")
       );
     }
@@ -182,7 +192,8 @@ function ListChargesDetail() {
     {
       title: "Payment Type",
       dataIndex: "paymentType",
-      key: "paymenttype"
+      key: "paymenttype",
+      render: index => <span>{convertPaymentType(props.listPaymentType, index)}</span>
     },
     {
       title: "Promotion",
@@ -356,5 +367,10 @@ function ListChargesDetail() {
     </Row>
   );
 }
+function mapStateToProps(state) {
+  return {
+    listPaymentType: state.listPaymentType
+  }
 
-export default ListChargesDetail;
+}
+export default connect(mapStateToProps, null)(ListChargesDetail);

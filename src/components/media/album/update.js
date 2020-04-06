@@ -163,7 +163,7 @@ function UpdateAlbum() {
               style={{ color: "red", cursor: "pointer" }}
               onClick={() => setIsShowAlert(true)}
             >
-              Xóa Album
+              Delete album
             </span>
           </div>
         )}
@@ -222,7 +222,7 @@ function UpdateAlbum() {
             name="name"
             onChange={e => getAlbumName(e)}
           />
-          <p className="add-images">Thêm ảnh</p>
+          <p className="add-images">Add Image</p>
           {fromComp === "pickFromComp" && (
             <CreateAlbumFromComp
               setImagesForAlbum={setImagesForAlbum}
@@ -255,7 +255,7 @@ function UpdateAlbum() {
                 }
               >
                 <Icon type="plus" style={{ marginRight: ".5rem" }} />
-                Chọn ảnh từ máy tính
+                Select photo from the computer
               </div>
               <div
                 className="create-album-pick"
@@ -267,7 +267,7 @@ function UpdateAlbum() {
                 }
               >
                 <Icon type="search" style={{ marginRight: ".5rem" }} />
-                Chọn ảnh từ thư viện
+                Select photo from the library
               </div>
             </>
           ) : null}

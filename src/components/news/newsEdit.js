@@ -138,11 +138,11 @@ const NewsEditor = props => {
       deleteNews({ variables: { ids: [newsId] } });
     }
   };
-  const showConfirm = () => {
+  const showConfirm = val => {
     setAlertIndex({
       ...alertIndex,
       isShow: true,
-      content: "Do you want to countinue delete this post??",
+      content: `Do you want to countinue ${val} this post?`,
       confirmBtn: "Ok !",
       isDelete: true
     });
@@ -180,13 +180,14 @@ const NewsEditor = props => {
       {val.partnerName}
     </Option>
   ));
-  console.log(moment(Number(startPost)).format("YYYY-MM-DD hh:mm:ss"))
+  // console.log(moment(Number(startPost)).format("YYYY-MM-DD hh:mm:ss"))
+  console.log(startPost)
   return (
     <Row>
       <Col sm={18} className="section1-news">
         <div style={{ display: "flex", justifyContent: "space-between" }}>
           <h3>Update</h3>
-          <Link to="/news">Back</Link>
+          <a onClick={()=>showConfirm("update")}>Back</a>
         </div>
         <Input
           placeholder=""
@@ -208,7 +209,7 @@ const NewsEditor = props => {
           value={newContent}
           onBlur={newContent => setNewContent(newContent)} // preferred to use only this option to update the content for performance reasons
         />
-        <Button onClick={() => showUrlImagesNews(false)}>Get image link</Button>
+        <Button onClick={() => showUrlImagesNews(false)}  style={{ marginTop: ".5rem" }}>Get image link</Button>
       </Col>
       <Col sm={6} style={{ padding: "0 1rem" }}>
         <div className="set-schedule-news">
@@ -217,7 +218,7 @@ const NewsEditor = props => {
             {printStatus}
           </Radio.Group>
           <div className={status === 'COMPLETE' ? 'option-settimeline' : "hide-options-settimeline"}>
-            <p style={{margin:".5rem 0"}}>
+            <p style={{ margin: ".5rem 0" }}>
               * Set timeline
            </p>
             <div style={{ display: "flex" }}>
@@ -232,7 +233,7 @@ const NewsEditor = props => {
                   // disabledDate={disabledDate}
                   format="YYYY-MM-DD HH:mm:ss"
                   allowClear={true}
-                  value={Number.isInteger(Number(startPost)) ? moment(moment(Number(startPost)).format("YYYY-MM-DD hh:mm:ss"),"YYYY-MM-DD hh:mm:ss") : moment(startPost, "YYYY-MM-DD hh:mm:ss")}
+                  value={Number.isInteger(Number(startPost)) ? moment(moment(Number(startPost)).format("YYYY-MM-DD hh:mm:ss"), "YYYY-MM-DD hh:mm:ss") : moment(startPost, "YYYY-MM-DD hh:mm:ss")}
                   disabled={status === 'COMPLETE' ? false : true}
                   open={isSetSchedule}
                   dropdownClassName='setTimeline-news'
@@ -272,7 +273,7 @@ const NewsEditor = props => {
           <a onClick={() => showUrlImagesNews(true)}>Change</a>
         </div>
         <div className="btn-submit">
-          <p onClick={showConfirm} style={{ color: "red", cursor: "pointer" }}>
+          <p onClick={()=>showConfirm("delete")} style={{ color: "red", cursor: "pointer" }}>
             Delete news
           </p>
           <a onClick={submitUpdateNews}>Update</a>

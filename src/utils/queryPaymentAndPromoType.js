@@ -7,6 +7,7 @@ const queryGetPaymentType = gql`
         name,
         enumValues{
           name
+          description
         }
       }
    }

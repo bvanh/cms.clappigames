@@ -30,6 +30,7 @@ const initialState = {
     coin: newItem,
     inkind: newItem
   },
+  listPaymentType: [{ name: "", description: "" }],
   idPromoAndEventCreateInUpdate: [null]
 };
 export default (state = initialState, action) => {
@@ -180,6 +181,11 @@ export default (state = initialState, action) => {
         ...state,
         idPromoAndEventCreateInUpdate: [...newId, action.value]
       };
+    case actions.SET_LIST_PAYMENTTYPE:
+      return {
+        ...state,
+        listPaymentType: action.value
+      }
     default:
       return state;
   }

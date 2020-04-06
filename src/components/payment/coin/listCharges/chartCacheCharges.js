@@ -5,7 +5,8 @@ import { Link } from "react-router-dom";
 import {
   queryGetListCharges
 } from "../../../../utils/queryCoin";
-import { useQuery, useLazyQuery } from "@apollo/react-hooks";
+import { useLazyQuery } from "@apollo/react-hooks";
+import {alertErrorServer}from '../../../../utils/alertErrorAll'
 import { getListChartCharges } from "../../../../utils/query/chart";
 import { optionLine } from "../../../../utils/configCharts";
 import { dates } from "../../../../utils/dateInfo";
@@ -38,7 +39,8 @@ const ChartCharges = props => {
       let demo = JSON.parse(data.listCacheChargesByDate.yAxis).map((val, i) => val[0].money);
       const demo2 = demo.reduce((a, b) => a + b)
       props.setTotalIndex({ ...props.totalIndex, totalMoney: demo2 })
-    }
+    },
+    onError: index => alertErrorServer(index.networkError.result.errors[0].message)
   });
   const [getDataCharges] = useLazyQuery(
     queryGetListCharges,
@@ -53,7 +55,8 @@ const ChartCharges = props => {
       },
       onCompleted: data => {
         props.setTotalIndex({ ...props.totalIndex, totalPurchase: data.listChargesByType.count })
-      }
+      },
+      onError: index => alertErrorServer(index.networkError.result.errors[0].message)
     }
   );
   useEffect(() => {

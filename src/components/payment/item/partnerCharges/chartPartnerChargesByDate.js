@@ -38,7 +38,7 @@ const ChartPartnerCharges = props => {
   const { TODAY } = dates;
   const [getData] = useLazyQuery(getListPartnerCharges, {
     onCompleted: data => {
-      // console.log(JSON.parse(data.chartCachePartnerChargeByDates.yAxis))
+      console.log(data)
       setDataCharts({
         xAxis: JSON.parse(data.chartCachePartnerChargeByDates.xAxis),
         yAxis: JSON.parse(data.chartCachePartnerChargeByDates.yAxis)

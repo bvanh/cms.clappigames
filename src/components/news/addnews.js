@@ -202,9 +202,6 @@ const AddNews = props => {
           <Radio.Group onChange={handleChangeSchedule}>
             {printStatus}
           </Radio.Group>
-          {/* <div>
-            <a>Set</a>
-          </div> */}
           <div className={status === 'COMPLETE' ? 'option-settimeline' : "hide-options-settimeline"}>
             <p style={{ margin: ".5rem 0" }}>
               * Set timeline

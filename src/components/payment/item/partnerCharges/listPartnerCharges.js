@@ -86,7 +86,7 @@ function ListPartnerCharges() {
       title: "Purchase Item ID",
       dataIndex: "partnerChargeCode",
       key: "chargeId",
-      width: "15%",
+      width: "18%",
       render: index => <span className="convert-col">{index}</span>
     },
     {
@@ -106,7 +106,7 @@ function ListPartnerCharges() {
       title: "Game",
       dataIndex: "partner",
       key: "partner",
-      width: "18%",
+      width: "17%",
       render: partner => <span>{partner.partnerName}</span>
     },
     {
@@ -124,7 +124,7 @@ function ListPartnerCharges() {
       title: "Status",
       dataIndex: "status",
       key: "status",
-      width: "17%",
+      width: "15%",
       render: index => <span className="convert-col">{index === "INPUT" ? "PENDING" : "DONE"}</span>
     }
   ];

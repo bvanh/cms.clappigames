@@ -15,9 +15,9 @@ import { queryGetListCoin } from "../../../../utils/queryCoin";
 import { useLazyQuery, useMutation, useQuery } from "@apollo/react-hooks";
 import { Link } from "react-router-dom";
 import "../../../../static/style/listProducts.css";
-import ChartCharges from "../listCharges/chartCacheCharges";
-import ListCharges from "../listCharges/listCharges";
-import CreateProductCoin from "../listCoin/addnewCoin";
+import { convertPaymentType } from '../service'
+import { alertErrorServer } from '../../../../utils/alertErrorAll'
+import { dispatchSetListPaymentType, dispatchTypeEventByMoney } from '../../../../redux/actions/index'
 import { deleteCoinProduct } from "../../../../utils/mutation/productCoin";
 const radioStyle = {
   display: "block",
@@ -30,7 +30,7 @@ function ListCoin(props) {
     type: "",
     pageSize: 100,
     productName: "",
-    listTypePayment: []
+    listTypePayment: [{ name: "", description: "" }]
   });
   const [dataCoin, setDataCoin] = useState(null);
   const [itemsForDelete, setItemsForDelete] = useState([]);
@@ -45,17 +45,22 @@ function ListCoin(props) {
     fetchPolicy: "cache-and-network",
     onCompleted: data => {
       setDataCoin(data);
-    }
+    },
+    onError: index => alertErrorServer(index.networkError.result.errors[0].message)
   });
   const { data } = useQuery(queryGetPaymentType, {
     onCompleted: data => {
+      console.log(data)
       setPageIndex({ ...pageIndex, listTypePayment: data.__type.enumValues });
-    }
+      dispatchSetListPaymentType(data.__type.enumValues);
+    },
+    onError: index => alertErrorServer(index.networkError.result.errors[0].message)
   });
   const [deleteProduct] = useMutation(deleteCoinProduct, {
     variables: {
       ids: itemsForDelete
-    }
+    },
+    onError: index => alertErrorServer(index.networkError.result.errors[0].message)
   });
   useEffect(() => {
     getDataCoin({
@@ -91,6 +96,7 @@ function ListCoin(props) {
       }
     });
   };
+  // console.log(convertPaymentType(listTypePayment,"GA"))
   // eslint-disable-next-line no-sparse-arrays
   const columns = [
     {
@@ -125,6 +131,7 @@ function ListCoin(props) {
       dataIndex: "type",
       key: "type",
       width: "20%",
+      render: index => <span>{convertPaymentType(listTypePayment, index)}</span>,
       filterDropdown: () => (
         <div style={{ padding: 8 }}>
           <Radio.Group onChange={setValueTypePayment} value={type}>

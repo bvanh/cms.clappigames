@@ -16,7 +16,7 @@ import {
 } from "../../../../redux/actions/index";
 import ListImagesForNews from "../../../news/modalImageUrl/imgsUrl";
 import { connect } from "react-redux";
-import { queryGetPaymentType } from "../../../../utils/queryPaymentAndPromoType";
+import { alertErrorServer } from '../../../../utils/alertErrorAll'
 import { createProduct } from "../../../../utils/mutation/productCoin";
 import { useLazyQuery, useMutation, useQuery } from "@apollo/react-hooks";
 import { Link } from "react-router-dom";
@@ -50,6 +50,12 @@ function CreateProductCoin(props) {
     price: null,
     status: "INPUT"
   });
+  const [alertIndex, setAlertIndex] = useState({
+    isShow: false,
+    content: "Do you want to countinue creating a new C.coin package?",
+    isDelete: false,
+    confirmBtn: "Back"
+  });
   useEffect(() => {
     dispatchSetUrlImageThumbnail(null);
   }, []);
@@ -65,7 +71,8 @@ function CreateProductCoin(props) {
         status: status,
         image: props.urlImgThumbnail
       }
-    }
+    },
+    onError: index => alertErrorServer(index.networkError.result.errors[0].message)
   });
   const checkStatusData = () => {
     if (
@@ -73,7 +80,8 @@ function CreateProductCoin(props) {
       type !== "" &&
       sort !== null &&
       price !== null &&
-      status !== ""
+      status !== "" &&
+      props.urlImgThumbnail !== null
     ) {
       return false;
     } else {
@@ -91,51 +99,46 @@ function CreateProductCoin(props) {
     let result = createCoin();
     result.then(val => {
       if (val) {
-        alert("tạo mới c.coin thành công!");
-        setOldDataProduct({ ...oldDataProduct, statusBtnCancel: true });
+        setAlertIndex({ ...alertIndex, isShow: true, content: "Create new C.coin package successful !" });
+        setDataProduct(oldDataProduct.oldData);
+        dispatchSetUrlImageThumbnail(null)
       }
     });
   };
   const getType = val => {
     setDataProduct({ ...dataProduct, type: val });
   };
+  const handleCancel = () => {
+    setAlertIndex({ ...alertIndex, isShow: false })
+  };
+  const handleOk = () => {
+    // setAlertIndex({ ...alertIndex, isShow: false })
+    // props.setIsCreateCoin(true);
+    console.log('fsfsf')
+  }
   const { enumValues } = props.data.__type;
   const printPaymentTypes = enumValues.map((val, index) => (
     <Option value={val.name} key={index}>
-      {val.name}
+      {val.description}
     </Option>
   ));
-
-  const showConfirm = () => {
-    Modal.confirm({
-      title: "Do you want to countinue creating a new C.coin package?",
-      okText:"Back",
-      cancelText:"Next",
-      onOk() {
-        props.setIsCreateCoin(false);
-      },
-      onCancel() {
-        console.log("Cancel");
-      }
-    });
-  };
   return (
     <Row>
-      <Link to="/payment/coin" onClick={showConfirm}>
+      <a onClick={() => setAlertIndex({ ...alertIndex, isShow: true })}>
         <span>
           <Icon type="arrow-left" style={{ paddingRight: ".2rem" }} />
           Back
         </span>
-      </Link>
+      </a>
       <div className="products-title">
         <div>
           <h2>Create new C.coin</h2>
           <div>
             <p>
               <Button
-                onClick={showConfirm}
+                onClick={() => setAlertIndex({ ...alertIndex, isShow: true })}
                 disabled={oldDataProduct.statusBtnCancel}
-                style={{marginRight:".5rem"}}
+                style={{ marginRight: ".5rem" }}
               >
                 Cancel
               </Button>
@@ -192,10 +195,10 @@ function CreateProductCoin(props) {
               <span className="edit-product-content-title">Image</span>
             </div>
             <div style={{ width: "100px" }}>
-              <img src={props.urlImgThumbnail} width="100%" />
+              {props.urlImgThumbnail === null ? <i>Thumbnail image is emtry</i> : <img src={props.urlImgThumbnail} width="100%" />}
             </div>
             <div>
-              <a onClick={() => dispatchShowImagesNews(true)}>Image</a>
+              <a onClick={() => dispatchShowImagesNews(true)}>Get image</a>
             </div>
           </div>
         </Col>
@@ -235,6 +238,16 @@ function CreateProductCoin(props) {
         </Col>
         <ListImagesForNews isThumbnail={true} />
       </Row>
+      <Modal
+        title="Confirm !"
+        visible={alertIndex.isShow}
+        okText="Back"
+        cancelText="Next"
+        onOK={handleOk}
+        onCancel={handleCancel}
+      >
+        <p>{alertIndex.content}</p>
+      </Modal>
     </Row>
   );
 }

@@ -133,6 +133,12 @@ const saveIdPromoAndEventInUpdate = value => {
     value
   }
 }
+const setListPaymentType = value => {
+  return {
+    type: actions.SET_LIST_PAYMENTTYPE,
+    value
+  }
+}
 function dispatchSwitchLogin(data) {
   store.dispatch(switchLogin(data));
 }
@@ -199,6 +205,9 @@ function dispatchInititalIndexConfig() {
 function dispatchSaveIdCreateInUpdate(value) {
   store.dispatch(saveIdPromoAndEventInUpdate(value))
 }
+function dispatchSetListPaymentType(value) {
+  store.dispatch(setListPaymentType(value))
+}
 export {
   dispatchSwitchLogin,
   dispatchSetAccessToken,
@@ -221,5 +230,6 @@ export {
   dispatchSelectCoinEvent,
   dispatchResetItemRewards,
   dispatchInititalIndexConfig,
-  dispatchSaveIdCreateInUpdate
+  dispatchSaveIdCreateInUpdate,
+  dispatchSetListPaymentType
 };

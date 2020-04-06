@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Row, Col } from "antd";
 import { queryGetPaymentType } from "../../../utils/queryPaymentAndPromoType";
-import { queryGetListCoin } from "../../../utils/queryCoin";
 import { useLazyQuery, useMutation, useQuery } from "@apollo/react-hooks";
 import { Link } from "react-router-dom";
 import "../../../static/style/listProducts.css";
@@ -18,6 +17,7 @@ function CoinsContainer(props) {
     totalPurchase: 0
   });
   const { data } = useQuery(queryGetPaymentType);
+  console.log(isCreateCoin)
   if (isCreateCoin)
     return <CreateProductCoin setIsCreateCoin={setIsCreateCoin} data={data} />;
   if (isCreateCoin === false)

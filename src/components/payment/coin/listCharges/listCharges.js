@@ -2,11 +2,13 @@ import React, { useState, useEffect } from "react";
 import { Table, Button, Pagination, Input, Row, Col, Select, Icon } from "antd";
 import moment from "moment";
 import {
-  queryGetListCoin,
   queryGetListCharges
 } from "../../../../utils/queryCoin";
 import { useLazyQuery } from "@apollo/react-hooks";
+import {connect} from 'react-redux'
 import { dates } from "../../../../utils/dateInfo";
+import { alertErrorServer } from '../../../../utils/alertErrorAll'
+import { convertPaymentType } from '../service'
 import { Link } from "react-router-dom";
 
 import "../../../../static/style/listProducts.css";
@@ -18,7 +20,7 @@ const listSelectDates = [
   { days: "Last 14 days", variables: "FOURTEEN_DAY_AGO" },
   { days: "Last 30 days", variables: "THIRTY_DAY_AGO" }
 ];
-function ListCharges() {
+function ListCharges(props) {
   const [pageIndex, setPageIndex] = useState({
     currentPage: 1,
     type: 1,
@@ -30,13 +32,14 @@ function ListCharges() {
   const [dataCharges, setDataCharges] = useState(null);
   const { currentPage, pageSize, type, search, fromDate, toDate } = pageIndex;
   const { TODAY } = dates;
-  const [getDataCharges, { loading, data }] = useLazyQuery(
+  const [getDataCharges, { loading, data, error }] = useLazyQuery(
     queryGetListCharges,
     {
       onCompleted: data => {
         console.log(data);
         setDataCharges(data);
-      }
+      },
+      onError: index => alertErrorServer(index.networkError.result.errors[0].message)
     }
   );
   useEffect(() => {
@@ -72,7 +75,7 @@ function ListCharges() {
       title: "Purchase Coin ID",
       dataIndex: "chargeId",
       key: "chargeId",
-      width: "10%",
+      width: "14%",
       render: index => <span className="convert-col">{index}</span>
     },
     {
@@ -92,7 +95,8 @@ function ListCharges() {
       title: "Type",
       dataIndex: "paymentType",
       key: "paymenttype",
-      width: "22%"
+      width: "18%",
+      render: index => <span>{convertPaymentType(props.listPaymentType, index)}</span>,
     },
     {
       title: "Time",
@@ -146,5 +150,9 @@ function ListCharges() {
     </>
   );
 }
-
-export default ListCharges;
+function mapStateToProps(state) {
+  return {
+    listPaymentType: state.listPaymentType
+  };
+}
+export default connect(mapStateToProps, null)(ListCharges);

@@ -14,7 +14,8 @@ import {
   dispatchShowImagesNews,
   dispatchSetUrlImageThumbnail
 } from "../../../../redux/actions/index";
-import {connect} from 'react-redux'
+import { connect } from 'react-redux'
+import {alertErrorServer} from '../../../../utils/alertErrorAll'
 import ListImagesForNews from "../../../news/modalImageUrl/imgsUrl";
 import { queryGetPlatform } from "../../../../utils/queryNews";
 import { queryGetRefPartnerProducts } from "../../../../utils/queryPartnerProducts";
@@ -55,13 +56,20 @@ function CreatePartnerItems(props) {
     promotionId: "",
     status: ""
   });
+  const [alertIndex, setAlertIndex] = useState({
+    isShow: false,
+    content: "Do you want to countinue creating a new Item ?",
+    isDelete: false,
+    confirmBtn: "Back"
+  });
   useEffect(() => {
     dispatchSetUrlImageThumbnail(null);
   }, []);
   const { loading, error, data } = useQuery(queryGetPlatform(), {
     onCompleted: dataPartner => {
       setListPlatform(dataPartner.listPartners);
-    }
+    },
+    onError: index => alertErrorServer(index.networkError.result.errors[0].message)
   });
   const {
     productName,
@@ -77,7 +85,8 @@ function CreatePartnerItems(props) {
     {
       onCompleted: data => {
         setListRefProduct(data.listRefPartnerProducts);
-      }
+      },
+      onError: index => alertErrorServer(index.networkError.result.errors[0].message)
     }
   );
   const [createItem] = useMutation(createPartnerProduct, {
@@ -90,9 +99,10 @@ function CreatePartnerItems(props) {
         coin: Number(coin),
         partnerProductName: partnerProductName,
         promotionId: Number(promotionId),
-        image:props.urlImgThumbnail
+        image: props.urlImgThumbnail
       }
-    }
+    },
+    onError: index => alertErrorServer(index.networkError.result.errors[0].message)
   });
   const getNewInfoItem = e => {
     setDataPartnerProduct({
@@ -134,12 +144,20 @@ function CreatePartnerItems(props) {
     await setDataPartnerProduct({ ...dataPartnerProduct, partnerId: val });
     getRefPartnerProduct();
   }
+  const handleCancel = () => {
+    setAlertIndex({ ...alertIndex, isShow: false })
+  };
+  const handleOk = (val) => {
+    // setAlertIndex({ ...alertIndex, isShow: false })
+    // props.setIsCreateCoin(true);
+    console.log(val)
+  }
   const printPlatform = dataListPlatform.map((val, index) => (
     <Option value={val.partnerId} key={index}>
       {val.partnerName}
     </Option>
   ));
-  const printRefProduct = dataListRefProduct.map(function(val, index) {
+  const printRefProduct = dataListRefProduct.map(function (val, index) {
     if (index <= 0) {
       return null;
     } else {
@@ -153,25 +171,25 @@ function CreatePartnerItems(props) {
       );
     }
   });
-  const showConfirm = () => {
-    Modal.confirm({
-      title: "Do you want to countinue creating a new Item?",
-      okText:"Back",
-      cancelText:"Next",
-      onOk() {
-        props.setIsCreateItem(false);
-      },
-      onCancel() {
-        console.log("Cancel");
-      }
-    });
-  };
+  // const showConfirm = () => {
+  //   Modal.confirm({
+  //     title: "Do you want to countinue creating a new Item?",
+  //     okText: "Back",
+  //     cancelText: "Next",
+  //     onOk() {
+  //       props.setIsCreateItem(false);
+  //     },
+  //     onCancel() {
+  //       console.log("Cancel");
+  //     }
+  //   });
+  // };
   return (
     <Row>
-      <Link to="/payment/items" onClick={showConfirm}>
+      <Link to="/payment/items" onClick={() => setAlertIndex({ ...alertIndex, isShow: true })}>
         <span>
-        <Icon type="arrow-left" style={{ paddingRight: ".2rem" }} />
-        Back  
+          <Icon type="arrow-left" style={{ paddingRight: ".2rem" }} />
+        Back
         </span>
       </Link>
       <div className="products-title">
@@ -180,9 +198,9 @@ function CreatePartnerItems(props) {
           <div>
             <p>
               <Button
-                onClick={showConfirm}
+                onClick={() => setAlertIndex({ ...alertIndex, isShow: true })}
                 disabled={oldDataPartnerProduct.statusBtnCancel}
-                style={{marginRight:".5rem"}}
+                style={{ marginRight: ".5rem" }}
               >
                 Cancel
               </Button>
@@ -190,12 +208,12 @@ function CreatePartnerItems(props) {
                 onClick={submitCreateItem}
                 disabled={
                   productName === "" ||
-                  partnerId === "" ||
-                  productId === "" ||
-                  coin === "" ||
-                  partnerProductName === "" ||
-                  promotionId === 0 ||
-                  status === ""
+                    partnerId === "" ||
+                    productId === "" ||
+                    coin === "" ||
+                    partnerProductName === "" ||
+                    promotionId === 0 ||
+                    status === ""
                     ? true
                     : false
                 }
@@ -215,14 +233,14 @@ function CreatePartnerItems(props) {
             </div>
           </div>
           <div className="product-input-update">
-              <span className="edit-product-content-title">Platform</span>
-              <Select
-                value={partnerId}
-                style={{ width: '100% !important' }}
-                onChange={changePartnerName}
-              >
-                {printPlatform}
-              </Select>       
+            <span className="edit-product-content-title">Platform</span>
+            <Select
+              value={partnerId}
+              style={{ width: '100% !important' }}
+              onChange={changePartnerName}
+            >
+              {printPlatform}
+            </Select>
             <span className="edit-product-content-title">ProductIdAndName</span>
             <Select
               value={
@@ -250,18 +268,11 @@ function CreatePartnerItems(props) {
               name="coin"
               onChange={getNewInfoItem}
             ></Input>
-            {/*<span className="edit-product-content-title">Mã khuyến mãi</span>
-            <Input
-              value={promotionId}
-              type="number"
-              name="promotionId"
-              onChange={getNewInfoItem}
-            ></Input>*/}
-             <div>
+            <div>
               <span className="edit-product-content-title">Image</span>
             </div>
             <div style={{ width: "100px" }}>
-              <img src={props.urlImgThumbnail} width="100%" />
+              {props.urlImgThumbnail === null ? <i>Thumbnail image is emtry</i> : <img src={props.urlImgThumbnail} width="100%" />}
             </div>
             <div>
               <a onClick={() => dispatchShowImagesNews(true)}>Select</a>
@@ -292,6 +303,16 @@ function CreatePartnerItems(props) {
         </Col>
         <ListImagesForNews isThumbnail={true} />
       </Row>
+      <Modal
+        title="Confirm !"
+        visible={alertIndex.isShow}
+        okText="Back"
+        cancelText="Next"
+        onOK={handleOk}
+        onCancel={handleCancel}
+      >
+        <p>{alertIndex.content}</p>
+      </Modal>
     </Row>
   );
 }

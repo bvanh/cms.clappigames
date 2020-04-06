@@ -54,7 +54,7 @@ function EditPartnerProductItem(props) {
   useQuery(queryGetPlatform(), {
     onCompleted: dataPartner => {
       setListPlatform(dataPartner.listPartners);
-    }
+    },
   });
   const { data, loading, error, refetch } = useQuery(
     queryGetPartnerProductById,

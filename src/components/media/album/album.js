@@ -238,7 +238,7 @@ const Album = () => {
                   }
                 >
                   <Icon type="plus" style={{ marginRight: ".5rem" }} />
-                  Choose from your computer
+                  Select photo from the computer
                 </div>
                 <div
                   className="create-album-pick"
@@ -250,7 +250,7 @@ const Album = () => {
                   }
                 >
                   <Icon type="search" style={{ marginRight: ".5rem" }} />
-                  Choose from library
+                  Select photo from the library
                 </div>
               </>
             ) : null}
