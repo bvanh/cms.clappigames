@@ -40,7 +40,8 @@ function InputrewardForShowByMoney(props) {
     dates,
     daily,
     startTime,
-    endTime
+    endTime,
+    linkUrl
   } = props.indexPromoAndEvent;
   const [rowItems, setRowItems] = useState(0);
   const [itemNumb, setItemNumb] = useState(null);
@@ -116,7 +117,9 @@ function InputrewardForShowByMoney(props) {
         config: JSON.stringify({
           type: props.typeEventByMoney,
           data: indexShop
-        })
+        }),
+        linkUrl: linkUrl,
+        imageUrl:props.imageUrl
       }
     },
     onCompleted: data => {
@@ -143,7 +146,9 @@ function InputrewardForShowByMoney(props) {
           server: server,
           type: props.typeEventByMoney,
           data: indexShop
-        })
+        }),
+        linkUrl: linkUrl,
+        imageUrl: props.imageUrl
       }
     },
     onCompleted: data => {
@@ -252,7 +257,7 @@ function InputrewardForShowByMoney(props) {
       </Radio>
     </Col>
   ));
-  const printItem = indexShop.map(function(val, index1) {
+  const printItem = indexShop.map(function (val, index1) {
     return (
       <div
         key={index1}
@@ -290,7 +295,7 @@ function InputrewardForShowByMoney(props) {
           )}
           {props.typeEventByMoney === "COIN" && (
             <div className='promo-input-coin-event'>
-              <div style={{ width: "35%",display: "flex", alignItems: "center" }}>
+              <div style={{ width: "35%", display: "flex", alignItems: "center" }}>
                 <Select
                   value={indexShop[index1].rewards[0]}
                   dropdownClassName="dropdown-coin-event"
@@ -332,7 +337,7 @@ function InputrewardForShowByMoney(props) {
   });
   return (
     <div className="section4-promotion">
-     <div style={{ width: "100%" }} className="section4-promotion-title">
+      <div style={{ width: "100%" }} className="section4-promotion-title">
         <div className="promo-input-title-numb">
           <span>Total price of purchase from</span>
         </div>
@@ -378,7 +383,8 @@ function InputrewardForShowByMoney(props) {
 function mapStateToProps(state) {
   return {
     typeEventByMoney: state.typeEventByMoney,
-    nameEventByMoney: state.nameEventByMoney
+    nameEventByMoney: state.nameEventByMoney,
+    imageUrl: state.urlImgThumbnail
   };
 }
 export default connect(mapStateToProps, null)(InputrewardForShowByMoney);

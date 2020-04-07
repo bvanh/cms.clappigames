@@ -1,15 +1,21 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { Row, Col, Modal, Icon } from "antd";
+import { Row, Col, Modal, Icon, Input } from "antd";
 import { useLazyQuery, useMutation, useQuery } from "@apollo/react-hooks";
 import "../../../../static/style/promotion.css";
 import EventByItems from "./promotion/inputRewardItem";
 import InputRewardByMoney from "./event/inputReward";
 import MenuRewardEventByMoney from "./event/menuReward";
+import ListImagesForNews from "../../../news/modalImageUrl/imgsUrl";
+import {
+  dispatchShowImagesNews,
+  dispatchSetUrlImageThumbnail
+} from "../../../../redux/actions/index";
 import { InputNameAndTypeArea, InputTimeArea } from "./nameAndTimePromo";
 import { dispatchSwitchCreatePromo } from "../../../../redux/actions/index";
 import MenuRewardByItem from "./promotion/menuRewardItem";
 import { queryGetPlatform } from "../../../../utils/queryPlatform";
 import { getListPartnerProducts } from "../../../../utils/queryPartnerProducts";
+import { connect } from 'react-redux'
 import moment from "moment";
 import {
   initialIndexEventByMoney,
@@ -44,7 +50,7 @@ function CreatePromotion(props) {
     type: "",
     typeEvent: "",
     timeTotal: [
-      moment()  
+      moment()
         .format("YYYY-MM-DD HH:mm:ss"),
       moment()
         .format("YYYY-MM-DD HH:mm:ss")
@@ -52,7 +58,8 @@ function CreatePromotion(props) {
     dates: [],
     daily: [],
     startTime: "00:00:00",
-    endTime: "00:00:00"
+    endTime: "00:00:00",
+    linkUrl: null
   });
   const [indexGameForPromo, setIndexGameForPromo] = useState({
     platformId: "",
@@ -79,8 +86,11 @@ function CreatePromotion(props) {
     itemsForEventByMoney: [{ productName: "", productId: "" }]
   });
   const [indexShop, setIndexShop] = useState(initialIndexShop);
+  useEffect(() => {
+    dispatchSetUrlImageThumbnail(null);
+  }, []);
   const isTimeInPromo = null;
-  const { platformId, status, server } = indexPromoAndEvent;
+  const { platformId, status, server, linkUrl } = indexPromoAndEvent;
   const { listGame, listItems, listServer } = listPartner;
   const { data } = useQuery(getListPartnerProducts(platformId), {
     onCompleted: data => {
@@ -241,6 +251,9 @@ function CreatePromotion(props) {
       }
     });
   };
+  const getLinkUrl = e => {
+    setIndexPromoAndEvent({ ...indexPromoAndEvent, linkUrl: e.target.value })
+  }
   return (
     <Router>
       <Row className="container-promotion">
@@ -282,18 +295,18 @@ function CreatePromotion(props) {
                 handleChangeServerPromo={handleChangeServerPromo}
               />
             ) : (
-              <MenuRewardEventByMoney
-                switchTypeEvent={switchTypeEvent}
-                indexPromoAndEvent={indexPromoAndEvent}
-                indexEventByMoney={indexEventByMoney}
-                setIndexEventByMoney={setIndexEventByMoney}
-                getItemsForEventTypeMoney={getItemsForEventTypeMoney}
-                server={server}
-                listPartner={listPartner}
-                handleChangePlatform={handleChangePlatform}
-                handleChangeServer={handleChangeServer}
-              />
-            )}
+                <MenuRewardEventByMoney
+                  switchTypeEvent={switchTypeEvent}
+                  indexPromoAndEvent={indexPromoAndEvent}
+                  indexEventByMoney={indexEventByMoney}
+                  setIndexEventByMoney={setIndexEventByMoney}
+                  getItemsForEventTypeMoney={getItemsForEventTypeMoney}
+                  server={server}
+                  listPartner={listPartner}
+                  handleChangePlatform={handleChangePlatform}
+                  handleChangeServer={handleChangeServer}
+                />
+              )}
           </div>
         </Col>
         <InputTimeArea
@@ -306,7 +319,7 @@ function CreatePromotion(props) {
           setTimePromo={setTimePromo}
           isTimeInPromo={isTimeInPromo}
         />
-        <Col md={24}>
+        <Col md={18}>
           {switchTypeEvent ? (
             <EventByItems
               successAlert={successAlert}
@@ -317,22 +330,40 @@ function CreatePromotion(props) {
               setIndexShop={setIndexShop}
             />
           ) : (
-            <InputRewardByMoney
-              listItems={listItems}
-              successAlert={successAlert}
-              indexShop={indexShop}
-              setIndexShop={setIndexShop}
-              indexPromoAndEvent={indexPromoAndEvent}
-              listPartner={listPartner}
-              setIndexPromoAndEvent={setIndexPromoAndEvent}
-              indexEventByMoney={indexEventByMoney}
-              setIndexEventByMoney={setIndexEventByMoney}
-              getItemsForEventTypeMoney={getItemsForEventTypeMoney}
-            />
-          )}
+              <InputRewardByMoney
+                listItems={listItems}
+                successAlert={successAlert}
+                indexShop={indexShop}
+                setIndexShop={setIndexShop}
+                indexPromoAndEvent={indexPromoAndEvent}
+                listPartner={listPartner}
+                setIndexPromoAndEvent={setIndexPromoAndEvent}
+                indexEventByMoney={indexEventByMoney}
+                setIndexEventByMoney={setIndexEventByMoney}
+                getItemsForEventTypeMoney={getItemsForEventTypeMoney}
+              />
+            )}
+        </Col>
+        <Col md={6} style={{ margin: ".5rem 0" }}>
+          <h3>Link post</h3>
+          <Input placeholder="Get link post..." style={{ width: "100%" }} value={linkUrl} onChange={getLinkUrl} />
+          <div>
+            <p className='select-image-promotion'>Select thumbnail promotion</p>
+            <div style={{ width: "100%" }}>
+              {props.urlImgThumbnail === null ? <i>Thumbnail image is emtry</i> : <img src={props.urlImgThumbnail} style={{ maxHeight: "100%", maxWidth: "100%" }} />}
+            </div>
+            <a onClick={() => dispatchShowImagesNews(true)}>Select</a>
+          </div>
+          <ListImagesForNews isThumbnail={true} />
         </Col>
       </Row>
     </Router>
   );
 }
-export default CreatePromotion;
+function mapStateToProps(state) {
+  return {
+    visible: state.visibleModalNews,
+    urlImgThumbnail: state.urlImgThumbnail
+  };
+}
+export default connect(mapStateToProps, null)(CreatePromotion);
