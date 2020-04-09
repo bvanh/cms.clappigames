@@ -15,6 +15,7 @@ const createProduct = gql`
       sort
       price
       status
+      baseCoin
     }
   }
 `;

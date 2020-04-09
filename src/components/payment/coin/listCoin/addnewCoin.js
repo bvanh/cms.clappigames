@@ -63,14 +63,17 @@ function CreateProductCoin(props) {
   const [createCoin] = useMutation(createProduct, {
     variables: {
       req: {
-        productName: productName,
-        sort: Number(sort),
+        productName: productName + ' coin',
+        sort: Number(sort), 
         price: Number(price),
-        baseCoin: Number(price),
+        baseCoin: Number(productName),
         type: type,
         status: status,
         image: props.urlImgThumbnail
       }
+    },
+    onCompleted: data => {
+      console.log(data)
     },
     onError: index => alertErrorServer(index.networkError.result.errors[0].message)
   });
@@ -158,8 +161,10 @@ function CreateProductCoin(props) {
             </div>
           </div>
           <div className="product-input-update">
-            <span className="edit-product-content-title">C.coin name</span>
+            <span className="edit-product-content-title">C.coin number</span>
             <Input
+              type='number'
+              min='0'
               name="productName"
               onChange={getNameAndPriceAndSort}
               value={productName}

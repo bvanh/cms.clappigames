@@ -77,6 +77,7 @@ function InputRewardForShowByMoney(props) {
       }
     },
     onCompleted: async data => {
+      console.log(data)
       const newIndexEvent = { ...props.indexEventByMoney };
       newIndexEvent.itemsForEventByMoney = [
         ...props.indexEventByMoney.itemsForEventByMoney,

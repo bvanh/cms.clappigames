@@ -91,6 +91,7 @@ function InputrewardForShowByMoney(props) {
       }
     },
     onCompleted: async data => {
+      console.log(data)
       const newItem1 = {
         productName: data.createProduct.productName,
         productId: data.createProduct.productId
