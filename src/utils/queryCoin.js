@@ -21,6 +21,7 @@ const queryGetListCoin = gql`
         productId
         productName
         price
+        image
       }
     }
   }

@@ -46,6 +46,7 @@ function CreateAlbumFromComp(props) {
      delete data.singleUploadImage['path'];
      delete data.singleUploadImage['__typename'];
      delete data.singleUploadImage['name'];
+     delete data.singleUploadImage['status'];
     props.setImagesForAlbum([
       ...props.imagesForAlbum,
       JSON.stringify(data.singleUploadImage)

@@ -8,26 +8,27 @@ import {
   Col,
   Select,
   Icon,
-  Rate
+  Modal,
 } from "antd";
 import {
   dispatchShowImagesNews,
-  dispatchSetUrlImageThumbnail
+  dispatchSetUrlImageThumbnail,
 } from "../../../../redux/actions/index";
-import { alertErrorServer } from '../../../../utils/alertErrorAll'
+import { alertErrorServer } from "../../../../utils/alertErrorAll";
 import ListImagesForNews from "../../../news/modalImageUrl/imgsUrl";
 import { queryGetPaymentType } from "../../../../utils/queryPaymentAndPromoType";
 import { queryGetProductById } from "../../../../utils/queryCoin";
 import { updateProduct } from "../../../../utils/mutation/productCoin";
 import { useLazyQuery, useMutation, useQuery } from "@apollo/react-hooks";
-import { connect } from 'react-redux'
+import { connect } from "react-redux";
 import { Link } from "react-router-dom";
+import { deleteCoinProduct } from "../../../../utils/mutation/productCoin";
 import "../../../../static/style/listProducts.css";
 const { Option } = Select;
 const radioStyle = {
   display: "block",
   height: "24px",
-  lineHeight: "30px"
+  lineHeight: "30px",
 };
 function EditProductCoin(props) {
   const userName = localStorage.getItem("userNameCMS");
@@ -35,7 +36,7 @@ function EditProductCoin(props) {
   const productId = query.get("productId");
   const [oldDataProduct, setOldDataProduct] = useState({
     statusBtnCancel: false,
-    oldData: null
+    oldData: null,
   });
   const [dataProduct, setDataProduct] = useState({
     productName: "",
@@ -43,32 +44,51 @@ function EditProductCoin(props) {
     sort: null,
     price: null,
     status: "",
-    image: ""
+    image: "",
   });
-  const [paymentType, setPaymentType] = useState([{ name: "" }])
+  const [alertIndex, setAlertIndex] = useState({
+    isShow: false,
+    contentModal: "Do you want to countinue creating a new Item ?",
+    isDelete: false,
+    confirmBtn: "Back",
+    cancelBtn: "Cancel",
+  });
+  const [paymentType, setPaymentType] = useState([{ name: "" }]);
   const [getData] = useLazyQuery(queryGetProductById, {
     fetchPolicy: "cache-and-network",
-    onCompleted: data => {
+    onCompleted: (data) => {
       setDataProduct(data.listProducts[0]);
       setOldDataProduct({ ...oldDataProduct, oldData: data.listProducts[0] });
-      dispatchSetUrlImageThumbnail(data.listProducts[0].image)
+      dispatchSetUrlImageThumbnail(data.listProducts[0].image);
     },
-    onError: index => alertErrorServer(index.networkError.result.errors[0].message)
+    onError: (index) =>
+      alertErrorServer(index.networkError.result.errors[0].message),
   });
   const { data } = useQuery(queryGetPaymentType, {
-    onCompleted: data => {
+    onCompleted: (data) => {
       setPaymentType(data.__type.enumValues);
     },
-    onError: index => alertErrorServer(index.networkError.result.errors[0].message)
+    onError: (index) =>
+      alertErrorServer(index.networkError.result.errors[0].message),
+  });
+  const [deleteProduct] = useMutation(deleteCoinProduct, {
+    variables: {
+      ids: [productId],
+    },
+    onCompleted: (data) => console.log(data),
+    onError: (index) =>
+      alertErrorServer(index.networkError.result.errors[0].message),
   });
   useEffect(() => {
     getData({
       variables: {
-        productId: productId
-      }
+        productId: productId,
+      },
     });
   }, []);
+
   const { productName, status, price, sort, type, image } = dataProduct;
+  const { isShow, cancelBtn, confirmBtn, contentModal, isDelete } = alertIndex;
   const [updateCoin] = useMutation(updateProduct, {
     variables: {
       productId: productId,
@@ -79,32 +99,61 @@ function EditProductCoin(props) {
         baseCoin: Number(price),
         type: type,
         status: status,
-        image: props.urlImgThumbnail
-      }
+        image: props.urlImgThumbnail,
+      },
     },
-    onError: index => alertErrorServer(index.networkError.result.errors[0].message)
+    onError: (index) =>
+      alertErrorServer(index.networkError.result.errors[0].message),
   });
-  const getType = val => {
+  const getType = (val) => {
     setDataProduct({ ...dataProduct, type: val });
   };
-  const getNameAndPriceAndSort = e => {
+  const getNameAndPriceAndSort = (e) => {
     setDataProduct({ ...dataProduct, [e.target.name]: e.target.value });
     setOldDataProduct({ ...oldDataProduct, statusBtnCancel: false });
   };
-  const getStatus = e => {
+  const getStatus = (e) => {
     setDataProduct({ ...dataProduct, status: e.target.value });
   };
   const submitUpdateCoin = () => {
     let result = updateCoin();
-    result.then(val => {
+    result.then((val) => {
       if (val) {
         alert("update thành công!");
         setOldDataProduct({ ...oldDataProduct, statusBtnCancel: true });
       }
     });
   };
-  const cancelUpdate = () => {
-    setDataProduct(oldDataProduct.oldData);
+  const confirmDeleteCoin = () => {
+    setAlertIndex({
+      isShow: true,
+      contentModal: "Are you sure delete this c.coin ?",
+      confirmBtn: "Yes",
+      cancelBtn: "No",
+      isDelete: true,
+    });
+  };
+  const confirmBackToList = () => {
+    setAlertIndex({
+      ...alertIndex,
+      isShow: true,
+      isDelete: true,
+    });
+  };
+  const handleOk = () => {
+    if (isDelete) {
+      deleteProduct();
+    }
+    console.log("fsdf");
+  };
+  const handleCancel = () => {
+    setAlertIndex({
+      isShow: false,
+      contentModal: "Do you want to countinue creating a new Item ?",
+      isDelete: false,
+      confirmBtn: "Back",
+      cancelBtn: "Cancel",
+    });
   };
   const printPaymentTypes = paymentType.map((val, index) => (
     <Option value={val.name} key={index}>
@@ -114,23 +163,20 @@ function EditProductCoin(props) {
   if (dataProduct !== null) {
     return (
       <Row>
-        <Link to="/payment/coin">
-          <span>
-            <Icon type="arrow-left" style={{ paddingRight: ".2rem" }} />
-            Back
-          </span>
-        </Link>
+        <a onClick={confirmBackToList}>
+          <Icon type="arrow-left" style={{ paddingRight: ".2rem" }} />
+          Back
+        </a>
         <div className="products-title">
           <div>
             <h2>Update C.coin</h2>
             <div>
               <p>
                 <Button
-                  onClick={cancelUpdate}
-                  disabled={oldDataProduct.statusBtnCancel}
+                  onClick={confirmDeleteCoin}
                   style={{ marginRight: ".5rem" }}
                 >
-                  Cancel
+                  Delete C.coin
                 </Button>
                 <Button onClick={submitUpdateCoin}>Update C.coin</Button>
               </p>
@@ -220,6 +266,22 @@ function EditProductCoin(props) {
           </Col>
           <ListImagesForNews isThumbnail={true} />
         </Row>
+        <Modal
+          title="Confirm !"
+          visible={isShow}
+          okText={
+            isDelete ? (
+              <span onClick={() => handleOk()}>{confirmBtn}</span>
+            ) : (
+              <Link to="/payment/coin">{confirmBtn}</Link>
+            )
+          }
+          cancelText={cancelBtn}
+          onOK={() => handleOk()}
+          onCancel={handleCancel}
+        >
+          <p>{contentModal}</p>
+        </Modal>
       </Row>
     );
   }
@@ -228,7 +290,7 @@ function EditProductCoin(props) {
 function mapStateToProps(state) {
   return {
     visible: state.visibleModalNews,
-    urlImgThumbnail: state.urlImgThumbnail
+    urlImgThumbnail: state.urlImgThumbnail,
   };
 }
 export default connect(mapStateToProps, null)(EditProductCoin);

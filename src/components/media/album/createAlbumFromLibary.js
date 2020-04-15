@@ -3,14 +3,15 @@ import { Upload, Checkbox, Row, Col, Card, Icon, Button, Modal } from "antd";
 import UploadImages from "../upload";
 import { useQuery, useMutation } from "@apollo/react-hooks";
 import { queryListImages } from "../../../utils/queryMedia";
-import {errorAlert} from '../mediaService'
+import { errorAlert } from '../mediaService'
 
 const gridStyle = {
   width: "24%",
   textAlign: "center",
   padding: "2px",
   margin: ".5%",
-  position: "relative"
+  position: "relative",
+  height: "100px"
 };
 
 function CreateAlbumFromLibary(props) {
@@ -51,7 +52,7 @@ function CreateAlbumFromLibary(props) {
 
   const getImagesForAlbum = valImg => {
     props.setImagesForAlbum(valImg);
-    console.log(valImg);
+    // console.log(valImg);
   };
 
   const updateAlbum = () => {
@@ -64,15 +65,15 @@ function CreateAlbumFromLibary(props) {
       props.removeAlbumName();
     }
   };
-  const printListImages = data.listUploadedImages.map(function(val, index) {
+  const printListImages = data.listUploadedImages.map(function (val, index) {
     if (val.status !== "INVISIBLE") {
       return (
         <Card.Grid style={gridStyle} key={index}>
           <Checkbox
-            value={`{"id":${val.id},"status":"${val.status}","url":"${val.url}"}`}
+            value={`{"id":${val.id},"url":"${val.url}"}`}
             className="checkbox-image"
           >
-            <img src={val.url} alt={val.name} width="100%" />
+            <img src={val.url} alt={val.name} style={{ maxHeight: "90px", width: "100%" }} />
           </Checkbox>
         </Card.Grid>
       );
@@ -108,7 +109,7 @@ function CreateAlbumFromLibary(props) {
         <Row>
           <Col>
             {imagesForAlbum.length > 0 && (
-              <div className="btn-media-options">
+              <div style={{ paddingBottom: ".5rem" }}>
                 <span>
                   <Icon type="close" style={{ marginRight: "5px" }} />
                   <span>{imagesForAlbum.length}</span> items đã được chọn
@@ -116,7 +117,7 @@ function CreateAlbumFromLibary(props) {
               </div>
             )}
             <Checkbox.Group
-              style={{ width: "100%" }}
+              style={{ width: "100%", overflowY: "scroll", height: "50vh" }}
               value={imagesForAlbum}
               onChange={getImagesForAlbum}
             >

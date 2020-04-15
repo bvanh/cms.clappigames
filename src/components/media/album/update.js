@@ -97,10 +97,15 @@ function UpdateAlbum() {
     await setImagesForAlbum(newImages);
     submitUpdateAlbum();
   };
+  const addImgToAlbum = async arrImg => {
+    const addImg = [...imagesForAlbum, ...arrImg];
+    const newImagesAlbum = addImg.filter((val, index) => addImg.indexOf(val) === index)
+    setImagesForAlbum(newImagesAlbum)
+  }
   const backScreenUpdate = () => {
     setPickDataImages({ fromComp: "", fromLibary: "" });
   };
-  const resetAlbumName = () => {};
+  const resetAlbumName = () => { };
   const showImage = val => {
     setPhotoIndex(val);
     setIsOpenImage(true);
@@ -149,24 +154,24 @@ function UpdateAlbum() {
             </div>
           </div>
         ) : (
-          <div
-            className="menu-images"
-            style={{ justifyContent: "space-between", alignItems: "center" }}
-          >
-            <Link to="/media/album">
-              <h3>
-                <Icon type="arrow-left" style={{ marginRight: ".5rem" }} />
+            <div
+              className="menu-images"
+              style={{ justifyContent: "space-between", alignItems: "center" }}
+            >
+              <Link to="/media/album">
+                <h3>
+                  <Icon type="arrow-left" style={{ marginRight: ".5rem" }} />
                 List album
               </h3>
-            </Link>
-            <span
-              style={{ color: "red", cursor: "pointer" }}
-              onClick={() => setIsShowAlert(true)}
-            >
-              Delete album
+              </Link>
+              <span
+                style={{ color: "red", cursor: "pointer" }}
+                onClick={() => setIsShowAlert(true)}
+              >
+                Delete album
             </span>
-          </div>
-        )}
+            </div>
+          )}
         <Checkbox.Group
           style={{ width: "100%" }}
           onChange={onChange}
@@ -185,8 +190,8 @@ function UpdateAlbum() {
             prevSrc={
               JSON.parse(
                 imagesForAlbum[
-                  (photoIndex + imagesForAlbum.length - 1) %
-                    imagesForAlbum.length
+                (photoIndex + imagesForAlbum.length - 1) %
+                imagesForAlbum.length
                 ]
               ).url
             }
@@ -235,7 +240,7 @@ function UpdateAlbum() {
           )}
           {fromLibary === "pickFromLibary" && (
             <CreateAlbumFromLibary
-              setImagesForAlbum={setImagesForAlbum}
+              setImagesForAlbum={addImgToAlbum}
               submitCreateAndUpdateAlbum={submitUpdateAlbum}
               refetch={refetch}
               imagesForAlbum={imagesForAlbum}
