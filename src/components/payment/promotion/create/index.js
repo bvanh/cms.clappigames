@@ -19,7 +19,7 @@ import { connect } from 'react-redux'
 import moment from "moment";
 import {
   initialIndexEventByMoney,
-  initialIndexPromo,
+  initialIndexPromo,  
   initiallistPartner
 } from "../promoService";
 import {
@@ -58,8 +58,7 @@ function CreatePromotion(props) {
     dates: [],
     daily: [],
     startTime: "00:00:00",
-    endTime: "00:00:00",
-    linkUrl: null
+    endTime: "00:00:00"
   });
   const [indexGameForPromo, setIndexGameForPromo] = useState({
     platformId: "",
@@ -90,7 +89,7 @@ function CreatePromotion(props) {
     dispatchSetUrlImageThumbnail(null);
   }, []);
   const isTimeInPromo = null;
-  const { platformId, status, server, linkUrl } = indexPromoAndEvent;
+  const { platformId, status, server } = indexPromoAndEvent;
   const { listGame, listItems, listServer } = listPartner;
   const { data } = useQuery(getListPartnerProducts(platformId), {
     onCompleted: data => {
@@ -251,9 +250,6 @@ function CreatePromotion(props) {
       }
     });
   };
-  const getLinkUrl = e => {
-    setIndexPromoAndEvent({ ...indexPromoAndEvent, linkUrl: e.target.value })
-  }
   return (
     <Router>
       <Row className="container-promotion">
@@ -344,13 +340,13 @@ function CreatePromotion(props) {
               />
             )}
         </Col>
-        <Col md={6} style={{ margin: ".5rem 0" }}>
+        <Col md={6}>
           <h3>Link post</h3>
-          <Input placeholder="Get link post..." style={{ width: "100%" }} value={linkUrl} onChange={getLinkUrl} />
+          <Input placeholder="Get link post..." style={{width:"100%"}}/>
           <div>
-            <p className='select-image-promotion'>Select thumbnail promotion</p>
+            <p>Select thumbnail promotion</p>
             <div style={{ width: "100%" }}>
-              {props.urlImgThumbnail === null ? <i>Thumbnail image is emtry</i> : <img src={props.urlImgThumbnail} style={{ maxHeight: "100%", maxWidth: "100%" }} />}
+            {props.urlImgThumbnail === null ? <i>Thumbnail image is emtry</i> : <img src={props.urlImgThumbnail} width="100%" />}
             </div>
             <a onClick={() => dispatchShowImagesNews(true)}>Select</a>
           </div>

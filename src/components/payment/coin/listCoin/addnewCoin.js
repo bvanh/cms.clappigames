@@ -50,12 +50,6 @@ function CreateProductCoin(props) {
     price: null,
     status: "INPUT"
   });
-  const [alertIndex, setAlertIndex] = useState({
-    isShow: false,
-    content: "Do you want to countinue creating a new C.coin package?",
-    isDelete: false,
-    confirmBtn: "Back"
-  });
   useEffect(() => {
     dispatchSetUrlImageThumbnail(null);
   }, []);
@@ -63,17 +57,14 @@ function CreateProductCoin(props) {
   const [createCoin] = useMutation(createProduct, {
     variables: {
       req: {
-        productName: productName + ' coin',
-        sort: Number(sort), 
+        productName: productName,
+        sort: Number(sort),
         price: Number(price),
-        baseCoin: Number(productName),
+        baseCoin: Number(price),
         type: type,
         status: status,
         image: props.urlImgThumbnail
       }
-    },
-    onCompleted: data => {
-      console.log(data)
     },
     onError: index => alertErrorServer(index.networkError.result.errors[0].message)
   });
@@ -100,25 +91,31 @@ function CreateProductCoin(props) {
   };
   const submitUpdateCoin = () => {
     let result = createCoin();
-    result.then(val => {
+    result.then(async val => {
       if (val) {
-        setAlertIndex({ ...alertIndex, isShow: true, content: "Create new C.coin package successful !" });
         setDataProduct(oldDataProduct.oldData);
-        dispatchSetUrlImageThumbnail(null)
+        dispatchSetUrlImageThumbnail(null);
+        showConfirm("Create new C.coin package successful !" );
       }
     });
   };
   const getType = val => {
     setDataProduct({ ...dataProduct, type: val });
   };
-  const handleCancel = () => {
-    setAlertIndex({ ...alertIndex, isShow: false })
+  const showConfirm = (val) => {
+    Modal.confirm({
+      title: val,
+      okText: "Back",
+      cancelText: "Next",
+      onOk() {
+        props.setIsCreateCoin(false);
+      },
+      onCancel() {
+        console.log("Cancel");
+      }
+    });
   };
-  const handleOk = () => {
-    // setAlertIndex({ ...alertIndex, isShow: false })
-    // props.setIsCreateCoin(true);
-    console.log('fsfsf')
-  }
+
   const { enumValues } = props.data.__type;
   const printPaymentTypes = enumValues.map((val, index) => (
     <Option value={val.name} key={index}>
@@ -127,7 +124,7 @@ function CreateProductCoin(props) {
   ));
   return (
     <Row>
-      <a onClick={() => setAlertIndex({ ...alertIndex, isShow: true })}>
+      <a onClick={()=>showConfirm("Do you want to countinue creating a new C.coin package?")}>
         <span>
           <Icon type="arrow-left" style={{ paddingRight: ".2rem" }} />
           Back
@@ -139,7 +136,7 @@ function CreateProductCoin(props) {
           <div>
             <p>
               <Button
-                onClick={() => setAlertIndex({ ...alertIndex, isShow: true })}
+                onClick={()=>showConfirm("Do you want to countinue creating a new C.coin package?")}
                 disabled={oldDataProduct.statusBtnCancel}
                 style={{ marginRight: ".5rem" }}
               >
@@ -161,10 +158,8 @@ function CreateProductCoin(props) {
             </div>
           </div>
           <div className="product-input-update">
-            <span className="edit-product-content-title">C.coin number</span>
+            <span className="edit-product-content-title">C.coin name</span>
             <Input
-              type='number'
-              min='0'
               name="productName"
               onChange={getNameAndPriceAndSort}
               value={productName}
@@ -243,16 +238,6 @@ function CreateProductCoin(props) {
         </Col>
         <ListImagesForNews isThumbnail={true} />
       </Row>
-      <Modal
-        title="Confirm !"
-        visible={alertIndex.isShow}
-        okText="Back"
-        cancelText="Next"
-        onOK={handleOk}
-        onCancel={handleCancel}
-      >
-        <p>{alertIndex.content}</p>
-      </Modal>
     </Row>
   );
 }

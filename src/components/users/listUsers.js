@@ -158,7 +158,7 @@ function Danhsach() {
       <div className="btn-search-charges">
         <div>
           <Input
-            placeholder={`Search by Username, UserId...`}
+            placeholder={`Search by Username, ChargeId...`}
             onChange={e => getValueSearch(e)}
             value={search}
             style={{ marginRight: ".2rem" }}

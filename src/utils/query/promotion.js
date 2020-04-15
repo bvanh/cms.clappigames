@@ -100,8 +100,6 @@ query {
     server
     type
     shop
-    imageUrl
-    linkUrl
   }
 }
 `}
@@ -115,8 +113,6 @@ query {
     paymentType
     config
     status
-    linkUrl
-    imageUrl
   }
 }
 `}

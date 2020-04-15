@@ -8,7 +8,7 @@ import {
   Col,
   Select,
   Icon,
-  Rate
+  Modal
 } from "antd";
 import {
   dispatchShowImagesNews,
@@ -44,6 +44,12 @@ function EditProductCoin(props) {
     price: null,
     status: "",
     image: ""
+  });
+  const [alertIndex, setAlertIndex] = useState({
+    isShow: false,
+    content: "Updating successful C.coin package !",
+    isDelete: false,
+    confirmBtn: "Back"
   });
   const [paymentType, setPaymentType] = useState([{ name: "" }])
   const [getData] = useLazyQuery(queryGetProductById, {
@@ -97,12 +103,9 @@ function EditProductCoin(props) {
   const submitUpdateCoin = () => {
     let result = updateCoin();
     result.then(val => {
-      if (val) {
-        alert("update thành công!");
-        setOldDataProduct({ ...oldDataProduct, statusBtnCancel: true });
-      }
+      setAlertIndex({ ...alertIndex, isShow: true })
     });
-  };
+  }
   const cancelUpdate = () => {
     setDataProduct(oldDataProduct.oldData);
   };
@@ -114,19 +117,21 @@ function EditProductCoin(props) {
   if (dataProduct !== null) {
     return (
       <Row>
-        <Link to="/payment/coin">
-          <span>
+        <a onClick={() => setAlertIndex({
+          ...alertIndex, isShow: true, content: "Do you want continute update this C.coin?"
+        })} >
+          < span >
             <Icon type="arrow-left" style={{ paddingRight: ".2rem" }} />
             Back
           </span>
-        </Link>
+        </a>
         <div className="products-title">
           <div>
             <h2>Update C.coin</h2>
             <div>
               <p>
                 <Button
-                  onClick={cancelUpdate}
+                  onClick={() => setAlertIndex({ ...alertIndex, isShow: true, content: "Do you want continute update this C.coin?" })}
                   disabled={oldDataProduct.statusBtnCancel}
                   style={{ marginRight: ".5rem" }}
                 >
@@ -220,7 +225,16 @@ function EditProductCoin(props) {
           </Col>
           <ListImagesForNews isThumbnail={true} />
         </Row>
-      </Row>
+        <Modal
+          title='Confirm!'
+          visible={alertIndex.isShow}
+          okText={<Link to="/payment/coin">{alertIndex.confirmBtn}</Link>}
+          cancelText="Next"
+          onCancel={() => setAlertIndex({ ...alertIndex, isshow: false })}
+        >
+          <p>{alertIndex.content}</p>
+        </Modal>
+      </Row >
     );
   }
   return <p>Loading...</p>;

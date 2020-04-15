@@ -9,13 +9,13 @@ import {
   Radio,
   DatePicker,
   Select,
-  TimePicker
+  TimePicker,
 } from "antd";
 import { useLazyQuery, useMutation, useQuery } from "@apollo/react-hooks";
 import "../../../../../static/style/promotion.css";
 import {
   getPromotionType,
-  getEventPaymentType
+  getEventPaymentType,
 } from "../../../../../utils/queryPaymentAndPromoType";
 import { queryGetPlatform } from "../../../../../utils/queryPlatform";
 import { getListPartnerProducts } from "../../../../../utils/queryPartnerProducts";
@@ -25,7 +25,7 @@ import { indexAllServer } from "../../promoService";
 import { connect } from "react-redux";
 import {
   dispatchTypeEventByMoney,
-  dispatchNameEventByMoney
+  dispatchNameEventByMoney,
 } from "../../../../../redux/actions";
 const { Option } = Select;
 const { RangePicker } = DatePicker;
@@ -33,83 +33,89 @@ const { RangePicker } = DatePicker;
 const eventMoneyType = [
   {
     value: "COIN",
-    description: "C.Coin"
+    description: "C.Coin",
   },
   {
     value: "INKIND",
-    description: "Gift's out game"
-  }
+    description: "Gift's out game",
+  },
 ];
 const eventCointype = [
   {
     value: "ITEM",
-    description: "Gift's in game"
-  }
+    description: "Gift's in game",
+  },
 ];
-const MenuRewardEventByMoney = props => {
+const MenuRewardEventByMoney = (props) => {
   const { server } = props;
   const { listGame } = props.listPartner;
   const { platformId } = props.indexPromoAndEvent;
   const [eventByMoneyIndex, setEventByMoneyIndex] = useState({
     eventType: [],
     eventPaymentType: [],
-    value: ""
+    value: "",
   });
   const [listServer, setListServer] = useState([indexAllServer]);
   const { eventType, eventPaymentType, value } = eventByMoneyIndex;
   useQuery(getListServer(platformId), {
-    onCompleted: data => {
+    onCompleted: (data) => {
       setListServer([...data.listPartnerServers, indexAllServer]);
-    }
+    },
   });
   useMemo(() => {
     dispatchNameEventByMoney("MONEY");
     setEventByMoneyIndex({
       ...eventByMoneyIndex,
       eventPaymentType: eventMoneyType,
-      value: "INKIND"
+      value: "INKIND",
     });
     dispatchTypeEventByMoney("INKIND");
     props.setIndexEventByMoney({
       ...props.indexEventByMoney,
-      isPaymentTypeByCoin: false
+      isPaymentTypeByCoin: false,
     });
   }, [props.switchTypeEvent]);
   useQuery(getEventPaymentType, {
-    onCompleted: data =>
+    fetchPolicy: "cache-and-network",
+    onCompleted: (data) => {
       setEventByMoneyIndex({
         ...eventByMoneyIndex,
-        eventType: data.__type.enumValues
-      })
+        eventType: data.__type.enumValues,
+      });
+    },
+    onError: (data) => console.log(data),
   });
-  const handleChangePaymentType = async val => {
+  // useEffect(() => {
+    
+  // }, []);
+  const handleChangePaymentType = async (val) => {
     if (val === "MONEY") {
       dispatchNameEventByMoney(val);
       setEventByMoneyIndex({
         ...eventByMoneyIndex,
         eventPaymentType: eventMoneyType,
-        value: "INKIND"
+        value: "INKIND",
       });
       dispatchTypeEventByMoney("INKIND");
       props.setIndexEventByMoney({
         ...props.indexEventByMoney,
-        isPaymentTypeByCoin: false
+        isPaymentTypeByCoin: false,
       });
     } else if (val === "COIN") {
       dispatchNameEventByMoney(val);
       setEventByMoneyIndex({
         ...eventByMoneyIndex,
         eventPaymentType: eventCointype,
-        value: "ITEM"
+        value: "ITEM",
       });
       dispatchTypeEventByMoney("ITEM");
       props.setIndexEventByMoney({
         ...props.indexEventByMoney,
-        isPaymentTypeByCoin: true
+        isPaymentTypeByCoin: true,
       });
     }
   };
-  const handleChanePaymentTypeByMoney = async val => {
+  const handleChanePaymentTypeByMoney = async (val) => {
     if (val === "COIN") {
       // props.getItemsForEventTypeMoney();
     }
@@ -196,7 +202,7 @@ function mapStateToProps(state) {
   return {
     typeEventByMoney: state.typeEventByMoney,
     nameEventByMoney: state.nameEventByMoney,
-    listPartners: state.listPartner
+    listPartners: state.listPartner,
   };
 }
 export default connect(mapStateToProps, null)(MenuRewardEventByMoney);

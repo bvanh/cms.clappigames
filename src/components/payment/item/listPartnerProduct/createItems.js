@@ -9,7 +9,7 @@ import {
   Select,
   Icon,
   Modal
-} from "antd";
+} from "antd"
 import {
   dispatchShowImagesNews,
   dispatchSetUrlImageThumbnail
@@ -56,12 +56,7 @@ function CreatePartnerItems(props) {
     promotionId: "",
     status: ""
   });
-  const [alertIndex, setAlertIndex] = useState({
-    isShow: false,
-    content: "Do you want to countinue creating a new Item ?",
-    isDelete: false,
-    confirmBtn: "Back"
-  });
+
   useEffect(() => {
     dispatchSetUrlImageThumbnail(null);
   }, []);
@@ -121,7 +116,7 @@ function CreatePartnerItems(props) {
     let result = createItem();
     result.then(val => {
       if (val) {
-        alert("Task is completed !");
+        showConfirm("Create new Item successful !")
         setOldDataPartnerProduct({
           ...oldDataPartnerProduct,
           statusBtnCancel: true
@@ -144,14 +139,6 @@ function CreatePartnerItems(props) {
     await setDataPartnerProduct({ ...dataPartnerProduct, partnerId: val });
     getRefPartnerProduct();
   }
-  const handleCancel = () => {
-    setAlertIndex({ ...alertIndex, isShow: false })
-  };
-  const handleOk = (val) => {
-    // setAlertIndex({ ...alertIndex, isShow: false })
-    // props.setIsCreateCoin(true);
-    console.log(val)
-  }
   const printPlatform = dataListPlatform.map((val, index) => (
     <Option value={val.partnerId} key={index}>
       {val.partnerName}
@@ -171,22 +158,22 @@ function CreatePartnerItems(props) {
       );
     }
   });
-  // const showConfirm = () => {
-  //   Modal.confirm({
-  //     title: "Do you want to countinue creating a new Item?",
-  //     okText: "Back",
-  //     cancelText: "Next",
-  //     onOk() {
-  //       props.setIsCreateItem(false);
-  //     },
-  //     onCancel() {
-  //       console.log("Cancel");
-  //     }
-  //   });
-  // };
+  const showConfirm = (val) => {
+    Modal.confirm({
+      title: val,
+      okText: "Back",
+      cancelText: "Next",
+      onOk() {
+        props.setIsCreateItem(false);
+      },
+      onCancel() {
+        console.log("Cancel");
+      }
+    });
+  };
   return (
     <Row>
-      <Link to="/payment/items" onClick={() => setAlertIndex({ ...alertIndex, isShow: true })}>
+      <Link to="/payment/items" onClick={()=>showConfirm("Do you want continute create new Item?")}>
         <span>
           <Icon type="arrow-left" style={{ paddingRight: ".2rem" }} />
         Back
@@ -198,7 +185,7 @@ function CreatePartnerItems(props) {
           <div>
             <p>
               <Button
-                onClick={() => setAlertIndex({ ...alertIndex, isShow: true })}
+                onClick={()=>showConfirm("Do you want continute create new Item?")}
                 disabled={oldDataPartnerProduct.statusBtnCancel}
                 style={{ marginRight: ".5rem" }}
               >
@@ -303,16 +290,6 @@ function CreatePartnerItems(props) {
         </Col>
         <ListImagesForNews isThumbnail={true} />
       </Row>
-      <Modal
-        title="Confirm !"
-        visible={alertIndex.isShow}
-        okText="Back"
-        cancelText="Next"
-        onOK={handleOk}
-        onCancel={handleCancel}
-      >
-        <p>{alertIndex.content}</p>
-      </Modal>
     </Row>
   );
 }

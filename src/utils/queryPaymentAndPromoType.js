@@ -28,6 +28,7 @@ const getEventPaymentType = gql`
       name
       enumValues {
         name
+        description
       }
     }
   }

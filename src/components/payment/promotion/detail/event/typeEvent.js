@@ -29,9 +29,11 @@ function TypeEvent(props) {
   ]);
   const { name, status, eventTime, config, paymentType } = props.detailPromo;
   const [getListGame] = useLazyQuery(queryGetPlatform, {
+    fetchPolicy:"cache-and-network",
     onCompleted: data => setListGame(data.listPartners)
   });
   const [getServers] = useLazyQuery(getListServer(props.dataDetail.game), {
+    fetchPolicy:"cache-and-network",
     onCompleted: data => {
       setListServer([
         {
@@ -46,6 +48,7 @@ function TypeEvent(props) {
   const [getPartnerProducts] = useLazyQuery(
     getListPartnerProducts(props.dataDetail.game),
     {
+      fetchPolicy:"cache-and-network",
       onCompleted: data => {
         setProductsEventTypeItem(data.listPartnerProducts);
       }

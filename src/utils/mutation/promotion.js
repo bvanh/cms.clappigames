@@ -15,7 +15,6 @@ const createItemEvent = gql`
     createProduct(req: $req) {
       productName
       productId
-      baseCoin
     }
   }
 `;

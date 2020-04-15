@@ -108,7 +108,7 @@ function ListEvents(props) {
       variables: {
         currentPage: currentPage,
         pageSize: pageSize,
-        status: statusValue,
+        status: status,
         paymentType: paymentType,
         name: name
       }

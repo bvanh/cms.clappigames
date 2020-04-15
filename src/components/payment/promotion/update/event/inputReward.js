@@ -50,8 +50,7 @@ function InputRewardForShowByMoney(props) {
     dates,
     daily,
     startTime,
-    endTime,
-    linkUrl
+    endTime
   } = props.indexPromoAndEvent;
   useEffect(() => {
     dispatchTypeEventByMoney(type);
@@ -77,7 +76,6 @@ function InputRewardForShowByMoney(props) {
       }
     },
     onCompleted: async data => {
-      console.log(data)
       const newIndexEvent = { ...props.indexEventByMoney };
       newIndexEvent.itemsForEventByMoney = [
         ...props.indexEventByMoney.itemsForEventByMoney,
@@ -467,8 +465,7 @@ function mapStateToProps(state) {
     typeEventByMoney: state.typeEventByMoney,
     nameEventByMoney: state.nameEventByMoney,
     detailPromo: state.detailPromo,
-    indexConfig: state.indexConfig,
-    imageUrl:state.imgUrlThumbnail
+    indexConfig: state.indexConfig
   };
 }
 export default connect(mapStateToProps, null)(InputRewardForShowByMoney);

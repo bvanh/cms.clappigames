@@ -28,9 +28,11 @@ function TypePromotion(props) {
     server
   } = props.detailPromo;
   const [getListGame] = useLazyQuery(queryGetPlatform, {
+    fetchPolicy:"cache-and-network",
     onCompleted: data => setListGame(data.listPartners)
   });
   const [getServers] = useLazyQuery(getListServer(game), {
+    fetchPolicy:"cache-and-network",
     onCompleted: data => {
       setListServer([
         {
@@ -42,6 +44,7 @@ function TypePromotion(props) {
     }
   });
   const [getPartnerProducts] = useLazyQuery(getListPartnerProducts(game), {
+    fetchPolicy:"cache-and-network",
     onCompleted: data => {
       setItemForEventTypeItem(data.listPartnerProducts);
     }
