@@ -57,6 +57,15 @@ const MenuRewardEventByMoney = props => {
   });
   const [listServer, setListServer] = useState([indexAllServer]);
   const { eventType, eventPaymentType, value } = eventByMoneyIndex;
+  useQuery(getEventPaymentType, {
+    onCompleted: data =>{
+      console.log(data)
+      setEventByMoneyIndex({
+        ...eventByMoneyIndex,
+        eventType: data.__type.enumValues
+      })
+    }
+  });
   useQuery(getListServer(platformId), {
     onCompleted: data => {
       setListServer([...data.listPartnerServers, indexAllServer]);
@@ -75,13 +84,6 @@ const MenuRewardEventByMoney = props => {
       isPaymentTypeByCoin: false
     });
   }, [props.switchTypeEvent]);
-  useQuery(getEventPaymentType, {
-    onCompleted: data =>
-      setEventByMoneyIndex({
-        ...eventByMoneyIndex,
-        eventType: data.__type.enumValues
-      })
-  });
   const handleChangePaymentType = async val => {
     if (val === "MONEY") {
       dispatchNameEventByMoney(val);
