@@ -28,7 +28,7 @@ function ListCoin(props) {
   const [pageIndex, setPageIndex] = useState({
     currentPage: 1,
     type: "",
-    pageSize: 100,
+    pageSize: 10,
     productName: "",
     listTypePayment: [{ name: "", description: "" }]
   });
@@ -99,18 +99,25 @@ function ListCoin(props) {
   // console.log(convertPaymentType(listTypePayment,"GA"))
   // eslint-disable-next-line no-sparse-arrays
   const columns = [
-    {
-      title: "C.coin Id",
-      dataIndex: "productId",
-      key: "productId",
-      width: "15%",
-      render: index => <span className="convert-col">{index}</span>
-    },
+    // {
+    //   title: "C.coin Id",
+    //   dataIndex: "productId",
+    //   key: "productId",
+    //   width: "15%",
+    //   render: index => <span className="convert-col">{index}</span>
+    // },
     {
       title: "C.coin Name",
       dataIndex: "productName",
       key: "productName",
-      width: "20%"
+      width: "25%",
+      render: (text, record) => (
+        <span>
+          <Link to={`/payment/coin/edit?productId=${record.productId}`}>
+            {text}
+          </Link>
+        </span>
+      )
     },
     ,
     {
@@ -118,13 +125,13 @@ function ListCoin(props) {
       dataIndex: "price",
       key: "price",
       render: price => <span>{price.toLocaleString()} đ</span>,
-      width: "20%"
+      width: "25%"
     },
     {
       title: "Promotion",
       dataIndex: "discount",
       key: "discount",
-      width: "10%"
+      width: "15%"
     },
     {
       title: "Type",
@@ -163,68 +170,67 @@ function ListCoin(props) {
       )
     },
     {
-      title: "Action",
-      key: "action",
+      title: "Image",
+      dataIndex: "image",
+      key: "img",
       width: "15%",
-      render: (text, record) => (
-        <span>
-          <Link to={`/payment/coin/edit?productId=${record.productId}`}>
-            Edit
-          </Link>
-        </span>
-      )
+      render: index => <img src={index} width='100%' />
     }
   ];
-  const rowSelection = {
-    onChange: (selectRowsKeys, selectedRows) => {
-      const itemsIdForDelete = selectedRows.map((val, index) => val.productId);
-      setItemsForDelete(itemsIdForDelete);
-    }
-  };
-  const submitDeleteProduct = async () => {
-    const demo = await deleteProduct();
-    refetch();
-  };
+  // const rowSelection = {
+  //   onChange: (selectRowsKeys, selectedRows) => {
+  //     const itemsIdForDelete = selectedRows.map((val, index) => val.productId);
+  //     setItemsForDelete(itemsIdForDelete);
+  //   }
+  // };
+  // const submitDeleteProduct = async () => {
+  //   const demo = await deleteProduct();
+  //   refetch();
+  // };
   const printOptionsType = listTypePayment.map((val, index) => (
     <Radio style={radioStyle} value={val.name} key={index}>
       {val.name}
     </Radio>
   ));
-  const hasSelected = itemsForDelete.length > 0;
-  if (loading)
-    return (
-      <Col md={12}>
-        <p>loading...</p>
-      </Col>
-    );
+  // const hasSelected = itemsForDelete.length > 0;
+  // if (loading)
+  //   return (
+  //     <Col md={12}>
+  //       <p>loading...</p>
+  //     </Col>
+  //   );
   return (
     <>
       <div className="products-title">
         <div>
           <h2>C.coin managerment</h2>
           <div className="view-more">
+          <Link className="btn-view-more" to="/payment/coin/listccoin/detail">
+              Detail <Icon type="double-right" />
+            </Link>
             <Link
               to="/payment/coin"
               onClick={() => props.setIsCreateCoin(true)}
             >
               <Button icon="plus">Add new C.coin package</Button>
             </Link>
-            <Button
+            {/* <Button
               disabled={!hasSelected}
               onClick={submitDeleteProduct}
               style={{ marginLeft: ".25rem" }}
             >
               Delete
-            </Button>
+            </Button> */}
           </div>
         </div>
       </div>
       {dataCoin && (
         <>
           <Table
-            rowSelection={rowSelection}
+            // rowSelection={rowSelection}
             columns={columns}
             dataSource={dataCoin.listProductsByPaymentType.rows}
+            pagination={false}
           />
         </>
       )}

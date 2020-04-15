@@ -74,7 +74,7 @@ function Detail(props) {
                 {/* <img src={importImage['avatar-detail.png']}/> */}
                 <b>{username}</b>
                 <p>C.coin: {coin}</p>
-                <p>UserId: {userId}</p>
+                <p>UserId: {fakeId}</p>
               </Col>
               {isUpdate ? (
                 <UpdateInforUser
