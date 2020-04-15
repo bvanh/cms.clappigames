@@ -59,7 +59,6 @@ const MenuRewardEventByMoney = props => {
   const { eventType, eventPaymentType, value } = eventByMoneyIndex;
   useQuery(getEventPaymentType, {
     onCompleted: data =>{
-      console.log(data)
       setEventByMoneyIndex({
         ...eventByMoneyIndex,
         eventType: data.__type.enumValues
