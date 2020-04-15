@@ -1,12 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
 import {
-  Table,
-  Button,
-  Pagination,
-  Input,
-  Row,
-  Col,
-  Radio,
   DatePicker,
   Select,
   TimePicker
@@ -17,9 +10,7 @@ import {
   getPromotionType,
   getEventPaymentType
 } from "../../../../../utils/queryPaymentAndPromoType";
-import { queryGetPlatform } from "../../../../../utils/queryPlatform";
-import { getListPartnerProducts } from "../../../../../utils/queryPartnerProducts";
-import { BrowserRouter as Router, Route, Link } from "react-router-dom";
+import { alertErrorServer } from '../../../../../utils/alertErrorAll'
 import { getListServer } from "../../../../../utils/query/promotion";
 import { indexAllServer } from "../../promoService";
 import { connect } from "react-redux";
@@ -57,19 +48,27 @@ const MenuRewardEventByMoney = props => {
   });
   const [listServer, setListServer] = useState([indexAllServer]);
   const { eventType, eventPaymentType, value } = eventByMoneyIndex;
-  useQuery(getEventPaymentType, {
-    onCompleted: data =>{
+  const [getListPaymentType] = useLazyQuery(getEventPaymentType, {
+    fetchPolicy:"cache-and-network",
+    onCompleted: data => {
       setEventByMoneyIndex({
         ...eventByMoneyIndex,
         eventType: data.__type.enumValues
       })
-    }
+    },
+    onError: index => alertErrorServer(index.networkError.result.errors[0].message)
   });
-  useQuery(getListServer(platformId), {
+  const [getListServe] = useLazyQuery(getListServer(platformId), {
+    fetchPolicy:"cache-and-network",
     onCompleted: data => {
       setListServer([...data.listPartnerServers, indexAllServer]);
-    }
+    },
+    onError: index => alertErrorServer(index.networkError.result.errors[0].message)
   });
+  useEffect(()=>{
+    getListPaymentType();
+    getListServe();
+  },[])
   useMemo(() => {
     dispatchNameEventByMoney("MONEY");
     setEventByMoneyIndex({

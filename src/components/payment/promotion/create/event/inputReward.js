@@ -1,4 +1,4 @@
-import React, { useState, useMemo, isValidElement } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { Button, Input, Row, Col, Select, Modal, Radio, Icon } from "antd";
 import moment from "moment";
 import {
@@ -15,6 +15,7 @@ import {
   checkEndHour,
   checkStartHour
 } from "../../promoService";
+import { alertErrorServer } from '../../../../../utils/alertErrorAll'
 import { dispatchSaveIdCreateInUpdate } from "../../../../../redux/actions/index";
 import { useLazyQuery, useMutation, useQuery } from "@apollo/react-hooks";
 import { connect } from "react-redux";
@@ -51,11 +52,6 @@ function InputrewardForShowByMoney(props) {
       rewards: []
     }
   ]);
-  useQuery(getListItemsForEvent, {
-    onCompleted: data => {
-      setCoinEvent(data.listProducts);
-    }
-  });
   const { isShow, itemsForEventTypeMoney } = listItemForEvent;
   const resetInput = useMemo(() => {
     setIndexShop([
@@ -65,7 +61,15 @@ function InputrewardForShowByMoney(props) {
       }
     ]);
   }, [props.typeEventByMoney]);
-  useQuery(getListPartnerProducts(platformId), {
+  const [getItemsForEvent] = useLazyQuery(getListItemsForEvent, {
+    fetchPolicy: "cache-and-network",
+    onCompleted: data => {
+      setCoinEvent(data.listProducts);
+    },
+    onError: index => alertErrorServer(index.networkError.result.errors[0].message)
+  });
+  const [getPartnerProducts] = useLazyQuery(getListPartnerProducts(platformId), {
+    fetchPolicy: "cache-and-network",
     onCompleted: data => {
       setListItemForEvent({
         ...listItemForEvent,
@@ -77,8 +81,13 @@ function InputrewardForShowByMoney(props) {
           rewards: []
         }
       ]);
-    }
+    },
+    onError: index => alertErrorServer(index.networkError.result.errors[0].message)
   });
+  useEffect(() => {
+    getItemsForEvent();
+    getPartnerProducts();
+  }, [])
   const [createNewItemEvent] = useMutation(createItemEvent, {
     variables: {
       req: {
@@ -120,7 +129,7 @@ function InputrewardForShowByMoney(props) {
           data: indexShop
         }),
         linkUrl: linkUrl,
-        imageUrl:props.imageUrl
+        imageUrl: props.imageUrl
       }
     },
     onCompleted: data => {
