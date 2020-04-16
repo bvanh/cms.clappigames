@@ -17,7 +17,6 @@ function CoinsContainer(props) {
     totalPurchase: 0
   });
   const { data } = useQuery(queryGetPaymentType);
-  console.log(isCreateCoin)
   if (isCreateCoin)
     return <CreateProductCoin setIsCreateCoin={setIsCreateCoin} data={data} />;
   if (isCreateCoin === false)

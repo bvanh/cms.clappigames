@@ -44,9 +44,10 @@ function ListCoin(props) {
   const [getDataCoin, { loading, refetch }] = useLazyQuery(queryGetListCoin, {
     fetchPolicy: "cache-and-network",
     onCompleted: data => {
+      console.log(data)
       setDataCoin(data);
     },
-    onError: index => alertErrorServer(index.networkError.result.errors[0].message)
+    onError: index => alertErrorServer(index.message)
   });
   const { data } = useQuery(queryGetPaymentType, {
     onCompleted: data => {
@@ -54,13 +55,7 @@ function ListCoin(props) {
       setPageIndex({ ...pageIndex, listTypePayment: data.__type.enumValues });
       dispatchSetListPaymentType(data.__type.enumValues);
     },
-    onError: index => alertErrorServer(index.networkError.result.errors[0].message)
-  });
-  const [deleteProduct] = useMutation(deleteCoinProduct, {
-    variables: {
-      ids: itemsForDelete
-    },
-    onError: index => alertErrorServer(index.networkError.result.errors[0].message)
+    onError: index => alertErrorServer(index.message)
   });
   useEffect(() => {
     getDataCoin({
