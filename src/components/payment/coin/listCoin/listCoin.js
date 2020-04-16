@@ -175,10 +175,9 @@ function ListCoin(props) {
           <h2>C.coin managerment</h2>
           <div className="view-more">
           <Link className="btn-view-more" to="/payment/coin/detail">
-              Detail <Icon type="double-right" />
+              Detail <Icon type="double-right" className='icon-detail' />
             </Link>
             <Link
-              to="/payment/coin"
               onClick={() => props.setIsCreateCoin(true)}
             >
               <Button icon="plus">Add new C.coin package</Button>

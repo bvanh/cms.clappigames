@@ -8,23 +8,18 @@ import MenuRewardEventByMoney from "./event/menuReward";
 import ListImagesForNews from "../../../news/modalImageUrl/imgsUrl";
 import {
   dispatchShowImagesNews,
-  dispatchSetUrlImageThumbnail
+  dispatchSetUrlImageThumbnail,
 } from "../../../../redux/actions/index";
 import { InputNameAndTypeArea, InputTimeArea } from "./nameAndTimePromo";
 import { dispatchSwitchCreatePromo } from "../../../../redux/actions/index";
 import MenuRewardByItem from "./promotion/menuRewardItem";
 import { queryGetPlatform } from "../../../../utils/queryPlatform";
 import { getListPartnerProducts } from "../../../../utils/queryPartnerProducts";
-import { connect } from 'react-redux'
+import { connect } from "react-redux";
 import moment from "moment";
 import {
-  initialIndexEventByMoney,
-  initialIndexPromo,
-  initiallistPartner
-} from "../promoService";
-import {
   getListServer,
-  getListItemsForEvent
+  getListItemsForEvent,
 } from "../../../../utils/query/promotion";
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 
@@ -35,10 +30,10 @@ const initialIndexShop = [
     rewards: [
       {
         numb: 1,
-        itemId: []
-      }
-    ]
-  }
+        itemId: [],
+      },
+    ],
+  },
 ];
 function CreatePromotion(props) {
   const [switchTypeEvent, setSwitchTypeEvent] = useState(true);
@@ -50,88 +45,87 @@ function CreatePromotion(props) {
     type: "",
     typeEvent: "",
     timeTotal: [
-      moment()
-        .format("YYYY-MM-DD HH:mm:ss"),
-      moment()
-        .format("YYYY-MM-DD HH:mm:ss")
+      moment().format("YYYY-MM-DD HH:mm:ss"),
+      moment().format("YYYY-MM-DD HH:mm:ss"),
     ],
     dates: [],
     daily: [],
     startTime: "00:00:00",
     endTime: "00:00:00",
-    linkUrl: null
+    linkUrl: null,
+    prefix: "",
   });
   const [indexGameForPromo, setIndexGameForPromo] = useState({
     platformId: "",
-    server: ""
+    server: "",
   });
   const [listPartner, setListPartner] = useState({
     listGame: [{}],
     listServer: [
       {
         server: 0,
-        serverName: "All server"
-      }
+        serverName: "All server",
+      },
     ],
     listItems: [
       {
         productId: "",
-        partnerProductId: ""
-      }
-    ]
+        partnerProductId: "",
+      },
+    ],
   });
   const [indexEventByMoney, setIndexEventByMoney] = useState({
     paymentTypeByMoney: "",
     isPaymentTypeByCoin: false,
-    itemsForEventByMoney: [{ productName: "", productId: "" }]
+    itemsForEventByMoney: [{ productName: "", productId: "" }],
   });
   const [indexShop, setIndexShop] = useState(initialIndexShop);
   useEffect(() => {
     dispatchSetUrlImageThumbnail(null);
   }, []);
   const isTimeInPromo = null;
-  const { platformId, status, server, linkUrl } = indexPromoAndEvent;
+  const { platformId, status, server, linkUrl, prefix } = indexPromoAndEvent;
   const { listGame, listItems, listServer } = listPartner;
   const { data } = useQuery(getListPartnerProducts(platformId), {
-    onCompleted: data => {
+    onCompleted: (data) => {
       setListPartner({ ...listPartner, listItems: data.listPartnerProducts });
-    }
+    },
   });
   useQuery(queryGetPlatform, {
-    onCompleted: data => {
+    onCompleted: (data) => {
       setListPartner({ ...listPartner, listGame: data.listPartners });
-    }
+    },
   });
   const { data2 } = useQuery(getListServer(platformId), {
-    onCompleted: data => {
+    onCompleted: (data) => {
       setListPartner({
         ...listPartner,
         listServer: [
           {
             server: 0,
-            serverName: "All server"
+            serverName: "All server",
           },
-          ...data.listPartnerServers
-        ]
+          ...data.listPartnerServers,
+        ],
       });
-    }
+    },
   });
   const [getItemsForEventTypeMoney] = useLazyQuery(getListItemsForEvent, {
-    onCompleted: data => {
+    onCompleted: (data) => {
       setIndexEventByMoney({
         ...indexEventByMoney,
-        itemsForEventByMoney: data.listProducts
+        itemsForEventByMoney: data.listProducts,
       });
-    }
+    },
   });
-  const handleChangePlatform = e => {
+  const handleChangePlatform = (e) => {
     setIndexPromoAndEvent({
       ...indexPromoAndEvent,
       platformId: e,
-      server: ""
+      server: "",
     });
   };
-  const handleChangePlatformPromo = e => {
+  const handleChangePlatformPromo = (e) => {
     setIndexShop([
       {
         purchaseTimes: 1,
@@ -139,15 +133,15 @@ function CreatePromotion(props) {
         rewards: [
           {
             numb: 1,
-            itemId: []
-          }
-        ]
-      }
+            itemId: [],
+          },
+        ],
+      },
     ]);
     setIndexGameForPromo({
       ...indexGameForPromo,
       platformId: e,
-      server: ""
+      server: "",
     });
   };
   const resetGameAndServer = () => {
@@ -156,29 +150,29 @@ function CreatePromotion(props) {
       listServer: [
         {
           server: 0,
-          serverName: "All server"
-        }
-      ]
+          serverName: "All server",
+        },
+      ],
     });
     setIndexPromoAndEvent({
       ...indexPromoAndEvent,
       platformPromoId: "",
-      server: ""
+      server: "",
     });
   };
-  const setInfoPromo = e => {
+  const setInfoPromo = (e) => {
     setIndexPromoAndEvent({
       ...indexPromoAndEvent,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
-  const handleChangeServer = e => {
+  const handleChangeServer = (e) => {
     setIndexPromoAndEvent({ ...indexPromoAndEvent, server: e });
   };
-  const handleChangeServerPromo = e => {
+  const handleChangeServerPromo = (e) => {
     setIndexGameForPromo({ ...indexGameForPromo, server: e });
   };
-  const handleStartTimeTotal = value => {
+  const handleStartTimeTotal = (value) => {
     const newTimetotal = indexPromoAndEvent.timeTotal;
     newTimetotal[0] = moment(value).format("YYYY-MM-DD HH:mm") + ":00";
     const numbEndTime = Number(moment(newTimetotal[1]).format("x"));
@@ -189,56 +183,56 @@ function CreatePromotion(props) {
     }
     setIndexPromoAndEvent({
       ...indexPromoAndEvent,
-      timeTotal: newTimetotal
+      timeTotal: newTimetotal,
     });
   };
-  const handleEndTimeTotal = value => {
+  const handleEndTimeTotal = (value) => {
     const newTimetotal = indexPromoAndEvent.timeTotal;
     newTimetotal[1] = moment(value).format("YYYY-MM-DD hh:mm") + ":59";
     setIndexPromoAndEvent({
       ...indexPromoAndEvent,
-      timeTotal: newTimetotal
+      timeTotal: newTimetotal,
     });
   };
   const pickAllDay = () => {
     setIndexPromoAndEvent({
       ...indexPromoAndEvent,
       startTime: "00:00:00",
-      endTime: "23:59:59"
+      endTime: "23:59:59",
     });
   };
-  const handleChangeTypePromo = val => {
+  const handleChangeTypePromo = (val) => {
     setIndexPromoAndEvent({ ...indexPromoAndEvent, type: val });
   };
   const setTimePromo = (timeString, val) => {
     if (val === "startTime") {
       setIndexPromoAndEvent({
         ...indexPromoAndEvent,
-        startTime: timeString !== "" ? timeString + ":00" : ""
+        startTime: timeString !== "" ? timeString + ":00" : "",
       });
     } else {
       setIndexPromoAndEvent({
         ...indexPromoAndEvent,
-        endTime: timeString !== "" ? timeString + ":59" : ""
+        endTime: timeString !== "" ? timeString + ":59" : "",
       });
     }
   };
-  const handleChangeDaily = value => {
+  const handleChangeDaily = (value) => {
     setIndexPromoAndEvent({
       ...indexPromoAndEvent,
-      daily: value.sort((a, b) => a - b)
+      daily: value.sort((a, b) => a - b),
     });
   };
-  const handleChangeDates = value => {
+  const handleChangeDates = (value) => {
     setIndexPromoAndEvent({
       ...indexPromoAndEvent,
-      dates: value.sort((a, b) => a - b)
+      dates: value.sort((a, b) => a - b),
     });
   };
-  const handleChangelistPartner = val => {
+  const handleChangelistPartner = (val) => {
     setIndexPromoAndEvent({ ...indexPromoAndEvent, listPartner: val });
   };
-  const successAlert = val => {
+  const successAlert = (val) => {
     Modal.confirm({
       title: "Tạo khuyến mãi thành công",
       okText: "Xem danh sách",
@@ -248,12 +242,15 @@ function CreatePromotion(props) {
       },
       onCancel() {
         setSwitchTypeEvent(!switchTypeEvent);
-      }
+      },
     });
   };
-  const getLinkUrl = e => {
-    setIndexPromoAndEvent({ ...indexPromoAndEvent, linkUrl: e.target.value })
-  }
+  const getLinkUrlAndPrefix = (e) => {
+    setIndexPromoAndEvent({
+      ...indexPromoAndEvent,
+      [e.target.name]: e.target.value,
+    });
+  };
   return (
     <Router>
       <Row className="container-promotion">
@@ -295,18 +292,18 @@ function CreatePromotion(props) {
                 handleChangeServerPromo={handleChangeServerPromo}
               />
             ) : (
-                <MenuRewardEventByMoney
-                  switchTypeEvent={switchTypeEvent}
-                  indexPromoAndEvent={indexPromoAndEvent}
-                  indexEventByMoney={indexEventByMoney}
-                  setIndexEventByMoney={setIndexEventByMoney}
-                  getItemsForEventTypeMoney={getItemsForEventTypeMoney}
-                  server={server}
-                  listPartner={listPartner}
-                  handleChangePlatform={handleChangePlatform}
-                  handleChangeServer={handleChangeServer}
-                />
-              )}
+              <MenuRewardEventByMoney
+                switchTypeEvent={switchTypeEvent}
+                indexPromoAndEvent={indexPromoAndEvent}
+                indexEventByMoney={indexEventByMoney}
+                setIndexEventByMoney={setIndexEventByMoney}
+                getItemsForEventTypeMoney={getItemsForEventTypeMoney}
+                server={server}
+                listPartner={listPartner}
+                handleChangePlatform={handleChangePlatform}
+                handleChangeServer={handleChangeServer}
+              />
+            )}
           </div>
         </Col>
         <InputTimeArea
@@ -330,27 +327,52 @@ function CreatePromotion(props) {
               setIndexShop={setIndexShop}
             />
           ) : (
-              <InputRewardByMoney
-                listItems={listItems}
-                successAlert={successAlert}
-                indexShop={indexShop}
-                setIndexShop={setIndexShop}
-                indexPromoAndEvent={indexPromoAndEvent}
-                listPartner={listPartner}
-                setIndexPromoAndEvent={setIndexPromoAndEvent}
-                indexEventByMoney={indexEventByMoney}
-                setIndexEventByMoney={setIndexEventByMoney}
-                getItemsForEventTypeMoney={getItemsForEventTypeMoney}
-              />
-            )}
+            <InputRewardByMoney
+              listItems={listItems}
+              successAlert={successAlert}
+              indexShop={indexShop}
+              setIndexShop={setIndexShop}
+              indexPromoAndEvent={indexPromoAndEvent}
+              listPartner={listPartner}
+              setIndexPromoAndEvent={setIndexPromoAndEvent}
+              indexEventByMoney={indexEventByMoney}
+              setIndexEventByMoney={setIndexEventByMoney}
+              getItemsForEventTypeMoney={getItemsForEventTypeMoney}
+            />
+          )}
         </Col>
         <Col md={6} style={{ margin: ".5rem 0" }}>
-          <h3>Link post</h3>
-          <Input placeholder="Get link post..." style={{ width: "100%" }} value={linkUrl} onChange={getLinkUrl} />
+          <div className="addLink">
+            <h3>Link post</h3>
+            <Input
+              placeholder="Get link post..."
+              style={{ width: "100%" }}
+              value={linkUrl}
+              name="linkUrl"
+              onChange={getLinkUrlAndPrefix}
+            />
+          </div>
+          <div className="addPrefix">
+            <h3>Prefix</h3>
+            <Input
+              placeholder="Get prefix..."
+              style={{ width: "100%" }}
+              value={prefix}
+              name="prefix"
+              onChange={getLinkUrlAndPrefix}
+            />
+          </div>
           <div>
-            <p className='select-image-promotion'>Select thumbnail promotion</p>
+            <p className="select-image-promotion">Select thumbnail promotion</p>
             <div style={{ width: "100%" }}>
-              {props.urlImgThumbnail === null ? <i>Thumbnail image is emtry</i> : <img src={props.urlImgThumbnail} style={{ maxHeight: "100%", maxWidth: "100%" }} />}
+              {props.urlImgThumbnail === null ? (
+                <i>Thumbnail image is emtry</i>
+              ) : (
+                <img
+                  src={props.urlImgThumbnail}
+                  style={{ maxHeight: "100%", maxWidth: "100%" }}
+                />
+              )}
             </div>
             <a onClick={() => dispatchShowImagesNews(true)}>Select</a>
           </div>
@@ -363,7 +385,7 @@ function CreatePromotion(props) {
 function mapStateToProps(state) {
   return {
     visible: state.visibleModalNews,
-    urlImgThumbnail: state.urlImgThumbnail
+    urlImgThumbnail: state.urlImgThumbnail,
   };
 }
 export default connect(mapStateToProps, null)(CreatePromotion);

@@ -6,8 +6,7 @@ import { queryGetListPartnerProducts } from "../../../../utils/queryPartnerProdu
 import { queryGetPlatform } from "../../../../utils/queryPlatform";
 import { useLazyQuery, useMutation, useQuery } from "@apollo/react-hooks";
 import { Link } from "react-router-dom";
-import ListPartnerChages from "../partnerCharges/listPartnerCharges";
-import ChartPartnerChages from "../partnerCharges/chartPartnerChargesByDate";
+import { alertErrorServer } from '../../../../utils/alertErrorAll'
 const radioStyle = {
   display: "block",
   height: "30px",
@@ -29,8 +28,10 @@ function ListItems(props) {
   const [getData, { loading }] = useLazyQuery(queryGetListPartnerProducts, {
     fetchPolicy: "cache-and-network",
     onCompleted: data => {
+      console.log(data)
       setData(data);
-    }
+    },
+    onError: index => alertErrorServer(index.networkError.result.errors[0].message)
   });
   const [getListGame] = useLazyQuery(queryGetPlatform, {
     fetchPolicy: "cache-and-network",
@@ -74,30 +75,32 @@ function ListItems(props) {
   };
   const columns = [
     {
-      title: "Item Id",
-      dataIndex: "partnerProductId",
-      key: "productId",
-      width: "23%",
-      render: index => <span className="convert-col">{index}</span>
-    },
-    {
       title: "Name",
       dataIndex: "productName",
       key: "productName",
-      width:"20%"
+      width: "20%",
+      render: (text, record) => (
+        <span>
+          <Link
+            to={`/payment/items/edit?partnerProductId=${record.partnerProductId}`}
+          >
+            {text}
+          </Link>
+        </span>
+      )
     },
     {
       title: "Price (C.coin)",
       dataIndex: "coin",
       key: "coin",
-      width:"20%",
+      width: "20%",
       render: index => <span className="convert-col">{index}</span>
     },
     {
       title: "Game",
       dataIndex: "partner",
       key: "partner",
-      width:"20%",
+      width: "20%",
       render: index => <span>{index.partnerName}</span>,
       filterDropdown: () => (
         <div style={{ padding: 8 }}>
@@ -135,28 +138,27 @@ function ListItems(props) {
       )
     },
     {
-      title: "Action",
-      key: "action",
-      width:"17%",
-      render: (text, record) => (
-        <span>
-          <Link
-            to={`/payment/items/edit?partnerProductId=${record.partnerProductId}`}
-          >
-            Edit
-          </Link>
-        </span>
-      )
+      title: "Image",
+      dataIndex: "image",
+      key: "image",
+      width: "17%",
+      render: index => <img src={index} width='100%' />
+    },
+    {
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+      width: "17%",
     }
   ];
-  const rowSelection = {
-    onChange: (selectRowsKeys, selectedRows) => {
-      const itemsIdForDelete = selectedRows.map(
-        (val, index) => val.partnerProductId
-      );
-      setItemsForDelete(itemsIdForDelete);
-    }
-  };
+  // const rowSelection = {
+  //   onChange: (selectRowsKeys, selectedRows) => {
+  //     const itemsIdForDelete = selectedRows.map(
+  //       (val, index) => val.partnerProductId
+  //     );
+  //     setItemsForDelete(itemsIdForDelete);
+  //   }
+  // };
   const submitDeletePartnerProduct = async () => {
     await deletePartnerProduct();
     getData({
@@ -182,17 +184,6 @@ function ListItems(props) {
       }
     });
   };
-  const goPage = val => {
-    setPageIndex({ ...pageIndex, currentPage: val });
-    getData({
-      variables: {
-        currentPage: val,
-        pageSize: pageSize,
-        partnerId: partnerId,
-        partnerProductName: partnerProductName
-      }
-    });
-  };
   const printOptionsGame = listGame.map((val, index) => (
     <Radio style={radioStyle} value={val.partnerId} key={index}>
       {val.partnerName}
@@ -210,46 +201,26 @@ function ListItems(props) {
         <div>
           <h2>Item managerment</h2>
           <div className="view-more">
+            <Link className="btn-view-more" to="/payment/items/detail">
+              Detail <Icon type="double-right" className='icon-detail' />
+            </Link>
             <Link
               to="/payment/items"
               onClick={() => props.setIsCreateItem(true)}
             >
               <Button icon="plus">Add new Item</Button>
-              <Button
-                disabled={!hasSelected}
-                onClick={submitDeletePartnerProduct}
-              >
-                Delete
-              </Button>
             </Link>
           </div>
         </div>
-        {/* <div className="btn-search-users">
-          <Button disabled={!hasSelected} onClick={submitDeletePartnerProduct}>
-            Delete
-          </Button>
-          <Input
-            onChange={e => getValueSearch(e)}
-            onPressEnter={onSearch}
-            prefix={<Icon type="search" style={{ color: "rgba(0,0,0,.25)" }} />}
-            placeholder="Search by name Item"/>
-        </div>*/}
       </div>
       {dataProducts && (
         <>
           <Table
-            rowSelection={rowSelection}
+
             columns={columns}
             dataSource={dataProducts.listPartnerProductsByPartner.rows}
             pagination={false}
-            // scroll={{ x: 1000 }}
-          />
-          <Pagination
-            current={pageIndex.currentPage}
-            total={dataProducts.listPartnerProductsByPartner.count}
-            pageSize={10}
-            onChange={goPage}
-            className="pagination-listUser"
+          // scroll={{ x: 1000 }}
           />
         </>
       )}

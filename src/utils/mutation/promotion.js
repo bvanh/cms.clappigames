@@ -7,6 +7,9 @@ const createPromotion = gql`
       shop
       name
       eventTime
+      linkUrl
+      imageUrl
+      prefix
     }
   }
 `;
@@ -24,6 +27,9 @@ const createEvent = gql`
       id
       name
       paymentType
+      linkUrl,
+      imageUrl,
+      prefix
     }
   }
 `;

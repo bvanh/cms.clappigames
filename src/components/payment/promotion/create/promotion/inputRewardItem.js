@@ -3,6 +3,7 @@ import { Button, Input, Row, Col, Select, Icon } from "antd";
 import { createPromotion } from "../../../../../utils/mutation/promotion";
 import { dispatchSaveIdCreateInUpdate } from "../../../../../redux/actions/index";
 import moment from "moment";
+import { connect } from 'react-redux'
 import { useLazyQuery, useMutation, useQuery } from "@apollo/react-hooks";
 import { getListPartnerProducts } from "../../../../../utils/queryPartnerProducts";
 import {
@@ -28,7 +29,9 @@ function EventByItems(props) {
     dates,
     daily,
     startTime,
-    endTime
+    endTime,
+    linkUrl,
+    prefix
   } = props.indexPromoAndEvent;
   const { platformId, server } = props.indexGameForPromo;
   const { indexShop, isUpdate } = props;
@@ -52,7 +55,10 @@ function EventByItems(props) {
           dates: dates,
           daily: daily,
           hour: [checkStartHour(startTime), checkEndHour(endTime)]
-        })
+        }),
+        linkUrl: linkUrl,
+        prefix: prefix,
+        imageUrl: props.imageUrl
       }
     },
     onCompleted: data => {
@@ -147,10 +153,10 @@ function EventByItems(props) {
       {val.productName}
     </Option>
   ));
-  const printItem = indexShop.map(function(val, index1) {
+  const printItem = indexShop.map(function (val, index1) {
     const printReward = val.rewards.map((valReward, index2) => (
       <div key={index2} className="more-reward">
-        <Icon type="minus" onClick={() => reduceReward(index1, index2)} style={{fontSize:"16px",margin:'0 .25rem'}} />
+        <Icon type="minus" onClick={() => reduceReward(index1, index2)} style={{ fontSize: "16px", margin: '0 .25rem' }} />
         <Input
           value={indexShop[index1].rewards[index2].numb}
           type="number"
@@ -170,8 +176,8 @@ function EventByItems(props) {
     ));
     return (
       <div key={index1}>
-        <Col md={12}  className='more-items'>
-          <Icon type="close" onClick={() => reduceItem(index1)} style={{fontSize:"16px",margin:'0 .25rem'}} />
+        <Col md={12} className='more-items'>
+          <Icon type="close" onClick={() => reduceItem(index1)} style={{ fontSize: "16px", margin: '0 .25rem' }} />
           <Input
             value={indexShop[index1].purchaseTimes}
             type="number"
@@ -190,7 +196,7 @@ function EventByItems(props) {
         </Col>
         <Col md={12} style={{ padding: "1rem 1rem 1rem .25rem" }}>
           {printReward}
-          <Button onClick={() => addReward(index1)} style={{marginLeft:'1.5rem'}}>Add more present</Button>
+          <Button onClick={() => addReward(index1)} style={{ marginLeft: '1.5rem' }}>Add more present</Button>
         </Col>
       </div>
     );
@@ -202,7 +208,7 @@ function EventByItems(props) {
           <div style={{ width: "20%" }}>The mount of item</div>
           <div style={{ width: "80%" }}>Item</div>
         </div>
-        <div style={{ width: "50%", display: "flex",paddingLeft:"1.5rem" }}>
+        <div style={{ width: "50%", display: "flex", paddingLeft: "1.5rem" }}>
           <div style={{ width: "20%" }}>Amount</div>
           <div style={{ width: "80%" }}>Present</div>
         </div>
@@ -212,10 +218,15 @@ function EventByItems(props) {
       </div>
       <Row>
         {printItem}
-        <Button onClick={() => addItem()} style={{margin:"1rem 1.5rem"}}>Add more conditions</Button>
+        <Button onClick={() => addItem()} style={{ margin: "1rem 1.5rem" }}>Add more conditions</Button>
       </Row>
     </div>
   );
 }
+function mapStateToProps(state) {
+  return {
+    imageUrl: state.urlImgThumbnail
+  };
+}
+export default connect(mapStateToProps, null)(EventByItems);
 
-export default EventByItems;

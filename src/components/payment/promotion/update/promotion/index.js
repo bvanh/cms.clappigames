@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { Row, Col, DatePicker, Select, Icon, Modal } from "antd";
+import { Row, Col, DatePicker, Select, Icon, Modal,Input } from "antd";
 import { useLazyQuery, useMutation, useQuery } from "@apollo/react-hooks";
 import {
   deleteEvents,
   deletePromotion
 } from "../../../../../utils/mutation/promotion";
+import ListImagesForNews from "../../../../news/modalImageUrl/imgsUrl";
 import "../../../../../static/style/promotion.css";
 import EventByItems from "./inputRewardItem";
 import MenuRewardByItem from "./menuRewardItem";
@@ -16,7 +17,9 @@ import {
 } from "../../create/nameAndTimePromo";
 import {
   dispatchResetItemRewards,
-  dispatchInititalIndexConfig
+  dispatchInititalIndexConfig,
+  dispatchShowImagesNews,
+  dispatchSetUrlImageThumbnail
 } from "../../../../../redux/actions/index";
 import { queryGetPlatform } from "../../../../../utils/queryPlatform";
 import { getListPartnerProducts2 } from "../../../../../utils/queryPartnerProducts";
@@ -38,7 +41,10 @@ function UpdatePromotion(props) {
     shop,
     type,
     config,
-    paymentType
+    paymentType,
+    linkUrl,
+    prefix,
+    imageUrl
   } = props.detailPromo;
   const { startTime, endTime, dates, daily, hour } = JSON.parse(eventTime);
   const isTimeInPromo = checkTime(startTime);
@@ -56,8 +62,11 @@ function UpdatePromotion(props) {
     dates: dates,
     daily: daily,
     startTime: hour[0],
-    endTime: hour[1]
+    endTime: hour[1],
+    linkUrlUpdate: linkUrl,
+    prefixUpdate: prefix
   });
+
   const [listPartner, setListPartner] = useState({
     listGame: [{}],
     listServer: [indexAllServer],
@@ -83,6 +92,7 @@ function UpdatePromotion(props) {
     itemsForEventByMoney: [{ productName: "", productId: "" }]
   });
   const { platformId, server } = indexGameForPromo;
+  const { linkUrlUpdate, prefixUpdate } = indexPromoAndEvent;
   const { listItems } = listPartner;
   const [getListPartnerByPlatform] = useLazyQuery(getListPartnerProducts2, {
     onCompleted: data => {
@@ -125,6 +135,9 @@ function UpdatePromotion(props) {
       });
     }
   });
+  useEffect(() => {
+    dispatchSetUrlImageThumbnail(imageUrl)
+  }, [])
   useMemo(
     () =>
       getListPartnerByPlatform({
@@ -134,7 +147,7 @@ function UpdatePromotion(props) {
       }),
     [switchTypeEvent]
   );
-  const resetGameAndServer = () => {};
+  const resetGameAndServer = () => { };
 
   const handleChangePlatform = async e => {
     dispatchResetItemRewards();
@@ -257,6 +270,12 @@ function UpdatePromotion(props) {
     deleteEvent();
     props.backToDetail();
   };
+  const getLinkUrlAndPrefix = (e) => {
+    setIndexPromoAndEvent({
+      ...indexPromoAndEvent,
+      [e.target.name]: e.target.value,
+    });
+  };
   return (
     <Row className="container-promotion">
       <div>
@@ -269,8 +288,8 @@ function UpdatePromotion(props) {
               Back
             </Link>
           ) : (
-            <a onClick={backToList}><Icon type="arrow-left" style={{ paddingRight: ".2rem" }} />Back</a>
-          )}
+              <a onClick={backToList}><Icon type="arrow-left" style={{ paddingRight: ".2rem" }} />Back</a>
+            )}
           <h2>Update promotion</h2>
         </div>
       </div>
@@ -300,17 +319,17 @@ function UpdatePromotion(props) {
               isTimeInPromo={isTimeInPromo}
             />
           ) : (
-            <MenuRewardEventByMoney
-              indexPromoAndEvent={indexPromoAndEvent}
-              setIndexPromoAndEvent={setIndexPromoAndEvent}
-              indexEventByMoney={indexEventByMoney}
-              setIndexEventByMoney={setIndexEventByMoney}
-              server={indexPromoAndEvent.server}
-              listPartner={listPartner}
-              handleChangePlatform={handleChangePlatform}
-              handleChangeServer={handleChangeServer}
-            />
-          )}
+              <MenuRewardEventByMoney
+                indexPromoAndEvent={indexPromoAndEvent}
+                setIndexPromoAndEvent={setIndexPromoAndEvent}
+                indexEventByMoney={indexEventByMoney}
+                setIndexEventByMoney={setIndexEventByMoney}
+                server={indexPromoAndEvent.server}
+                listPartner={listPartner}
+                handleChangePlatform={handleChangePlatform}
+                handleChangeServer={handleChangeServer}
+              />
+            )}
         </div>
       </Col>
       <InputTimeArea
@@ -324,7 +343,7 @@ function UpdatePromotion(props) {
         setTimePromo={setTimePromo}
         isTimeInPromo={isTimeInPromo}
       />
-      <Col md={24}>
+      <Col md={18}>
         {switchTypeEvent ? (
           <EventByItems
             listItems={listItems}
@@ -336,17 +355,47 @@ function UpdatePromotion(props) {
             isTimeInPromo={isTimeInPromo}
           />
         ) : (
-          <InputRewardForShowByMoney
-            successAlert={successAlert}
-            listPartner={listPartner}
-            listItems={listItems}
-            indexPromoAndEvent={indexPromoAndEvent}
-            setIndexPromoAndEvent={setIndexPromoAndEvent}
-            indexEventByMoney={indexEventByMoney}
-            setIndexEventByMoney={setIndexEventByMoney}
-            isUpdate={props.isUpdate}
+            <InputRewardForShowByMoney
+              successAlert={successAlert}
+              listPartner={listPartner}
+              listItems={listItems}
+              indexPromoAndEvent={indexPromoAndEvent}
+              setIndexPromoAndEvent={setIndexPromoAndEvent}
+              indexEventByMoney={indexEventByMoney}
+              setIndexEventByMoney={setIndexEventByMoney}
+              isUpdate={props.isUpdate}
+            />
+          )}
+      </Col>
+      <Col md={6}>
+        <div className="addLink">
+          <h3>Link post</h3>
+          <Input
+            placeholder="Get link post..."
+            style={{ width: "100%" }}
+            value={linkUrlUpdate}
+            name="linkUrlUpdate"
+            onChange={getLinkUrlAndPrefix}
           />
-        )}
+        </div>
+        <div className="addPrefix">
+          <h3>Prefix</h3>
+          <Input
+            placeholder="Get prefix..."
+            style={{ width: "100%" }}
+            value={prefixUpdate}
+            name="prefixUpdate"
+            onChange={getLinkUrlAndPrefix}
+          />
+        </div>
+        <div>
+          <p>Select thumbnail promotion</p>
+          <div style={{ width: "100%" }}>
+            {props.urlImgThumbnail === null ? <i>Thumbnail image is emtry</i> : <img src={props.urlImgThumbnail} width="100%" />}
+          </div>
+          <a onClick={() => dispatchShowImagesNews(true)}>Select</a>
+        </div>
+        <ListImagesForNews isThumbnail={true} />
       </Col>
       <Modal
         title={<Icon type="check-circle" />}
@@ -363,8 +412,8 @@ function UpdatePromotion(props) {
               Back
             </Link>
           ) : (
-            <span>Back</span>
-          )
+              <span>Back</span>
+            )
         }
         cancelText="Next"
       ></Modal>
@@ -374,7 +423,9 @@ function UpdatePromotion(props) {
 function mapStateToProps(state) {
   return {
     detailPromo: state.detailPromo,
-    idCreatePromoAndEvent: state.idPromoAndEventCreateInUpdate
+    idCreatePromoAndEvent: state.idPromoAndEventCreateInUpdate,
+    visible: state.visibleModalNews,
+    urlImgThumbnail: state.urlImgThumbnail
   };
 }
 export default connect(mapStateToProps, null)(UpdatePromotion);

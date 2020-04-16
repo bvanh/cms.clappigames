@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect, useCallback } from "react";
-import { Button, Input, Row, Col, Select, Modal, Radio,Icon } from "antd";
+import { Button, Input, Row, Col, Select, Modal, Radio, Icon } from "antd";
 import {
   createItemEvent,
   updateEvent
@@ -50,7 +50,9 @@ function InputRewardForShowByMoney(props) {
     dates,
     daily,
     startTime,
-    endTime
+    endTime,
+    linkUrlUpdate,
+    prefixUpdate
   } = props.indexPromoAndEvent;
   useEffect(() => {
     dispatchTypeEventByMoney(type);
@@ -98,7 +100,10 @@ function InputRewardForShowByMoney(props) {
       dates: dates,
       daily: daily,
       hour: [checkStartHour(startTime), checkEndHour(endTime)]
-    })
+    }),
+    prefix: prefixUpdate,
+    linkUrl: linkUrlUpdate,
+    imageUrl: props.imageUrl
   };
   const [updateEventByInkind] = useMutation(updateEvent, {
     variables: {
@@ -250,7 +255,7 @@ function InputRewardForShowByMoney(props) {
       </Col>
     )
   );
-  const printItemInkind = inkind.map(function(val, index1) {
+  const printItemInkind = inkind.map(function (val, index1) {
     return (
       <div
         style={{ display: "flex", alignItems: "center", marginBottom: "1rem" }}
@@ -289,7 +294,7 @@ function InputRewardForShowByMoney(props) {
   });
   const printItemCoin = coin.map((val, index1) => (
     <div
-      style={{ display: "flex", alignItems: "center", marginBottom: "1rem",padding:'1rem' }}
+      style={{ display: "flex", alignItems: "center", marginBottom: "1rem", padding: '1rem' }}
       key={index1}
     >
       <div style={{ width: "15%", display: "flex", alignItems: "center" }}>
@@ -306,7 +311,7 @@ function InputRewardForShowByMoney(props) {
           {props.nameEventByMoney === "MONEY" ? "VNĐ" : "C.COIN"}
         </span>
       </div>
-      <div className="promo-input-coin-event" style={{width:"85%",paddingLeft:"1rem"}}>
+      <div className="promo-input-coin-event" style={{ width: "85%", paddingLeft: "1rem" }}>
         <div style={{ width: "35%", display: "flex", alignItems: "center" }}>
           <Select
             value={val.rewards}
@@ -321,7 +326,7 @@ function InputRewardForShowByMoney(props) {
           <Icon
             type="menu"
             onClick={() => showModal(index1)}
-            
+
             style={{ fontSize: "24px", margin: "0 .25rem" }}
           />
         </div>
@@ -465,7 +470,8 @@ function mapStateToProps(state) {
     typeEventByMoney: state.typeEventByMoney,
     nameEventByMoney: state.nameEventByMoney,
     detailPromo: state.detailPromo,
-    indexConfig: state.indexConfig
+    indexConfig: state.indexConfig,
+    imageUrl: state.urlImgThumbnail
   };
 }
 export default connect(mapStateToProps, null)(InputRewardForShowByMoney);

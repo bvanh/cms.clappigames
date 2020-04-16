@@ -54,22 +54,22 @@ function ListCharges(props) {
       }
     });
   }, []);
-  const changeDates = val => {
-    setPageIndex({ ...pageIndex, fromDate: dates[val], toDate: TODAY });
-    getDataCharges({
-      variables: {
-        fromDate: dates[val],
-        toDate: TODAY,
-        currentPage: currentPage,
-        type: type,
-        pageSize: pageSize,
-        search: search
-      }
-    });
-  };
-  const handleChangeRangeDates = value => {
-    changeDates(value);
-  };
+  // const changeDates = val => {
+  //   setPageIndex({ ...pageIndex, fromDate: dates[val], toDate: TODAY });
+  //   getDataCharges({
+  //     variables: {
+  //       fromDate: dates[val],
+  //       toDate: TODAY,
+  //       currentPage: currentPage,
+  //       type: type,
+  //       pageSize: pageSize,
+  //       search: search
+  //     }
+  //   });
+  // };
+  // const handleChangeRangeDates = value => {
+  //   changeDates(value);
+  // };
   const columns = [
     {
       title: "Purchase Coin ID",
@@ -114,11 +114,11 @@ function ListCharges(props) {
       width: "15%"
     }
   ];
-  const printOptionDates = listSelectDates.map((val, i) => (
-    <Option value={val.variables} key={i}>
-      {val.days}
-    </Option>
-  ));
+  // const printOptionDates = listSelectDates.map((val, i) => (
+  //   <Option value={val.variables} key={i}>
+  //     {val.days}
+  //   </Option>
+  // ));
   if (loading) return "Loading...";
   return (
     <>
@@ -127,16 +127,16 @@ function ListCharges(props) {
           <h2>History Purchase</h2>
           <div className="view-more">
             <Link className="btn-view-more" to="/payment/coin/charges/detail">
-              Detail <Icon type="double-right" />
+              Detail <Icon type="double-right" className='icon-detail' />
             </Link>
-            <Select
+            {/* <Select
               defaultValue="SEVENT_DAY_AGO"
               style={{ width: 120 }}
               onChange={handleChangeRangeDates}
               className="select-charges-date"
             >
               {printOptionDates}
-            </Select>
+            </Select> */}
           </div>
         </div>
       </div>

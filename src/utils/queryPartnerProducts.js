@@ -22,6 +22,8 @@ const queryGetListPartnerProducts = gql`
         partner {
           partnerName
         }
+        image
+        status
       }
     }
   }

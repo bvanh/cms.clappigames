@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from "react";
-import { Button, Input, Row, Col, Select,Icon } from "antd";
+import { Button, Input, Row, Col, Select, Icon } from "antd";
 import { updatePromotion } from "../../../../../utils/mutation/promotion";
 import moment from "moment";
 import {
@@ -29,7 +29,9 @@ function EventByItems(props) {
     dates,
     daily,
     startTime,
-    endTime
+    endTime,
+    linkUrlUpdate,
+    prefixUpdate
   } = props.indexPromoAndEvent;
   const { indexShop } = props;
   const { platformId, server } = props.indexGameForPromo;
@@ -54,7 +56,10 @@ function EventByItems(props) {
           dates: dates,
           daily: daily,
           hour: [checkStartHour(startTime), checkEndHour(endTime)]
-        })
+        }),
+        linkUrl: linkUrlUpdate,
+        prefix: prefixUpdate,
+        imageUrl: props.imageUrl
       }
     },
     onCompleted: data => console.log(data)
@@ -72,7 +77,7 @@ function EventByItems(props) {
       if (checkNumb(indexShop) &&
         checkItemIsEmtry(indexShop) &&
         checkPurchaseItemIsEmtry(indexShop)) {
-          await updatePromo();
+        await updatePromo();
         props.successAlert(false);
       } else {
         alertErrorItemPromo();
@@ -110,7 +115,7 @@ function EventByItems(props) {
     props.setIndexShop(newShop);
   };
   const reduceReward = async (numberItem, indexReward) => {
-    if(!props.isTimeInPromo){
+    if (!props.isTimeInPromo) {
       const newShop = [...indexShop];
       if (newShop.length > 0) {
         const newReward = await indexShop[numberItem].rewards.filter(
@@ -152,7 +157,7 @@ function EventByItems(props) {
   const printItem = indexShop.map(function (val, index1) {
     const printReward = val.rewards.map((valReward, index2) => (
       <div key={index2} className="more-reward">
-      <Icon type="minus" onClick={() => reduceReward(index1, index2)} style={{fontSize:"16px",margin:'0 .25rem'}}/>
+        <Icon type="minus" onClick={() => reduceReward(index1, index2)} style={{ fontSize: "16px", margin: '0 .25rem' }} />
         <Input
           value={indexShop[index1].rewards[index2].numb}
           type="number"
@@ -175,7 +180,7 @@ function EventByItems(props) {
     return (
       <div key={index1}>
         <Col md={12} className='more-items'>
-        <Icon type="close" onClick={() => reduceItem(index1)} style={{fontSize:"16px",margin:'0 .25rem'}} disabled={props.isTimeInPromo} />
+          <Icon type="close" onClick={() => reduceItem(index1)} style={{ fontSize: "16px", margin: '0 .25rem' }} disabled={props.isTimeInPromo} />
           <Input
             value={indexShop[index1].purchaseTimes}
             type="number"
@@ -197,7 +202,7 @@ function EventByItems(props) {
         </Col>
         <Col md={12} style={{ padding: "1rem 1rem 1rem .25rem" }}>
           {printReward}
-          <Button onClick={() => addReward(index1)} disabled={props.isTimeInPromo} style={{marginLeft:'1.5rem'}}>Add more present</Button>
+          <Button onClick={() => addReward(index1)} disabled={props.isTimeInPromo} style={{ marginLeft: '1.5rem' }}>Add more present</Button>
         </Col>
       </div>
     );
@@ -219,14 +224,15 @@ function EventByItems(props) {
       </div>
       <Row>
         {printItem}
-        <Button onClick={() => addItem()} disabled={props.isTimeInPromo} style={{margin:"1rem 1.5rem"}}>Add more conditions</Button>
+        <Button onClick={() => addItem()} disabled={props.isTimeInPromo} style={{ margin: "1rem 1.5rem" }}>Add more conditions</Button>
       </Row>
     </div>
   );
 }
 function mapStateToProps(state) {
   return {
-    detailPromo: state.detailPromo
+    detailPromo: state.detailPromo,
+    imageUrl: state.urlImgThumbnail
   };
 }
 export default connect(mapStateToProps, null)(EventByItems);

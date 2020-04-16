@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { Row, Col,Input, Icon, Modal } from "antd";
+import { Row, Col, Input, Icon, Modal } from "antd";
 import { useLazyQuery, useMutation, useQuery } from "@apollo/react-hooks";
 import {
   deleteEvents,
@@ -42,7 +42,10 @@ function UpdateEvent(props) {
     status,
     eventTime,
     config,
-    paymentType
+    paymentType,
+    linkUrl,
+    imageUrl,
+    prefix
   } = props.detailPromo;
   const { startTime, endTime, dates, daily, hour } = JSON.parse(eventTime);
   const isTimeInPromo = checkTime(startTime);
@@ -51,7 +54,6 @@ function UpdateEvent(props) {
   const [indexShop, setIndexShop] = useState(initialIndexShop);
   const [isCreatePromo, setIsCreatePromo] = useState(false);
   const { game, server, data, type } = JSON.parse(config);
-  console.log(endTime);
   const [indexPromoAndEvent, setIndexPromoAndEvent] = useState({
     id: id,
     name: name,
@@ -63,7 +65,9 @@ function UpdateEvent(props) {
     dates: dates,
     daily: daily,
     startTime: hour[0],
-    endTime: hour[1]
+    endTime: hour[1],
+    linkUrlUpdate: linkUrl,
+    prefixUpdate: prefix
   });
   const [listPartner, setListPartner] = useState({
     listGame: [{}],
@@ -95,7 +99,7 @@ function UpdateEvent(props) {
     }
   });
   useEffect(() => {
-    dispatchSetUrlImageThumbnail()
+    dispatchSetUrlImageThumbnail(imageUrl)
     dispatchTypeEventByMoney(type);
     dispatchSetDataTypePromo({ isType: type.toLowerCase(), data: data });
     getListPartnerByPlatform({
@@ -104,7 +108,7 @@ function UpdateEvent(props) {
       }
     });
   }, []);
-  const { platformId } = indexPromoAndEvent;
+  const { platformId, linkUrlUpdate, prefixUpdate } = indexPromoAndEvent;
   const { listGame, listItems, listServer } = listPartner;
   const [deleteEvent] = useMutation(deleteEvents, {
     variables: {
@@ -148,7 +152,7 @@ function UpdateEvent(props) {
       }
     });
   };
-  const resetGameAndServer = () => {};
+  const resetGameAndServer = () => { };
   const handleChangePlatformPromo = async e => {
     dispatchResetItemRewards();
     setIndexShop([
@@ -248,6 +252,12 @@ function UpdateEvent(props) {
     deletePromo();
     props.backToDetail();
   };
+  const getLinkUrlAndPrefix = (e) => {
+    setIndexPromoAndEvent({
+      ...indexPromoAndEvent,
+      [e.target.name]: e.target.value,
+    });
+  };
   return (
     <Row className="container-promotion">
       <div>
@@ -260,11 +270,11 @@ function UpdateEvent(props) {
               Back
             </Link>
           ) : (
-            <a onClick={backToList}>
-              <Icon type="arrow-left" style={{ paddingRight: ".2rem" }} />
+              <a onClick={backToList}>
+                <Icon type="arrow-left" style={{ paddingRight: ".2rem" }} />
               Back
-            </a>
-          )}
+              </a>
+            )}
           <h2>Update promotion</h2>
         </div>
       </div>
@@ -291,18 +301,18 @@ function UpdateEvent(props) {
               handleChangeServerPromo={handleChangeServerPromo}
             />
           ) : (
-            <MenuRewardEventByMoney
-              indexPromoAndEvent={indexPromoAndEvent}
-              setIndexPromoAndEvent={setIndexPromoAndEvent}
-              indexEventByMoney={indexEventByMoney}
-              setIndexEventByMoney={setIndexEventByMoney}
-              server={server}
-              listPartner={listPartner}
-              handleChangePlatform={handleChangePlatform}
-              handleChangeServer={handleChangeServer}
-              isTimeInPromo={isTimeInPromo}
-            />
-          )}
+              <MenuRewardEventByMoney
+                indexPromoAndEvent={indexPromoAndEvent}
+                setIndexPromoAndEvent={setIndexPromoAndEvent}
+                indexEventByMoney={indexEventByMoney}
+                setIndexEventByMoney={setIndexEventByMoney}
+                server={server}
+                listPartner={listPartner}
+                handleChangePlatform={handleChangePlatform}
+                handleChangeServer={handleChangeServer}
+                isTimeInPromo={isTimeInPromo}
+              />
+            )}
         </div>
       </Col>
       <InputTimeArea
@@ -328,32 +338,50 @@ function UpdateEvent(props) {
             successAlert={successAlert}
           />
         ) : (
-          <InputRewardForShowByMoney
-            successAlert={successAlert}
-            listPartner={listPartner}
-            listItems={listItems}
-            switchTypeEvent={switchTypeEvent}
-            indexPromoAndEvent={indexPromoAndEvent}
-            setIndexPromoAndEvent={setIndexPromoAndEvent}
-            indexEventByMoney={indexEventByMoney}
-            setIndexEventByMoney={setIndexEventByMoney}
-            setIsCreatePromo={setIsCreatePromo}
-            isTimeInPromo={isTimeInPromo}
-          />
-        )}
+            <InputRewardForShowByMoney
+              successAlert={successAlert}
+              listPartner={listPartner}
+              listItems={listItems}
+              switchTypeEvent={switchTypeEvent}
+              indexPromoAndEvent={indexPromoAndEvent}
+              setIndexPromoAndEvent={setIndexPromoAndEvent}
+              indexEventByMoney={indexEventByMoney}
+              setIndexEventByMoney={setIndexEventByMoney}
+              setIsCreatePromo={setIsCreatePromo}
+              isTimeInPromo={isTimeInPromo}
+            />
+          )}
       </Col>
       <Col md={6}>
+        <div className="addLink">
           <h3>Link post</h3>
-          <Input placeholder="Get link post..." style={{width:"100%"}}/>
-          <div>
-            <p>Select thumbnail promotion</p>
-            <div style={{ width: "100%" }}>
+          <Input
+            placeholder="Get link post..."
+            style={{ width: "100%" }}
+            value={linkUrlUpdate}
+            name="linkUrl"
+            onChange={getLinkUrlAndPrefix}
+          />
+        </div>
+        <div className="addPrefix">
+          <h3>Prefix</h3>
+          <Input
+            placeholder="Get prefix..."
+            style={{ width: "100%" }}
+            value={prefixUpdate}
+            name="prefix"
+            onChange={getLinkUrlAndPrefix}
+          />
+        </div>
+        <div>
+          <p>Select thumbnail promotion</p>
+          <div style={{ width: "100%" }}>
             {props.urlImgThumbnail === null ? <i>Thumbnail image is emtry</i> : <img src={props.urlImgThumbnail} width="100%" />}
-            </div>
-            <a onClick={() => dispatchShowImagesNews(true)}>Select</a>
           </div>
-          <ListImagesForNews isThumbnail={true} />
-        </Col>
+          <a onClick={() => dispatchShowImagesNews(true)}>Select</a>
+        </div>
+        <ListImagesForNews isThumbnail={true} />
+      </Col>
       <Modal
         title={<Icon type="check-circle" />}
         visible={alertUpdateSuccess}
@@ -369,8 +397,8 @@ function UpdateEvent(props) {
               Back
             </Link>
           ) : (
-            <span>Back</span>
-          )
+              <span>Back</span>
+            )
         }
         cancelText="Next"
       ></Modal>
