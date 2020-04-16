@@ -8,36 +8,40 @@ import {
   Col,
   Select,
   Icon,
-  Rate
+  Rate,
+  Modal,
 } from "antd";
 import { queryGetPlatform } from "../../../../utils/queryNews";
+import { alertErrorServer } from "../../../../utils/alertErrorAll";
+import { deletePartnerProducts } from "../../../../utils/mutation/partnerProductItems";
 import {
   dispatchShowImagesNews,
-  dispatchSetUrlImageThumbnail
+  dispatchSetUrlImageThumbnail,
 } from "../../../../redux/actions/index";
-import { connect } from 'react-redux'
+import { connect } from "react-redux";
 import ListImagesForNews from "../../../news/modalImageUrl/imgsUrl";
 import {
   queryGetPartnerProductById,
-  queryGetRefPartnerProducts
+  queryGetRefPartnerProducts,
 } from "../../../../utils/queryPartnerProducts";
 import { updatePartnerProductItem } from "../../../../utils/mutation/partnerProductItems";
 import { useLazyQuery, useMutation, useQuery } from "@apollo/react-hooks";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import "../../../../static/style/listProducts.css";
 const { Option } = Select;
 const radioStyle = {
   display: "block",
   height: "24px",
-  lineHeight: "30px"
+  lineHeight: "30px",
 };
 function EditPartnerProductItem(props) {
+  const history = useHistory();
   const userName = localStorage.getItem("userNameCMS");
   const query = new URLSearchParams(window.location.search);
   const partnerProductId = query.get("partnerProductId");
   const [oldDataPartnerProduct, setOldDataPartnerProduct] = useState({
     statusBtnCancel: false,
-    oldData: null
+    oldData: null,
   });
   const [dataListPlatform, setListPlatform] = useState([]);
   const [dataListRefProduct, setListRefProduct] = useState([]);
@@ -49,27 +53,32 @@ function EditPartnerProductItem(props) {
     partnerProductName: "",
     // promotionId: 0,
     status: "",
-    image: ''
+    image: "",
   });
   useQuery(queryGetPlatform(), {
-    onCompleted: dataPartner => {
+    onCompleted: (dataPartner) => {
       setListPlatform(dataPartner.listPartners);
-    },
+    }
+    ,
+    onError: (index) =>
+      alertErrorServer(index.networkError.result.errors[0].message),
   });
   const { data, loading, error, refetch } = useQuery(
     queryGetPartnerProductById,
     {
       variables: {
-        partnerProductId: partnerProductId
+        partnerProductId: partnerProductId,
       },
-      onCompleted: data => {
-        console.log(data)
+      onCompleted: (data) => {
+        dispatchSetUrlImageThumbnail(data.listPartnerProducts[0].image)
         setDataPartnerProduct(data.listPartnerProducts[0]);
         setOldDataPartnerProduct({
           ...oldDataPartnerProduct,
-          oldData: data.listPartnerProducts[0]
+          oldData: data.listPartnerProducts[0],
         });
-      }
+      },
+      onError: (index) =>
+        alertErrorServer(index.networkError.result.errors[0].message),
     }
   );
   const {
@@ -83,9 +92,11 @@ function EditPartnerProductItem(props) {
   const [getRefPartnerProduct] = useLazyQuery(
     queryGetRefPartnerProducts(partnerId),
     {
-      onCompleted: data => {
+      onCompleted: (data) => {
         setListRefProduct(data.listRefPartnerProducts);
-      }
+      },
+      onError: (index) =>
+        alertErrorServer(index.networkError.result.errors[0].message),
     }
   );
   useEffect(() => {
@@ -102,32 +113,42 @@ function EditPartnerProductItem(props) {
         coin: Number(coin),
         partnerProductName: partnerProductName,
         // promotionId: Number(promotionId),
-        image: props.urlImgThumbnail
-      }
-    }
+        image: props.urlImgThumbnail,
+      },
+    },
+    onError: (index) =>
+      alertErrorServer(index.networkError.result.errors[0].message),
   });
-  const getNewInfoItem = e => {
+  const [deletePartnerProduct] = useMutation(deletePartnerProducts, {
+    variables: {
+      ids: [partnerProductId],
+    },
+    onCompleted: data => console.log(data),
+    onError: (index) =>
+      alertErrorServer(index.networkError.result.errors[0].message),
+  });
+  const getNewInfoItem = (e) => {
     setDataPartnerProduct({
       ...dataPartnerProduct,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
     setOldDataPartnerProduct({
       ...oldDataPartnerProduct,
-      statusBtnCancel: false
+      statusBtnCancel: false,
     });
   };
-  const getStatus = e => {
+  const getStatus = (e) => {
     setDataPartnerProduct({ ...dataPartnerProduct, status: e.target.value });
   };
   const submitupdateItem = () => {
     let result = updateItem();
-    result.then(val => {
+    result.then((val) => {
       if (val) {
         alert("update thành công!");
         refetch();
         setOldDataPartnerProduct({
           ...oldDataPartnerProduct,
-          statusBtnCancel: true
+          statusBtnCancel: true,
         });
       }
     });
@@ -137,12 +158,26 @@ function EditPartnerProductItem(props) {
   };
   const changePartnerName = (value) => {
     setDataPartnerProduct({ ...dataPartnerProduct, partnerId: value });
-  }
-  const changePartnerProductName = async val => {
+  };
+  const changePartnerProductName = async (val) => {
     await setDataPartnerProduct({
       ...dataPartnerProduct,
       partnerProductName: JSON.parse(val).productName,
-      productId: JSON.parse(val).productId
+      productId: JSON.parse(val).productId,
+    });
+  };
+  const showConfirm = (isDelete, contentAlert, okTextBtn, cancelTextBtn) => {
+    Modal.confirm({
+      title: `Do you want to ${contentAlert} these items ?`,
+      okText: okTextBtn,
+      cancelText: cancelTextBtn,
+      onOk() {
+        if (isDelete) {
+          deletePartnerProduct();
+        }
+        history.push("/payment/items");
+      },
+      onCancel() { },
     });
   };
   const printPlatform = dataListPlatform.map((val, index) => (
@@ -151,7 +186,7 @@ function EditPartnerProductItem(props) {
     </Option>
   ));
   const printRefProduct = dataListRefProduct.map(function (val, index) {
-    if (index = 0) {
+    if ((index = 0)) {
       return (
         <Option
           value={`{"productId":"${productId}","productName":"${partnerProductName}"}`}
@@ -174,22 +209,24 @@ function EditPartnerProductItem(props) {
   if (dataPartnerProduct !== null) {
     return (
       <Row>
-        <Link to="/payment/items">
-          <span>
-            <Icon type="arrow-left" style={{ paddingRight: ".2rem" }} />
-            Danh sách Items
-          </span>
-        </Link>
+        <a
+          onClick={() =>
+            showConfirm(false, "continue update", "Back", "Continue")
+          }
+        >
+          <Icon type="arrow-left" style={{ paddingRight: ".2rem" }} />
+          Back
+        </a>
         <div className="products-title">
           <div>
             <h2>Update Item</h2>
             <div>
               <p>
                 <Button
-                  onClick={cancelUpdate}
-                  disabled={oldDataPartnerProduct.statusBtnCancel}
+                  onClick={() => showConfirm(true, "delete", "Yes", "No")}
+                  style={{ marginRight: ".5rem" }}
                 >
-                  Cancel
+                  Delete C.coin
                 </Button>
                 <Button onClick={submitupdateItem}>Update Item</Button>
               </p>
@@ -201,7 +238,9 @@ function EditPartnerProductItem(props) {
             <div>
               <div>
                 <p className="edit-product-content-title">Item Id</p>
-                <span style={{paddingLeft:"1rem"}}>Id: {partnerProductId} </span>
+                <span style={{ paddingLeft: "1rem" }}>
+                  Id: {partnerProductId}{" "}
+                </span>
               </div>
             </div>
             <div className="product-input-update">
@@ -251,9 +290,7 @@ function EditPartnerProductItem(props) {
                 <img src={props.urlImgThumbnail} width="100%" />
               </div>
               <div>
-                <a onClick={() => dispatchShowImagesNews(true)}>
-                
-                Select</a>
+                <a onClick={() => dispatchShowImagesNews(true)}>Select</a>
               </div>
             </div>
           </Col>
@@ -289,8 +326,7 @@ function EditPartnerProductItem(props) {
 function mapStateToProps(state) {
   return {
     visible: state.visibleModalNews,
-    urlImgThumbnail: state.urlImgThumbnail
+    urlImgThumbnail: state.urlImgThumbnail,
   };
 }
 export default connect(mapStateToProps, null)(EditPartnerProductItem);
-
