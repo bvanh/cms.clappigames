@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Login from "./components/login";
-import { BrowserRouter as Router, Route, Link } from "react-router-dom";
+import { BrowserRouter as Router, Route, Link, Switch } from "react-router-dom";
 import { connect } from "react-redux";
 import Danhsach from "./components/users/listUsers";
 import Detail from "./components/users/userDetail";
@@ -16,19 +16,18 @@ import EditProductCoin from "./components/payment/coin/listCoin/editCoin";
 import EditPartnerProductItem from "./components/payment/item/listPartnerProduct/editItems";
 import CreatePromotion from "./components/payment/promotion/create/index";
 import Stats from "./components/stats/index";
-import Partner from './components/partner/index'
+import Partner from "./components/partner/index";
 import ListPromoAndEvent from "./components/payment/promotion/list/index";
 import DetailPromotion from "./components/payment/promotion/detail/promotion/index";
 import DetailEvent from "./components/payment/promotion/detail/event/index";
 import ListChargesDetail from "./components/payment/coin/listCharges/detail";
-import ListPartnerChargesDetail from './components/payment/item/partnerCharges/detail'
+import ListPartnerChargesDetail from "./components/payment/item/partnerCharges/detail";
+import routers from "./components/routers";
 import { ApolloProvider } from "@apollo/react-hooks";
 import ApolloClient from "apollo-boost";
 import { importImage } from "./utils/importImg";
 import checkTokenFinal from "./utils/checkToken";
-import {
-  dispatchSwitchLogin,
-} from "./redux/actions/index";
+import { dispatchSwitchLogin } from "./redux/actions/index";
 import { Layout, Menu, Icon, Dropdown } from "antd";
 import "./static/style/menu.css";
 import { is } from "immutable";
@@ -49,8 +48,8 @@ function App(props) {
   const client = new ApolloClient({
     uri: "https://api.cms.cubegame.vn/graphql",
     headers: {
-      Authorization: `Bearer ${props.token.accessToken}`
-    }
+      Authorization: `Bearer ${props.token.accessToken}`,
+    },
   });
   const converPathname = () => {
     const pathName = window.location.pathname.slice(1);
@@ -73,6 +72,14 @@ function App(props) {
       </Menu.Item>
     </Menu>
   );
+  const printRouters = routers.map((val, index) => (
+    <Route
+      key={index}
+      path={val.path}
+      exact={val.exact}
+      render={(props) => val.main(props)}
+    />
+  ));
   return (
     <ApolloProvider client={client}>
       <Router>
@@ -83,9 +90,9 @@ function App(props) {
               overflow: "auto",
               height: "100vh",
               position: "fixed",
-              left: 0
+              left: 0,
             }}
-            onBreakpoint={broken => {
+            onBreakpoint={(broken) => {
               console.log(broken);
             }}
             onCollapse={(collapsed, type) => {
@@ -95,7 +102,11 @@ function App(props) {
             <div className="logo">
               <img src={importImage["logoclappigames.png"]} width="100%" />
             </div>
-            <Menu theme="dark" mode="inline" defaultSelectedKeys={isMenu === '' ? ['users'] : [isMenu]}>
+            <Menu
+              theme="dark"
+              mode="inline"
+              defaultSelectedKeys={isMenu === "" ? ["users"] : [isMenu]}
+            >
               <Menu.Item key="users">
                 <Link to="/">
                   <Icon type="idcard" />
@@ -166,74 +177,10 @@ function App(props) {
               style={{
                 overflow: "initial",
                 padding: "2rem 2rem",
-                background: "white"
+                background: "white",
               }}
             >
-              <Route exact path="/" render={() => <Danhsach />} />
-              <Route
-                exact
-                path="/users/detail"
-                render={props => <Detail {...props} />}
-              />
-              <Route exact path="/news" render={() => <ListNews />} />
-              <Route
-                exact
-                path="/news/edit"
-                render={props => <NewsEditor {...props} />}
-              />
-              <Route exact path="/news/addnews" render={() => <AddNews />} />
-              <Route exact path="/media" render={() => <ListImages />} />
-              <Route exact path="/media/album" render={() => <Album />} />
-              <Route
-                exact
-                path="/media/album/edit"
-                render={() => <UpdateAlbum />}
-              />
-              <Route
-                exact
-                path="/payment/items"
-                render={() => <ItemsContainer />}
-              />
-              <Route
-                exact
-                path="/payment/items/edit"
-                render={() => <EditPartnerProductItem />}
-              />
-              <Route exact path="/payment/coin" render={() => <CoinsContainer />} />
-              <Route
-                exact
-                path="/payment/coin/edit"
-                render={() => <EditProductCoin />}
-              />
-              <Route
-                exact
-                path="/payment/coin/charges/detail"
-                render={() => <ListChargesDetail />}
-              />
-              <Route
-                exact
-                path="/payment/item/charges/detail"
-                render={() => <ListPartnerChargesDetail />}
-              />
-              <Route
-                path="/payment/promotion/create"
-                render={() => <CreatePromotion />}
-              />
-              <Route
-                exact
-                path="/payment/promotion"
-                render={() => <ListPromoAndEvent />}
-              />
-              <Route
-                path="/payment/promotion/detail/promotion"
-                render={() => <DetailPromotion />}
-              />
-              <Route
-                path="/payment/promotion/detail/event"
-                render={() => <DetailEvent />}
-              />
-              <Route path="/stats" render={() => <Stats />} />
-              <Route path="/partner" render={() => <Partner />} />
+              {printRouters}
             </Content>
             <Footer style={{ textAlign: "center", bottom: "0", width: "100%" }}>
               LUSSOM ©2020
@@ -247,7 +194,7 @@ function App(props) {
 function mapStateToProps(state) {
   return {
     isLogin: state.isLogin,
-    token: state.accessToken
+    token: state.accessToken,
   };
 }
 export default connect(mapStateToProps, null)(App);

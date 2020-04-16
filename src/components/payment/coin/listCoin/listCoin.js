@@ -94,13 +94,6 @@ function ListCoin(props) {
   // console.log(convertPaymentType(listTypePayment,"GA"))
   // eslint-disable-next-line no-sparse-arrays
   const columns = [
-    // {
-    //   title: "C.coin Id",
-    //   dataIndex: "productId",
-    //   key: "productId",
-    //   width: "15%",
-    //   render: index => <span className="convert-col">{index}</span>
-    // },
     {
       title: "C.coin Name",
       dataIndex: "productName",
@@ -172,35 +165,18 @@ function ListCoin(props) {
       render: index => <img src={index} width='100%' />
     }
   ];
-  // const rowSelection = {
-  //   onChange: (selectRowsKeys, selectedRows) => {
-  //     const itemsIdForDelete = selectedRows.map((val, index) => val.productId);
-  //     setItemsForDelete(itemsIdForDelete);
-  //   }
-  // };
-  // const submitDeleteProduct = async () => {
-  //   const demo = await deleteProduct();
-  //   refetch();
-  // };
   const printOptionsType = listTypePayment.map((val, index) => (
     <Radio style={radioStyle} value={val.name} key={index}>
       {val.name}
     </Radio>
   ));
-  // const hasSelected = itemsForDelete.length > 0;
-  // if (loading)
-  //   return (
-  //     <Col md={12}>
-  //       <p>loading...</p>
-  //     </Col>
-  //   );
   return (
     <>
       <div className="products-title">
         <div>
           <h2>C.coin managerment</h2>
           <div className="view-more">
-          <Link className="btn-view-more" to="/payment/coin/listccoin/detail">
+          <Link className="btn-view-more" to="/payment/coin/detail">
               Detail <Icon type="double-right" />
             </Link>
             <Link

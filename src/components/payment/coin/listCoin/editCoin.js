@@ -79,6 +79,7 @@ function EditProductCoin(props) {
         image: props.urlImgThumbnail,
       },
     },
+    onCompleted: data => successUpdate(),
     onError: (index) =>
       alertErrorServer(index.networkError.result.errors[0].message),
   });
@@ -86,7 +87,6 @@ function EditProductCoin(props) {
     variables: {
       ids: [productId],
     },
-    onCompleted: (data) => console.log(data),
     onError: (index) =>
       alertErrorServer(index.networkError.result.errors[0].message),
   });
@@ -107,25 +107,23 @@ function EditProductCoin(props) {
   const getStatus = (e) => {
     setDataProduct({ ...dataProduct, status: e.target.value });
   };
-  const submitUpdateCoin = () => {
-    let result = updateCoin();
-    result.then((val) => {
-      if (val) {
-        alert("update thành công!");
-        setOldDataProduct({ ...oldDataProduct, statusBtnCancel: true });
-      }
+  const successUpdate = () => {
+    Modal.success({
+      title: 'Update C.coin successful !'
     });
-  };
-  const showConfirm = (isDelete, contentAlert) => {
+  }
+  const showConfirm = (isDelete, contentAlert, okTextBtn, cancelTextBtn) => {
     Modal.confirm({
       title: `Do you want to ${contentAlert} these items ?`,
+      okText: okTextBtn,
+      cancelText: cancelTextBtn,
       onOk() {
         if (isDelete) {
           deleteProduct();
         }
         history.push("/payment/coin");
       },
-      onCancel() {},
+      onCancel() { },
     });
   };
   const printPaymentTypes = paymentType.map((val, index) => (
@@ -136,7 +134,7 @@ function EditProductCoin(props) {
   if (dataProduct !== null) {
     return (
       <Row>
-        <a onClick={()=>showConfirm(false, "continue update")}>
+        <a onClick={() => showConfirm(false, "continue update", 'Back', 'Continue')}>
           <Icon type="arrow-left" style={{ paddingRight: ".2rem" }} />
           Back
         </a>
@@ -146,12 +144,12 @@ function EditProductCoin(props) {
             <div>
               <p>
                 <Button
-                  onClick={()=>showConfirm(true, "delete")}
+                  onClick={() => showConfirm(true, "delete", 'Yes', 'No')}
                   style={{ marginRight: ".5rem" }}
                 >
                   Delete C.coin
                 </Button>
-                <Button onClick={submitUpdateCoin}>Update C.coin</Button>
+                <Button onClick={() => updateCoin()}>Update C.coin</Button>
               </p>
             </div>
           </div>

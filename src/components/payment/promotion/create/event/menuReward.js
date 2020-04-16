@@ -48,9 +48,10 @@ const MenuRewardEventByMoney = (props) => {
   });
   const [listServer, setListServer] = useState([indexAllServer]);
   const { eventType, eventPaymentType, value } = eventByMoneyIndex;
-  const [getListPaymentType] = useLazyQuery(getEventPaymentType, {
-    fetchPolicy:"cache-and-network",
+  useQuery(getEventPaymentType, {
+    fetchPolicy: "cache-and-network",
     onCompleted: data => {
+      console.log(data)
       setEventByMoneyIndex({
         ...eventByMoneyIndex,
         eventType: data.__type.enumValues
@@ -58,17 +59,14 @@ const MenuRewardEventByMoney = (props) => {
     },
     onError: index => alertErrorServer(index.networkError.result.errors[0].message)
   });
-  const [getListServe] = useLazyQuery(getListServer(platformId), {
-    fetchPolicy:"cache-and-network",
+  useQuery(getListServer(platformId), {
+    fetchPolicy: "cache-and-network",
     onCompleted: data => {
+      console.log(data)
       setListServer([...data.listPartnerServers, indexAllServer]);
     },
     onError: index => alertErrorServer(index.networkError.result.errors[0].message)
   });
-  useEffect(()=>{
-    getListPaymentType();
-    getListServe();
-  },[])
   useMemo(() => {
     dispatchNameEventByMoney("MONEY");
     setEventByMoneyIndex({
