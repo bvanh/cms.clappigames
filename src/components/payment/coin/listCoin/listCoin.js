@@ -18,7 +18,6 @@ import "../../../../static/style/listProducts.css";
 import { convertPaymentType } from '../service'
 import { alertErrorServer } from '../../../../utils/alertErrorAll'
 import { dispatchSetListPaymentType, dispatchTypeEventByMoney } from '../../../../redux/actions/index'
-import { deleteCoinProduct } from "../../../../utils/mutation/productCoin";
 const radioStyle = {
   display: "block",
   height: "30px",
@@ -33,7 +32,6 @@ function ListCoin(props) {
     listTypePayment: [{ name: "", description: "" }]
   });
   const [dataCoin, setDataCoin] = useState(null);
-  const [itemsForDelete, setItemsForDelete] = useState([]);
   const {
     currentPage,
     type,

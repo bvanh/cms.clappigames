@@ -61,14 +61,14 @@ function InputrewardForShowByMoney(props) {
       }
     ]);
   }, [props.typeEventByMoney]);
-  const [getItemsForEvent] = useLazyQuery(getListItemsForEvent, {
+  useQuery(getListItemsForEvent, {
     fetchPolicy: "cache-and-network",
     onCompleted: data => {
       setCoinEvent(data.listProducts);
     },
     onError: index => alertErrorServer(index.networkError.result.errors[0].message)
   });
-  const [getPartnerProducts] = useLazyQuery(getListPartnerProducts(platformId), {
+  useQuery(getListPartnerProducts(platformId), {
     fetchPolicy: "cache-and-network",
     onCompleted: data => {
       setListItemForEvent({
@@ -84,10 +84,13 @@ function InputrewardForShowByMoney(props) {
     },
     onError: index => alertErrorServer(index.networkError.result.errors[0].message)
   });
-  useEffect(() => {
-    getItemsForEvent();
-    getPartnerProducts();
-  }, [])
+  // useMemo(()=>{
+
+  // })
+  // useEffect(() => {
+  //   getItemsForEvent();
+  //   getPartnerProducts();
+  // }, [])
   const [createNewItemEvent] = useMutation(createItemEvent, {
     variables: {
       req: {

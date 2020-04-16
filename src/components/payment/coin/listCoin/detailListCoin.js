@@ -8,6 +8,7 @@ import {
     Select,
     Icon,
     DatePicker,
+    Radio
 } from "antd";
 import moment from "moment";
 import {
@@ -18,7 +19,7 @@ import { dispatchSetListPaymentType } from '../../../../redux/actions/index'
 import { connect } from 'react-redux';
 import { convertPaymentType } from '../service';
 import { alertErrorServer } from '../../../../utils/alertErrorAll'
-import { useLazyQuery } from "@apollo/react-hooks";
+import { useLazyQuery,useQuery } from "@apollo/react-hooks";
 import { dates } from "../../../../utils/dateInfo";
 import ReactExport from "react-export-excel";
 import { Link } from "react-router-dom";
@@ -34,12 +35,11 @@ const listSelectDates = [
     { days: "Last 14 days", variables: "FOURTEEN_DAY_AGO" },
     { days: "Last 30 days", variables: "THIRTY_DAY_AGO" }
 ];
-const listType = [
-    { nameType: "By UserName", id: 4 },
-    { nameType: "By Purchase Coin ID", id: 1 },
-    // { nameType: "By Payment Type", id: 3 }
-    // { nameType: "Theo kiểu thanh toán", id: 3 }
-];
+const radioStyle = {
+    display: "block",
+    height: "30px",
+    lineHeight: "30px"
+  };
 function DetailListCoin(props) {
     const [pageIndex, setPageIndex] = useState({
         currentPage: 1,
@@ -51,8 +51,10 @@ function DetailListCoin(props) {
     const [dataExport, setDataExport] = useState([]);
     const { currentPage, pageSize, type, productName } = pageIndex;
     const { TODAY } = dates;
-    const [getListPaymentType] = useLazyQuery(queryGetPaymentType, {
+    useQuery(queryGetPaymentType, {
+        fetchPolicy:"cache-and-network",
         onCompleted: data => {
+            console.log(data)
             dispatchSetListPaymentType(data.__type.enumValues);
         },
         onError: index => alertErrorServer(index.networkError.result.errors[0].message)
@@ -66,7 +68,7 @@ function DetailListCoin(props) {
         onError: index => alertErrorServer(index.networkError.result.errors[0].message)
     });
     useEffect(() => {
-        getListPaymentType();
+        // getListPaymentType();
         getDataListCoin({
             variables: {
                 currentPage: currentPage,
@@ -127,6 +129,29 @@ function DetailListCoin(props) {
             }
         });
     };
+    const handleFilter = () => {
+        getDataListCoin({
+            variables: {
+                currentPage: currentPage,
+                type: type,
+                pageSize: pageSize,
+                productName: productName
+            }
+        });
+    };
+    const handleResetFilter = () => {
+        getDataListCoin({
+            variables: {
+                currentPage: currentPage,
+                type: "",
+                pageSize: pageSize,
+                productName: productName
+            }
+        });
+    };
+    const setValueTypePayment = e => {
+        setPageIndex({ ...pageIndex, type: e.target.value });
+      };
     const columns = [
         {
             title: "C.coin Id",
@@ -147,8 +172,37 @@ function DetailListCoin(props) {
         {
             title: "Payment Type",
             dataIndex: "type",
-            key: "paymenttype",
-            render: index => <span>{convertPaymentType(props.listPaymentType, index)}</span>
+            key: "type",
+            render: index => <span>{convertPaymentType(props.listPaymentType, index)}</span>,
+            filterDropdown: () => (
+                <div style={{ padding: 8 }}>
+                    <Radio.Group onChange={setValueTypePayment} value={type}>
+                        {printOptionsType}
+                    </Radio.Group>
+                    <Button
+                        type="primary"
+                        onClick={handleFilter}
+                        size="small"
+                        style={{ width: 90, marginRight: 8 }}
+                    >
+                        Filter
+              </Button>
+                    <Button
+                        onClick={handleResetFilter}
+                        size="small"
+                        style={{ width: 90 }}
+                    >
+                        Reset
+              </Button>
+                </div>
+            ),
+            filterIcon: filtered => (
+                <Icon
+                    type="filter"
+                    theme="filled"
+                    style={{ color: filtered ? "#1890ff" : "#fafafa" }}
+                />
+            )
         },
         {
             title: "Promotion",
@@ -177,16 +231,11 @@ function DetailListCoin(props) {
         }
 
     ];
-    const printOptionDates = listSelectDates.map((val, i) => (
-        <Option value={val.variables} key={i}>
-            {val.days}
-        </Option>
-    ));
-    const printTypePayment = listType.map((val, i) => (
-        <Option value={val.id} key={i}>
-            {val.nameType}
-        </Option>
-    ));
+    const printOptionsType = props.listPaymentType.map((val, index) => (
+        <Radio style={radioStyle} value={val.name} key={index}>
+          {val.name}
+        </Radio>
+      ));
     return (
         <Row>
             <div>
@@ -213,13 +262,13 @@ function DetailListCoin(props) {
                                 />
                             }
                         />
-                        <Select
+                        {/* <Select
                             value={type}
                             style={{ width: "15%", marginRight: "2%" }}
                             onChange={handleChangeType}
                         >
                             {printTypePayment}
-                        </Select>
+                        </Select> */}
                         <Button style={{ width: "25%", margin: "" }} onClick={onSearch}>
                             Search
             </Button>
