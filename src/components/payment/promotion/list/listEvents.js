@@ -7,6 +7,7 @@ import { useLazyQuery, useQuery, useMutation } from "@apollo/react-hooks";
 import { Link } from "react-router-dom";
 import { connect } from 'react-redux'
 import { deleteEvents } from "../../../../utils/mutation/promotion";
+import {alertErrorServer} from '../../../../utils/alertErrorAll'
 
 const { TabPane } = Tabs;
 function ListEvents(props) {
@@ -24,13 +25,17 @@ function ListEvents(props) {
     fetchPolicy: "cache-and-network",
     onCompleted: data => {
       setData(data.listEventsByType);
-    }
+    },
+    onError: (index) =>
+      alertErrorServer(index.message)
   });
   const [deleteEvent] = useMutation(deleteEvents, {
     variables: {
       ids: listDelete
     },
-    onCompleted: data => console.log(data)
+    onCompleted: data => console.log(data),
+    onError: (index) =>
+      alertErrorServer(index.message)
   });
   useEffect(() => {
     getData({
@@ -108,7 +113,7 @@ function ListEvents(props) {
       variables: {
         currentPage: currentPage,
         pageSize: pageSize,
-        status: status,
+        status: statusValue,
         paymentType: paymentType,
         name: name
       }
@@ -159,8 +164,6 @@ function ListEvents(props) {
       <div className="btn-search-promo">
         <Input onChange={getValueSearch} style={{marginRight:'.25rem'}}/>
         <Button onClick={onSearchPromo} style={{marginRight:'.25rem'}}>Search</Button>
-      
-        {/* <Button onClick={submitDelete} disabled={listDelete.length > 0 ? false : true}>Delete</Button> */}
         </div>
       <Tabs activeKey={status} onChange={handleChangeTypePromo}>
         <TabPane tab="Total Purchase" key=""></TabPane>

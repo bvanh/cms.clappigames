@@ -1,53 +1,51 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { Button, Row, Col, Icon, Radio, Tabs, Select, Input } from "antd";
-import { Link } from "react-router-dom";
+import { alertErrorServer} from "../../../../../utils/alertErrorAll";
 import { connect } from "react-redux";
 import { queryGetPlatform } from "../../../../../utils/queryPlatform";
-import { getDetailPromotion } from "../../../../../utils/query/promotion";
 import { getListPartnerProducts } from "../../../../../utils/queryPartnerProducts";
 import { getListServer } from "../../../../../utils/query/promotion";
 import { useQuery, useLazyQuery } from "react-apollo";
+import { dispatchListPartner } from "../../../../../redux/actions/index";
 const { Option } = Select;
 function TypePromotion(props) {
   const [itemsForEventTypeItem, setItemForEventTypeItem] = useState([
-    { productName: "", partnerProductId: "" }
+    { productName: "", partnerProductId: "" },
   ]);
   const [listGame, setListGame] = useState([
-    { partnerId: "", partnerName: "" }
+    { partnerId: "", partnerName: "" },
   ]);
   const [listServer, setListServer] = useState([
-    { server: 0, serverName: "All server" }
+    { server: 0, serverName: "All server" },
   ]);
-  const {
-    name,
-    status,
-    eventTime,
-    type,
-    shop,
-    game,
-    server
-  } = props.detailPromo;
+  const { type, shop, game, server } = props.detailPromo;
   const [getListGame] = useLazyQuery(queryGetPlatform, {
-    fetchPolicy:"cache-and-network",
-    onCompleted: data => setListGame(data.listPartners)
+    fetchPolicy: "cache-and-network",
+    onCompleted: (data) => {
+      setListGame(data.listPartners);
+      dispatchListPartner(data.listPartners);
+    },
+    onError: (index) => alertErrorServer(index.message),
   });
   const [getServers] = useLazyQuery(getListServer(game), {
-    fetchPolicy:"cache-and-network",
-    onCompleted: data => {
+    fetchPolicy: "cache-and-network",
+    onCompleted: (data) => {
       setListServer([
         {
           server: 0,
-          serverName: "All server"
+          serverName: "All server",
         },
-        ...data.listPartnerServers
+        ...data.listPartnerServers,
       ]);
-    }
+    },
+    onError: (index) => alertErrorServer(index.message),
   });
   const [getPartnerProducts] = useLazyQuery(getListPartnerProducts(game), {
-    fetchPolicy:"cache-and-network",
-    onCompleted: data => {
+    fetchPolicy: "cache-and-network",
+    onCompleted: (data) => {
       setItemForEventTypeItem(data.listPartnerProducts);
-    }
+    },
+    onError: (index) => alertErrorServer(index.message),
   });
   useMemo(() => getListGame(), [game]);
   useMemo(() => getServers(), [game]);
@@ -60,7 +58,7 @@ function TypePromotion(props) {
 
   if (shop) {
     const indexShop = JSON.parse(shop);
-    const printItem = indexShop.map(function(val, index1) {
+    const printItem = indexShop.map(function (val, index1) {
       const printReward = val.rewards.map((valReward, index2) => (
         <div key={index2} className="more-reward-detail">
           <Input
@@ -142,7 +140,6 @@ function TypePromotion(props) {
             >
               {printListServer}
             </Select>
-            
           </span>
         </div>
         <div style={{ width: "100%" }} className="section4-promotion-title">
@@ -165,7 +162,7 @@ function TypePromotion(props) {
 
 function mapStateToProps(state) {
   return {
-    detailPromo: state.detailPromo
+    detailPromo: state.detailPromo,
   };
 }
 export default connect(mapStateToProps, null)(TypePromotion);

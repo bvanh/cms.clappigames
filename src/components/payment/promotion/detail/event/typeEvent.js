@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { Button, Row, Col, Icon, Radio, Tabs, Select, Input } from "antd";
-import { Link } from "react-router-dom";
+import { alertErrorServer } from "../../../../../utils/alertErrorAll";
 import { connect } from "react-redux";
 import { queryGetPlatform } from "../../../../../utils/queryPlatform";
 import { getDetailPromotion } from "../../../../../utils/query/promotion";
@@ -8,57 +8,61 @@ import { getListServer } from "../../../../../utils/query/promotion";
 import { getListItemsForEvent } from "../../../../../utils/query/promotion";
 import { getListPartnerProducts } from "../../../../../utils/queryPartnerProducts";
 import { isTypeEvent } from "../../promoService";
-import {
-  dispatchDeatilPromo,
-  dispatchDetailPromo
-} from "../../../../../redux/actions/index";
+import { dispatchListPartner } from "../../../../../redux/actions/index";
 import { useQuery, useLazyQuery } from "react-apollo";
 const { Option } = Select;
 function TypeEvent(props) {
   const [productsEventTypeItem, setProductsEventTypeItem] = useState([
-    { productName: "", partnerProductId: "" }
+    { productName: "", partnerProductId: "" },
   ]);
   const [itemsEvent, setItemsEvent] = useState([
-    { productName: "", productId: "" }
+    { productName: "", productId: "" },
   ]);
   const [listGame, setListGame] = useState([
-    { partnerId: "", partnerName: "" }
+    { partnerId: "", partnerName: "" },
   ]);
   const [listServer, setListServer] = useState([
-    { server: 0, serverName: "All server" }
+    { server: 0, serverName: "All server" },
   ]);
-  const { name, status, eventTime, config, paymentType } = props.detailPromo;
+  const { config, paymentType } = props.detailPromo;
   const [getListGame] = useLazyQuery(queryGetPlatform, {
-    fetchPolicy:"cache-and-network",
-    onCompleted: data => setListGame(data.listPartners)
+    fetchPolicy: "cache-and-network",
+    onCompleted: (data) => {
+      dispatchListPartner(data.listPartners);
+      setListGame(data.listPartners);
+    },
+    onError: (index) => alertErrorServer(index.message),
   });
   const [getServers] = useLazyQuery(getListServer(props.dataDetail.game), {
-    fetchPolicy:"cache-and-network",
-    onCompleted: data => {
+    fetchPolicy: "cache-and-network",
+    onCompleted: (data) => {
       setListServer([
         {
           server: 0,
-          serverName: "All server"
+          serverName: "All server",
         },
-        ...data.listPartnerServers
+        ...data.listPartnerServers,
       ]);
-    }
+    },
+    onError: (index) => alertErrorServer(index.message),
   });
 
   const [getPartnerProducts] = useLazyQuery(
     getListPartnerProducts(props.dataDetail.game),
     {
-      fetchPolicy:"cache-and-network",
-      onCompleted: data => {
+      fetchPolicy: "cache-and-network",
+      onCompleted: (data) => {
         setProductsEventTypeItem(data.listPartnerProducts);
-      }
+      },
+      onError: (index) => alertErrorServer(index.message),
     }
   );
   useQuery(getListItemsForEvent, {
     fetchPolicy: "cache-and-network",
-    onCompleted: data => {
+    onCompleted: (data) => {
       setItemsEvent(data.listProducts);
-    }
+    },
+    onError: (index) => alertErrorServer(index.message),
   });
   useMemo(() => getListGame(), [props.dataDetail.game]);
   useMemo(() => getServers(), [props.dataDetail.game]);
@@ -85,7 +89,7 @@ function TypeEvent(props) {
         {val.serverName}
       </Option>
     ));
-    const printItem = indexShop.data.map(function(val, index1) {
+    const printItem = indexShop.data.map(function (val, index1) {
       return (
         <div key={index1}>
           <Col
@@ -95,7 +99,7 @@ function TypeEvent(props) {
               display: "flex",
               alignItems: "center",
               padding: "1rem",
-              border: "1px solid #eeeeee"
+              border: "1px solid #eeeeee",
             }}
           >
             <div
@@ -103,7 +107,7 @@ function TypeEvent(props) {
                 width: "28%",
                 display: "flex",
                 alignItems: "center",
-                marginRight: "2%"
+                marginRight: "2%",
               }}
             >
               <span style={{ marginRight: "1%" }}>From</span>
@@ -158,10 +162,10 @@ function TypeEvent(props) {
         {/* <p>Hình thức : {type}</p> */}
         <div className="detail-game">
           <span style={{ marginRight: "1rem" }}>
-          Type of purchase: By {paymentType} ( {paymentType} exchange)
+            Type of purchase: By {paymentType} ( {paymentType} exchange)
           </span>
           <span style={{ marginRight: "1rem" }}>
-          Type of present : {isTypeEvent(indexShop.type)}
+            Type of present : {isTypeEvent(indexShop.type)}
           </span>
         </div>
         <div>
@@ -211,7 +215,7 @@ function TypeEvent(props) {
 
 function mapStateToProps(state) {
   return {
-    detailPromo: state.detailPromo
+    detailPromo: state.detailPromo,
   };
 }
 export default connect(mapStateToProps, null)(TypeEvent);

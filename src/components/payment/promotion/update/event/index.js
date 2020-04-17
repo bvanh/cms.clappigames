@@ -33,9 +33,15 @@ import { checkTime, indexAllServer } from "../../promoService";
 import moment from "moment";
 
 import { connect } from "react-redux";
-import { BrowserRouter as Router, Route, Link } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Route,
+  Link,
+  useHistory,
+} from "react-router-dom";
 
 function UpdateEvent(props) {
+  const history = useHistory();
   const {
     id,
     name,
@@ -67,7 +73,7 @@ function UpdateEvent(props) {
     startTime: hour[0],
     endTime: hour[1],
     linkUrlUpdate: linkUrl,
-    prefixUpdate: prefix,
+    prefixPromo: prefix,
   });
   const [listPartner, setListPartner] = useState({
     listGame: [{}],
@@ -108,7 +114,7 @@ function UpdateEvent(props) {
       },
     });
   }, []);
-  const { platformId, linkUrlUpdate, prefixUpdate } = indexPromoAndEvent;
+  const { platformId, linkUrlUpdate } = indexPromoAndEvent;
   const { listGame, listItems, listServer } = listPartner;
   const [deleteEvent] = useMutation(deleteEvents, {
     variables: {
@@ -239,14 +245,42 @@ function UpdateEvent(props) {
   };
   const handleChangeTypePromo = (val) => {
     setIndexPromoAndEvent({ ...indexPromoAndEvent, type: val });
+  };  
+  const confirmAlert = (val) => {
+    Modal.confirm({
+      title: "Do you want continue update this promotion ?!",
+      okText: "No",
+      cancelText: "Yes",
+      onOk() {
+        dispatchInititalIndexConfig();
+        if (isCreatePromo) {
+          deleteEvent();
+          history.push(
+            `/payment/promotion/detail/promotion?id=${props.idCreatePromoAndEvent}`
+          );
+        } else {
+          viewDetail();
+        }
+      },
+    });
   };
-  const successAlert = (value) => {
-    setIsCreatePromo(value);
-    setAlertUpdateSuccess(true);
-  };
-  const backToList = () => {
-    dispatchInititalIndexConfig();
-    isCreatePromo ? deleteEvent() : viewDetail();
+  const successAlert = (isCreatePromo) => {
+    setIsCreatePromo(isCreatePromo);
+    Modal.confirm({
+      title: "Update promotion successful ?!",
+      okText: "Back",
+      cancelText: "Continue",
+      onOk() {
+        if (isCreatePromo) {
+          deleteEvent();
+          history.push(
+            `/payment/promotion/detail/promotion?id=${props.idCreatePromoAndEvent}`
+          );
+        } else {
+          viewDetail();
+        }
+      },
+    });
   };
   const viewDetail = () => {
     deletePromo();
@@ -262,26 +296,17 @@ function UpdateEvent(props) {
     <Row className="container-promotion">
       <div>
         <div>
-          {isCreatePromo ? (
-            <Link
-              to={`/payment/promotion/detail/promotion?id=${props.idCreatePromoAndEvent}`}
-              onClick={backToList}
-            >
-              Back
-            </Link>
-          ) : (
-            <a onClick={backToList}>
-              <Icon type="arrow-left" style={{ paddingRight: ".2rem" }} />
-              Back
-            </a>
-          )}
+          <a onClick={confirmAlert}>
+            <Icon type="arrow-left" style={{ paddingRight: ".2rem" }} />
+            Back
+          </a>
           <h2>Update promotion</h2>
         </div>
       </div>
       <Col md={12} className="section1-promotion">
         <div>
           <InputNameAndTypeArea
-            alertUpdateSuccess={alertUpdateSuccess}
+            // alertUpdateSuccess={alertUpdateSuccess}
             indexPromoAndEvent={indexPromoAndEvent}
             resetGameAndServer={resetGameAndServer}
             setInfoPromo={setInfoPromo}
@@ -326,7 +351,7 @@ function UpdateEvent(props) {
         setTimePromo={setTimePromo}
         isTimeInPromo={isTimeInPromo}
       />
-      <Col md={18}>
+      <Col md={18} className="input-gift-container">
         {switchTypeEvent ? (
           <EventByItems
             listItems={listItems}
@@ -351,9 +376,15 @@ function UpdateEvent(props) {
             isTimeInPromo={isTimeInPromo}
           />
         )}
-        <Button>demo</Button>
+        <Button
+          className="btn-update-promo"
+          onClick={() => deletePromo()}
+          disabled={isTimeInPromo}
+        >
+          Delete
+        </Button>
       </Col>
-      <Col md={6}>
+      <Col md={6} style={{ margin: ".5rem 0" }}>
         <div className="addLink">
           <h3>Link post</h3>
           <Input
@@ -364,30 +395,27 @@ function UpdateEvent(props) {
             onChange={getLinkUrlAndPrefix}
           />
         </div>
-        <div className="addPrefix">
-          <h3>Prefix</h3>
-          <Input
-            placeholder="Get prefix..."
-            style={{ width: "100%" }}
-            value={prefixUpdate}
-            name="prefix"
-            onChange={getLinkUrlAndPrefix}
-          />
-        </div>
-        <div>
-          <p>Select thumbnail promotion</p>
-          <div style={{ width: "100%" }}>
+        <div className="select-image-promotion">
+          <p className="select-image-promotion-title">
+            Select thumbnail promotion
+          </p>
+          <div style={{ width: "100%", padding: ".5rem" }}>
             {props.urlImgThumbnail === null ? (
               <i>Thumbnail image is emtry</i>
             ) : (
               <img src={props.urlImgThumbnail} width="100%" />
             )}
           </div>
-          <a onClick={() => dispatchShowImagesNews(true)}>Select</a>
+          <a
+            onClick={() => dispatchShowImagesNews(true)}
+            style={{ paddingLeft: ".5rem" }}
+          >
+            Select
+          </a>
         </div>
         <ListImagesForNews isThumbnail={true} />
       </Col>
-      <Modal
+      {/* <Modal
         title={<Icon type="check-circle" />}
         visible={alertUpdateSuccess}
         onCancel={() => setAlertUpdateSuccess(false)}
@@ -406,7 +434,7 @@ function UpdateEvent(props) {
           )
         }
         cancelText="Next"
-      ></Modal>
+      ></Modal> */}
     </Row>
   );
 }

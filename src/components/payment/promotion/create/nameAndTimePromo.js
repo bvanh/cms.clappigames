@@ -7,37 +7,39 @@ import {
   DatePicker,
   Select,
   TimePicker,
-  Button
+  Button,
 } from "antd";
 import moment from "moment";
-import { useLazyQuery, useMutation, useQuery } from "@apollo/react-hooks";
-import "../../../../static/style/promotion.css";
-import EventByItems from "./promotion/inputRewardItem";
-import InputRewardByMoney from "./event/inputReward";
-import MenuRewardEventByMoney from "./event/menuReward";
-import {
-  getPromotionType,
-  getEventPaymentType
-} from "../../../../utils/queryPaymentAndPromoType";
-import { queryGetPlatform } from "../../../../utils/queryPlatform";
-import { getListPartnerProducts } from "../../../../utils/queryPartnerProducts";
-import { getListServer } from "../../../../utils/query/promotion";
-import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import { printAlertDailyPromo, daily0 } from "../promoService";
 const { Option } = Select;
 const { RangePicker } = DatePicker;
 function InputNameAndTypeArea(props) {
   const { switchTypeEvent } = props;
-  const { name, status } = props.indexPromoAndEvent;
+  const { name, status, prefixPromo } = props.indexPromoAndEvent;
   return (
-    <div>
-      <h3 className="promotion-title-field">Promotion Name</h3>
-      <Input
-        placeholder="Ex: Promotion for open new server..."
-        onChange={props.setInfoPromo}
-        name="name"
-        value={name}
-      ></Input>
+    <div className="add-name-info">
+      <div>
+        <div className="addPromoName">
+          <h3 className="promotion-title-field">Promotion Name</h3>
+          <Input
+            placeholder="Ex: Promotion for open new server..."
+            onChange={props.setInfoPromo}
+            name="name"
+            style={{ width: "100%" }}
+            value={name}
+          ></Input>
+        </div>
+        <div className="addPromoId">
+          <h3>Promotion Id</h3>
+          <Input
+            placeholder="Promotion id..."
+            style={{ width: "100%" }}
+            value={prefixPromo}
+            name="prefixPromo"
+            onChange={props.setInfoPromo}
+          />
+        </div>
+      </div>
       <div className="promotion-title-status">
         <h3>Status</h3>
         <Radio.Group onChange={props.setInfoPromo} value={status} name="status">
@@ -50,7 +52,7 @@ function InputNameAndTypeArea(props) {
         disabled={props.isTimeInPromo ? props.isTimeInPromo : false}
         value={switchTypeEvent}
         buttonStyle="solid"
-        onChange={e => {
+        onChange={(e) => {
           props.setSwitchTypeEvent(e.target.value);
           props.resetGameAndServer();
         }}
@@ -71,7 +73,7 @@ function InputTimeArea(props) {
     server,
     startTime,
     endTime,
-    timeTotal
+    timeTotal,
   } = props.indexPromoAndEvent;
   const alertDaily = printAlertDailyPromo(daily);
   const printAlertDates = dates.map((val, i) => <>{val}rd, </>);
@@ -89,7 +91,7 @@ function InputTimeArea(props) {
       {val}
     </Option>
   ));
-  const disabledEndDate = endValue => {
+  const disabledEndDate = (endValue) => {
     const startValue = moment(timeTotal[0]).format("x");
     return endValue.valueOf() <= Number(startValue);
   };
@@ -204,8 +206,9 @@ function InputTimeArea(props) {
         </div>
       </div>
       <div className="section2-promotion-footer">
-       Promotion's timeline will be on {" "}
-        {endTime === "00:00:00" ? "" : `${startTime} to ${endTime}`} {alertDaily}
+        Promotion's timeline will be on{" "}
+        {endTime === "00:00:00" ? "" : `${startTime} to ${endTime}`}{" "}
+        {alertDaily}
         {printAlertDates} from {timeTotal[0]} to {timeTotal[1]}
       </div>
     </Col>

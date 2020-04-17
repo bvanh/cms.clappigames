@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from "react";
 import { Button, Input, Row, Col, Select, Icon } from "antd";
 import { updatePromotion } from "../../../../../utils/mutation/promotion";
-import moment from "moment";
+import {alertErrorServer} from '../../../../../utils/alertErrorAll'
 import {
   checkNumb,
   checkMainInfoPromoAndEvent,
@@ -31,14 +31,16 @@ function EventByItems(props) {
     startTime,
     endTime,
     linkUrlUpdate,
-    prefixUpdate
+    prefixPromo
   } = props.indexPromoAndEvent;
   const { indexShop } = props;
   const { platformId, server } = props.indexGameForPromo;
   const { data } = useQuery(getListPartnerProducts(platformId), {
     onCompleted: data => {
       setItemForEventTypeItem(data.listPartnerProducts);
-    }
+    },
+    onError: (index) =>
+      alertErrorServer(index.message)
   });
   const [updatePromo] = useMutation(updatePromotion, {
     variables: {
@@ -58,11 +60,13 @@ function EventByItems(props) {
           hour: [checkStartHour(startTime), checkEndHour(endTime)]
         }),
         linkUrl: linkUrlUpdate,
-        prefix: prefixUpdate,
+        prefix: prefixPromo,
         imageUrl: props.imageUrl
       }
     },
-    onCompleted: data => console.log(data)
+    onCompleted: data => props.successAlert(false),
+    onError: (index) =>
+      alertErrorServer(index.message)
   });
   const submitUpdatePromo = async () => {
     if (
@@ -77,8 +81,7 @@ function EventByItems(props) {
       if (checkNumb(indexShop) &&
         checkItemIsEmtry(indexShop) &&
         checkPurchaseItemIsEmtry(indexShop)) {
-        await updatePromo();
-        props.successAlert(false);
+       updatePromo();
       } else {
         alertErrorItemPromo();
       }
@@ -219,9 +222,7 @@ function EventByItems(props) {
           <div style={{ width: "80%" }}>Present</div>
         </div>
       </div>
-      <div className="btn-create-promo">
-        <Button onClick={submitUpdatePromo}>Submit</Button>
-      </div>
+        <Button onClick={submitUpdatePromo} className="btn-create-promo">Update</Button>
       <Row>
         {printItem}
         <Button onClick={() => addItem()} disabled={props.isTimeInPromo} style={{ margin: "1rem 1.5rem" }}>Add more conditions</Button>

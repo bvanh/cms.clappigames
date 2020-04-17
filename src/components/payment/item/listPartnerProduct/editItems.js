@@ -88,16 +88,16 @@ function EditPartnerProductItem(props) {
     partnerProductName,
     partnerId,
   } = dataPartnerProduct;
-  const [getRefPartnerProduct] = useLazyQuery(
-    queryGetRefPartnerProducts(partnerId),
-    {
-      onCompleted: (data) => {
-        setListRefProduct(data.listRefPartnerProducts);
-      },
-      onError: (index) =>
-        alertErrorServer(index.networkError.result.errors[0].message),
-    }
-  );
+  const [getRefPartnerProduct] = useLazyQuery(queryGetRefPartnerProducts, {
+    variables: {
+      partnerId: partnerId,
+    },
+    onCompleted: (data) => {
+      setListRefProduct(data.listRefPartnerProducts);
+    },
+    onError: (index) =>
+      alertErrorServer(index.networkError.result.errors[0].message),
+  });
   useEffect(() => {
     getRefPartnerProduct();
   }, []);
@@ -232,7 +232,7 @@ function EditPartnerProductItem(props) {
                 >
                   Delete Item
                 </Button>
-                <Button onClick={()=>updateItem()}>Update Item</Button>
+                <Button onClick={() => updateItem()}>Update Item</Button>
               </p>
             </div>
           </div>

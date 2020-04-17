@@ -3,49 +3,48 @@ import { DatePicker, Select, TimePicker } from "antd";
 import { useLazyQuery, useMutation, useQuery } from "@apollo/react-hooks";
 import "../../../../../static/style/promotion.css";
 import { queryGetPlatform } from "../../../../../utils/queryPlatform";
-import {
-  getPromotionType,
-  getEventPaymentType
-} from "../../../../../utils/queryPaymentAndPromoType";
+import { getEventPaymentType } from "../../../../../utils/queryPaymentAndPromoType";
 import { connect } from "react-redux";
 import {
   dispatchTypeEventByMoney,
   dispatchNameEventByMoney,
-  dispatchResetItemRewards
 } from "../../../../../redux/actions";
+import { alertErrorServer } from "../../../../../utils/alertErrorAll";
 const { Option } = Select;
 const { RangePicker } = DatePicker;
 
 const eventMoneyType = [
   {
     value: "COIN",
-    description: "Tặng C.Coin"
+    description: "Tặng C.Coin",
   },
   {
     value: "INKIND",
-    description: "Tặng quà out game"
-  }
+    description: "Tặng quà out game",
+  },
 ];
 const eventCointype = [
   {
     value: "ITEM",
-    description: "Tặng bằng vật phẩm trong game"
-  }
+    description: "Tặng bằng vật phẩm trong game",
+  },
 ];
-const MenuRewardEventByMoney = props => {
+const MenuRewardEventByMoney = (props) => {
   const { paymentType, config } = props.detailPromo;
   const { listServer } = props.listPartner;
   const { platformId, server, type } = props.indexPromoAndEvent;
   const [eventByMoneyIndex, setEventByMoneyIndex] = useState({
     eventType: [],
     eventPaymentType: [],
-    value: JSON.parse(config).type
+    value: JSON.parse(config).type,
   });
   const [listGame, setListGame] = useState([{}]);
   useQuery(queryGetPlatform, {
-    onCompleted: data => {
+    fetchPolicy: "cache-and-network",
+    onCompleted: (data) => {
       setListGame(data.listPartners);
-    }
+    },
+    onError: (index) => alertErrorServer(index.message),
   });
   useMemo(() => {
     // props.setIndexPromoAndEvent({ ...props.indexPromoAndEvent, platformId: platformId, server: server })
@@ -54,54 +53,56 @@ const MenuRewardEventByMoney = props => {
       setEventByMoneyIndex({
         ...eventByMoneyIndex,
         eventPaymentType: eventCointype,
-        value: "ITEM"
+        value: "ITEM",
       });
       dispatchTypeEventByMoney("ITEM");
     } else if (paymentType === "MONEY") {
       dispatchNameEventByMoney(paymentType);
       setEventByMoneyIndex({
         ...eventByMoneyIndex,
-        eventPaymentType: eventMoneyType
+        eventPaymentType: eventMoneyType,
       });
       dispatchTypeEventByMoney(type);
     }
   }, []);
   const { eventType, eventPaymentType, value } = eventByMoneyIndex;
   useQuery(getEventPaymentType, {
-    onCompleted: data =>
+    fetchPolicy: "cache-and-network",
+    onCompleted: (data) =>
       setEventByMoneyIndex({
         ...eventByMoneyIndex,
-        eventType: data.__type.enumValues
-      })
+        eventType: data.__type.enumValues,
+      }),
+    onError: (index) => alertErrorServer(index.message),
   });
-  const handleChangePaymentType = async val => {
+  const handleChangePaymentType = async (val) => {
     if (val === "MONEY") {
       dispatchNameEventByMoney(val);
       setEventByMoneyIndex({
         ...eventByMoneyIndex,
         eventPaymentType: eventMoneyType,
-        value: "INKIND"
+        value: "INKIND",
       });
       dispatchTypeEventByMoney("INKIND");
       props.setIndexEventByMoney({
         ...props.indexEventByMoney,
-        isPaymentTypeByCoin: false
+        isPaymentTypeByCoin: false,
       });
     } else if (val === "COIN") {
       dispatchNameEventByMoney(val);
       props.setIndexEventByMoney({
         ...props.indexEventByMoney,
-        isPaymentTypeByCoin: true
+        isPaymentTypeByCoin: true,
       });
       setEventByMoneyIndex({
         ...eventByMoneyIndex,
         eventPaymentType: eventCointype,
-        value: "ITEM"
+        value: "ITEM",
       });
       dispatchTypeEventByMoney("ITEM");
     }
   };
-  const handleChanePaymentTypeByMoney = async val => {
+  const handleChanePaymentTypeByMoney = async (val) => {
     if (val === "COIN") {
       //   props.getItemsForEventTypeMoney();
     }
@@ -115,7 +116,7 @@ const MenuRewardEventByMoney = props => {
   ));
   const printEventType = eventType.map((val, index) => (
     <Option key={index} value={val.name}>
-      {val.name}
+      By {val.name} ( {val.name} exchange)
     </Option>
   ));
   const printPlatform = props.listPartners.map((val, index) => (
@@ -131,55 +132,55 @@ const MenuRewardEventByMoney = props => {
   return (
     <div className="promo-section2">
       <div className="promo-choose-platform">
-      <div>
-        <div className="promo-choose-platform-name">
-          <p>Type of Purchase</p>
-          <Select
-            value={props.nameEventByMoney}
-            style={{ width: 120 }}
-            onChange={handleChangePaymentType}
-            placeholder="-Chọn game-"
-            disabled={props.isTimeInPromo}
-          >
-            {printEventType}
-          </Select>
-        </div>
-        <div className="promo-choose-platform-server">
-          <span>Type of present: </span>
-          <Select
-            value={value}
-            style={{ width: 120 }}
-            onChange={handleChanePaymentTypeByMoney}
-            disabled={props.isTimeInPromo}
-          >
-            {printEventMoneyType}
-          </Select>
-        </div>
-      </div>
-      {props.nameEventByMoney === "COIN" && (
         <div>
-          <p className="promotion-title-field">Platform</p>
-          <Select
-            style={{ width: 120 }}
-            onChange={props.handleChangePlatform}
-            value={platformId}
-            disabled={props.isTimeInPromo}
-          >
-            {printPlatform}
-          </Select>{" "}
-          <span>Server</span>
-          <Select
-            placeholder="-Chọn server-"
-            style={{ width: 120 }}
-            onChange={props.handleChangeServer}
-            name="server"
-            value={server}
-            disabled={props.isTimeInPromo}
-          >
-            {printListServer}
-          </Select>{" "}
+          <div className="promo-choose-platform-name">
+            <p>Type of Purchase</p>
+            <Select
+              value={props.nameEventByMoney}
+              style={{ width: 120 }}
+              onChange={handleChangePaymentType}
+              placeholder="-Chọn game-"
+              disabled={props.isTimeInPromo}
+            >
+              {printEventType}
+            </Select>
+          </div>
+          <div className="promo-choose-platform-server">
+            <span>Type of present: </span>
+            <Select
+              value={value}
+              style={{ width: 120 }}
+              onChange={handleChanePaymentTypeByMoney}
+              disabled={props.isTimeInPromo}
+            >
+              {printEventMoneyType}
+            </Select>
+          </div>
         </div>
-      )}
+        {props.nameEventByMoney === "COIN" && (
+          <div>
+            <p className="promotion-title-field">Platform</p>
+            <Select
+              style={{ width: 120 }}
+              onChange={props.handleChangePlatform}
+              value={platformId}
+              disabled={props.isTimeInPromo}
+            >
+              {printPlatform}
+            </Select>{" "}
+            <span>Server</span>
+            <Select
+              placeholder="-Chọn server-"
+              style={{ width: 120 }}
+              onChange={props.handleChangeServer}
+              name="server"
+              value={server}
+              disabled={props.isTimeInPromo}
+            >
+              {printListServer}
+            </Select>{" "}
+          </div>
+        )}
       </div>
     </div>
   );
@@ -189,7 +190,7 @@ function mapStateToProps(state) {
     typeEventByMoney: state.typeEventByMoney,
     nameEventByMoney: state.nameEventByMoney,
     detailPromo: state.detailPromo,
-    listPartners: state.listPartner
+    listPartners: state.listPartner,
   };
 }
 export default connect(mapStateToProps, null)(MenuRewardEventByMoney);

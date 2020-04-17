@@ -17,10 +17,8 @@ import { queryGetPlatform } from "../../../../utils/queryPlatform";
 import { getListPartnerProducts } from "../../../../utils/queryPartnerProducts";
 import { connect } from "react-redux";
 import moment from "moment";
-import {
-  getListServer,
-  getListItemsForEvent,
-} from "../../../../utils/query/promotion";
+import { alertErrorServer } from "../../../../utils/alertErrorAll";
+import { getListItemsForEvent } from "../../../../utils/query/promotion";
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 
 const initialIndexShop = [
@@ -53,20 +51,13 @@ function CreatePromotion(props) {
     startTime: "00:00:00",
     endTime: "00:00:00",
     linkUrl: null,
-    prefix: "",
+    prefixPromo: "",
   });
   const [indexGameForPromo, setIndexGameForPromo] = useState({
     platformId: "",
     server: "",
   });
   const [listPartner, setListPartner] = useState({
-    listGame: [{}],
-    listServer: [
-      {
-        server: 0,
-        serverName: "All server",
-      },
-    ],
     listItems: [
       {
         productId: "",
@@ -84,31 +75,13 @@ function CreatePromotion(props) {
     dispatchSetUrlImageThumbnail(null);
   }, []);
   const isTimeInPromo = null;
-  const { platformId, status, server, linkUrl, prefix } = indexPromoAndEvent;
-  const { listGame, listItems, listServer } = listPartner;
+  const { platformId, status, server, linkUrl } = indexPromoAndEvent;
+  const { listItems } = listPartner;
   const { data } = useQuery(getListPartnerProducts(platformId), {
     onCompleted: (data) => {
       setListPartner({ ...listPartner, listItems: data.listPartnerProducts });
     },
-  });
-  useQuery(queryGetPlatform, {
-    onCompleted: (data) => {
-      setListPartner({ ...listPartner, listGame: data.listPartners });
-    },
-  });
-  const { data2 } = useQuery(getListServer(platformId), {
-    onCompleted: (data) => {
-      setListPartner({
-        ...listPartner,
-        listServer: [
-          {
-            server: 0,
-            serverName: "All server",
-          },
-          ...data.listPartnerServers,
-        ],
-      });
-    },
+    onError: (index) => alertErrorServer(index.message),
   });
   const [getItemsForEventTypeMoney] = useLazyQuery(getListItemsForEvent, {
     onCompleted: (data) => {
@@ -117,6 +90,7 @@ function CreatePromotion(props) {
         itemsForEventByMoney: data.listProducts,
       });
     },
+    onError: (index) => alertErrorServer(index.message),
   });
   const handleChangePlatform = (e) => {
     setIndexPromoAndEvent({
@@ -233,10 +207,23 @@ function CreatePromotion(props) {
     setIndexPromoAndEvent({ ...indexPromoAndEvent, listPartner: val });
   };
   const successAlert = (val) => {
+    Modal.success({
+      title: "Create promotion successful !",
+      okText: "Back",
+      cancelText: "Continue",
+      onOk() {
+        dispatchSwitchCreatePromo(true);
+      },
+      onCancel() {
+        setSwitchTypeEvent(!switchTypeEvent);
+      },
+    });
+  };
+  const confirmAlert = (val) => {
     Modal.confirm({
-      title: "Tạo khuyến mãi thành công",
-      okText: "Xem danh sách",
-      cancelText: "Tiếp tục",
+      title: "Do you want continue create promotion ?!",
+      okText: "No",
+      cancelText: "Yes",
       onOk() {
         dispatchSwitchCreatePromo(true);
       },
@@ -256,16 +243,13 @@ function CreatePromotion(props) {
       <Row className="container-promotion">
         <div>
           <div>
-            <Link
-              to="/payment/promotion"
-              onClick={() => dispatchSwitchCreatePromo(true)}
-            >
+            <a onClick={() => confirmAlert()}>
               <span>
                 <Icon type="arrow-left" style={{ paddingRight: ".2rem" }} />
-                Quay lại
+                Back
               </span>
-            </Link>
-            <h2>Thêm mới khuyến mãi</h2>
+            </a>
+            <h2>Create Promotion</h2>
           </div>
         </div>
         <Col md={12} className="section1-promotion">
@@ -316,7 +300,7 @@ function CreatePromotion(props) {
           setTimePromo={setTimePromo}
           isTimeInPromo={isTimeInPromo}
         />
-        <Col md={18}>
+        <Col md={18} className="input-gift-container">
           {switchTypeEvent ? (
             <EventByItems
               successAlert={successAlert}
@@ -352,19 +336,9 @@ function CreatePromotion(props) {
               onChange={getLinkUrlAndPrefix}
             />
           </div>
-          <div className="addPrefix">
-            <h3>Prefix</h3>
-            <Input
-              placeholder="Get prefix..."
-              style={{ width: "100%" }}
-              value={prefix}
-              name="prefix"
-              onChange={getLinkUrlAndPrefix}
-            />
-          </div>
-          <div>
-            <p className="select-image-promotion">Select thumbnail promotion</p>
-            <div style={{ width: "100%" }}>
+          <div className="select-image-promotion">
+            <h3 className="select-image-promotion-title">Select thumbnail</h3>
+            <div style={{ width: "100%", padding: ".5rem" }}>
               {props.urlImgThumbnail === null ? (
                 <i>Thumbnail image is emtry</i>
               ) : (
@@ -374,7 +348,12 @@ function CreatePromotion(props) {
                 />
               )}
             </div>
-            <a onClick={() => dispatchShowImagesNews(true)}>Select</a>
+            <a
+              onClick={() => dispatchShowImagesNews(true)}
+              style={{ paddingLeft: ".5rem" }}
+            >
+              Select
+            </a>
           </div>
           <ListImagesForNews isThumbnail={true} />
         </Col>

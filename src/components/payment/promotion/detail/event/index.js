@@ -3,6 +3,7 @@ import { Button, Row, Col, Icon, Radio, Tabs, Modal } from "antd";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 import { getDetailEvent } from "../../../../../utils/query/promotion";
+import{ alertErrorServer} from '../../../../../utils/alertErrorAll'
 import TypeEvent from "./typeEvent";
 import TimePromo from "../timePromo";
 import UpdateEvent from "../../update/event/index";
@@ -46,7 +47,9 @@ function DetailEvent(props) {
     onCompleted: data => {
       dispatchDetailPromoAndEvent(data.listEvents[0]);
       setDataDetail(JSON.parse(data.listEvents[0].config));
-    }
+    },
+    onError: (index) =>
+      alertErrorServer(index.message)
   });
   const backToDetail = () => {
     setIsUpdate(false);

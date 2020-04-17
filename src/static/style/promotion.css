@@ -43,8 +43,15 @@
 }
 .btn-create-promo {
   position: absolute;
-  top: -435px;
+  top: 0;
   right: 8px;
+  width: 100px;
+}
+.btn-update-promo {
+  position: absolute;
+  top: 0;
+  right: 120px;
+  width: 100px;
 }
 /*  */
 .input-coin-event-money {
@@ -63,7 +70,7 @@
   justify-content: space-between;
   position: absolute;
   top: 0.2rem;
-  right: 0;
+  right: 160px;
 }
 /* detail promo */
 .promo-title {
@@ -203,4 +210,37 @@
 }
 .ant-select-selection {
   border-radius: 0;
+}
+.input-gift-container{
+  position: initial;
+}
+.addPromoId{
+  display: flex;
+  flex-direction: column;
+  width: 30%;
+}
+.addPromoName{
+  display: flex;
+  flex-direction: column;
+  width: 65%;
+}
+.add-name-info>div{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.select-image-promotion{
+  border: 1px solid #eeeeee;
+  margin-top: .5rem;
+  padding-bottom: .5rem;
+}
+.select-image-promotion-title{
+  padding: 1rem;
+  background: #eeeeee;
+}
+.create-promo{
+  width: 150px;
+  position: absolute;
+  top: .2rem;
+  right: 0;
 }

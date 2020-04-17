@@ -193,8 +193,8 @@ const alertErrorItemPromo = () => {
     title: "Error !!!",
     content: (
       <div>
-        <p>+ Kiểm tra thông tin game, server, item, hình thức.</p>
-        <p>+ Giá trị các mốc khuyến mãi tăng dần.</p>
+        <p>+ Check again game info, server, item, type promotion</p>
+        <p>+ Milestones are sorted by increasing .</p>
       </div>
     )
   });
@@ -204,7 +204,7 @@ const alertErrorNamePromo = () => {
     title: "Error!!!",
     content: (
       <div>
-        <p>+ Kiểm tra thông tin tên, trạng thái, thời gian.</p>
+        <p>+ Check again promotion name, status, time.</p>
       </div>
     )
   });

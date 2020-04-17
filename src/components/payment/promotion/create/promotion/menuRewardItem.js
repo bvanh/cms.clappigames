@@ -6,6 +6,7 @@ import { getListServer } from "../../../../../utils/query/promotion";
 import { useQuery } from "@apollo/react-hooks";
 import { connect } from "react-redux";
 import { indexAllServer } from "../../promoService";
+import { alertErrorServer } from "../../../../../utils/alertErrorAll";
 const { Option } = Select;
 
 function MenuRewardByItem(props) {
@@ -17,19 +18,26 @@ function MenuRewardByItem(props) {
     { name: "", description: "" }
   ]);
   useQuery(getPromotionType, {
+    fetchPolicy:"cache-and-network",
     onCompleted: data => {
       setListTypePromo(data.__type.enumValues);
-    }
+    },
+    onError: (index) =>
+      alertErrorServer(index.message)
   });
   useQuery(queryGetPlatform, {
     onCompleted: data => {
       setListGame(data.listPartners);
-    }
+    },
+    onError: (index) =>
+      alertErrorServer(index.message)
   });
   useQuery(getListServer(platformId), {
     onCompleted: data => {
       setListServer([...data.listPartnerServers, indexAllServer]);
-    }
+    },
+    onError: (index) =>
+      alertErrorServer(index.message)
   });
   const printPromoType = listTypePromo.map((val, index) => (
     <Option value={val.name} key={index}>

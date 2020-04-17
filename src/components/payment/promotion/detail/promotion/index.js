@@ -8,6 +8,7 @@ import TimePromo from "../timePromo";
 import UpdatePromotion from "../../update/promotion/index";
 import { dispatchDetailPromoAndEvent } from "../../../../../redux/actions/index";
 import { useQuery } from "react-apollo";
+import {alertErrorServer} from '../../../../../utils/alertErrorAll'
 
 const { TabPane } = Tabs;
 const { confirm } = Modal;
@@ -19,7 +20,7 @@ function DetailPromotion(props) {
   const promoId = query.get("id");
   const showConfirm = () => {
     confirm({
-      title: "Promotion edit?",
+      title: "Confirm edit promotion ?",
       content: (
         <div>
           <p>
@@ -45,7 +46,9 @@ function DetailPromotion(props) {
     fetchPolicy: "cache-and-network",
     onCompleted: data => {
       dispatchDetailPromoAndEvent(data.listPromotions[0]);
-    }
+    },
+    onError: (index) =>
+      alertErrorServer(index.message)
   });
   const backToDetail = () => {
     setIsUpdate(false);

@@ -8,14 +8,14 @@ import {
   Col,
   Select,
   Icon,
-  Modal
-} from "antd"
+  Modal,
+} from "antd";
 import {
   dispatchShowImagesNews,
-  dispatchSetUrlImageThumbnail
+  dispatchSetUrlImageThumbnail,
 } from "../../../../redux/actions/index";
-import { connect } from 'react-redux'
-import {alertErrorServer} from '../../../../utils/alertErrorAll'
+import { connect } from "react-redux";
+import { alertErrorServer } from "../../../../utils/alertErrorAll";
 import ListImagesForNews from "../../../news/modalImageUrl/imgsUrl";
 import { queryGetPlatform } from "../../../../utils/queryNews";
 import { queryGetRefPartnerProducts } from "../../../../utils/queryPartnerProducts";
@@ -27,7 +27,7 @@ const { Option } = Select;
 const radioStyle = {
   display: "block",
   height: "24px",
-  lineHeight: "30px"
+  lineHeight: "30px",
 };
 function CreatePartnerItems(props) {
   const userName = localStorage.getItem("userNameCMS");
@@ -42,8 +42,8 @@ function CreatePartnerItems(props) {
       coin: "",
       partnerProductName: "",
       promotionId: "",
-      status: ""
-    }
+      status: "",
+    },
   });
   const [dataListPlatform, setListPlatform] = useState([]);
   const [dataListRefProduct, setListRefProduct] = useState([]);
@@ -54,17 +54,18 @@ function CreatePartnerItems(props) {
     coin: "",
     partnerProductName: "",
     // promotionId: "",
-    status: ""
+    status: "",
   });
 
   useEffect(() => {
     dispatchSetUrlImageThumbnail(null);
   }, []);
   const { loading, error, data } = useQuery(queryGetPlatform(), {
-    onCompleted: dataPartner => {
+    onCompleted: (dataPartner) => {
       setListPlatform(dataPartner.listPartners);
     },
-    onError: index => alertErrorServer(index.networkError.result.errors[0].message)
+    onError: (index) =>
+      alertErrorServer(index.networkError.result.errors[0].message),
   });
   const {
     productName,
@@ -75,15 +76,16 @@ function CreatePartnerItems(props) {
     partnerId,
     // promotionId
   } = dataPartnerProduct;
-  const [getRefPartnerProduct] = useLazyQuery(
-    queryGetRefPartnerProducts(partnerId),
-    {
-      onCompleted: data => {
-        setListRefProduct(data.listRefPartnerProducts);
-      },
-      onError: index => alertErrorServer(index.networkError.result.errors[0].message)
-    }
-  );
+  const [getRefPartnerProduct] = useLazyQuery(queryGetRefPartnerProducts, {
+    variables: {
+      partnerId: partnerId,
+    },
+    onCompleted: (data) => {
+      setListRefProduct(data.listRefPartnerProducts);
+    },
+    onError: (index) =>
+      alertErrorServer(index.networkError.result.errors[0].message),
+  });
   const [createItem] = useMutation(createPartnerProduct, {
     variables: {
       req: {
@@ -94,32 +96,33 @@ function CreatePartnerItems(props) {
         coin: Number(coin),
         partnerProductName: partnerProductName,
         // promotionId: Number(promotionId),
-        image: props.urlImgThumbnail
-      }
+        image: props.urlImgThumbnail,
+      },
     },
-    onError: index => alertErrorServer(index.networkError.result.errors[0].message)
+    onError: (index) =>
+      alertErrorServer(index.networkError.result.errors[0].message),
   });
-  const getNewInfoItem = e => {
+  const getNewInfoItem = (e) => {
     setDataPartnerProduct({
       ...dataPartnerProduct,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
     setOldDataPartnerProduct({
       ...oldDataPartnerProduct,
-      statusBtnCancel: false
+      statusBtnCancel: false,
     });
   };
-  const getStatus = e => {
+  const getStatus = (e) => {
     setDataPartnerProduct({ ...dataPartnerProduct, status: e.target.value });
   };
   const submitCreateItem = () => {
     let result = createItem();
-    result.then(val => {
+    result.then((val) => {
       if (val) {
-        showConfirm("Create new Item successful !")
+        showConfirm("Create new Item successful !");
         setOldDataPartnerProduct({
           ...oldDataPartnerProduct,
-          statusBtnCancel: true
+          statusBtnCancel: true,
         });
         setDataPartnerProduct(oldDataPartnerProduct.oldData);
       }
@@ -128,11 +131,11 @@ function CreatePartnerItems(props) {
   const cancelUpdate = () => {
     setDataPartnerProduct(oldDataPartnerProduct.oldData);
   };
-  const changePartnerProductName = async val => {
+  const changePartnerProductName = async (val) => {
     await setDataPartnerProduct({
       ...dataPartnerProduct,
       partnerProductName: JSON.parse(val).productName,
-      productId: JSON.parse(val).productId
+      productId: JSON.parse(val).productId,
     });
   };
   async function changePartnerName(val) {
@@ -168,15 +171,18 @@ function CreatePartnerItems(props) {
       },
       onCancel() {
         console.log("Cancel");
-      }
+      },
     });
   };
   return (
     <Row>
-      <Link to="/payment/items" onClick={()=>showConfirm("Do you want continute create new Item?")}>
+      <Link
+        to="/payment/items"
+        onClick={() => showConfirm("Do you want continute create new Item?")}
+      >
         <span>
           <Icon type="arrow-left" style={{ paddingRight: ".2rem" }} />
-        Back
+          Back
         </span>
       </Link>
       <div className="products-title">
@@ -185,7 +191,9 @@ function CreatePartnerItems(props) {
           <div>
             <p>
               <Button
-                onClick={()=>showConfirm("Do you want continute create new Item?")}
+                onClick={() =>
+                  showConfirm("Do you want continute create new Item?")
+                }
                 disabled={oldDataPartnerProduct.statusBtnCancel}
                 style={{ marginRight: ".5rem" }}
               >
@@ -195,12 +203,12 @@ function CreatePartnerItems(props) {
                 onClick={submitCreateItem}
                 disabled={
                   productName === "" ||
-                    partnerId === "" ||
-                    productId === "" ||
-                    coin === "" ||
-                    partnerProductName === "" ||
-                    // promotionId === 0 ||
-                    status === ""
+                  partnerId === "" ||
+                  productId === "" ||
+                  coin === "" ||
+                  partnerProductName === "" ||
+                  // promotionId === 0 ||
+                  status === ""
                     ? true
                     : false
                 }
@@ -223,7 +231,7 @@ function CreatePartnerItems(props) {
             <span className="edit-product-content-title">Platform</span>
             <Select
               value={partnerId}
-              style={{ width: '100% !important' }}
+              style={{ width: "100% !important" }}
               onChange={changePartnerName}
             >
               {printPlatform}
@@ -259,7 +267,11 @@ function CreatePartnerItems(props) {
               <span className="edit-product-content-title">Image</span>
             </div>
             <div style={{ width: "100px" }}>
-              {props.urlImgThumbnail === null ? <i>Thumbnail image is emtry</i> : <img src={props.urlImgThumbnail} width="100%" />}
+              {props.urlImgThumbnail === null ? (
+                <i>Thumbnail image is emtry</i>
+              ) : (
+                <img src={props.urlImgThumbnail} width="100%" />
+              )}
             </div>
             <div>
               <a onClick={() => dispatchShowImagesNews(true)}>Select</a>
@@ -296,8 +308,7 @@ function CreatePartnerItems(props) {
 function mapStateToProps(state) {
   return {
     visible: state.visibleModalNews,
-    urlImgThumbnail: state.urlImgThumbnail
+    urlImgThumbnail: state.urlImgThumbnail,
   };
 }
 export default connect(mapStateToProps, null)(CreatePartnerItems);
-

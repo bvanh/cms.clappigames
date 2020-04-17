@@ -57,7 +57,7 @@ const MenuRewardEventByMoney = (props) => {
         eventType: data.__type.enumValues
       })
     },
-    onError: index => alertErrorServer(index.networkError.result.errors[0].message)
+    onError: index => alertErrorServer(index.message)
   });
   useQuery(getListServer(platformId), {
     fetchPolicy: "cache-and-network",
@@ -65,7 +65,7 @@ const MenuRewardEventByMoney = (props) => {
       console.log(data)
       setListServer([...data.listPartnerServers, indexAllServer]);
     },
-    onError: index => alertErrorServer(index.networkError.result.errors[0].message)
+    onError: index => alertErrorServer(index.message)
   });
   useMemo(() => {
     dispatchNameEventByMoney("MONEY");

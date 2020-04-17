@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { Button, Input, Row, Col, Select, Icon } from "antd";
 import { createPromotion } from "../../../../../utils/mutation/promotion";
 import { dispatchSaveIdCreateInUpdate } from "../../../../../redux/actions/index";
-import moment from "moment";
-import { connect } from 'react-redux'
+import { alertErrorServer } from "../../../../../utils/alertErrorAll";
+import { connect } from "react-redux";
 import { useLazyQuery, useMutation, useQuery } from "@apollo/react-hooks";
 import { getListPartnerProducts } from "../../../../../utils/queryPartnerProducts";
 import {
@@ -14,12 +14,12 @@ import {
   alertErrorNamePromo,
   alertErrorItemPromo,
   checkEndHour,
-  checkStartHour
+  checkStartHour,
 } from "../../promoService";
 const { Option } = Select;
 function EventByItems(props) {
   const [itemsForEventTypeItem, setItemForEventTypeItem] = useState([
-    { productName: "", partnerProductId: "" }
+    { productName: "", partnerProductId: "" },
   ]);
   const {
     name,
@@ -31,14 +31,15 @@ function EventByItems(props) {
     startTime,
     endTime,
     linkUrl,
-    prefix
+    prefixPromo,
   } = props.indexPromoAndEvent;
   const { platformId, server } = props.indexGameForPromo;
   const { indexShop, isUpdate } = props;
   useQuery(getListPartnerProducts(platformId), {
-    onCompleted: data => {
+    onCompleted: (data) => {
       setItemForEventTypeItem(data.listPartnerProducts);
-    }
+    },
+    onError: (index) => alertErrorServer(index.message),
   });
   const [createPromo] = useMutation(createPromotion, {
     variables: {
@@ -54,18 +55,20 @@ function EventByItems(props) {
           endTime: timeTotal[1],
           dates: dates,
           daily: daily,
-          hour: [checkStartHour(startTime), checkEndHour(endTime)]
+          hour: [checkStartHour(startTime), checkEndHour(endTime)],
         }),
         linkUrl: linkUrl,
-        prefix: prefix,
-        imageUrl: props.imageUrl
-      }
+        prefix: prefixPromo,
+        imageUrl: props.imageUrl,
+      },
     },
-    onCompleted: data => {
+    onCompleted: (data) => {
+      props.successAlert(true);
       isUpdate
         ? dispatchSaveIdCreateInUpdate(data.createPromotion.id)
         : console.log(data);
-    }
+    },
+    onError: (index) => alertErrorServer(index.message),
   });
   const submitCreatePromo = async () => {
     if (
@@ -78,8 +81,7 @@ function EventByItems(props) {
         server !== "" &&
         platformId !== ""
       ) {
-        await createPromo();
-        props.successAlert(true);
+        createPromo();
       } else {
         alertErrorItemPromo();
       }
@@ -95,22 +97,22 @@ function EventByItems(props) {
       rewards: [
         {
           numb: 1,
-          itemId: []
-        }
-      ]
+          itemId: [],
+        },
+      ],
     };
     props.setIndexShop([...indexShop, newItem]);
   };
-  const reduceItem = async val => {
+  const reduceItem = async (val) => {
     if (val !== 0) {
       const newItem = await indexShop.filter((value, index) => index !== val);
       props.setIndexShop(newItem);
     }
   };
-  const addReward = async i => {
+  const addReward = async (i) => {
     const newReward = {
       numb: 1,
-      itemId: []
+      itemId: [],
     };
     const newShop = [...indexShop];
     newShop[i].rewards = [...newShop[i].rewards, newReward];
@@ -156,19 +158,23 @@ function EventByItems(props) {
   const printItem = indexShop.map(function (val, index1) {
     const printReward = val.rewards.map((valReward, index2) => (
       <div key={index2} className="more-reward">
-        <Icon type="minus" onClick={() => reduceReward(index1, index2)} style={{ fontSize: "16px", margin: '0 .25rem' }} />
+        <Icon
+          type="minus"
+          onClick={() => reduceReward(index1, index2)}
+          style={{ fontSize: "16px", margin: "0 .25rem" }}
+        />
         <Input
           value={indexShop[index1].rewards[index2].numb}
           type="number"
           name="pucharseTimes"
-          onChange={e => handleChooseNumbReward(index1, index2, e)}
+          onChange={(e) => handleChooseNumbReward(index1, index2, e)}
           style={{ width: "20%" }}
         ></Input>
         <Select
           mode="multiple"
           value={indexShop[index1].rewards[index2].itemId}
           style={{ width: "80%" }}
-          onChange={value => handleChooseReward(index1, index2, value)}
+          onChange={(value) => handleChooseReward(index1, index2, value)}
         >
           {printListItems}
         </Select>{" "}
@@ -176,27 +182,36 @@ function EventByItems(props) {
     ));
     return (
       <div key={index1}>
-        <Col md={12} className='more-items'>
-          <Icon type="close" onClick={() => reduceItem(index1)} style={{ fontSize: "16px", margin: '0 .25rem' }} />
+        <Col md={12} className="more-items">
+          <Icon
+            type="close"
+            onClick={() => reduceItem(index1)}
+            style={{ fontSize: "16px", margin: "0 .25rem" }}
+          />
           <Input
             value={indexShop[index1].purchaseTimes}
             type="number"
             min={index1 > 0 ? indexShop[index1 - 1].purchaseTimes : 0}
             name="pucharseTimes"
-            onChange={e => handleChooseNumbItem(index1, e)}
+            onChange={(e) => handleChooseNumbItem(index1, e)}
             style={{ width: "20%" }}
           ></Input>
           <Select
             value={indexShop[index1].purchaseItemId}
             style={{ width: "80%" }}
-            onChange={value => handleChooseItem(index1, value)}
+            onChange={(value) => handleChooseItem(index1, value)}
           >
             {printListItems}
           </Select>{" "}
         </Col>
         <Col md={12} style={{ padding: "1rem 1rem 1rem .25rem" }}>
           {printReward}
-          <Button onClick={() => addReward(index1)} style={{ marginLeft: '1.5rem' }}>Add more present</Button>
+          <Button
+            onClick={() => addReward(index1)}
+            style={{ marginLeft: "1.5rem" }}
+          >
+            Add more present
+          </Button>
         </Col>
       </div>
     );
@@ -213,20 +228,23 @@ function EventByItems(props) {
           <div style={{ width: "80%" }}>Present</div>
         </div>
       </div>
-      <div className="btn-create-promo">
-        <Button onClick={submitCreatePromo}>Xác nhận</Button>
-      </div>
+
+      <Button onClick={submitCreatePromo} className="btn-create-promo">
+        {isUpdate ? "Update" : "Submit"}
+      </Button>
+
       <Row>
         {printItem}
-        <Button onClick={() => addItem()} style={{ margin: "1rem 1.5rem" }}>Add more conditions</Button>
+        <Button onClick={() => addItem()} style={{ margin: "1rem 1.5rem" }}>
+          Add more conditions
+        </Button>
       </Row>
     </div>
   );
 }
 function mapStateToProps(state) {
   return {
-    imageUrl: state.urlImgThumbnail
+    imageUrl: state.urlImgThumbnail,
   };
 }
 export default connect(mapStateToProps, null)(EventByItems);
-

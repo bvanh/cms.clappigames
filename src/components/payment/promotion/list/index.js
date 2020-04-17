@@ -7,22 +7,25 @@ import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 import CreatePromotion from "../create/index";
 import { queryGetPlatform } from "../../../../utils/queryPlatform";
+import {alertErrorServer} from '../../../../utils/alertErrorAll'
 import {
   dispatchSwitchCreatePromo,
-  dispatchListPartner
+  dispatchListPartner,
 } from "../../../../redux/actions/index";
 import "../../../../static/style/listUsers.css";
-import moment from "moment";
 function ListPromoAndEvent(props) {
   const [isTypePromo, setIsTypePromo] = useState("promo");
   // const [isCreatePromo, setIsCreatePromo] = useState(false);
-  const switchPromoAndEvent = e => {
+  const switchPromoAndEvent = (e) => {
     setIsTypePromo(e.target.value);
   };
   useQuery(queryGetPlatform, {
-    onCompleted: data => {
+    fetchPolicy:"cache-and-network",
+    onCompleted: (data) => {
       dispatchListPartner(data.listPartners);
-    }
+    },
+    onError: (index) =>
+      alertErrorServer(index.message)
   });
   return (
     <>
@@ -32,10 +35,10 @@ function ListPromoAndEvent(props) {
             <h2>
               Promotion managerment{" "}
               <Button
-                size="small"
+                className="create-promo"
                 onClick={() => dispatchSwitchCreatePromo(false)}
               >
-                Creat new promotion
+                Create Promotion
               </Button>
             </h2>
           </div>
@@ -71,7 +74,7 @@ function ListPromoAndEvent(props) {
 }
 function mapStateToProps(state) {
   return {
-    isCreatePromo: state.isCreatePromo
+    isCreatePromo: state.isCreatePromo,
   };
 }
 export default connect(mapStateToProps, null)(ListPromoAndEvent);

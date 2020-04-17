@@ -2,14 +2,12 @@ import React, { useState, useEffect, useMemo } from "react";
 import { Table, Button, Pagination, Input, Tabs, Modal } from "antd";
 import {
   getListEventByType,
-  getListPromotionByType
+  getListPromotionByType,
 } from "../../../../utils/query/promotion";
 import { useLazyQuery, useQuery, useMutation } from "@apollo/react-hooks";
 import { Link } from "react-router-dom";
-import { connect } from 'react-redux'
-import {
-  deletePromotion
-} from "../../../../utils/mutation/promotion";
+import { alertErrorServer } from "../../../../utils/alertErrorAll";
+import { deletePromotion } from "../../../../utils/mutation/promotion";
 
 const { TabPane } = Tabs;
 function ListPromo() {
@@ -20,22 +18,24 @@ function ListPromo() {
     type: "",
     game: "",
     server: 0,
-    name: ""
+    name: "",
   });
   const [dataListPromo, setData] = useState(null);
-  const [listDelete, setListDelete] = useState([])
+  const [listDelete, setListDelete] = useState([]);
   const { currentPage, pageSize, status, type, game, server, name } = pageIndex;
   const [getData, { loading, data }] = useLazyQuery(getListPromotionByType, {
     fetchPolicy: "cache-and-network",
-    onCompleted: data => {
+    onCompleted: (data) => {
       setData(data.listPromotionsByType);
-    }
+    },
+    onError: (index) => alertErrorServer(index.message),
   });
   const [deletePromo] = useMutation(deletePromotion, {
     variables: {
-      ids: listDelete
+      ids: listDelete,
     },
-    onCompleted: data => console.log(data)
+    onCompleted: (data) => console.log(data),
+    onError: (index) => alertErrorServer(index.message),
   });
   useMemo(() => {
     getData({
@@ -46,7 +46,7 @@ function ListPromo() {
         type: type,
         game: game,
         server: server,
-        name: name
+        name: name,
       },
     });
   }, []);
@@ -61,40 +61,40 @@ function ListPromo() {
             {text}
           </Link>
         </span>
-      )
+      ),
     },
     {
       title: "Method",
       dataIndex: "type",
-      key: "type"
+      key: "type",
     },
     {
       title: "Status",
       dataIndex: "status",
       key: "status",
-      render: index => (
+      render: (index) => (
         <span>{index === "INPUT" ? "Ngừng hoạt động" : "Hoạt động"}</span>
-      )
+      ),
     },
     {
       title: "Total",
       dataIndex: "",
-      key: "demo"
+      key: "demo",
     },
     {
       title: "Start Time",
       dataIndex: "eventTime",
       key: "startTime",
-      render: index => <span>{JSON.parse(index).startTime}</span>
+      render: (index) => <span>{JSON.parse(index).startTime}</span>,
     },
     {
       title: "End Time",
       dataIndex: "eventTime",
       key: "endTime",
-      render: index => <span>{JSON.parse(index).endTime}</span>
-    }
+      render: (index) => <span>{JSON.parse(index).endTime}</span>,
+    },
   ];
-  const handleChangeTypePromo = statusValue => {
+  const handleChangeTypePromo = (statusValue) => {
     setPageIndex({ ...pageIndex, status: statusValue });
     getData({
       variables: {
@@ -104,11 +104,11 @@ function ListPromo() {
         type: type,
         game: game,
         server: server,
-        name: name
-      }
+        name: name,
+      },
     });
   };
-  const goPage = pageNumber => {
+  const goPage = (pageNumber) => {
     setPageIndex({ ...pageIndex, currentPage: pageNumber });
     getData({
       variables: {
@@ -118,11 +118,11 @@ function ListPromo() {
         type: type,
         game: game,
         server: server,
-        name: name
-      }
+        name: name,
+      },
     });
   };
-  const getValueSearch = e => {
+  const getValueSearch = (e) => {
     setPageIndex({ ...pageIndex, name: e.target.value });
   };
   const onSearchPromo = () => {
@@ -134,8 +134,8 @@ function ListPromo() {
         type: type,
         game: game,
         server: server,
-        name: name
-      }
+        name: name,
+      },
     });
   };
   const submitDelete = async () => {
@@ -148,11 +148,11 @@ function ListPromo() {
         type: type,
         game: game,
         server: server,
-        name: name
-      }
+        name: name,
+      },
     });
-    setListDelete([])
-  }
+    setListDelete([]);
+  };
   const onSelectListDelete = (selectedRowKeys, selectedRows) => {
     setListDelete(selectedRows.map((val, i) => val.id));
   };
@@ -163,8 +163,10 @@ function ListPromo() {
   return (
     <div>
       <div className="btn-search-promo">
-        <Input onChange={getValueSearch} style={{marginRight:'.25rem'}}/>
-        <Button onClick={onSearchPromo} style={{marginRight:'.25rem'}}>Search</Button>
+        <Input onChange={getValueSearch} style={{ marginRight: ".25rem" }} />
+        <Button onClick={onSearchPromo} style={{ marginRight: ".25rem" }}>
+          Search
+        </Button>
         {/* <Button onClick={submitDelete} disabled={listDelete.length > 0 ? false : true}>Delete</Button> */}
       </div>
       <Tabs activeKey={status} onChange={handleChangeTypePromo}>
@@ -192,4 +194,4 @@ function ListPromo() {
     </div>
   );
 }
-export default ListPromo
+export default ListPromo;
