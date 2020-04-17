@@ -140,19 +140,19 @@ function EditPartnerProductItem(props) {
   const getStatus = (e) => {
     setDataPartnerProduct({ ...dataPartnerProduct, status: e.target.value });
   };
-  const submitupdateItem = () => {
-    let result = updateItem();
-    result.then((val) => {
-      if (val) {
-        alert("update thành công!");
-        refetch();
-        setOldDataPartnerProduct({
-          ...oldDataPartnerProduct,
-          statusBtnCancel: true,
-        });
-      }
-    });
-  };
+  // const submitupdateItem = () => {
+  //   let result = updateItem();
+  //   result.then((val) => {
+  //     if (val) {
+  //       alert("update thành công!");
+  //       refetch();
+  //       setOldDataPartnerProduct({
+  //         ...oldDataPartnerProduct,
+  //         statusBtnCancel: true,
+  //       });
+  //     }
+  //   });
+  // };
 
   const changePartnerName = (value) => {
     setDataPartnerProduct({ ...dataPartnerProduct, partnerId: value });
@@ -232,7 +232,7 @@ function EditPartnerProductItem(props) {
                 >
                   Delete Item
                 </Button>
-                <Button onClick={submitupdateItem}>Update Item</Button>
+                <Button onClick={()=>updateItem()}>Update Item</Button>
               </p>
             </div>
           </div>
