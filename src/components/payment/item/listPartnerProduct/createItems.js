@@ -53,7 +53,7 @@ function CreatePartnerItems(props) {
     productId: "",
     coin: "",
     partnerProductName: "",
-    promotionId: "",
+    // promotionId: "",
     status: ""
   });
 
@@ -73,7 +73,7 @@ function CreatePartnerItems(props) {
     coin,
     partnerProductName,
     partnerId,
-    promotionId
+    // promotionId
   } = dataPartnerProduct;
   const [getRefPartnerProduct] = useLazyQuery(
     queryGetRefPartnerProducts(partnerId),
@@ -93,7 +93,7 @@ function CreatePartnerItems(props) {
         productId: productId,
         coin: Number(coin),
         partnerProductName: partnerProductName,
-        promotionId: Number(promotionId),
+        // promotionId: Number(promotionId),
         image: props.urlImgThumbnail
       }
     },
@@ -199,7 +199,7 @@ function CreatePartnerItems(props) {
                     productId === "" ||
                     coin === "" ||
                     partnerProductName === "" ||
-                    promotionId === 0 ||
+                    // promotionId === 0 ||
                     status === ""
                     ? true
                     : false

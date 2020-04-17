@@ -5,18 +5,21 @@ const queryGetListPartnerProducts = gql`
     $pageSize: Int!
     $partnerId: String!
     $partnerProductName: String!
+    $productName: String!
   ) {
     listPartnerProductsByPartner(
       currentPage: $currentPage
       pageSize: $pageSize
       partnerId: $partnerId
       partnerProductName: $partnerProductName
+      productName: $productName
     ) {
       count
       rows {
         partnerProductId
         partnerId
         productName
+        partnerProductName
         coin
         createAt
         partner {
@@ -29,7 +32,7 @@ const queryGetListPartnerProducts = gql`
   }
 `;
 // get productId
-const queryGetRefPartnerProducts = partnerId => {
+const queryGetRefPartnerProducts = (partnerId) => {
   return gql`
   query{
  listRefPartnerProducts(partnerId:"${partnerId}"){
@@ -100,7 +103,7 @@ const queryGetPartnerProductById = gql`
     }
   }
 `;
-const getListPartnerProducts = partnerId => {
+const getListPartnerProducts = (partnerId) => {
   return gql`
   query{
     listPartnerProducts(partnerId:"${partnerId}"){
@@ -125,5 +128,5 @@ export {
   queryGetPartnerProductById,
   queryGetRefPartnerProducts,
   getListPartnerProducts,
-  getListPartnerProducts2
+  getListPartnerProducts2,
 };

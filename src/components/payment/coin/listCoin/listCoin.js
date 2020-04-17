@@ -15,7 +15,7 @@ import { queryGetListCoin } from "../../../../utils/queryCoin";
 import { useLazyQuery, useMutation, useQuery } from "@apollo/react-hooks";
 import { Link } from "react-router-dom";
 import "../../../../static/style/listProducts.css";
-import { convertPaymentType } from '../service'
+import { convertPaymentType } from '../serviceCoin'
 import { alertErrorServer } from '../../../../utils/alertErrorAll'
 import { dispatchSetListPaymentType, dispatchTypeEventByMoney } from '../../../../redux/actions/index'
 const radioStyle = {

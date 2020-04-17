@@ -11,11 +11,9 @@ import {
   Radio,
 } from "antd";
 import moment from "moment";
-import { queryGetListCoin } from "../../../../utils/queryCoin";
-import { queryGetPaymentType } from "../../../../utils/queryPaymentAndPromoType";
-import { dispatchSetListPaymentType } from "../../../../redux/actions/index";
+import { queryGetListPartnerProducts } from "../../../../utils/queryPartnerProducts";
 import { connect } from "react-redux";
-import { convertPaymentType } from "../serviceCoin";
+import { queryGetPlatform } from "../../../../utils/queryPlatform";
 import { alertErrorServer } from "../../../../utils/alertErrorAll";
 import { useLazyQuery, useQuery } from "@apollo/react-hooks";
 import { dates } from "../../../../utils/dateInfo";
@@ -25,56 +23,52 @@ import "../../../../static/style/listProducts.css";
 const ExcelFile = ReactExport.ExcelFile;
 const ExcelSheet = ReactExport.ExcelFile.ExcelSheet;
 const ExcelColumn = ReactExport.ExcelFile.ExcelColumn;
-const { Option } = Select;
-const { RangePicker } = DatePicker;
-const listSelectDates = [
-  { days: "Last 3 days", variables: "THREE_DAY_AGO" },
-  { days: "Last 7 days", variables: "SEVENT_DAY_AGO" },
-  { days: "Last 14 days", variables: "FOURTEEN_DAY_AGO" },
-  { days: "Last 30 days", variables: "THIRTY_DAY_AGO" },
-];
 const radioStyle = {
   display: "block",
   height: "30px",
   lineHeight: "30px",
 };
-function DetailListCoin(props) {
+function DetailListItems(props) {
   const [pageIndex, setPageIndex] = useState({
     currentPage: 1,
-    type: "",
     pageSize: 10,
-    productName: "",
+    partnerProductName: "",
+    partnerId: "",
+    productName:""
   });
-  const [dataListCoin, setDataListCoin] = useState(null);
+  const [listGame, setListGame] = useState([
+    { partnerId: "", partnerName: "" },
+  ]);
+  const [dataListItem, setDataListItems] = useState(null);
   const [dataExport, setDataExport] = useState([]);
-  const { currentPage, pageSize, type, productName } = pageIndex;
+  const { currentPage, pageSize,productName, partnerProductName, partnerId } = pageIndex;
   const { TODAY } = dates;
-  useQuery(queryGetPaymentType, {
+  const [getListGame] = useLazyQuery(queryGetPlatform, {
     fetchPolicy: "cache-and-network",
-    onCompleted: (data) => {
-      console.log(data);
-      dispatchSetListPaymentType(data.__type.enumValues);
-    },
+    onCompleted: (data) => setListGame(data.listPartners),
     onError: (index) =>
       alertErrorServer(index.networkError.result.errors[0].message),
   });
-  const [getDataListCoin, { loading }] = useLazyQuery(queryGetListCoin, {
-    fetchPolicy: "cache-and-network",
-    onCompleted: (data) => {
-      setDataListCoin(data);
-      // console.log(data)
-    },
-    onError: (index) =>
-      alertErrorServer(index.networkError.result.errors[0].message),
-  });
+  const [getDataListItems, { loading }] = useLazyQuery(
+    queryGetListPartnerProducts,
+    {
+      fetchPolicy: "cache-and-network",
+      onCompleted: (data) => {
+        setDataListItems(data);
+      },
+      onError: (index) =>
+        alertErrorServer(index.networkError.result.errors[0].message),
+    }
+  );
   useEffect(() => {
-    // getListPaymentType();
-    getDataListCoin({
+    getListGame();
+    getDataListItems({
       variables: {
         currentPage: currentPage,
-        type: type,
+        partnerId: partnerId,
         pageSize: pageSize,
-        productName: productName,
+        partnerProductName: partnerProductName,
+        productName:productName
       },
     });
   }, []);
@@ -91,92 +85,97 @@ function DetailListCoin(props) {
   };
   const goPage = (value) => {
     setPageIndex({ ...pageIndex, currentPage: value });
-    getDataListCoin({
+    getDataListItems({
       variables: {
-        currentPage: value,
-        type: type,
+        currentPage: currentPage,
+        partnerId: partnerId,
         pageSize: pageSize,
-        productName: productName,
+        partnerProductName: partnerProductName,
+        productName:productName
       },
     });
   };
   const onSearch = () => {
-    getDataListCoin({
+    getDataListItems({
       variables: {
         currentPage: currentPage,
-        type: type,
+        partnerId: partnerId,
         pageSize: pageSize,
-        productName: productName,
+        partnerProductName: partnerProductName,
+        productName:productName
       },
     });
   };
   const reset = () => {
     setPageIndex({
       currentPage: 1,
-      type: "",
+      partnerId: "",
       pageSize: 10,
-      productName: "",
+      partnerProductName: "",
     });
-    getDataListCoin({
+    getDataListItems({
       variables: {
         currentPage: 1,
-        type: "",
+        partnerId: "",
         pageSize: 10,
-        productName: "",
+        partnerProductName: "",
+        productName:""
       },
     });
   };
   const handleFilter = () => {
-    getDataListCoin({
+    getDataListItems({
       variables: {
         currentPage: currentPage,
-        type: type,
+        partnerId: partnerId,
         pageSize: pageSize,
-        productName: productName,
+        partnerProductName: partnerProductName,
+        productName:productName
       },
     });
   };
   const handleResetFilter = () => {
-    getDataListCoin({
+    getDataListItems({
       variables: {
         currentPage: currentPage,
-        type: "",
+        partnerId: "",
         pageSize: pageSize,
-        productName: productName,
+        partnerProductName: "",
+        productName:""
       },
     });
   };
-  const setValueTypePayment = (e) => {
-    setPageIndex({ ...pageIndex, type: e.target.value });
-  };
   const columns = [
     {
-      title: "C.coin Id",
-      dataIndex: "productId",
-      key: "productId",
+      title: "Items Id",
+      dataIndex: "partnerProductId",
+      key: "partnerProductId",
     },
     {
-      title: "C.coin Name",
+      title: "Items Name",
       dataIndex: "productName",
-      key: "coin name",
+      key: "itemName",
       // render: val => <span>{val !== null ? val.username : null}</span>
     },
     {
-      title: "Price (VNĐ)",
-      dataIndex: "price",
+      title: "Price (C.coin)",
+      dataIndex: "coin",
       key: "price",
     },
     {
-      title: "Payment Type",
-      dataIndex: "type",
-      key: "type",
-      render: (index) => (
-        <span>{convertPaymentType(props.listPaymentType, index)}</span>
-      ),
+      title: "Game",
+      dataIndex: "partner",
+      key: "partner",
+      render: (index) => <span>{index.partnerName}</span>,
       filterDropdown: () => (
         <div style={{ padding: 8 }}>
-          <Radio.Group onChange={setValueTypePayment} value={type}>
-            {printOptionsType}
+          <Radio.Group
+            onChange={(e) =>
+              setPageIndex({ ...pageIndex, partnerId: e.target.value })
+            }
+            value={partnerId}
+          >
+            {printOptionsGame}
           </Radio.Group>
           <Button
             type="primary"
@@ -210,12 +209,6 @@ function DetailListCoin(props) {
       render: (index) => <span>0</span>,
     },
     {
-      title: "Sort",
-      dataIndex: "sort",
-      key: "sort",
-      render: (index) => <span>0</span>,
-    },
-    {
       title: "Status",
       dataIndex: "status",
       key: "status",
@@ -229,9 +222,9 @@ function DetailListCoin(props) {
       render: (time) => <img src={time} width="100%" />,
     },
   ];
-  const printOptionsType = props.listPaymentType.map((val, index) => (
-    <Radio style={radioStyle} value={val.name} key={index}>
-      {val.description}
+  const printOptionsGame = listGame.map((val, index) => (
+    <Radio style={radioStyle} value={val.partnerId} key={index}>
+      {val.partnerName}
     </Radio>
   ));
   if (loading) return <p>loading...</p>;
@@ -242,18 +235,20 @@ function DetailListCoin(props) {
           <Icon type="double-left" />
           Back
         </Link>
-        <h2>List C.coin</h2>
+        <h2>List Items</h2>
         <div className="btn-search-listCoin">
           <div>
             <Input
               value={productName}
-              placeholder="Search by C.coin name"
+              placeholder="Search by Items name..."
               onChange={getProductName}
               style={{ width: "30%", marginRight: "1%" }}
               suffix={
                 <Icon
                   className={
-                    productName !== "" ? "reset-btn-show" : "reset-btn-hide"
+                    productName !== ""
+                      ? "reset-btn-show"
+                      : "reset-btn-hide"
                   }
                   type="close"
                   style={{ color: "rgba(0,0,0,.45)" }}
@@ -280,15 +275,17 @@ function DetailListCoin(props) {
                   Export Excel
                 </Button>
               }
-              filename="List C.coin"
+              filename="List Items"
             >
               <ExcelSheet data={dataExport} name="History Purchase C.coin">
-                <ExcelColumn label="C.coin Id" value="productId" />
-                <ExcelColumn label="C.coin Name" value="productName" />
-                <ExcelColumn label="Price" value="price" />
-                <ExcelColumn label="PaymentType" value="type" />
+                <ExcelColumn label="Item Id" value="partnerProductId" />
+                <ExcelColumn label="Item Name" value="productName" />
+                <ExcelColumn label="Price (C.coin)" value="coin" />
+                <ExcelColumn
+                  label="Game"
+                  value={(index) => index.partner.partnerName}
+                />
                 <ExcelColumn label="Promotion" value="discount" />
-                <ExcelColumn label="Sort" value="sort" />
                 <ExcelColumn label="Status" value="status" />
               </ExcelSheet>
             </ExcelFile>
@@ -296,23 +293,23 @@ function DetailListCoin(props) {
         </div>
       </div>
 
-      {dataListCoin && (
+      {dataListItem && (
         <>
           <h3>
             Total C.coin:{" "}
             <span style={{ color: "#1890ff" }}>
-              {dataListCoin.listProductsByPaymentType.count}
+              {dataListItem.listPartnerProductsByPartner.count}
             </span>
           </h3>
           <Table
             columns={columns}
-            dataSource={dataListCoin.listProductsByPaymentType.rows}
+            dataSource={dataListItem.listPartnerProductsByPartner.rows}
             pagination={false}
             rowSelection={rowSelection}
           />
           <Pagination
             current={pageIndex.currentPage}
-            total={dataListCoin.listProductsByPaymentType.count}
+            total={dataListItem.listPartnerProductsByPartner.count}
             pageSize={10}
             onChange={goPage}
             className="pagination-listUser"
@@ -327,4 +324,4 @@ function mapStateToProps(state) {
     listPaymentType: state.listPaymentType,
   };
 }
-export default connect(mapStateToProps, null)(DetailListCoin);
+export default connect(mapStateToProps, null)(DetailListItems);

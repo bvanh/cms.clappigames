@@ -160,7 +160,7 @@ function ListEvents(props) {
         <Input onChange={getValueSearch} style={{marginRight:'.25rem'}}/>
         <Button onClick={onSearchPromo} style={{marginRight:'.25rem'}}>Search</Button>
       
-        <Button onClick={submitDelete} disabled={listDelete.length > 0 ? false : true}>Delete</Button>
+        {/* <Button onClick={submitDelete} disabled={listDelete.length > 0 ? false : true}>Delete</Button> */}
         </div>
       <Tabs activeKey={status} onChange={handleChangeTypePromo}>
         <TabPane tab="Total Purchase" key=""></TabPane>
@@ -173,7 +173,7 @@ function ListEvents(props) {
             columns={columns}
             dataSource={dataListEvents.rows}
             pagination={false}
-            rowSelection={rowSelection}
+            // rowSelection={rowSelection}
           />
           <Pagination
             current={currentPage}

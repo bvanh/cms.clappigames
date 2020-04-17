@@ -8,7 +8,7 @@ import { useLazyQuery } from "@apollo/react-hooks";
 import {connect} from 'react-redux'
 import { dates } from "../../../../utils/dateInfo";
 import { alertErrorServer } from '../../../../utils/alertErrorAll'
-import { convertPaymentType } from '../service'
+import { convertPaymentType } from '../serviceCoin'
 import { Link } from "react-router-dom";
 
 import "../../../../static/style/listProducts.css";

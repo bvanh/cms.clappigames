@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { Row, Col, Input, Icon, Modal } from "antd";
+import { Row, Col, Input, Icon, Modal, Button } from "antd";
 import { useLazyQuery, useMutation, useQuery } from "@apollo/react-hooks";
 import {
   deleteEvents,
-  deletePromotion
+  deletePromotion,
 } from "../../../../../utils/mutation/promotion";
 import "../../../../../static/style/promotion.css";
 import EventByItems from "../../create/promotion/inputRewardItem";
@@ -12,7 +12,7 @@ import InputRewardForShowByMoney from "./inputReward";
 import MenuRewardEventByMoney from "./menuReward";
 import {
   InputNameAndTypeArea,
-  InputTimeArea
+  InputTimeArea,
 } from "../../create/nameAndTimePromo";
 import ListImagesForNews from "../../../../news/modalImageUrl/imgsUrl";
 import {
@@ -21,13 +21,13 @@ import {
   dispatchTypeEventByMoney,
   dispatchSetDataTypePromo,
   dispatchShowImagesNews,
-  dispatchSetUrlImageThumbnail
+  dispatchSetUrlImageThumbnail,
 } from "../../../../../redux/actions/index";
 import { initialIndexShop } from "../../promoService";
 import { getListPartnerProducts2 } from "../../../../../utils/queryPartnerProducts";
 import {
   getListServer,
-  getListItemsForEvent
+  getListItemsForEvent,
 } from "../../../../../utils/query/promotion";
 import { checkTime, indexAllServer } from "../../promoService";
 import moment from "moment";
@@ -45,7 +45,7 @@ function UpdateEvent(props) {
     paymentType,
     linkUrl,
     imageUrl,
-    prefix
+    prefix,
   } = props.detailPromo;
   const { startTime, endTime, dates, daily, hour } = JSON.parse(eventTime);
   const isTimeInPromo = checkTime(startTime);
@@ -67,7 +67,7 @@ function UpdateEvent(props) {
     startTime: hour[0],
     endTime: hour[1],
     linkUrlUpdate: linkUrl,
-    prefixUpdate: prefix
+    prefixUpdate: prefix,
   });
   const [listPartner, setListPartner] = useState({
     listGame: [{}],
@@ -75,85 +75,85 @@ function UpdateEvent(props) {
     listItems: [
       {
         productId: "",
-        partnerProductId: ""
-      }
-    ]
+        partnerProductId: "",
+      },
+    ],
   });
   const [alertInfoPromo, setAlertInfoPromo] = useState({
     dailyAlert: [],
     datesAlert: [],
-    timeTotalAlert: []
+    timeTotalAlert: [],
   });
   const [indexEventByMoney, setIndexEventByMoney] = useState({
     paymentTypeByMoney: "",
     isPaymentTypeByCoin: paymentType === "COIN" ? true : false,
-    itemsForEventByMoney: [{ productName: "", productId: "" }]
+    itemsForEventByMoney: [{ productName: "", productId: "" }],
   });
   const [indexGameForPromo, setIndexGameForPromo] = useState({
     platformId: "",
-    server: ""
+    server: "",
   });
   const [getListPartnerByPlatform] = useLazyQuery(getListPartnerProducts2, {
-    onCompleted: data => {
+    onCompleted: (data) => {
       setListPartner({ ...listPartner, listItems: data.listPartnerProducts });
-    }
+    },
   });
   useEffect(() => {
-    dispatchSetUrlImageThumbnail(imageUrl)
+    dispatchSetUrlImageThumbnail(imageUrl);
     dispatchTypeEventByMoney(type);
     dispatchSetDataTypePromo({ isType: type.toLowerCase(), data: data });
     getListPartnerByPlatform({
       variables: {
-        partnerId: game
-      }
+        partnerId: game,
+      },
     });
   }, []);
   const { platformId, linkUrlUpdate, prefixUpdate } = indexPromoAndEvent;
   const { listGame, listItems, listServer } = listPartner;
   const [deleteEvent] = useMutation(deleteEvents, {
     variables: {
-      ids: [id]
+      ids: [id],
     },
-    onCompleted: data => console.log(data)
+    onCompleted: (data) => console.log(data),
   });
   const [deletePromo] = useMutation(deletePromotion, {
     variables: {
-      ids: props.idCreatePromoAndEvent
+      ids: props.idCreatePromoAndEvent,
     },
-    onCompleted: data => console.log(data)
+    onCompleted: (data) => console.log(data),
   });
   useQuery(getListServer(platformId), {
-    onCompleted: data => {
+    onCompleted: (data) => {
       setListPartner({
         ...listPartner,
-        listServer: [indexAllServer, ...data.listPartnerServers]
+        listServer: [indexAllServer, ...data.listPartnerServers],
       });
-    }
+    },
   });
   useQuery(getListItemsForEvent, {
     fetchPolicy: "cache-and-network",
-    onCompleted: data => {
+    onCompleted: (data) => {
       setIndexEventByMoney({
         ...indexEventByMoney,
-        itemsForEventByMoney: data.listProducts
+        itemsForEventByMoney: data.listProducts,
       });
-    }
+    },
   });
-  const handleChangePlatform = async e => {
+  const handleChangePlatform = async (e) => {
     dispatchResetItemRewards();
     await setIndexPromoAndEvent({
       ...indexPromoAndEvent,
       platformId: e,
-      server: 0
+      server: 0,
     });
     await getListPartnerByPlatform({
       variables: {
-        partnerId: e
-      }
+        partnerId: e,
+      },
     });
   };
-  const resetGameAndServer = () => { };
-  const handleChangePlatformPromo = async e => {
+  const resetGameAndServer = () => {};
+  const handleChangePlatformPromo = async (e) => {
     dispatchResetItemRewards();
     setIndexShop([
       {
@@ -162,85 +162,85 @@ function UpdateEvent(props) {
         rewards: [
           {
             numb: 1,
-            itemId: []
-          }
-        ]
-      }
+            itemId: [],
+          },
+        ],
+      },
     ]);
     await setIndexGameForPromo({
       platformId: e,
-      server: 0
+      server: 0,
     });
     await getListPartnerByPlatform({
       variables: {
-        partnerId: e
-      }
+        partnerId: e,
+      },
     });
   };
-  const handleChangeServerPromo = e => {
+  const handleChangeServerPromo = (e) => {
     setIndexGameForPromo({ ...indexGameForPromo, server: e });
   };
-  const setInfoPromo = e => {
+  const setInfoPromo = (e) => {
     setIndexPromoAndEvent({
       ...indexPromoAndEvent,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
-  const handleChangeServer = e => {
+  const handleChangeServer = (e) => {
     setIndexPromoAndEvent({ ...indexPromoAndEvent, server: e });
   };
-  const handleStartTimeTotal = value => {
+  const handleStartTimeTotal = (value) => {
     const newTimetotal = indexPromoAndEvent.timeTotal;
     newTimetotal[0] = moment(value).format("YYYY-MM-DD HH:mm") + ":00";
     setIndexPromoAndEvent({
       ...indexPromoAndEvent,
-      timeTotal: newTimetotal
+      timeTotal: newTimetotal,
     });
   };
-  const handleEndTimeTotal = value => {
+  const handleEndTimeTotal = (value) => {
     const newTimetotal = indexPromoAndEvent.timeTotal;
     newTimetotal[1] = moment(value).format("YYYY-MM-DD HH:mm") + ":59";
     setIndexPromoAndEvent({
       ...indexPromoAndEvent,
-      timeTotal: newTimetotal
+      timeTotal: newTimetotal,
     });
   };
   const pickAllDay = () => {
     setIndexPromoAndEvent({
       ...indexPromoAndEvent,
       startTime: "00:00:00",
-      endTime: "23:59:59"
+      endTime: "23:59:59",
     });
   };
   const setTimePromo = (timeString, val) => {
     if (val === "startTime") {
       setIndexPromoAndEvent({
         ...indexPromoAndEvent,
-        startTime: timeString !== "" ? timeString + ":00" : ""
+        startTime: timeString !== "" ? timeString + ":00" : "",
       });
     } else {
       setIndexPromoAndEvent({
         ...indexPromoAndEvent,
-        endTime: timeString !== "" ? timeString + ":59" : ""
+        endTime: timeString !== "" ? timeString + ":59" : "",
       });
     }
   };
-  const handleChangeDaily = value => {
+  const handleChangeDaily = (value) => {
     setIndexPromoAndEvent({
       ...indexPromoAndEvent,
-      daily: value.sort((a, b) => a - b)
+      daily: value.sort((a, b) => a - b),
     });
   };
-  const handleChangeDates = value => {
+  const handleChangeDates = (value) => {
     setIndexPromoAndEvent({
       ...indexPromoAndEvent,
-      dates: value.sort((a, b) => a - b)
+      dates: value.sort((a, b) => a - b),
     });
   };
-  const handleChangeTypePromo = val => {
+  const handleChangeTypePromo = (val) => {
     setIndexPromoAndEvent({ ...indexPromoAndEvent, type: val });
   };
-  const successAlert = value => {
+  const successAlert = (value) => {
     setIsCreatePromo(value);
     setAlertUpdateSuccess(true);
   };
@@ -270,11 +270,11 @@ function UpdateEvent(props) {
               Back
             </Link>
           ) : (
-              <a onClick={backToList}>
-                <Icon type="arrow-left" style={{ paddingRight: ".2rem" }} />
+            <a onClick={backToList}>
+              <Icon type="arrow-left" style={{ paddingRight: ".2rem" }} />
               Back
-              </a>
-            )}
+            </a>
+          )}
           <h2>Update promotion</h2>
         </div>
       </div>
@@ -301,18 +301,18 @@ function UpdateEvent(props) {
               handleChangeServerPromo={handleChangeServerPromo}
             />
           ) : (
-              <MenuRewardEventByMoney
-                indexPromoAndEvent={indexPromoAndEvent}
-                setIndexPromoAndEvent={setIndexPromoAndEvent}
-                indexEventByMoney={indexEventByMoney}
-                setIndexEventByMoney={setIndexEventByMoney}
-                server={server}
-                listPartner={listPartner}
-                handleChangePlatform={handleChangePlatform}
-                handleChangeServer={handleChangeServer}
-                isTimeInPromo={isTimeInPromo}
-              />
-            )}
+            <MenuRewardEventByMoney
+              indexPromoAndEvent={indexPromoAndEvent}
+              setIndexPromoAndEvent={setIndexPromoAndEvent}
+              indexEventByMoney={indexEventByMoney}
+              setIndexEventByMoney={setIndexEventByMoney}
+              server={server}
+              listPartner={listPartner}
+              handleChangePlatform={handleChangePlatform}
+              handleChangeServer={handleChangeServer}
+              isTimeInPromo={isTimeInPromo}
+            />
+          )}
         </div>
       </Col>
       <InputTimeArea
@@ -338,19 +338,20 @@ function UpdateEvent(props) {
             successAlert={successAlert}
           />
         ) : (
-            <InputRewardForShowByMoney
-              successAlert={successAlert}
-              listPartner={listPartner}
-              listItems={listItems}
-              switchTypeEvent={switchTypeEvent}
-              indexPromoAndEvent={indexPromoAndEvent}
-              setIndexPromoAndEvent={setIndexPromoAndEvent}
-              indexEventByMoney={indexEventByMoney}
-              setIndexEventByMoney={setIndexEventByMoney}
-              setIsCreatePromo={setIsCreatePromo}
-              isTimeInPromo={isTimeInPromo}
-            />
-          )}
+          <InputRewardForShowByMoney
+            successAlert={successAlert}
+            listPartner={listPartner}
+            listItems={listItems}
+            switchTypeEvent={switchTypeEvent}
+            indexPromoAndEvent={indexPromoAndEvent}
+            setIndexPromoAndEvent={setIndexPromoAndEvent}
+            indexEventByMoney={indexEventByMoney}
+            setIndexEventByMoney={setIndexEventByMoney}
+            setIsCreatePromo={setIsCreatePromo}
+            isTimeInPromo={isTimeInPromo}
+          />
+        )}
+        <Button>demo</Button>
       </Col>
       <Col md={6}>
         <div className="addLink">
@@ -376,7 +377,11 @@ function UpdateEvent(props) {
         <div>
           <p>Select thumbnail promotion</p>
           <div style={{ width: "100%" }}>
-            {props.urlImgThumbnail === null ? <i>Thumbnail image is emtry</i> : <img src={props.urlImgThumbnail} width="100%" />}
+            {props.urlImgThumbnail === null ? (
+              <i>Thumbnail image is emtry</i>
+            ) : (
+              <img src={props.urlImgThumbnail} width="100%" />
+            )}
           </div>
           <a onClick={() => dispatchShowImagesNews(true)}>Select</a>
         </div>
@@ -397,8 +402,8 @@ function UpdateEvent(props) {
               Back
             </Link>
           ) : (
-              <span>Back</span>
-            )
+            <span>Back</span>
+          )
         }
         cancelText="Next"
       ></Modal>
@@ -410,7 +415,7 @@ function mapStateToProps(state) {
     detailPromo: state.detailPromo,
     idCreatePromoAndEvent: state.idPromoAndEventCreateInUpdate,
     visible: state.visibleModalNews,
-    urlImgThumbnail: state.urlImgThumbnail
+    urlImgThumbnail: state.urlImgThumbnail,
   };
 }
 export default connect(mapStateToProps, null)(UpdateEvent);

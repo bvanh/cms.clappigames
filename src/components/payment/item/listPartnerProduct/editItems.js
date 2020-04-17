@@ -58,8 +58,7 @@ function EditPartnerProductItem(props) {
   useQuery(queryGetPlatform(), {
     onCompleted: (dataPartner) => {
       setListPlatform(dataPartner.listPartners);
-    }
-    ,
+    },
     onError: (index) =>
       alertErrorServer(index.networkError.result.errors[0].message),
   });
@@ -70,7 +69,7 @@ function EditPartnerProductItem(props) {
         partnerProductId: partnerProductId,
       },
       onCompleted: (data) => {
-        dispatchSetUrlImageThumbnail(data.listPartnerProducts[0].image)
+        dispatchSetUrlImageThumbnail(data.listPartnerProducts[0].image);
         setDataPartnerProduct(data.listPartnerProducts[0]);
         setOldDataPartnerProduct({
           ...oldDataPartnerProduct,
@@ -116,6 +115,7 @@ function EditPartnerProductItem(props) {
         image: props.urlImgThumbnail,
       },
     },
+    onCompleted: (data) => successUpdate(),
     onError: (index) =>
       alertErrorServer(index.networkError.result.errors[0].message),
   });
@@ -123,7 +123,7 @@ function EditPartnerProductItem(props) {
     variables: {
       ids: [partnerProductId],
     },
-    onCompleted: data => console.log(data),
+    onCompleted: (data) => console.log(data),
     onError: (index) =>
       alertErrorServer(index.networkError.result.errors[0].message),
   });
@@ -153,9 +153,7 @@ function EditPartnerProductItem(props) {
       }
     });
   };
-  const cancelUpdate = () => {
-    setDataPartnerProduct(oldDataPartnerProduct.oldData);
-  };
+
   const changePartnerName = (value) => {
     setDataPartnerProduct({ ...dataPartnerProduct, partnerId: value });
   };
@@ -164,6 +162,12 @@ function EditPartnerProductItem(props) {
       ...dataPartnerProduct,
       partnerProductName: JSON.parse(val).productName,
       productId: JSON.parse(val).productId,
+    });
+  };
+
+  const successUpdate = () => {
+    Modal.success({
+      title: "Update Item successful !",
     });
   };
   const showConfirm = (isDelete, contentAlert, okTextBtn, cancelTextBtn) => {
@@ -177,7 +181,7 @@ function EditPartnerProductItem(props) {
         }
         history.push("/payment/items");
       },
-      onCancel() { },
+      onCancel() {},
     });
   };
   const printPlatform = dataListPlatform.map((val, index) => (
@@ -226,7 +230,7 @@ function EditPartnerProductItem(props) {
                   onClick={() => showConfirm(true, "delete", "Yes", "No")}
                   style={{ marginRight: ".5rem" }}
                 >
-                  Delete C.coin
+                  Delete Item
                 </Button>
                 <Button onClick={submitupdateItem}>Update Item</Button>
               </p>

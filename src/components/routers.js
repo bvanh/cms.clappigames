@@ -20,113 +20,118 @@ import DetailEvent from "./payment/promotion/detail/event/index";
 import ListChargesDetail from "./payment/coin/listCharges/detail";
 import ListPartnerChargesDetail from "./payment/item/partnerCharges/detail";
 import DetailListCoin from "./payment/coin/listCoin/detailListCoin";
-
+import DetailListItems from "./payment/item/listPartnerProduct/detailListItems";
 const routers = [
-    {
-        path: "/",
-        exact: true,
-        main: (props) => <Danhsach {...props} />,
-    },
-    {
-        path: "/users/detail",
-        exact: true,
-        main: (props) => <Detail {...props} />,
-    },
-    {
-        path: "/news",
-        exact: true,
-        main: () => <ListNews />,
-    },
-    {
-        path: "/news/edit",
-        exact: true,
-        main: (props) => <NewsEditor {...props} />,
-    },
-    {
-        path: "/news/addnews",
-        exact: true,
-        main: () => <AddNews />,
-    },
-    {
-        path: "/media",
-        exact: true,
-        main: () => <ListImages />,
-    },
-    {
-        path: "/media/album",
-        exact: true,
-        main: () => <Album />,
-    },
-    {
-        path: "/media/album/edit",
-        exact: true,
-        main: () => <UpdateAlbum />,
-    },
-    {
-        path: "/payment/items",
-        exact: true,
-        main: () => <ItemsContainer />,
-    },
-    {
-        path: "/payment/items/edit",
-        exact: true,
-        main: () => <EditPartnerProductItem />,
-    },
-    {
-        path: "/payment/item/charges/detail",
-        exact: true,
-        main: () => <ListPartnerChargesDetail />,
-    },
-    {
-        path: "/payment/coin",
-        exact: true,
-        main: () => <CoinsContainer />,
-    },
-    {
-        path: "/payment/coin/detail",
-        exact: true,
-        main: () => <DetailListCoin />,
-    },
-    {
-        path: "/payment/coin/edit",
-        exact: true,
-        main: () => <EditProductCoin />,
-    },
-    {
-        path: "/payment/coin/charges/detail",
-        exact: true,
-        main: () => <ListChargesDetail />,
-    },
-    {
-        path: "/payment/promotion",
-        exact: true,
-        main: () => <ListPromoAndEvent />,
-    },
-    {
-        path: "/payment/promotion/create",
-        exact: false,
-        main: () => <CreatePromotion />,
-    },
-    {
-        path: "/payment/promotion/detail/promotion",
-        exact: false,
-        main: () => <DetailPromotion />,
-    },
-    {
-        path: "/payment/promotion/detail/event",
-        exact: false,
-        main: () => <DetailEvent />,
-    },
-    {
-        path: "/stats",
-        exact: false,
-        main: () => <Stats />,
-    },
-    {
-        path: "/partner",
-        exact: false,
-        main: () => <Partner />,
-    },
+  {
+    path: "/",
+    exact: true,
+    main: (props) => <Danhsach {...props} />,
+  },
+  {
+    path: "/users/detail",
+    exact: true,
+    main: (props) => <Detail {...props} />,
+  },
+  {
+    path: "/news",
+    exact: true,
+    main: () => <ListNews />,
+  },
+  {
+    path: "/news/edit",
+    exact: true,
+    main: (props) => <NewsEditor {...props} />,
+  },
+  {
+    path: "/news/addnews",
+    exact: true,
+    main: () => <AddNews />,
+  },
+  {
+    path: "/media",
+    exact: true,
+    main: () => <ListImages />,
+  },
+  {
+    path: "/media/album",
+    exact: true,
+    main: () => <Album />,
+  },
+  {
+    path: "/media/album/edit",
+    exact: true,
+    main: () => <UpdateAlbum />,
+  },
+  {
+    path: "/payment/items",
+    exact: true,
+    main: () => <ItemsContainer />,
+  },
+  {
+    path: "/payment/items/edit",
+    exact: true,
+    main: () => <EditPartnerProductItem />,
+  },
+  {
+    path: "/payment/items/detailListItems",
+    exact: true,
+    main: () => <DetailListItems />,
+  },
+  {
+    path: "/payment/item/charges/detail",
+    exact: true,
+    main: () => <ListPartnerChargesDetail />,
+  },
+  {
+    path: "/payment/coin",
+    exact: true,
+    main: () => <CoinsContainer />,
+  },
+  {
+    path: "/payment/coin/detail",
+    exact: true,
+    main: () => <DetailListCoin />,
+  },
+  {
+    path: "/payment/coin/edit",
+    exact: true,
+    main: () => <EditProductCoin />,
+  },
+  {
+    path: "/payment/coin/charges/detail",
+    exact: true,
+    main: () => <ListChargesDetail />,
+  },
+  {
+    path: "/payment/promotion",
+    exact: true,
+    main: () => <ListPromoAndEvent />,
+  },
+  {
+    path: "/payment/promotion/create",
+    exact: false,
+    main: () => <CreatePromotion />,
+  },
+  {
+    path: "/payment/promotion/detail/promotion",
+    exact: false,
+    main: () => <DetailPromotion />,
+  },
+  {
+    path: "/payment/promotion/detail/event",
+    exact: false,
+    main: () => <DetailEvent />,
+  },
+  {
+    path: "/stats",
+    exact: false,
+    main: () => <Stats />,
+  },
+  {
+    path: "/partner",
+    exact: false,
+    main: () => <Partner />,
+  },
 ];
 
 export default routers;

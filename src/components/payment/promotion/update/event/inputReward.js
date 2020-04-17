@@ -398,6 +398,7 @@ function InputRewardForShowByMoney(props) {
         </div>
       </div>
       <div className="btn-create-promo">
+        {/* <Button disabled={props.isTimeInPromo}>Delete</Button> */}
         <Button onClick={() => submitUpdateEvent()}>Submit</Button>
       </div>
       <Row>

@@ -6,41 +6,48 @@ import { queryGetListPartnerProducts } from "../../../../utils/queryPartnerProdu
 import { queryGetPlatform } from "../../../../utils/queryPlatform";
 import { useLazyQuery, useMutation, useQuery } from "@apollo/react-hooks";
 import { Link } from "react-router-dom";
-import { alertErrorServer } from '../../../../utils/alertErrorAll'
+import { alertErrorServer } from "../../../../utils/alertErrorAll";
 const radioStyle = {
   display: "block",
   height: "30px",
-  lineHeight: "30px"
+  lineHeight: "30px",
 };
 function ListItems(props) {
   const [pageIndex, setPageIndex] = useState({
     currentPage: 1,
     pageSize: 10,
     partnerId: "",
-    partnerProductName: ""
+    partnerProductName: "",
+    productName: "",
   });
   const [listGame, setListGame] = useState([
-    { partnerId: "", partnerName: "" }
+    { partnerId: "", partnerName: "" },
   ]);
   const [dataProducts, setData] = useState(null);
   const [itemsForDelete, setItemsForDelete] = useState([]);
-  const { currentPage, pageSize, partnerId, partnerProductName } = pageIndex;
+  const {
+    currentPage,
+    pageSize,
+    partnerId,
+    partnerProductName,
+    productName,
+  } = pageIndex;
   const [getData, { loading }] = useLazyQuery(queryGetListPartnerProducts, {
     fetchPolicy: "cache-and-network",
-    onCompleted: data => {
-      console.log(data)
+    onCompleted: (data) => {
+      console.log(data);
       setData(data);
     },
-    onError: index => alertErrorServer(index.networkError.result.errors[0].message)
+    onError: (index) => alertErrorServer(index.message),
   });
   const [getListGame] = useLazyQuery(queryGetPlatform, {
     fetchPolicy: "cache-and-network",
-    onCompleted: data => setListGame(data.listPartners)
+    onCompleted: (data) => setListGame(data.listPartners),
   });
   const [deletePartnerProduct] = useMutation(deletePartnerProducts, {
     variables: {
-      ids: itemsForDelete
-    }
+      ids: itemsForDelete,
+    },
   });
   useEffect(() => {
     getListGame();
@@ -49,8 +56,9 @@ function ListItems(props) {
         currentPage: currentPage,
         pageSize: pageSize,
         partnerId: partnerId,
-        partnerProductName: partnerProductName
-      }
+        partnerProductName: partnerProductName,
+        productName: productName,
+      },
     });
   }, []);
   const handleFilter = () => {
@@ -59,8 +67,9 @@ function ListItems(props) {
         currentPage: 1,
         pageSize: 10,
         partnerId: partnerId,
-        partnerProductName: partnerProductName
-      }
+        partnerProductName: partnerProductName,
+        productName: productName,
+      },
     });
   };
   const handleResetFilter = () => {
@@ -69,8 +78,9 @@ function ListItems(props) {
         currentPage: 1,
         pageSize: 10,
         partnerId: "",
-        partnerProductName: ""
-      }
+        partnerProductName: "",
+        productName: "",
+      },
     });
   };
   const columns = [
@@ -87,25 +97,25 @@ function ListItems(props) {
             {text}
           </Link>
         </span>
-      )
+      ),
     },
     {
       title: "Price (C.coin)",
       dataIndex: "coin",
       key: "coin",
       width: "20%",
-      render: index => <span className="convert-col">{index}</span>
+      render: (index) => <span className="convert-col">{index}</span>,
     },
     {
       title: "Game",
       dataIndex: "partner",
       key: "partner",
       width: "20%",
-      render: index => <span>{index.partnerName}</span>,
+      render: (index) => <span>{index.partnerName}</span>,
       filterDropdown: () => (
         <div style={{ padding: 8 }}>
           <Radio.Group
-            onChange={e =>
+            onChange={(e) =>
               setPageIndex({ ...pageIndex, partnerId: e.target.value })
             }
             value={pageIndex.partnerId}
@@ -129,36 +139,28 @@ function ListItems(props) {
           </Button>
         </div>
       ),
-      filterIcon: filtered => (
+      filterIcon: (filtered) => (
         <Icon
           type="filter"
           theme="filled"
           style={{ color: filtered ? "#1890ff" : "#fafafa" }}
         />
-      )
+      ),
     },
     {
       title: "Image",
       dataIndex: "image",
       key: "image",
       width: "17%",
-      render: index => <img src={index} width='100%' />
+      render: (index) => <img src={index} width="100%" />,
     },
     {
       title: "Status",
       dataIndex: "status",
       key: "status",
       width: "17%",
-    }
+    },
   ];
-  // const rowSelection = {
-  //   onChange: (selectRowsKeys, selectedRows) => {
-  //     const itemsIdForDelete = selectedRows.map(
-  //       (val, index) => val.partnerProductId
-  //     );
-  //     setItemsForDelete(itemsIdForDelete);
-  //   }
-  // };
   const submitDeletePartnerProduct = async () => {
     await deletePartnerProduct();
     getData({
@@ -166,12 +168,12 @@ function ListItems(props) {
         currentPage: currentPage,
         pageSize: pageSize,
         partnerId: partnerId,
-        partnerProductName: partnerProductName
-      }
+        partnerProductName: partnerProductName,
+      },
     });
   };
   const hasSelected = itemsForDelete.length > 0;
-  const getValueSearch = e => {
+  const getValueSearch = (e) => {
     setPageIndex({ ...pageIndex, partnerProductName: e.target.value });
   };
   const onSearch = () => {
@@ -180,8 +182,8 @@ function ListItems(props) {
         currentPage: currentPage,
         pageSize: pageSize,
         partnerId: partnerId,
-        partnerProductName: partnerProductName
-      }
+        partnerProductName: partnerProductName,
+      },
     });
   };
   const printOptionsGame = listGame.map((val, index) => (
@@ -201,8 +203,8 @@ function ListItems(props) {
         <div>
           <h2>Item managerment</h2>
           <div className="view-more">
-            <Link className="btn-view-more" to="/payment/items/detail">
-              Detail <Icon type="double-right" className='icon-detail' />
+            <Link className="btn-view-more" to="/payment/items/detailListItems">
+              Detail <Icon type="double-right" className="icon-detail" />
             </Link>
             <Link
               to="/payment/items"
@@ -216,11 +218,10 @@ function ListItems(props) {
       {dataProducts && (
         <>
           <Table
-
             columns={columns}
             dataSource={dataProducts.listPartnerProductsByPartner.rows}
             pagination={false}
-          // scroll={{ x: 1000 }}
+            // scroll={{ x: 1000 }}
           />
         </>
       )}
