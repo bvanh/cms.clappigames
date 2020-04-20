@@ -56,8 +56,8 @@ function EventByItems(props) {
           startTime: timeTotal[0],
           endTime: timeTotal[1],
           dates: dates,
-          daily: daily,
-          hour: [checkStartHour(startTime), checkEndHour(endTime)]
+          days: daily,
+          hours: [checkStartHour(startTime), checkEndHour(endTime)]
         }),
         linkUrl: linkUrlUpdate,
         prefix: prefixPromo,

@@ -49,7 +49,7 @@ function CreatePromotion(props) {
     dates: [],
     daily: [],
     startTime: "00:00:00",
-    endTime: "00:00:00",
+    endTime: "23:59:59",
     linkUrl: null,
     prefixPromo: "",
   });
@@ -121,12 +121,7 @@ function CreatePromotion(props) {
   const resetGameAndServer = () => {
     setListPartner({
       ...listPartner,
-      listServer: [
-        {
-          server: 0,
-          serverName: "All server",
-        },
-      ],
+      listServer: [],
     });
     setIndexPromoAndEvent({
       ...indexPromoAndEvent,
@@ -179,6 +174,7 @@ function CreatePromotion(props) {
     setIndexPromoAndEvent({ ...indexPromoAndEvent, type: val });
   };
   const setTimePromo = (timeString, val) => {
+    console.log(timeString)
     if (val === "startTime") {
       setIndexPromoAndEvent({
         ...indexPromoAndEvent,

@@ -63,7 +63,7 @@ const MenuRewardEventByMoney = (props) => {
     fetchPolicy: "cache-and-network",
     onCompleted: data => {
       console.log(data)
-      setListServer([...data.listPartnerServers, indexAllServer]);
+      setListServer(data.listPartnerServers);
     },
     onError: index => alertErrorServer(index.message)
   });

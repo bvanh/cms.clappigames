@@ -47,7 +47,7 @@ function UpdatePromotion(props) {
     prefix,
     imageUrl,
   } = props.detailPromo;
-  const { startTime, endTime, dates, daily, hour } = JSON.parse(eventTime);
+  const { startTime, endTime, dates, days, hours } = JSON.parse(eventTime);
   const isTimeInPromo = checkTime(startTime);
   const [switchTypeEvent, setSwitchTypeEvent] = useState(shop ? true : false);
   const [isCreateEvent, setIsCreateEvent] = useState(false);
@@ -60,9 +60,9 @@ function UpdatePromotion(props) {
     type: type,
     timeTotal: [startTime, endTime],
     dates: dates,
-    daily: daily,
-    startTime: hour[0],
-    endTime: hour[1],
+    daily: days,
+    startTime: hours[0],
+    endTime: hours[1],
     linkUrlUpdate: linkUrl,
     prefixPromo: prefix,
   });
@@ -122,7 +122,7 @@ function UpdatePromotion(props) {
     onCompleted: (data) => {
       setListPartner({
         ...listPartner,
-        listServer: [indexAllServer, ...data.listPartnerServers],
+        listServer: data.listPartnerServers,
       });
     },
   });
@@ -157,12 +157,7 @@ function UpdatePromotion(props) {
     });
     setListPartner({
       ...listPartner,
-      listServer: [
-        {
-          server: 0,
-          serverName: "All server",
-        },
-      ],
+      listServer: [],
     });
     await getListPartnerByPlatform({
       variables: {
@@ -430,26 +425,6 @@ function UpdatePromotion(props) {
         </div>
         <ListImagesForNews isThumbnail={true} />
       </Col>
-      {/* <Modal
-        title={<Icon type="check-circle" />}
-        visible={alertUpdateSuccess}
-        onCancel={() => setAlertUpdateSuccess(false)}
-        onOk={() => {
-          isCreateEvent ? deletePromo() : viewDetail();
-        }}
-        okText={
-          isCreateEvent ? (
-            <Link
-              to={`/payment/promotion/detail/event?id=${props.idCreatePromoAndEvent}`}
-            >
-              Back
-            </Link>
-          ) : (
-            <span>Back</span>
-          )
-        }
-        cancelText="Next"
-      ></Modal> */}
     </Row>
   );
 }

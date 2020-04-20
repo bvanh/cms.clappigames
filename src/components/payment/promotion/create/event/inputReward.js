@@ -125,8 +125,8 @@ function InputrewardForShowByMoney(props) {
           startTime: timeTotal[0],
           endTime: timeTotal[1],
           dates: dates,
-          daily: daily,
-          hour: [startTime, endTime],
+          days: daily,
+          hours: [startTime, endTime],
         }),
         config: JSON.stringify({
           type: props.typeEventByMoney,
@@ -155,8 +155,8 @@ function InputrewardForShowByMoney(props) {
           startTime: moment(timeTotal[0]).format("YYYY-MM-DD hh:mm"),
           endTime: moment(timeTotal[1]).format("YYYY-MM-DD hh:mm"),
           dates: dates,
-          daily: daily,
-          hour: [checkStartHour(startTime), checkEndHour(endTime)],
+          days: daily,
+          hours: [checkStartHour(startTime), checkEndHour(endTime)],
         }),
         config: JSON.stringify({
           game: platformId,

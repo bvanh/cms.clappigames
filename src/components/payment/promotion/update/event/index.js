@@ -53,7 +53,7 @@ function UpdateEvent(props) {
     imageUrl,
     prefix,
   } = props.detailPromo;
-  const { startTime, endTime, dates, daily, hour } = JSON.parse(eventTime);
+  const { startTime, endTime, dates, days, hours } = JSON.parse(eventTime);
   const isTimeInPromo = checkTime(startTime);
   const [alertUpdateSuccess, setAlertUpdateSuccess] = useState(false);
   const [switchTypeEvent, setSwitchTypeEvent] = useState(config ? false : true);
@@ -69,9 +69,9 @@ function UpdateEvent(props) {
     type: "",
     timeTotal: [startTime, endTime],
     dates: dates,
-    daily: daily,
-    startTime: hour[0],
-    endTime: hour[1],
+    daily: days,
+    startTime: hours[0],
+    endTime: hours[1],
     linkUrlUpdate: linkUrl,
     prefixPromo: prefix,
   });
@@ -132,7 +132,7 @@ function UpdateEvent(props) {
     onCompleted: (data) => {
       setListPartner({
         ...listPartner,
-        listServer: [indexAllServer, ...data.listPartnerServers],
+        listServer: data.listPartnerServers,
       });
     },
   });

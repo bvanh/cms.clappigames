@@ -210,8 +210,8 @@ const alertErrorNamePromo = () => {
   });
 };
 const indexAllServer = {
-  server: 0,
-  serverName: "All server"
+  server: null,
+  serverName: ""
 }
 export {
   printAlertDailyPromo,

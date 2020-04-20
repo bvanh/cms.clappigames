@@ -34,7 +34,7 @@ function MenuRewardByItem(props) {
   });
   useQuery(getListServer(platformId), {
     onCompleted: data => {
-      setListServer([...data.listPartnerServers, indexAllServer]);
+      setListServer(data.listPartnerServers);
     },
     onError: (index) =>
       alertErrorServer(index.message)
