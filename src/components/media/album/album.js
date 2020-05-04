@@ -68,6 +68,7 @@ const Album = () => {
     {
       fetchPolicy: "cache-and-network",
       onCompleted: data => {
+        console.log(data)
         setPageIndex({ ...pageIndex, count: data.listAdminAlbumsByUser.count });
         setImagesAlbum(data.listAdminAlbumsByUser.rows);
       }
