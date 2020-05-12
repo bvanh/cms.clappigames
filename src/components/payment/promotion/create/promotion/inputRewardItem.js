@@ -6,6 +6,7 @@ import { alertErrorServer } from "../../../../../utils/alertErrorAll";
 import { connect } from "react-redux";
 import { useLazyQuery, useMutation, useQuery } from "@apollo/react-hooks";
 import { getListPartnerProducts } from "../../../../../utils/queryPartnerProducts";
+import { initialIndexShop2 } from "../../promoService"
 import {
   checkMainInfoPromoAndEvent,
   checkItemIsEmtry,
@@ -34,7 +35,7 @@ function EventByItems(props) {
     prefixPromo,
   } = props.indexPromoAndEvent;
   const { platformId, server } = props.indexGameForPromo;
-  const { indexShop, isUpdate } = props;
+  const { indexShop, isUpdate, indexShop2 } = props;
   useQuery(getListPartnerProducts(platformId), {
     onCompleted: (data) => {
       setItemForEventTypeItem(data.listPartnerProducts);
@@ -103,7 +104,28 @@ function EventByItems(props) {
     };
     props.setIndexShop([...indexShop, newItem]);
   };
-  const reduceItem = async (val) => {
+  const addItems = () => {
+    const newItem = {
+      productId: '',
+      productName: '',
+      detail: [
+        {
+          requiredQuantity: 1,
+          description: "",
+          thresholds: [{
+            quantity: 1,
+            rewards: [{
+              id: "",
+              name: ""
+            }]
+          }]
+        }
+      ]
+    };
+    props.setIndexShop2([...indexShop2, newItem])
+  }
+  console.log(indexShop2)
+  const reduceItem = async val => {
     if (val !== 0) {
       const newItem = await indexShop.filter((value, index) => index !== val);
       props.setIndexShop(newItem);
@@ -118,6 +140,36 @@ function EventByItems(props) {
     newShop[i].rewards = [...newShop[i].rewards, newReward];
     props.setIndexShop(newShop);
   };
+  const addRewards = (indexDetail, indexThresholds) => {
+    const newReward = {
+      quantity: 1,
+      rewards: [{
+        id: "",
+        name: ""
+      }]
+    }
+    const newShop = [...indexShop2];
+    newShop[indexDetail].detail[indexThresholds].thresholds = [...newShop[indexDetail].detail[indexThresholds].thresholds, newReward]
+    props.setIndexShop2(newShop)
+    // console.log(newShop[indexDetail].detail)
+  }
+  const addStep = (i) => {
+    const newStep = {
+      requiredQuantity: 1,
+      description: "",
+      thresholds: [{
+        quantity: 1,
+        rewards: [{
+          id: "",
+          name: ""
+        }]
+      }]
+    };
+    const newShop = [...indexShop2];
+    newShop[i].detail = [...newShop[i].detail, newStep];
+    props.setIndexShop2(newShop)
+    console.log(newStep)
+  }
   const reduceReward = async (numberItem, indexReward) => {
     const newShop = [...indexShop];
     if (indexShop[numberItem].rewards.length > 1) {
@@ -155,6 +207,62 @@ function EventByItems(props) {
       {val.productName}
     </Option>
   ));
+  const printStep = indexShop2.map(function (firtRow, index1) {
+    const printDetailStep = firtRow.detail.map(function (secondRow, index2) {
+      const printReward = secondRow.thresholds.map((thirdRow, index3) => (
+        <div key={index2} className="more-reward">
+          {/* <Icon type="minus" onClick={() => reduceReward(index1, index2)} style={{ fontSize: "16px", margin: '0 .25rem' }} /> */}
+          <Input
+            // value={indexShop[index1].rewards[index2].numb}
+            placeholder="số lượng quà"
+            type="number"
+            name="pucharseTimes"
+            // onChange={e => handleChooseNumbReward(index1, index2, e)}
+            style={{ width: "20%" }}
+          ></Input>
+          <Select
+            mode="multiple"
+            placeholder='quà'
+            // value={indexShop[index1].rewards[index2].itemId}
+            style={{ width: "80%" }}
+          // onChange={value => handleChooseReward(index1, index2, value)}
+          >
+            {printListItems}
+          </Select>{" "}
+        </div>
+      ))
+      return (
+        <>
+          <Input
+            // value={indexShop[index1].rewards[index2].numb}
+            placeholder="số lượng item"
+            type="number"
+            name="pucharseTimes"
+            // onChange={e => handleChooseNumbReward(index1, index2, e)}
+            style={{ width: "20%" }}
+          ></Input>
+          {printReward}
+          <Button onClick={() => addRewards(index1, index2)} style={{ marginLeft: '1.5rem' }}>Add more present</Button>
+        </>
+      )
+    }
+    )
+    return (
+      <>
+        <Select
+          mode="multiple"
+          placeholder="tên item"
+          // value={indexShop[index1].rewards[index2].itemId}
+          style={{ width: "80%" }}
+        // onChange={value => handleChooseReward(index1, index2, value)}
+        >
+          {printListItems}
+        </Select>{" "}
+        {printDetailStep}
+        <Button onClick={() => addStep(index1)} style={{ marginLeft: '1.5rem' }}>Add more step</Button>
+      </>
+    )
+  })
   const printItem = indexShop.map(function (val, index1) {
     const printReward = val.rewards.map((valReward, index2) => (
       <div key={index2} className="more-reward">
@@ -235,9 +343,9 @@ function EventByItems(props) {
 
       <Row>
         {printItem}
-        <Button onClick={() => addItem()} style={{ margin: "1rem 1.5rem" }}>
-          Add more conditions
-        </Button>
+        {printStep}
+        <Button onClick={() => addItems()} style={{ marginLeft: '1.5rem' }}>Add more items</Button>
+        <Button onClick={() => addItem()} style={{ margin: "1rem 1.5rem" }}>Add more conditions</Button>
       </Row>
     </div>
   );
