@@ -58,6 +58,25 @@ const initialIndexShop = [
     ]
   }
 ];
+const initialIndexShop2 = [
+  {
+    productId: '',
+    productName: '',
+    detail: [
+      {
+        requiredQuantity: 1,
+        description: "",
+        thresholds: [{
+          quantity: 1,
+          rewards: [{
+            id: "",
+            name: ""
+          }]
+        }]
+      }
+    ]
+  },
+];
 const initialIndexPromo = {
   eventPaymentType: [],
   namePromo: "",
@@ -218,6 +237,7 @@ export {
   daily0,
   isTypeEvent,
   initialIndexShop,
+  initialIndexShop2,
   initialIndexEventByMoney,
   initialIndexPromo,
   initialTypePromo,

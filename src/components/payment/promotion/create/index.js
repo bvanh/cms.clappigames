@@ -35,6 +35,25 @@ const initialIndexShop = [
     ],
   },
 ];
+const initialIndexShop2 = [
+  {
+    productId: '',
+    productName: '',
+    detail: [
+      {
+        requiredQuantity: 1,
+        description: "",
+        thresholds: [{
+          quantity: 1,
+          rewards: [{
+            id: "",
+            name: ""
+          }]
+        }]
+      }
+    ]
+  },
+];
 function CreatePromotion(props) {
   const [switchTypeEvent, setSwitchTypeEvent] = useState(true);
   const [indexPromoAndEvent, setIndexPromoAndEvent] = useState({
@@ -80,6 +99,7 @@ function CreatePromotion(props) {
     itemsForEventByMoney: [{ productName: "", productId: "" }],
   });
   const [indexShop, setIndexShop] = useState(initialIndexShop);
+  const [indexShop2,setIndexShop2]= useState(initialIndexShop2)
   useEffect(() => {
     dispatchSetUrlImageThumbnail(null);
   }, []);
@@ -292,18 +312,18 @@ function CreatePromotion(props) {
                 handleChangeServerPromo={handleChangeServerPromo}
               />
             ) : (
-              <MenuRewardEventByMoney
-                switchTypeEvent={switchTypeEvent}
-                indexPromoAndEvent={indexPromoAndEvent}
-                indexEventByMoney={indexEventByMoney}
-                setIndexEventByMoney={setIndexEventByMoney}
-                getItemsForEventTypeMoney={getItemsForEventTypeMoney}
-                server={server}
-                listPartner={listPartner}
-                handleChangePlatform={handleChangePlatform}
-                handleChangeServer={handleChangeServer}
-              />
-            )}
+                <MenuRewardEventByMoney
+                  switchTypeEvent={switchTypeEvent}
+                  indexPromoAndEvent={indexPromoAndEvent}
+                  indexEventByMoney={indexEventByMoney}
+                  setIndexEventByMoney={setIndexEventByMoney}
+                  getItemsForEventTypeMoney={getItemsForEventTypeMoney}
+                  server={server}
+                  listPartner={listPartner}
+                  handleChangePlatform={handleChangePlatform}
+                  handleChangeServer={handleChangeServer}
+                />
+              )}
           </div>
         </Col>
         <InputTimeArea
@@ -325,21 +345,23 @@ function CreatePromotion(props) {
               indexGameForPromo={indexGameForPromo}
               indexShop={indexShop}
               setIndexShop={setIndexShop}
+              indexShop2={indexShop2}
+              setIndexShop2={setIndexShop2}
             />
           ) : (
-            <InputRewardByMoney
-              listItems={listItems}
-              successAlert={successAlert}
-              indexShop={indexShop}
-              setIndexShop={setIndexShop}
-              indexPromoAndEvent={indexPromoAndEvent}
-              listPartner={listPartner}
-              setIndexPromoAndEvent={setIndexPromoAndEvent}
-              indexEventByMoney={indexEventByMoney}
-              setIndexEventByMoney={setIndexEventByMoney}
-              getItemsForEventTypeMoney={getItemsForEventTypeMoney}
-            />
-          )}
+              <InputRewardByMoney
+                listItems={listItems}
+                successAlert={successAlert}
+                indexShop={indexShop}
+                setIndexShop={setIndexShop}
+                indexPromoAndEvent={indexPromoAndEvent}
+                listPartner={listPartner}
+                setIndexPromoAndEvent={setIndexPromoAndEvent}
+                indexEventByMoney={indexEventByMoney}
+                setIndexEventByMoney={setIndexEventByMoney}
+                getItemsForEventTypeMoney={getItemsForEventTypeMoney}
+              />
+            )}
         </Col>
         <Col md={6} style={{ margin: ".5rem 0" }}>
           <div className="addLink">
@@ -368,11 +390,11 @@ function CreatePromotion(props) {
               {props.urlImgThumbnail === null ? (
                 <i>Thumbnail image is emtry</i>
               ) : (
-                <img
-                  src={props.urlImgThumbnail}
-                  style={{ maxHeight: "100%", maxWidth: "100%" }}
-                />
-              )}
+                  <img
+                    src={props.urlImgThumbnail}
+                    style={{ maxHeight: "100%", maxWidth: "100%" }}
+                  />
+                )}
             </div>
             <a onClick={() => dispatchShowImagesNews(true)}>Select</a>
           </div>
