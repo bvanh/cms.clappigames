@@ -2,7 +2,7 @@ import React from "react";
 import moment from "moment";
 import { Modal, Icon } from "antd";
 import { Link } from "react-router-dom";
-const printAlertDailyPromo = arr => {
+const printAlertDailyPromo = (arr) => {
   return arr.map(function (val, index) {
     switch (val) {
       case 0:
@@ -31,9 +31,9 @@ const daily0 = [
   "Thursday",
   "Friday",
   "Saturday",
-  "Sunday"
+  "Sunday",
 ];
-const isTypeEvent = val => {
+const isTypeEvent = (val) => {
   switch (val) {
     case "INKIND":
       return "Gift's out game";
@@ -53,10 +53,10 @@ const initialIndexShop = [
     rewards: [
       {
         numb: 1,
-        itemId: []
-      }
-    ]
-  }
+        itemId: [],
+      },
+    ],
+  },
 ];
 const initialIndexPromo = {
   eventPaymentType: [],
@@ -67,33 +67,33 @@ const initialIndexPromo = {
   promoType: "",
   timeTotalPromo: [
     moment().format("YYYY-MM-DD HH:mm"),
-    moment().format("YYYY-MM-DD HH:mm")
+    moment().format("YYYY-MM-DD HH:mm"),
   ],
   datesPromo: [],
   dailyPromo: [],
   startTime: "00:00:00",
-  endTime: "23:00:00"
+  endTime: "23:59:59",
 };
 const initialTypePromo = {
   eventPaymentType: [],
   listGame: [{}],
   listServer: [
     {
-      server: 0,
-      serverName: "All server"
-    }
+      server: null,
+      serverName: "",
+    },
   ],
   listItems: [
     {
       productId: "",
-      partnerProductId: ""
-    }
-  ]
+      partnerProductId: "",
+    },
+  ],
 };
 const initialIndexEventByMoney = {
   paymentTypeByMoney: "",
   isPaymentTypeByCoin: false,
-  itemsForEventByMoney: [{ productName: "", productId: "" }]
+  itemsForEventByMoney: [{ productName: "", productId: "" }],
 };
 const checkMainInfoPromoAndEvent = (
   namePromo,
@@ -114,7 +114,7 @@ const checkMainInfoPromoAndEvent = (
     return false;
   }
 };
-const checkPurchaseItemIsEmtry = indexShop => {
+const checkPurchaseItemIsEmtry = (indexShop) => {
   const result = indexShop.map((val, i) => {
     if (val.purchaseItemId.length > 0) {
       return true;
@@ -124,7 +124,7 @@ const checkPurchaseItemIsEmtry = indexShop => {
   });
   return result.every((val, i) => val != false);
 };
-const checkRewardsIsEmtry = indexShop => {
+const checkRewardsIsEmtry = (indexShop) => {
   const result = indexShop.map((val, i) => {
     if (val.rewards.length > 0 && val.rewards[0] !== "") {
       return true;
@@ -134,7 +134,7 @@ const checkRewardsIsEmtry = indexShop => {
   });
   return result.every((val, i) => val != false);
 };
-const checkItemIsEmtry = indexShop => {
+const checkItemIsEmtry = (indexShop) => {
   let demo = [];
   const result1 = indexShop.map((value, i) => {
     const result = value.rewards.map((value2, i) => {
@@ -147,7 +147,7 @@ const checkItemIsEmtry = indexShop => {
   });
   return demo.every((val, i) => val != false);
 };
-const checkPoint = indexShop => {
+const checkPoint = (indexShop) => {
   const demo = indexShop.map((val, i) => {
     if (i > 0) {
       return val.point > indexShop[i - 1].point;
@@ -155,7 +155,7 @@ const checkPoint = indexShop => {
   });
   return demo.every((val, i) => val === true || val === undefined);
 };
-const checkNumb = indexShop => {
+const checkNumb = (indexShop) => {
   const demo = indexShop.map((val, i) => {
     if (i > 0) {
       return val.purchaseTimes > indexShop[i - 1].purchaseTimes;
@@ -163,7 +163,7 @@ const checkNumb = indexShop => {
   });
   return demo.every((val, i) => val === true || val === undefined);
 };
-const checkTime = startTime => {
+const checkTime = (startTime) => {
   const startTimes = moment(startTime).format("x");
   const now1 = moment().format("x");
   if (Number(now1) - Number(startTimes) > 0) {
@@ -174,20 +174,20 @@ const checkTime = startTime => {
 };
 const checkStartHour = (startTime) => {
   switch (startTime) {
-    case '00:00:00':
-      return '00:00:00'
+    case "00:00:00":
+      return "00:00:00";
     default:
       return startTime;
   }
-}
+};
 const checkEndHour = (endTime) => {
   switch (endTime) {
-    case '00:00:00':
-      return '23:59:59'
+    case "00:00:00":
+      return "23:59:59";
     default:
       return endTime;
   }
-}
+};
 const alertErrorItemPromo = () => {
   Modal.error({
     title: "Error !!!",
@@ -196,7 +196,7 @@ const alertErrorItemPromo = () => {
         <p>+ Check again game info, server, item, type promotion</p>
         <p>+ Milestones are sorted by increasing .</p>
       </div>
-    )
+    ),
   });
 };
 const alertErrorNamePromo = () => {
@@ -206,13 +206,13 @@ const alertErrorNamePromo = () => {
       <div>
         <p>+ Check again promotion name, status, time.</p>
       </div>
-    )
+    ),
   });
 };
 const indexAllServer = {
   server: null,
-  serverName: ""
-}
+  serverName: "",
+};
 export {
   printAlertDailyPromo,
   daily0,
@@ -230,6 +230,7 @@ export {
   alertErrorNamePromo,
   alertErrorItemPromo,
   checkTime,
-  checkEndHour, checkStartHour,
-  indexAllServer
+  checkEndHour,
+  checkStartHour,
+  indexAllServer,
 };

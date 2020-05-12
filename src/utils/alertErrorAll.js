@@ -5,4 +5,5 @@ function alertErrorServer(contentError) {
         content: contentError,
     });
 }
+
 export {alertErrorServer}
