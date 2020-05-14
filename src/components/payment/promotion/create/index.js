@@ -43,10 +43,7 @@ const initialIndexShop2 = [
         description: "",
         thresholds: [{
           quantity: 1,
-          rewards: [{
-            id: "",
-            name: ""
-          }]
+          rewards: []
         }]
       }
     ]

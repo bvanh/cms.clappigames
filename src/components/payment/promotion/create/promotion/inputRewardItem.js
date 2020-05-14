@@ -25,26 +25,24 @@ function EventByItems(props) {
   const [itemSelected, setItemSelected] = useState([{ productName: "", partnerProductId: "" }]);
   const [rewardsSelected, setRewardsSelected] = useState([[]])
   const [itemDeselected, setItemDeselected] = useState({
-    productName:"",
-    productId:""
+    productName: "",
+    productId: ""
   })
   const itemsID = new Set(itemSelected.map(({ productId }) => productId));
-  const rewardsID = new Set(rewardsSelected.map(({ productId }) => productId));
+  // const rewardsID = new Set(rewardsSelected.map(({ productId }) => productId));
   const filteredOptions = [
     ...itemsForEventTypeItem.filter(({ partnerProductId }) => !itemsID.has(partnerProductId))
   ];
-  const filterRewardsOptions = [
-    ...itemsForEventTypeItem.filter(({ partnerProductId }) => !rewardsID.has(partnerProductId))
-  ];
   const filterRewards = (i) => {
-    const filterDuplicate = rewardsSelected[i].filter((v, index, a) => a.findIndex(t => (JSON.stringify(t) === JSON.stringify(v))) === index)
-    const filterItemDeselected = filterDuplicate.filter((val, i) => val.productId !== itemDeselected.productId)
-    const rewardsID = new Set(filterItemDeselected.map(({ productId }) => productId));
+    // const filterDuplicate = rewardsSelected[i].filter((v, index, a) => a.findIndex(t => (JSON.stringify(t) === JSON.stringify(v))) === index)
+    // const filterItemDeselected = filterDuplicate.filter((val, i) => val.productId !== itemDeselected.productId)
+    const rewardsID = new Set(rewardsSelected[i].map(({ productId }) => productId));
     const filterRewardsOptions = [
       ...itemsForEventTypeItem.filter(({ partnerProductId }) => !rewardsID.has(partnerProductId))
     ];
-    console.log(filterItemDeselected);
-    console.log(rewardsID)
+    // console.log(filterItemDeselected);
+    // console.log(itemDeselected)
+
     return filterRewardsOptions;
   }
   // const filteredOptions = itemsForEventTypeItem.filter((val, index) => !itemSelected.includes(val.productId));
@@ -143,10 +141,6 @@ function EventByItems(props) {
             {
               quantity: 1,
               rewards: [
-                {
-                  id: "",
-                  name: "",
-                },
               ],
             },
           ],
@@ -160,12 +154,7 @@ function EventByItems(props) {
   const addRewards = (indexDetail, indexThresholds) => {
     const newReward = {
       quantity: 1,
-      rewards: [
-        {
-          id: "",
-          name: "",
-        },
-      ],
+      rewards: [],
     };
     const newShop = [...indexShop2];
     newShop[indexDetail].detail[indexThresholds].thresholds = [
@@ -219,30 +208,51 @@ function EventByItems(props) {
     newItem[positionItem].detail[positionDetail].thresholds[positionReward].quantity = Number(value);
     props.setIndexShop2(newItem)
   }
-  const handleChooseRewards = async (positionItem, positionDetail, positionReward, value) => {
-    const convertValue = value.map(val => JSON.parse(val))
+  const handleSelectedRewards = async (positionItem, positionDetail, positionReward, value) => {
+    const convertValue = JSON.parse(value);
     const newItem = [...indexShop2];
-    const newRewardsSelected = rewardsSelected;
-    newRewardsSelected[positionItem] = [...newRewardsSelected[positionItem], ...convertValue];
-    newItem[positionItem].detail[positionDetail].thresholds[positionReward].rewards = convertValue;
+    const newRewardsSelected = [...rewardsSelected];
+    newRewardsSelected[positionItem] = [...newRewardsSelected[positionItem], convertValue];
+    newItem[positionItem].detail[positionDetail].thresholds[positionReward].rewards = [...newItem[positionItem].detail[positionDetail].thresholds[positionReward].rewards, convertValue];
     await props.setIndexShop2(newItem);
-    setRewardsSelected(newRewardsSelected)
+    setRewardsSelected(newRewardsSelected);
+    console.log(indexShop2)
   }
-  const handleDeselectedRewards = (positionItem, value) => {
-    // const convertValue = value.map(val => JSON.parse(val))
-    setItemDeselected(JSON.parse(value))
-    console.log(value)
+  const handleDeselectedRewards = (positionItem, positionDetail, positionReward, value) => {
+    const convertValue = JSON.parse(value);
+    const newRewardsSelected = [...rewardsSelected];
+    const newItem = [...indexShop2];
+    const newItem2 = newItem[positionItem].detail[positionDetail].thresholds[positionReward].rewards.filter((val, i) => val.productId !== convertValue.productId)
+    const res = newRewardsSelected[positionItem].filter((val, i) => val.productId !== convertValue.productId);
+    newRewardsSelected[positionItem] = res;
+    newItem[positionItem].detail[positionDetail].thresholds[positionReward].rewards = newItem2;
+    setRewardsSelected(newRewardsSelected);
+    props.setIndexShop2(newItem);
+    console.log(indexShop2)
   }
   const reduceReward = async (positionItem, positionDetail, positionThresholds) => {
     const newShop = [...indexShop2];
+    const newRewardsSelected = [...rewardsSelected];
     if (indexShop2[positionItem].detail[positionDetail].thresholds.length > 1) {
-      const newReward = await indexShop2[positionItem].detail[positionDetail].thresholds.filter(
+      const newReward = await newShop[positionItem].detail[positionDetail].thresholds.filter(
         (value, i) => positionThresholds !== i
       );
+      const rewardRemoved = indexShop2[positionItem].detail[positionDetail].thresholds.filter(
+        (value, i) => positionThresholds === i
+      );
+      const rewardRemovedID = new Set(rewardRemoved[0].rewards.map(({ productId }) => productId));
+      const filterRewardsRemoved = [
+        ...newRewardsSelected[positionItem].filter(({ productId }) => !rewardRemovedID.has(productId))
+      ];
+      newRewardsSelected[positionItem] = filterRewardsRemoved;
       newShop[positionItem].detail[positionDetail].thresholds = newReward;
-      props.setIndexShop2(newShop);
+      // console.log(newReward)
     }
+    props.setIndexShop2(newShop);
+    setRewardsSelected(newRewardsSelected);
+    console.log(newShop)
   };
+  console.log(indexShop2)
   // const reduceItem = async (val) => {
   //   if (val !== 0) {
   //     const newItem = await indexShop.filter((value, index) => index !== val);
@@ -307,7 +317,7 @@ function EventByItems(props) {
         <div key={index3 + "a"} >
           <Icon type="minus" onClick={() => reduceReward(index1, index2, index3)} style={{ fontSize: "16px", margin: '0 .25rem' }} />
           <Input
-            // value={indexShop[index1].rewards[index2].numb}
+            // value={indexShop2[index1].rewards[index2].numb}
             placeholder="số"
             type="number"
             name="pucharseTimes"
@@ -317,10 +327,11 @@ function EventByItems(props) {
           <Select
             mode="multiple"
             placeholder="quà"
-            // value={indexShop[index1].rewards[index2].itemId}
+            // default
+            // value={JSON.stringify(indexShop2[index1].detail[index2].thresholds[index3].rewards)}
             style={{ width: "80%" }}
-            onChange={value => handleChooseRewards(index1, index2, index3, value)}
-            onDeselect={value => handleDeselectedRewards(index1, value)}
+            onSelect={value => handleSelectedRewards(index1, index2, index3, value)}
+            onDeselect={value => handleDeselectedRewards(index1, index2, index3, value)}
           >
             {printListItemsRewards(index1)}
           </Select>{" "}
