@@ -124,7 +124,6 @@ function EventByItems(props) {
     };
     props.setIndexShop2([...indexShop2, newItem])
   }
-  console.log(indexShop2)
   const reduceItem = async val => {
     if (val !== 0) {
       const newItem = await indexShop.filter((value, index) => index !== val);
@@ -232,7 +231,7 @@ function EventByItems(props) {
         </div>
       ))
       return (
-        <>
+        <div>
           <Input
             // value={indexShop[index1].rewards[index2].numb}
             placeholder="số lượng item"
@@ -243,7 +242,7 @@ function EventByItems(props) {
           ></Input>
           {printReward}
           <Button onClick={() => addRewards(index1, index2)} style={{ marginLeft: '1.5rem' }}>Add more present</Button>
-        </>
+        </div>
       )
     }
     )
