@@ -35,7 +35,7 @@ const getListPromotionByType = gql`
     $currentPage: Int!
     $pageSize: Int!
     $type: String
-    $game: String
+    $gameId: String
     $server: Int
     $status: String
     $name: String
@@ -45,7 +45,7 @@ const getListPromotionByType = gql`
       pageSize: $pageSize
       status: $status
       type: $type
-      game: $game
+      gameId: $gameId
       server: $server
       name: $name
     ) {
@@ -94,7 +94,7 @@ query {
   listPromotions(id:${promoId}){
     id
     name
-    game
+    gameId
     status
     eventTime
     server

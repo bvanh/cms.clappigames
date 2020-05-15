@@ -244,3 +244,9 @@
   top: .2rem;
   right: 0;
 }
+.showDeletePresent{
+  display: block;
+}
+.hideDeletePresent{
+  display: none;
+}

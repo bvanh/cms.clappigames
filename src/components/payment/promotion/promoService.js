@@ -58,25 +58,7 @@ const initialIndexShop = [
     ],
   },
 ];
-const initialIndexShop2 = [
-  {
-    productId: '',
-    productName: '',
-    detail: [
-      {
-        requiredQuantity: 1,
-        description: "",
-        thresholds: [{
-          quantity: 1,
-          rewards: [{
-            id: "",
-            name: ""
-          }]
-        }]
-      }
-    ]
-  },
-];
+
 const initialIndexPromo = {
   eventPaymentType: [],
   namePromo: "",
@@ -133,15 +115,48 @@ const checkMainInfoPromoAndEvent = (
     return false;
   }
 };
-const checkPurchaseItemIsEmtry = (indexShop) => {
+const checkItemsPromoIsEmtry = (indexShop) => {
   const result = indexShop.map((val, i) => {
-    if (val.purchaseItemId.length > 0) {
+    if (val.productId !== "") {
       return true;
     } else {
       return false;
     }
   });
   return result.every((val, i) => val != false);
+};
+const checkStepEmtry = (indexShop) => {
+  const demo = indexShop.map((val, i1) => val.detail);
+  const demo2=demo[0].map(val=>val.requiredQuantity)
+    
+    // const demo2 = val.detail.map((val2, i2) => {
+    //   if (i2 > 0) {
+    //     return val2.requiredQuantity > indexShop[i1].detail[i2 - 1].requiredQuantity;
+    //   }
+    // });
+  
+  // console.log(indexShop)
+  console.log(demo)
+  console.log(demo2)
+  return demo.every((val, i) => val === true || val === undefined);
+};
+const checkDescriptionEmtry = (indexShop) => {
+  const demo = indexShop.map((val, i1) => {
+    val.detail.map((val2, i2) => {
+      return val2.description === "";
+    });
+  });
+  return demo.every((val, i) => val === true || val === undefined);
+};
+const checkRewardsEmtry = (indexShop) => {
+  const demo = indexShop.map((val, i1) => {
+    val.detail.map((val2, i2) => {
+      val2.thresholds.map((val3, i3) => {
+        return val3.rewards.length === 0;
+      });
+    });
+  });
+  return demo.every((val, i) => val === true || val === undefined);
 };
 const checkRewardsIsEmtry = (indexShop) => {
   const result = indexShop.map((val, i) => {
@@ -237,14 +252,16 @@ export {
   daily0,
   isTypeEvent,
   initialIndexShop,
-  initialIndexShop2,
   initialIndexEventByMoney,
   initialIndexPromo,
   initialTypePromo,
+  checkItemsPromoIsEmtry,
+  checkStepEmtry,
+  checkRewardsEmtry,
+  checkDescriptionEmtry,
   checkMainInfoPromoAndEvent,
   checkRewardsIsEmtry,
   checkItemIsEmtry,
-  checkPurchaseItemIsEmtry,
   checkPoint,
   checkNumb,
   alertErrorNamePromo,

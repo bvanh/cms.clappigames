@@ -5,7 +5,7 @@ import {alertErrorServer} from '../../../../../utils/alertErrorAll'
 import {
   checkNumb,
   checkMainInfoPromoAndEvent,
-  checkPurchaseItemIsEmtry,
+  // checkPurchaseItemIsEmtry,
   alertErrorNamePromo,
   alertErrorItemPromo,
   checkItemIsEmtry,
@@ -79,8 +79,8 @@ function EventByItems(props) {
       )
     ) {
       if (checkNumb(indexShop) &&
-        checkItemIsEmtry(indexShop) &&
-        checkPurchaseItemIsEmtry(indexShop)) {
+        checkItemIsEmtry(indexShop)
+        ) {
        updatePromo();
       } else {
         alertErrorItemPromo();

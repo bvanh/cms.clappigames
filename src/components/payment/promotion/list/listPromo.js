@@ -44,7 +44,7 @@ function ListPromo() {
         pageSize: pageSize,
         status: status,
         type: type,
-        game: game,
+        gameId: game,
         server: server,
         name: name,
       },
