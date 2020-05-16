@@ -126,19 +126,17 @@ const checkItemsPromoIsEmtry = (indexShop) => {
   return result.every((val, i) => val != false);
 };
 const checkStepEmtry = (indexShop) => {
-  const demo = indexShop.map((val, i1) => val.detail);
-  const demo2=demo[0].map(val=>val.requiredQuantity)
-    
-    // const demo2 = val.detail.map((val2, i2) => {
-    //   if (i2 > 0) {
-    //     return val2.requiredQuantity > indexShop[i1].detail[i2 - 1].requiredQuantity;
-    //   }
-    // });
-  
-  // console.log(indexShop)
-  console.log(demo)
-  console.log(demo2)
-  return demo.every((val, i) => val === true || val === undefined);
+  let res = true;
+  indexShop.map((val, i1) => {
+    val.detail.map((val2, i2) => {
+      if (res === false) {
+        return;
+      }
+      if (i2 > 0)
+        res = val2.requiredQuantity > val.detail[i2 - 1].requiredQuantity;
+    });
+  });
+  return res;
 };
 const checkDescriptionEmtry = (indexShop) => {
   const demo = indexShop.map((val, i1) => {
