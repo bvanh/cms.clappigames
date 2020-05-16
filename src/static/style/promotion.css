@@ -250,3 +250,6 @@
 .hideDeletePresent{
   display: none;
 }
+#hideTypePresent{
+  display: none;
+}

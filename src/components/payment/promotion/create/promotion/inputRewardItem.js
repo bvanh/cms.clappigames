@@ -6,13 +6,14 @@ import { alertErrorServer } from "../../../../../utils/alertErrorAll";
 import { connect } from "react-redux";
 import { useLazyQuery, useMutation, useQuery } from "@apollo/react-hooks";
 import { getListPartnerProducts } from "../../../../../utils/queryPartnerProducts";
-import { initialIndexShop2 } from "../../promoService";
+import { initialIndexShop2, checkLinkAndThumbnail } from "../../promoService";
 import {
   checkItemsPromoIsEmtry,
   checkStepEmtry,
   checkRewardsEmtry,
   checkDescriptionEmtry,
   checkMainInfoPromoAndEvent,
+  checkGameInfo,
   checkItemIsEmtry,
   checkNumb,
   alertErrorNamePromo,
@@ -35,6 +36,7 @@ function EventByItems(props) {
     startTime,
     endTime,
     linkUrl,
+    linkSupport,
     prefixPromo,
   } = props.indexPromoAndEvent;
   const { platformId, server } = props.indexGameForPromo;
@@ -69,17 +71,18 @@ function EventByItems(props) {
         type: type,
         status: status,
         gameId: platformId,
-        server: server,
+        serverId: server,
         shop: JSON.stringify(indexShop2),
         eventTime: JSON.stringify({
           dates: dates,
           days: daily,
           hours: [checkStartHour(startTime), checkEndHour(endTime)],
         }),
-        startedAt:timeTotal[0],
-        endedAt:timeTotal[1],
+        startedAt: timeTotal[0],
+        endedAt: timeTotal[1],
         linkUrl: linkUrl,
         prefix: prefixPromo,
+        supportUrl:linkSupport,
         imageUrl: props.imageUrl,
       },
     },
@@ -92,26 +95,18 @@ function EventByItems(props) {
     onError: (index) => alertErrorServer(index.message),
   });
   const submitCreatePromo = async () => {
-    // if (
-    //   checkMainInfoPromoAndEvent(name, type, timeTotal[0], startTime, endTime)
-    // ) {
-      if (
-        // checkItemsPromoIsEmtry(indexShop2) &&
-        checkStepEmtry(indexShop2) &&
-        checkDescriptionEmtry(indexShop2) &&
-        checkRewardsEmtry(indexShop2)
-        // checkNumb(indexShop2) &&
-        // checkItemIsEmtry(indexShop2) &&
-        // server !== "" &&
-        // platformId !== ""
-      ) {
-        // createPromo();
-      } else {
-        alertErrorItemPromo();
-      }
-    // } else {
-    //   alertErrorNamePromo();
-    // }
+    if (
+      checkMainInfoPromoAndEvent(name, type, timeTotal[0], startTime, endTime) &&
+      checkGameInfo(platformId, server) &&
+      checkItemsPromoIsEmtry(indexShop2) &&
+      checkStepEmtry(indexShop2) &&
+      checkDescriptionEmtry(indexShop2) &&
+      checkRewardsEmtry(indexShop2) && 
+      checkLinkAndThumbnail(linkUrl,props.imageUrl)
+    ) {
+      // createPromo();
+      console.log('src')
+    }
   };
   const addItems = (i) => {
     const newItem = {

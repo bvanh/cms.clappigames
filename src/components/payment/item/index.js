@@ -7,7 +7,7 @@ import ListItems from "./listPartnerProduct/listItems";
 import { nFormatter } from "../../../utils/configCharts";
 
 function ItemsContainer() {
-  const [isCreateItem, setIsCreateItem] = useState(false);
+  const [isCreateItem, setIsCreateItem] = useState(true);
   const [totalIndex, setTotalIndex] = useState({
     totalMoney: 0,
     totalPurchase: 0

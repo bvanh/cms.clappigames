@@ -43,6 +43,7 @@ function InputrewardForShowByMoney(props) {
     startTime,
     endTime,
     linkUrl,
+    linkSupport,
     prefixPromo,
   } = props.indexPromoAndEvent;
   const [rowItems, setRowItems] = useState(0);
@@ -53,6 +54,16 @@ function InputrewardForShowByMoney(props) {
       rewards: [],
     },
   ]);
+  const [indexShop2, setIndexShop2] = useState([
+    {
+      point: 1,
+      rewards: {
+        type: "",
+        id: "",
+        name: ""
+      }
+    }
+  ])
   const { isShow, itemsForEventTypeMoney } = listItemForEvent;
   const resetInput = useMemo(() => {
     setIndexShop([
@@ -109,9 +120,10 @@ function InputrewardForShowByMoney(props) {
         productId: data.createProduct.productId,
       };
       setCoinEvent([...coinEvent, newItem1]);
-      const newItem2 = [...indexShop];
-      newItem2[rowItems].rewards[0] = data.createProduct.productId;
-      setIndexShop(newItem2);
+      const newItem2 = [...indexShop2];
+      newItem2[rowItems].rewards.id = data.createProduct.productId;
+      newItem2[rowItems].rewards.name = data.createProduct.productName;
+      setIndexShop2(newItem2);
     },
     onError: (index) => alertErrorServer(index.message),
   });
@@ -135,6 +147,7 @@ function InputrewardForShowByMoney(props) {
         linkUrl: linkUrl,
         imageUrl: props.imageUrl,
         prefix: prefixPromo,
+        supportUrl: linkSupport
       },
     },
     onCompleted: (data) => {
@@ -167,6 +180,7 @@ function InputrewardForShowByMoney(props) {
         linkUrl: linkUrl,
         imageUrl: props.imageUrl,
         prefix: prefixPromo,
+        supportUrl: linkSupport
       },
     },
     onCompleted: (data) => {
@@ -209,6 +223,32 @@ function InputrewardForShowByMoney(props) {
       alertErrorNamePromo();
     }
   };
+  const changeTypeRewards = (positionItem, val) => {
+    const newShop = [...indexShop2];
+    newShop[positionItem].rewards.type = val;
+    setIndexShop2(newShop)
+  }
+  const addItem2 = () => {
+    const newItem = {
+      point: indexShop2[indexShop2.length - 1].point,
+      rewards: {
+        type: "",
+        id: '',
+        name: ""
+      },
+    }
+    setIndexShop2([...indexShop2, newItem])
+  }
+  const handleStep = (positionItem, value) => {
+    const newItem = [...indexShop2];
+    newItem[positionItem].point = value;
+    setIndexShop2(newItem)
+  }
+  const handleChooseInKind = (positionItem, value) => {
+    const newItem = [...indexShop2];
+    newItem[positionItem].rewards.name = value;
+    setIndexShop2(newItem)
+  }
   const addItem = () => {
     const newItem = {
       point: indexShop[indexShop.length - 1].point,
@@ -218,8 +258,8 @@ function InputrewardForShowByMoney(props) {
   };
   const reduceItem = async (val) => {
     if (val !== 0) {
-      const newItem = await indexShop.filter((value, index) => index !== val);
-      setIndexShop(newItem);
+      const newItem = await indexShop2.filter((value, index) => index !== val);
+      setIndexShop2(newItem);
     }
   };
   const handleChooseItem = (positionItem, value) => {
@@ -239,10 +279,13 @@ function InputrewardForShowByMoney(props) {
     setIndexShop(newItem);
   };
   const setCoinForEventTypeMoney = (e) => {
-    const newItem = [...indexShop];
-    newItem[rowItems].rewards = [e.target.value];
+    const convertValue = JSON.parse(e)
+    const newItem = [...indexShop2];
+    newItem[rowItems].rewards.id = convertValue.id;
+    newItem[rowItems].rewards.name = convertValue.name;
     setIndexShop(newItem);
     setItemNumb(null);
+    console.log(e)
   };
   const submitCreateItem = async () => {
     if (itemNumb !== null) {
@@ -261,7 +304,7 @@ function InputrewardForShowByMoney(props) {
     </Option>
   ));
   const printListItemsEvent = coinEvent.map((val, index) => (
-    <Option value={val.productId} key={index}>
+    <Option value={`{"id":"${val.productId}","name":"${val.productName}"}`} key={index}>
       {val.productName}
     </Option>
   ));
@@ -269,13 +312,14 @@ function InputrewardForShowByMoney(props) {
     <Col span={24} key={i}>
       <Radio
         style={{ display: "block", height: "30px", lineHeight: "30px" }}
-        value={val.productId}
+        value={`{"id":"${val.productId}","name":"${val.productName}"}`}
       >
         {val.productName}
       </Radio>
     </Col>
   ));
-  const printItem = indexShop.map(function (val, index1) {
+  console.log(indexShop2)
+  const printItemOutGame = indexShop2.map(function (val, index1) {
     return (
       <div
         key={index1}
@@ -284,24 +328,34 @@ function InputrewardForShowByMoney(props) {
         <div style={{ width: "15%", display: "flex", alignItems: "center" }}>
           <span style={{ marginRight: ".2rem" }}>From</span>
           <Input
-            value={indexShop[index1].point}
-            min={index1 > 0 ? indexShop[index1 - 1].point : 0}
+            value={indexShop2[index1].point}
+            min={index1 > 0 ? indexShop2[index1 - 1].point : 0}
             type="number"
             name="pucharseTimes"
-            onChange={(e) => handleChooseNumbItem(index1, e)}
+            onChange={(e) => handleStep(index1, e.target.value)}
           ></Input>
           <span style={{ marginLeft: ".2rem" }}>
-            {props.nameEventByMoney === "MONEY" ? "VNĐ" : "C.COIN"}
+            VNĐ
           </span>
         </div>
         <div className="promo-input-item-input">
-          {props.typeEventByMoney === "INKIND" && (
+          {val.rewards.type === "" && (
+            <>
+              <Button type="primary" onClick={() => changeTypeRewards(index1, 'INKIND')} ghost>
+                Gift's out game
+             </Button>
+              <Button type="primary" onClick={() => changeTypeRewards(index1, 'COIN')} ghost>
+                C.coin
+             </Button>
+            </>
+          )}
+          {val.rewards.type === "INKIND" && (
             <div className="promo-input-coin-event">
               <Input
-                value={indexShop[index1].rewards[0]}
+                value={indexShop2[index1].rewards.name}
                 placeholder="-Input name of gift out game-"
                 name="pucharseTimes"
-                onChange={(e) => handleChooseIsKind(index1, e)}
+                onChange={(e) => handleChooseInKind(index1, e.target.value)}
                 style={{ width: "45%" }}
               ></Input>
               <Icon
@@ -311,13 +365,13 @@ function InputrewardForShowByMoney(props) {
               />
             </div>
           )}
-          {props.typeEventByMoney === "COIN" && (
+          {val.rewards.type === "COIN" && (
             <div className="promo-input-coin-event">
               <div
                 style={{ width: "35%", display: "flex", alignItems: "center" }}
               >
                 <Select
-                  value={indexShop[index1].rewards[0]}
+                  value={indexShop2[index1].rewards.id !== "" ? `{"id":"${indexShop2[index1].rewards.id}","name":"${indexShop2[index1].rewards.name}"}` : ""}
                   dropdownClassName="dropdown-coin-event"
                   showArrow={false}
                   style={{ width: "90%" }}
@@ -338,23 +392,43 @@ function InputrewardForShowByMoney(props) {
               />
             </div>
           )}
-          {props.typeEventByMoney === "ITEM" && (
-            <div className="promo-input-coin-event">
-              <Select
-                mode="multiple"
-                value={indexShop[index1].rewards}
-                style={{ width: "80%" }}
-                onChange={(value) => handleChooseItem(index1, value)}
-              >
-                {printListItems}
-              </Select>{" "}
-              <Icon
-                type="close"
-                onClick={() => reduceItem(index1)}
-                style={{ fontSize: "16px", margin: "0 .25rem" }}
-              />
-            </div>
-          )}
+        </div>
+      </div>
+    )
+  })
+  const printItem = indexShop.map(function (val, index1) {
+    return (
+      <div
+        key={index1}
+        style={{ display: "flex", alignItems: "center", marginBottom: "1rem" }}
+      >
+        <div style={{ width: "15%", display: "flex", alignItems: "center" }}>
+          <span style={{ marginRight: ".2rem" }}>From</span>
+          <Input
+            value={indexShop[index1].point}
+            min={index1 > 0 ? indexShop[index1 - 1].point : 0}
+            type="number"
+            name="pucharseTimes"
+            onChange={(e) => handleChooseNumbItem(index1, e)}
+          ></Input>
+          <span style={{ marginLeft: ".2rem" }}>
+            {props.nameEventByMoney === "MONEY" ? "VNĐ" : "C.COIN"}
+          </span>
+        </div>
+        <div className="promo-input-item-input">
+          <Select
+            mode="multiple"
+            value={indexShop[index1].rewards}
+            style={{ width: "80%" }}
+            onChange={(value) => handleChooseItem(index1, value)}
+          >
+            {printListItems}
+          </Select>{" "}
+          <Icon
+            type="close"
+            onClick={() => reduceItem(index1)}
+            style={{ fontSize: "16px", margin: "0 .25rem" }}
+          />
         </div>
       </div>
     );
@@ -370,11 +444,20 @@ function InputrewardForShowByMoney(props) {
         </div>
       </div>
       <Button onClick={submitCreateEvent} className="btn-create-promo">
-      {isUpdate ? "Update" : "Submit"}
+        {isUpdate ? "Update" : "Submit"}
       </Button>
       <Row className="promo-input-item">
-        {printItem}
-        <Button onClick={() => addItem()}>Add more conditions</Button>
+        {props.typeEventByMoney === "ITEM" ? (
+          <>
+            {printItem}
+            < Button onClick={() => addItem()}>Add more conditions </ Button>
+          </>
+        ) : (
+            <>
+              {printItemOutGame}
+              <Button onClick={() => addItem2()}>Add more conditions</Button>
+            </>
+          )}
       </Row>
       <Modal
         title="Choose C.coin package"
@@ -397,11 +480,11 @@ function InputrewardForShowByMoney(props) {
             Submit
           </Button>
         </div>
-        <Radio.Group onChange={(e) => setCoinForEventTypeMoney(e)}>
+        <Radio.Group onChange={(e) => setCoinForEventTypeMoney(e.target.value)}>
           {printItemsForEventTypeMoney}
         </Radio.Group>
       </Modal>
-    </div>
+    </div >
   );
 }
 

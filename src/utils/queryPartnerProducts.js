@@ -98,6 +98,9 @@ const queryGetPartnerProductById = gql`
       coin
       productId
       image
+      prefix
+      appleId
+      googleId
     }
   }
 `;

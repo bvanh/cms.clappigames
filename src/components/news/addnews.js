@@ -122,7 +122,7 @@ const AddNews = props => {
     setAlertIndex({ ...alertIndex, isShow: false })
   };
   const handleChangeSchedule = (e) => {
-    setNewsIndex({ ...newsIndex, status: e.target.value, startPost: moment().format('YYYY-MM-DD hh:mm:ss') })
+    setNewsIndex({ ...newsIndex, status: e.target.value, startPost: moment().format('YYYY-MM-DD HH:mm:ss') })
   }
   const handleChangeDateSchedule = val => {
     setIsPostNow(false);
@@ -130,10 +130,11 @@ const AddNews = props => {
       ...newsIndex,
       startPost: val
     });
+    console.log(val)
   };
   const setStartPostNow = () => {
     // moment.unix(value).format("MM/DD/YYYY")
-    const now = moment().format("YYYY-MM-DD hh:mm:ss")
+    const now = moment().format("YYYY-MM-DD HH:mm:ss")
     setIsSchedule(false);
     setIsPostNow(true);
     setNewsIndex({ ...newsIndex, startPost: now })

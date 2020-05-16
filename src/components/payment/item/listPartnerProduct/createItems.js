@@ -43,6 +43,9 @@ function CreatePartnerItems(props) {
       partnerProductName: "",
       promotionId: "",
       status: "",
+      prefix: "",
+      appleId: "",
+      googleId: ""
     },
   });
   const [dataListPlatform, setListPlatform] = useState([]);
@@ -55,6 +58,9 @@ function CreatePartnerItems(props) {
     partnerProductName: "",
     // promotionId: "",
     status: "",
+    prefix: "",
+    appleId: "",
+    googleId: ""
   });
 
   useEffect(() => {
@@ -74,17 +80,24 @@ function CreatePartnerItems(props) {
     coin,
     partnerProductName,
     partnerId,
+    prefix,
+    appleId,
+    googleId
     // promotionId
   } = dataPartnerProduct;
   const [getRefPartnerProduct] = useLazyQuery(queryGetRefPartnerProducts, {
+    fetchPolicy: 'cache-and-network',
     variables: {
       partnerId: partnerId,
     },
     onCompleted: (data) => {
+      console.log(data)
       setListRefProduct(data.listRefPartnerProducts);
     },
-    onError: (index) =>
-      alertErrorServer(index.networkError.result.errors[0].message),
+    onError: (index) => {
+       alertErrorServer(index.networkError.result.errors[0].message)
+    }
+    ,
   });
   const [createItem] = useMutation(createPartnerProduct, {
     variables: {
@@ -97,10 +110,14 @@ function CreatePartnerItems(props) {
         partnerProductName: partnerProductName,
         // promotionId: Number(promotionId),
         image: props.urlImgThumbnail,
+        prefix: prefix,
+        appleId: appleId,
+        googleId: googleId
       },
     },
     onError: (index) =>
-      alertErrorServer(index.networkError.result.errors[0].message),
+      console.log(index)
+    // alertErrorServer(index.networkError.result.errors[0].message),
   });
   const getNewInfoItem = (e) => {
     setDataPartnerProduct({
@@ -115,6 +132,19 @@ function CreatePartnerItems(props) {
   const getStatus = (e) => {
     setDataPartnerProduct({ ...dataPartnerProduct, status: e.target.value });
   };
+  const getTypeItem = e => {
+    switch (e) {
+      case "appleId":
+        setDataPartnerProduct({ ...dataPartnerProduct, [e]: e, googleId: "" });
+        break;
+      case "googleId":
+        setDataPartnerProduct({ ...dataPartnerProduct, [e]: e, appleId: "" })
+        break;
+      default:
+        setDataPartnerProduct({ ...dataPartnerProduct, googleId: '', appleId: "" })
+        break;
+    }
+  }
   const submitCreateItem = () => {
     let result = createItem();
     result.then((val) => {
@@ -141,7 +171,9 @@ function CreatePartnerItems(props) {
   async function changePartnerName(val) {
     await setDataPartnerProduct({ ...dataPartnerProduct, partnerId: val });
     getRefPartnerProduct();
+    console.log(val)
   }
+
   const printPlatform = dataListPlatform.map((val, index) => (
     <Option value={val.partnerId} key={index}>
       {val.partnerName}
@@ -203,12 +235,12 @@ function CreatePartnerItems(props) {
                 onClick={submitCreateItem}
                 disabled={
                   productName === "" ||
-                  partnerId === "" ||
-                  productId === "" ||
-                  coin === "" ||
-                  partnerProductName === "" ||
-                  // promotionId === 0 ||
-                  status === ""
+                    partnerId === "" ||
+                    productId === "" ||
+                    coin === "" ||
+                    partnerProductName === "" ||
+                    prefix === "" ||
+                    status === ""
                     ? true
                     : false
                 }
@@ -220,7 +252,7 @@ function CreatePartnerItems(props) {
         </div>
       </div>
       <Row className="products-content">
-        <Col md={12} className="section1-listcoin">
+        <Col md={10} className="section1-listcoin">
           <div>
             <div>
               <p className="edit-product-content-title">Item Id</p>
@@ -263,22 +295,29 @@ function CreatePartnerItems(props) {
               name="coin"
               onChange={getNewInfoItem}
             ></Input>
-            <div>
-              <span className="edit-product-content-title">Image</span>
-            </div>
-            <div style={{ width: "100px" }}>
-              {props.urlImgThumbnail === null ? (
-                <i>Thumbnail image is emtry</i>
-              ) : (
-                <img src={props.urlImgThumbnail} width="100%" />
-              )}
-            </div>
-            <div>
-              <a onClick={() => dispatchShowImagesNews(true)}>Select</a>
-            </div>
+            <Radio.Group onChange={e => getTypeItem(e.target.value)} defaultValue={""} style={{ flexDirection: "column" }}>
+              <span className="edit-product-content-title">Loại Item</span>
+              <Radio style={radioStyle} value="" name=''>
+                Nap.clappigames
+              </Radio>
+              <Radio style={radioStyle} value="appleId">
+                Appstore
+              </Radio>
+              <Radio style={radioStyle} value="googleId">
+                Google Play
+              </Radio>
+            </Radio.Group>
+            <span className="edit-product-content-title" style={{ marginTop: ".5rem" }}>Id</span>
+            <Input
+              value={prefix}
+              // type="number"
+              // max="9990000000"
+              name="prefix"
+              onChange={getNewInfoItem}
+            ></Input>
           </div>
         </Col>
-        <Col md={8} className="section2">
+        <Col md={7} className="section2">
           <div>
             <p className="edit-product-content-title">Status</p>
             <Radio.Group value={status} onChange={getStatus}>
@@ -298,6 +337,23 @@ function CreatePartnerItems(props) {
             <span>
               Admin: <span>{userName}</span>
             </span>
+          </div>
+        </Col>
+        <Col md={7} className="section2">
+          <div>
+            <div>
+              <span className="edit-product-content-title">Image</span>
+            </div>
+            <div style={{ width: "100px" }}>
+              {props.urlImgThumbnail === null ? (
+                <i>Thumbnail image is emtry</i>
+              ) : (
+                  <img src={props.urlImgThumbnail} width="100%" />
+                )}
+            </div>
+            <div>
+              <a onClick={() => dispatchShowImagesNews(true)}>Select</a>
+            </div>
           </div>
         </Col>
         <ListImagesForNews isThumbnail={true} />

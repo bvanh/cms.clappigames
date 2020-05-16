@@ -6,7 +6,6 @@ query{
     listPartnerServers(partnerId:"${partnerId}"){
       server
       serverName
-      status
     }
   }
 `;

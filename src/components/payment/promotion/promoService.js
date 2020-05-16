@@ -112,49 +112,82 @@ const checkMainInfoPromoAndEvent = (
   ) {
     return true;
   } else {
+    alertErrorNamePromo();
     return false;
   }
 };
+const checkLinkAndThumbnail = (link, thumbnail) => {
+  console.log(link,thumbnail)
+  if (link === "" || thumbnail === null) {
+    alertErrorItemPromo("Link post and thumbnail is emtry !")
+    console.log("Link post and thumbnail is emtry !")
+    return false;
+  } else {
+    return true;
+  }
+}
+const checkGameInfo = (game, server) => {
+  if (game === "" || server === "") {
+    alertErrorItemPromo("Game info is emtry!")
+    return false;
+  } else {
+    return true;
+  }
+}
 const checkItemsPromoIsEmtry = (indexShop) => {
-  const result = indexShop.map((val, i) => {
-    if (val.productId !== "") {
-      return true;
-    } else {
-      return false;
+  let res = true;
+  indexShop.map((val, i) => {
+    if (val.productId === "") {
+      res = false;
+
+      return;
     }
   });
-  return result.every((val, i) => val != false);
+  if (res === false) alertErrorItemPromo("Item is Emtry!");
+  return res;
 };
 const checkStepEmtry = (indexShop) => {
   let res = true;
   indexShop.map((val, i1) => {
     val.detail.map((val2, i2) => {
       if (res === false) {
+
         return;
       }
       if (i2 > 0)
         res = val2.requiredQuantity > val.detail[i2 - 1].requiredQuantity;
     });
   });
+  if (res === false) alertErrorItemPromo("Milestones are sorted by increasing !");
   return res;
 };
 const checkDescriptionEmtry = (indexShop) => {
-  const demo = indexShop.map((val, i1) => {
+  let res = true;
+  indexShop.map((val, i1) => {
     val.detail.map((val2, i2) => {
-      return val2.description === "";
+      if (val2.description === "") {
+        res = false;
+        return;
+      }
     });
   });
-  return demo.every((val, i) => val === true || val === undefined);
+  if (res === false) alertErrorItemPromo("Desctiption is emtry !");
+  return res;
 };
 const checkRewardsEmtry = (indexShop) => {
-  const demo = indexShop.map((val, i1) => {
+  let res = true;
+  indexShop.map((val, i1) => {
     val.detail.map((val2, i2) => {
       val2.thresholds.map((val3, i3) => {
-        return val3.rewards.length === 0;
+        if (val3.rewards.length === 0) {
+          res = false;
+          return;
+        }
       });
     });
   });
-  return demo.every((val, i) => val === true || val === undefined);
+  if (res === false) alertErrorItemPromo("Present is emtry !");
+  return res;
 };
 const checkRewardsIsEmtry = (indexShop) => {
   const result = indexShop.map((val, i) => {
@@ -220,13 +253,12 @@ const checkEndHour = (endTime) => {
       return endTime;
   }
 };
-const alertErrorItemPromo = () => {
+const alertErrorItemPromo = (content) => {
   Modal.error({
     title: "Error !!!",
     content: (
       <div>
-        <p>+ Check again game info, server, item, type promotion</p>
-        <p>+ Milestones are sorted by increasing .</p>
+        {content}
       </div>
     ),
   });
@@ -253,6 +285,8 @@ export {
   initialIndexEventByMoney,
   initialIndexPromo,
   initialTypePromo,
+  checkGameInfo,
+  checkLinkAndThumbnail,
   checkItemsPromoIsEmtry,
   checkStepEmtry,
   checkRewardsEmtry,

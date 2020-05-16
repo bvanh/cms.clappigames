@@ -72,6 +72,7 @@ const createNews = gql`
       platform
       shortContent
       image
+      startPost
     }
   }
 `;

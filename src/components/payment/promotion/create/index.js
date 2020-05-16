@@ -50,7 +50,7 @@ const initialIndexShop2 = [
   },
 ];
 function CreatePromotion(props) {
-  const [switchTypeEvent, setSwitchTypeEvent] = useState(true);
+  const [switchTypeEvent, setSwitchTypeEvent] = useState(false);
   const [indexPromoAndEvent, setIndexPromoAndEvent] = useState({
     name: "",
     platformId: "",
@@ -66,7 +66,8 @@ function CreatePromotion(props) {
     daily: [],
     startTime: "00:00:00",
     endTime: "23:59:59",
-    linkUrl: null,
+    linkUrl: '',
+    linkSupport: "",
     prefixPromo: "",
   });
   const [indexGameForPromo, setIndexGameForPromo] = useState({
@@ -87,12 +88,12 @@ function CreatePromotion(props) {
     itemsForEventByMoney: [{ productName: "", productId: "" }],
   });
   const [indexShop, setIndexShop] = useState(initialIndexShop);
-  const [indexShop2,setIndexShop2]= useState(initialIndexShop2)
+  const [indexShop2, setIndexShop2] = useState(initialIndexShop2)
   useEffect(() => {
     dispatchSetUrlImageThumbnail(null);
   }, []);
   const isTimeInPromo = null;
-  const { platformId, status, server, linkUrl } = indexPromoAndEvent;
+  const { platformId, status, server, linkUrl, linkSupport } = indexPromoAndEvent;
   const { listItems } = listPartner;
   const { data } = useQuery(getListPartnerProducts(platformId), {
     onCompleted: (data) => {
@@ -110,6 +111,7 @@ function CreatePromotion(props) {
     onError: (index) => alertErrorServer(index.message),
   });
   const handleChangePlatform = (e) => {
+    console.log(e)
     setIndexPromoAndEvent({
       ...indexPromoAndEvent,
       platformId: e,
@@ -348,6 +350,16 @@ function CreatePromotion(props) {
               style={{ width: "100%" }}
               value={linkUrl}
               name="linkUrl"
+              onChange={getLinkUrlAndPrefix}
+            />
+          </div>
+          <div className="addLink">
+            <h3>Link support</h3>
+            <Input
+              placeholder="Get link support..."
+              style={{ width: "100%" }}
+              value={linkSupport}
+              name="linkSupport"
               onChange={getLinkUrlAndPrefix}
             />
           </div>

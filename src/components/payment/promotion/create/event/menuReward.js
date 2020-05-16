@@ -62,7 +62,7 @@ const MenuRewardEventByMoney = (props) => {
   useQuery(getListServer(platformId), {
     fetchPolicy: "cache-and-network",
     onCompleted: data => {
-      console.log(data)
+      // console.log(data)
       setListServer(data.listPartnerServers);
     },
     onError: index => alertErrorServer(index.message)
@@ -149,7 +149,7 @@ const MenuRewardEventByMoney = (props) => {
               {printEventType}
             </Select>{" "}
           </div>
-          <div className="promo-choose-platform-server">
+          <div className="promo-choose-platform-server" id={props.nameEventByMoney==='MONEY'?'hideTypePresent':""}>
             <span>Type of present: </span>
             <Select
               value={value}

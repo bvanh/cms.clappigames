@@ -82,7 +82,11 @@ const NewsEditor = (props) => {
     newsId,
     startPost,
   } = newsIndex;
-  const [deleteNews] = useMutation(queryDeleteNews);
+  const [deleteNews] = useMutation(queryDeleteNews,{
+    variables:{
+      ids:[Number(query.get("newsId"))]
+    }
+  });
   const [updateNews] = useMutation(UpdateNews, {
     variables: {
       newsId: Number(query.get("newsId")),
@@ -141,7 +145,7 @@ const NewsEditor = (props) => {
   };
   const setStartPostNow = () => {
     // moment.unix(value).format("MM/DD/YYYY")
-    const now = moment().format("YYYY-MM-DD hh:mm:ss");
+    const now = moment().format("YYYY-MM-DD HH:mm:ss");
     setIsSchedule(false);
     setIsPostNow(true);
     setNewsIndex({ ...newsIndex, startPost: now });
@@ -161,7 +165,7 @@ const NewsEditor = (props) => {
       {val.partnerName}
     </Option>
   ));
-  // console.log(moment(Number(startPost)).format("YYYY-MM-DD hh:mm:ss"))
+  // console.log(moment(Number(startPost)).format("YYYY-MM-DD HH:mm:ss"))
   console.log(startPost);
   return (
     <Row>
@@ -231,11 +235,11 @@ const NewsEditor = (props) => {
                     Number.isInteger(Number(startPost))
                       ? moment(
                           moment(Number(startPost)).format(
-                            "YYYY-MM-DD hh:mm:ss"
+                            "YYYY-MM-DD HH:mm:ss"
                           ),
-                          "YYYY-MM-DD hh:mm:ss"
+                          "YYYY-MM-DD HH:mm:ss"
                         )
-                      : moment(startPost, "YYYY-MM-DD hh:mm:ss")
+                      : moment(startPost, "YYYY-MM-DD HH:mm:ss")
                   }
                   disabled={status === "COMPLETE" ? false : true}
                   open={isSetSchedule}

@@ -54,6 +54,9 @@ function EditPartnerProductItem(props) {
     // promotionId: 0,
     status: "",
     image: "",
+    prefix: "",
+    appleId: "",
+    googleId: ''
   });
   useQuery(queryGetPlatform(), {
     onCompleted: (dataPartner) => {
@@ -87,6 +90,9 @@ function EditPartnerProductItem(props) {
     coin,
     partnerProductName,
     partnerId,
+    prefix,
+    appleId,
+    googleId
   } = dataPartnerProduct;
   const [getRefPartnerProduct] = useLazyQuery(queryGetRefPartnerProducts, {
     variables: {
@@ -113,6 +119,9 @@ function EditPartnerProductItem(props) {
         partnerProductName: partnerProductName,
         // promotionId: Number(promotionId),
         image: props.urlImgThumbnail,
+        prefix: prefix,
+        appleId: appleId,
+        googleId: googleId
       },
     },
     onCompleted: (data) => successUpdate(),
@@ -153,7 +162,30 @@ function EditPartnerProductItem(props) {
   //     }
   //   });
   // };
+  const setIdApple = () => {
+    // console.log(appleId, googleId)
+    if (appleId !== "") {
+      return "appleId";
+    } else if (googleId !== "") {
+      return "googleId";
+    } else {
+      return ""
+    }
+  }
 
+  const getTypeItem = e => {
+    switch (e) {
+      case "appleId":
+        setDataPartnerProduct({ ...dataPartnerProduct, [e]: e, googleId: "" });
+        break;
+      case "googleId":
+        setDataPartnerProduct({ ...dataPartnerProduct, [e]: e, appleId: "" })
+        break;
+      default:
+        setDataPartnerProduct({ ...dataPartnerProduct, googleId: '', appleId: "" })
+        break;
+    }
+  }
   const changePartnerName = (value) => {
     setDataPartnerProduct({ ...dataPartnerProduct, partnerId: value });
   };
@@ -181,7 +213,7 @@ function EditPartnerProductItem(props) {
         }
         history.push("/payment/items");
       },
-      onCancel() {},
+      onCancel() { },
     });
   };
   const printPlatform = dataListPlatform.map((val, index) => (
@@ -238,7 +270,7 @@ function EditPartnerProductItem(props) {
           </div>
         </div>
         <Row className="products-content">
-          <Col md={12} className="section1">
+          <Col md={10} className="section1">
             <div>
               <div>
                 <p className="edit-product-content-title">Item Id</p>
@@ -287,18 +319,30 @@ function EditPartnerProductItem(props) {
                 name="coin"
                 onChange={getNewInfoItem}
               ></Input>
-              <div>
-                <span className="edit-product-content-title">Image</span>
-              </div>
-              <div style={{ width: "100px" }}>
-                <img src={props.urlImgThumbnail} width="100%" />
-              </div>
-              <div>
-                <a onClick={() => dispatchShowImagesNews(true)}>Select</a>
-              </div>
+              <Radio.Group onChange={e => getTypeItem(e.target.value)} value={setIdApple()} style={{ flexDirection: "column" }}>
+                <span className="edit-product-content-title">Loại Item</span>
+                <Radio style={radioStyle} value="">
+                  Nap.clappigames
+              </Radio>
+                <Radio style={radioStyle} value="appleId">
+                  Appstore
+              </Radio>
+                <Radio style={radioStyle} value="googleId">
+                  Google Play
+              </Radio>
+              </Radio.Group>
+              <span className="edit-product-content-title" style={{ marginTop: ".5rem" }}>Id</span>
+              <Input
+                value={prefix}
+                // type="number"
+                // max="9990000000"
+                name="prefix"
+                onChange={getNewInfoItem}
+              ></Input>
+
             </div>
           </Col>
-          <Col md={8} className="section2">
+          <Col md={7} className="section2">
             <div>
               <p className="edit-product-content-title">Status</p>
               <Radio.Group value={status} onChange={getStatus}>
@@ -318,6 +362,19 @@ function EditPartnerProductItem(props) {
               <span>
                 Admin: <span>{userName}</span>
               </span>
+            </div>
+          </Col>
+          <Col md={7} className="section2">
+            <div>
+              <div>
+                <span className="edit-product-content-title">Image</span>
+              </div>
+              <div style={{ width: "100px" }}>
+                <img src={props.urlImgThumbnail} width="100%" />
+              </div>
+              <div>
+                <a onClick={() => dispatchShowImagesNews(true)}>Select</a>
+              </div>
             </div>
           </Col>
           <ListImagesForNews isThumbnail={true} />
