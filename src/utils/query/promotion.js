@@ -96,12 +96,14 @@ query {
     gameId
     status
     eventTime
-    server
+    serverId
     type
     shop
     linkUrl
     imageUrl
     prefix
+    startedAt
+    endedAt
   }
 }
 `}

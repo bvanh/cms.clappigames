@@ -42,22 +42,28 @@ function EventByItems(props) {
   const { platformId, server } = props.indexGameForPromo;
   const { indexShop, isUpdate, indexShop2 } = props;
   const [itemSelected, setItemSelected] = useState([]);
-  const [rewardsSelected, setRewardsSelected] = useState([[]])
+  const [rewardsSelected, setRewardsSelected] = useState([[]]);
   // const [itemDeselected, setItemDeselected] = useState({
   //   productName: "",
   //   productId: ""
   // })
   const itemsID = new Set(indexShop2.map(({ productId }) => productId));
   const filteredOptions = [
-    ...itemsForEventTypeItem.filter(({ partnerProductId }) => !itemsID.has(partnerProductId))
+    ...itemsForEventTypeItem.filter(
+      ({ partnerProductId }) => !itemsID.has(partnerProductId)
+    ),
   ];
   const filterRewards = (i) => {
-    const rewardsID = new Set(rewardsSelected[i].map(({ productId }) => productId));
+    const rewardsID = new Set(
+      rewardsSelected[i].map(({ id }) => id)
+    );
     const filterRewardsOptions = [
-      ...itemsForEventTypeItem.filter(({ partnerProductId }) => !rewardsID.has(partnerProductId))
+      ...itemsForEventTypeItem.filter(
+        ({ partnerProductId }) => !rewardsID.has(partnerProductId)
+      ),
     ];
     return filterRewardsOptions;
-  }
+  };
   useQuery(getListPartnerProducts(platformId), {
     onCompleted: (data) => {
       setItemForEventTypeItem(data.listPartnerProducts);
@@ -72,7 +78,7 @@ function EventByItems(props) {
         status: status,
         gameId: platformId,
         serverId: server,
-        shop: JSON.stringify(indexShop2),
+        shop: JSON.stringify({ data: indexShop2 }),
         eventTime: JSON.stringify({
           dates: dates,
           days: daily,
@@ -82,7 +88,7 @@ function EventByItems(props) {
         endedAt: timeTotal[1],
         linkUrl: linkUrl,
         prefix: prefixPromo,
-        supportUrl:linkSupport,
+        supportUrl: linkSupport,
         imageUrl: props.imageUrl,
       },
     },
@@ -96,16 +102,22 @@ function EventByItems(props) {
   });
   const submitCreatePromo = async () => {
     if (
-      checkMainInfoPromoAndEvent(name, type, timeTotal[0], startTime, endTime) &&
+      checkMainInfoPromoAndEvent(
+        name,
+        type,
+        timeTotal[0],
+        startTime,
+        endTime
+      ) &&
       checkGameInfo(platformId, server) &&
       checkItemsPromoIsEmtry(indexShop2) &&
       checkStepEmtry(indexShop2) &&
       checkDescriptionEmtry(indexShop2) &&
-      checkRewardsEmtry(indexShop2) && 
-      checkLinkAndThumbnail(linkUrl,props.imageUrl)
+      checkRewardsEmtry(indexShop2) &&
+      checkLinkAndThumbnail(linkUrl, props.imageUrl)
     ) {
-      // createPromo();
-      console.log('src')
+      createPromo();
+      // console.log("src");
     }
   };
   const addItems = (i) => {
@@ -119,15 +131,14 @@ function EventByItems(props) {
           thresholds: [
             {
               quantity: 1,
-              rewards: [
-              ],
+              rewards: [],
             },
           ],
         },
       ],
     };
     props.setIndexShop2([...indexShop2, newItem]);
-    setRewardsSelected([...rewardsSelected, []])
+    setRewardsSelected([...rewardsSelected, []]);
   };
   // console.log(indexShop2);
   const addRewards = (indexDetail, indexThresholds) => {
@@ -149,8 +160,7 @@ function EventByItems(props) {
       thresholds: [
         {
           quantity: 1,
-          rewards: [
-          ],
+          rewards: [],
         },
       ],
     };
@@ -164,63 +174,106 @@ function EventByItems(props) {
     let newItemSelected = [...itemSelected];
     newItem[positionItem].productId = productId;
     newItem[positionItem].productName = productName;
-    newItemSelected = [...newItemSelected, JSON.parse(value)]
+    newItemSelected = [...newItemSelected, JSON.parse(value)];
     setItemSelected(newItemSelected);
     props.setIndexShop2(newItem);
-    console.log(newItemSelected)
-  }
+    console.log(newItemSelected);
+  };
   const handleChooseNumbItems = (positionItem, positionDetail, value) => {
     const newItem = [...indexShop2];
-    newItem[positionItem].detail[positionDetail].requiredQuantity = Number(value);
+    newItem[positionItem].detail[positionDetail].requiredQuantity = Number(
+      value
+    );
     props.setIndexShop2(newItem);
-  }
+  };
   const handleSetDescription = (positionItem, positionDetail, value) => {
     const newItem = [...indexShop2];
     newItem[positionItem].detail[positionDetail].description = value;
     props.setIndexShop2(newItem);
-  }
-  const handleChooseNumbRewards = (positionItem, positionDetail, positionReward, value) => {
+  };
+  const handleChooseNumbRewards = (
+    positionItem,
+    positionDetail,
+    positionReward,
+    value
+  ) => {
     const newItem = [...indexShop2];
-    newItem[positionItem].detail[positionDetail].thresholds[positionReward].quantity = Number(value);
-    props.setIndexShop2(newItem)
-  }
-  const handleSelectedRewards = async (positionItem, positionDetail, positionReward, value) => {
+    newItem[positionItem].detail[positionDetail].thresholds[
+      positionReward
+    ].quantity = Number(value);
+    props.setIndexShop2(newItem);
+  };
+  const handleSelectedRewards = async (
+    positionItem,
+    positionDetail,
+    positionReward,
+    value
+  ) => {
     const convertValue = JSON.parse(value);
     const newItem = [...indexShop2];
     const newRewardsSelected = [...rewardsSelected];
-    newRewardsSelected[positionItem] = [...newRewardsSelected[positionItem], convertValue];
-    newItem[positionItem].detail[positionDetail].thresholds[positionReward].rewards = [...newItem[positionItem].detail[positionDetail].thresholds[positionReward].rewards, convertValue];
+    newRewardsSelected[positionItem] = [
+      ...newRewardsSelected[positionItem],
+      convertValue,
+    ];
+    newItem[positionItem].detail[positionDetail].thresholds[
+      positionReward
+    ].rewards = [
+      ...newItem[positionItem].detail[positionDetail].thresholds[positionReward]
+        .rewards,
+      convertValue,
+    ];
     await props.setIndexShop2(newItem);
     setRewardsSelected(newRewardsSelected);
-    console.log(indexShop2)
-  }
-  const handleDeselectedRewards = (positionItem, positionDetail, positionReward, value) => {
+    console.log(indexShop2);
+  };
+  const handleDeselectedRewards = (
+    positionItem,
+    positionDetail,
+    positionReward,
+    value
+  ) => {
     const convertValue = JSON.parse(value);
     const newRewardsSelected = [...rewardsSelected];
     const newItem = [...indexShop2];
-    const newItem2 = newItem[positionItem].detail[positionDetail].thresholds[positionReward].rewards.filter((val, i) => val.productId !== convertValue.productId)
-    const res = newRewardsSelected[positionItem].filter((val, i) => val.productId !== convertValue.productId);
+    const newItem2 = newItem[positionItem].detail[positionDetail].thresholds[
+      positionReward
+    ].rewards.filter((val, i) => val.id !== convertValue.id);
+    const res = newRewardsSelected[positionItem].filter(
+      (val, i) => val.id !== convertValue.id
+    );
     newRewardsSelected[positionItem] = res;
-    newItem[positionItem].detail[positionDetail].thresholds[positionReward].rewards = newItem2;
+    newItem[positionItem].detail[positionDetail].thresholds[
+      positionReward
+    ].rewards = newItem2;
     setRewardsSelected(newRewardsSelected);
     props.setIndexShop2(newItem);
-    console.log(indexShop2)
-  }
-  const lengthThreholds = (positionItem, positionDetail) => indexShop2[positionItem].detail[positionDetail].thresholds.length;
+    console.log(indexShop2);
+  };
+  const lengthThreholds = (positionItem, positionDetail) =>
+    indexShop2[positionItem].detail[positionDetail].thresholds.length;
   const lengthDetail = (positionItem) => indexShop2[positionItem].detail.length;
-  const reduceReward = async (positionItem, positionDetail, positionThresholds) => {
+  const reduceReward = async (
+    positionItem,
+    positionDetail,
+    positionThresholds
+  ) => {
     const newShop = [...indexShop2];
     const newRewardsSelected = [...rewardsSelected];
     if (lengthThreholds(positionItem, positionDetail) > 1) {
-      const newReward = await newShop[positionItem].detail[positionDetail].thresholds.filter(
-        (value, i) => positionThresholds !== i
+      const newReward = await newShop[positionItem].detail[
+        positionDetail
+      ].thresholds.filter((value, i) => positionThresholds !== i);
+      const rewardRemoved = indexShop2[positionItem].detail[
+        positionDetail
+      ].thresholds.filter((value, i) => positionThresholds === i);
+      const rewardRemovedID = new Set(
+        rewardRemoved[0].rewards.map(({ id }) => id)
       );
-      const rewardRemoved = indexShop2[positionItem].detail[positionDetail].thresholds.filter(
-        (value, i) => positionThresholds === i
-      );
-      const rewardRemovedID = new Set(rewardRemoved[0].rewards.map(({ productId }) => productId));
       const filterRewardsRemoved = [
-        ...newRewardsSelected[positionItem].filter(({ productId }) => !rewardRemovedID.has(productId))
+        ...newRewardsSelected[positionItem].filter(
+          ({ id }) => !rewardRemovedID.has(id)
+        ),
       ];
       newRewardsSelected[positionItem] = filterRewardsRemoved;
       newShop[positionItem].detail[positionDetail].thresholds = newReward;
@@ -239,12 +292,16 @@ function EventByItems(props) {
       const rewardRemoved = indexShop2[positionItem].detail.filter(
         (value, i) => positionDetail === i
       );
-      const rewardRemovedID = rewardRemoved[0].thresholds.map((val) => val.rewards.map(({ productId }) => {
-        arrRemovedID.push(productId);
-        return productId;
-      }));
+      const rewardRemovedID = rewardRemoved[0].thresholds.map((val) =>
+        val.rewards.map(({ id }) => {
+          arrRemovedID.push(id);
+          return id;
+        })
+      );
       const filterRewardsRemoved = [
-        ...newRewardsSelected[positionItem].filter(({ productId }) => !new Set(arrRemovedID).has(productId))
+        ...newRewardsSelected[positionItem].filter(
+          ({ id }) => !new Set(arrRemovedID).has(id)
+        ),
       ];
       newRewardsSelected[positionItem] = filterRewardsRemoved;
       newShop[positionItem].detail = newReward;
@@ -252,8 +309,8 @@ function EventByItems(props) {
     }
     props.setIndexShop2(newShop);
     setRewardsSelected(newRewardsSelected);
-  }
-  const reduceItems = positionItem => {
+  };
+  const reduceItems = (positionItem) => {
     let newShop = [...indexShop2];
     const newRewardsSelected = [...rewardsSelected];
     let newItemSelected = [...itemSelected];
@@ -267,10 +324,10 @@ function EventByItems(props) {
     // setItemSelected(newItemSelected)
     props.setIndexShop2(newShop);
     setRewardsSelected(newRewardsSelected);
-  }
-  const tranformValue = arr => arr.map(val => JSON.stringify(val))
+  };
+  const tranformValue = (arr) => arr.map((val) => JSON.stringify(val));
 
-  console.log(JSON.stringify(indexShop2))
+  console.log(JSON.stringify(indexShop2));
   // const reduceItem = async (val) => {
   //   if (val !== 0) {
   //     const newItem = await indexShop.filter((value, index) => index !== val);
@@ -319,13 +376,19 @@ function EventByItems(props) {
   //   props.setIndexShop(newItem);
   // };
   const printListItems = filteredOptions.map((val, index) => (
-    <Option value={`{"productName":"${val.productName}","productId":"${val.partnerProductId}"}`} key={index} >
+    <Option
+      value={`{"productName":"${val.productName}","productId":"${val.partnerProductId}"}`}
+      key={index}
+    >
       {val.productName}
     </Option>
   ));
   const printListItemsRewards = (i) =>
     filterRewards(i).map((val, index) => (
-      <Option value={`{"productName":"${val.productName}","productId":"${val.partnerProductId}"}`} key={index} >
+      <Option
+        value={`{"name":"${val.productName}","id":"${val.partnerProductId}"}`}
+        key={index}
+      >
         {val.productName}
       </Option>
     ));
@@ -333,47 +396,76 @@ function EventByItems(props) {
     const printDetailStep = firtRow.detail.map(function (secondRow, index2) {
       const printReward = secondRow.thresholds.map((thirdRow, index3) => (
         <div key={index3 + "a"} style={{ display: "flex" }}>
-          <Icon type="minus" onClick={() => reduceReward(index1, index2, index3)} style={{ fontSize: "16px", margin: '0 .25rem' }} className={lengthThreholds(index1, index2) - 1 === index3 ? 'showDeletePresent' : "hideDeletePresent"} />
+          <Icon
+            type="minus"
+            onClick={() => reduceReward(index1, index2, index3)}
+            style={{ fontSize: "16px", margin: "0 .25rem" }}
+            className={
+              lengthThreholds(index1, index2) - 1 === index3
+                ? "showDeletePresent"
+                : "hideDeletePresent"
+            }
+          />
           <Input
             // value={indexShop2[index1].rewards[index2].numb}
             placeholder="số"
             type="number"
             name="pucharseTimes"
-            onChange={e => handleChooseNumbRewards(index1, index2, index3, e.target.value)}
+            onChange={(e) =>
+              handleChooseNumbRewards(index1, index2, index3, e.target.value)
+            }
             style={{ width: "20%" }}
           ></Input>
           <Select
             mode="multiple"
             placeholder="quà"
             // default
-            value={tranformValue(indexShop2[index1].detail[index2].thresholds[index3].rewards)}
+            value={tranformValue(
+              indexShop2[index1].detail[index2].thresholds[index3].rewards
+            )}
             style={{ width: "80%" }}
             // onChange={value => demo(value)}
-            onSelect={value => handleSelectedRewards(index1, index2, index3, value)}
-            onDeselect={value => handleDeselectedRewards(index1, index2, index3, value)}
+            onSelect={(value) =>
+              handleSelectedRewards(index1, index2, index3, value)
+            }
+            onDeselect={(value) =>
+              handleDeselectedRewards(index1, index2, index3, value)
+            }
           >
             {printListItemsRewards(index1)}
           </Select>{" "}
         </div>
       ));
       return (
-        <Row md={20} key={index2 + "b"} >
+        <Row md={20} key={index2 + "b"}>
           <Col md={8} style={{ display: "flex" }}>
-            <Icon type="minus" onClick={() => reduceStep(index1, index2)} style={{ fontSize: "16px", margin: '0 .25rem' }} />
+            <Icon
+              type="minus"
+              onClick={() => reduceStep(index1, index2)}
+              style={{ fontSize: "16px", margin: "0 .25rem" }}
+            />
             <Input
               value={indexShop2[index1].detail[index2].requiredQuantity}
               placeholder="số lượng item"
               type="number"
-              min={index2 > 0 ? indexShop2[index1].detail[index2 - 1].requiredQuantity : 0}
+              min={
+                index2 > 0
+                  ? indexShop2[index1].detail[index2 - 1].requiredQuantity
+                  : 0
+              }
               name="pucharseTimes"
-              onChange={e => handleChooseNumbItems(index1, index2, e.target.value)}
+              onChange={(e) =>
+                handleChooseNumbItems(index1, index2, e.target.value)
+              }
               style={{ width: "100%" }}
             ></Input>
             <Input
               value={indexShop2[index1].detail[index2].description}
               placeholder="description"
               name="description"
-              onChange={e => handleSetDescription(index1, index2, e.target.value)}
+              onChange={(e) =>
+                handleSetDescription(index1, index2, e.target.value)
+              }
               style={{ width: "100%" }}
             ></Input>
           </Col>
@@ -393,12 +485,21 @@ function EventByItems(props) {
     return (
       <div>
         <Col md={6} key={index1 + "c"} style={{ display: "flex" }}>
-          <Icon type="minus" onClick={() => reduceItems(index1)} style={{ fontSize: "16px", margin: '0 .25rem' }} className={indexShop2.length - 1 === index1 ? 'showDeletePresent' : "hideDeletePresent"} />
+          <Icon
+            type="minus"
+            onClick={() => reduceItems(index1)}
+            style={{ fontSize: "16px", margin: "0 .25rem" }}
+            className={
+              indexShop2.length - 1 === index1
+                ? "showDeletePresent"
+                : "hideDeletePresent"
+            }
+          />
           <Select
             placeholder="tên item"
             // value={indexShop[index1].rewards[index2].itemId}
             style={{ width: "100%" }}
-            onChange={value => handleChooseItems(index1, value)}
+            onChange={(value) => handleChooseItems(index1, value)}
           >
             {printListItems}
           </Select>{" "}
@@ -497,7 +598,11 @@ function EventByItems(props) {
       <Row>
         {/* {printItem} */}
         {printStep}
-        <Button onClick={() => addItems()} style={{ marginLeft: "1.5rem" }} disabled={filteredOptions.length === 0 ? true : false}>
+        <Button
+          onClick={() => addItems()}
+          style={{ marginLeft: "1.5rem" }}
+          disabled={filteredOptions.length === 0 ? true : false}
+        >
           Add more items
         </Button>
         {/* <Button onClick={() => addItem()} style={{ margin: "1rem 1.5rem" }}>

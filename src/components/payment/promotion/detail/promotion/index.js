@@ -45,6 +45,7 @@ function DetailPromotion(props) {
   const { refetch } = useQuery(getDetailPromotion(promoId), {
     fetchPolicy: "cache-and-network",
     onCompleted: data => {
+      console.log(data.listPromotions[0])
       dispatchDetailPromoAndEvent(data.listPromotions[0]);
     },
     onError: (index) =>

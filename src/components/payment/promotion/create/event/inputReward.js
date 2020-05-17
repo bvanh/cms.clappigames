@@ -51,7 +51,12 @@ function InputrewardForShowByMoney(props) {
   const [indexShop, setIndexShop] = useState([
     {
       point: 1,
-      rewards: [],
+      rewards: [
+        {
+          id: "",
+          name: "",
+        },
+      ],
     },
   ]);
   const [indexShop2, setIndexShop2] = useState([
@@ -60,10 +65,10 @@ function InputrewardForShowByMoney(props) {
       rewards: {
         type: "",
         id: "",
-        name: ""
-      }
-    }
-  ])
+        name: "",
+      },
+    },
+  ]);
   const { isShow, itemsForEventTypeMoney } = listItemForEvent;
   const resetInput = useMemo(() => {
     setIndexShop([
@@ -132,22 +137,21 @@ function InputrewardForShowByMoney(props) {
       req: {
         name: name,
         status: status,
+        startedAt: timeTotal[0],
+        endedAt: timeTotal[1],
         paymentType: props.nameEventByMoney,
         eventTime: JSON.stringify({
-          startTime: timeTotal[0],
-          endTime: timeTotal[1],
           dates: dates,
           days: daily,
           hours: [startTime, endTime],
         }),
         config: JSON.stringify({
-          type: props.typeEventByMoney,
-          data: indexShop,
+          data: indexShop2,
         }),
         linkUrl: linkUrl,
         imageUrl: props.imageUrl,
         prefix: prefixPromo,
-        supportUrl: linkSupport
+        supportUrl: linkSupport,
       },
     },
     onCompleted: (data) => {
@@ -164,23 +168,23 @@ function InputrewardForShowByMoney(props) {
         name: name,
         status: status,
         paymentType: props.nameEventByMoney,
+        startedAt: moment(timeTotal[0]).format("YYYY-MM-DD hh:mm"),
+        endedAt: moment(timeTotal[1]).format("YYYY-MM-DD hh:mm"),
         eventTime: JSON.stringify({
-          startTime: moment(timeTotal[0]).format("YYYY-MM-DD hh:mm"),
-          endTime: moment(timeTotal[1]).format("YYYY-MM-DD hh:mm"),
           dates: dates,
           days: daily,
           hours: [checkStartHour(startTime), checkEndHour(endTime)],
         }),
         config: JSON.stringify({
-          game: platformId,
-          server: server,
           type: props.typeEventByMoney,
           data: indexShop,
         }),
+        gameId: platformId,
+        serverId: server,
         linkUrl: linkUrl,
         imageUrl: props.imageUrl,
         prefix: prefixPromo,
-        supportUrl: linkSupport
+        supportUrl: linkSupport,
       },
     },
     onCompleted: (data) => {
@@ -202,11 +206,11 @@ function InputrewardForShowByMoney(props) {
       )
     ) {
       if (props.nameEventByMoney === "MONEY") {
-        if (checkRewardsIsEmtry(indexShop) && checkPoint(indexShop)) {
+        // if (checkRewardsIsEmtry(indexShop2) && checkPoint(indexShop2)) {
           createEventByMoney();
-        } else {
-          alertErrorItemPromo();
-        }
+        // } else {
+        //   alertErrorItemPromo();
+        // }
       } else if (props.nameEventByMoney === "COIN") {
         if (
           checkRewardsIsEmtry(indexShop) &&
@@ -226,29 +230,29 @@ function InputrewardForShowByMoney(props) {
   const changeTypeRewards = (positionItem, val) => {
     const newShop = [...indexShop2];
     newShop[positionItem].rewards.type = val;
-    setIndexShop2(newShop)
-  }
+    setIndexShop2(newShop);
+  };
   const addItem2 = () => {
     const newItem = {
       point: indexShop2[indexShop2.length - 1].point,
       rewards: {
         type: "",
-        id: '',
-        name: ""
+        id: "",
+        name: "",
       },
-    }
-    setIndexShop2([...indexShop2, newItem])
-  }
+    };
+    setIndexShop2([...indexShop2, newItem]);
+  };
   const handleStep = (positionItem, value) => {
     const newItem = [...indexShop2];
-    newItem[positionItem].point = value;
-    setIndexShop2(newItem)
-  }
+    newItem[positionItem].point = Number(value);
+    setIndexShop2(newItem);
+  };
   const handleChooseInKind = (positionItem, value) => {
     const newItem = [...indexShop2];
     newItem[positionItem].rewards.name = value;
-    setIndexShop2(newItem)
-  }
+    setIndexShop2(newItem);
+  };
   const addItem = () => {
     const newItem = {
       point: indexShop[indexShop.length - 1].point,
@@ -264,7 +268,7 @@ function InputrewardForShowByMoney(props) {
   };
   const handleChooseItem = (positionItem, value) => {
     const newItem = [...indexShop];
-    newItem[positionItem].rewards = value;
+    newItem[positionItem].rewards = value.map(val=>JSON.parse(val));
     setIndexShop(newItem);
   };
   const handleChooseNumbItem = (positionItem, e) => {
@@ -279,13 +283,13 @@ function InputrewardForShowByMoney(props) {
     setIndexShop(newItem);
   };
   const setCoinForEventTypeMoney = (e) => {
-    const convertValue = JSON.parse(e)
+    const convertValue = JSON.parse(e);
     const newItem = [...indexShop2];
     newItem[rowItems].rewards.id = convertValue.id;
     newItem[rowItems].rewards.name = convertValue.name;
     setIndexShop(newItem);
     setItemNumb(null);
-    console.log(e)
+    console.log(e);
   };
   const submitCreateItem = async () => {
     if (itemNumb !== null) {
@@ -299,12 +303,18 @@ function InputrewardForShowByMoney(props) {
     setItemNumb(null);
   };
   const printListItems = itemsForEventTypeMoney.map((val, index) => (
-    <Option value={val.partnerProductId} key={index}>
+    <Option
+      value={`{"id":"${val.productId}","name":"${val.productName}"}`}
+      key={index}
+    >
       {val.productName}
     </Option>
   ));
   const printListItemsEvent = coinEvent.map((val, index) => (
-    <Option value={`{"id":"${val.productId}","name":"${val.productName}"}`} key={index}>
+    <Option
+      value={`{"id":"${val.productId}","name":"${val.productName}"}`}
+      key={index}
+    >
       {val.productName}
     </Option>
   ));
@@ -318,7 +328,7 @@ function InputrewardForShowByMoney(props) {
       </Radio>
     </Col>
   ));
-  console.log(indexShop2)
+  console.log(indexShop2);
   const printItemOutGame = indexShop2.map(function (val, index1) {
     return (
       <div
@@ -334,19 +344,25 @@ function InputrewardForShowByMoney(props) {
             name="pucharseTimes"
             onChange={(e) => handleStep(index1, e.target.value)}
           ></Input>
-          <span style={{ marginLeft: ".2rem" }}>
-            VNĐ
-          </span>
+          <span style={{ marginLeft: ".2rem" }}>VNĐ</span>
         </div>
         <div className="promo-input-item-input">
           {val.rewards.type === "" && (
             <>
-              <Button type="primary" onClick={() => changeTypeRewards(index1, 'INKIND')} ghost>
+              <Button
+                type="primary"
+                onClick={() => changeTypeRewards(index1, "INKIND")}
+                ghost
+              >
                 Gift's out game
-             </Button>
-              <Button type="primary" onClick={() => changeTypeRewards(index1, 'COIN')} ghost>
+              </Button>
+              <Button
+                type="primary"
+                onClick={() => changeTypeRewards(index1, "COIN")}
+                ghost
+              >
                 C.coin
-             </Button>
+              </Button>
             </>
           )}
           {val.rewards.type === "INKIND" && (
@@ -371,7 +387,11 @@ function InputrewardForShowByMoney(props) {
                 style={{ width: "35%", display: "flex", alignItems: "center" }}
               >
                 <Select
-                  value={indexShop2[index1].rewards.id !== "" ? `{"id":"${indexShop2[index1].rewards.id}","name":"${indexShop2[index1].rewards.name}"}` : ""}
+                  value={
+                    indexShop2[index1].rewards.id !== ""
+                      ? `{"id":"${indexShop2[index1].rewards.id}","name":"${indexShop2[index1].rewards.name}"}`
+                      : ""
+                  }
                   dropdownClassName="dropdown-coin-event"
                   showArrow={false}
                   style={{ width: "90%" }}
@@ -394,8 +414,8 @@ function InputrewardForShowByMoney(props) {
           )}
         </div>
       </div>
-    )
-  })
+    );
+  });
   const printItem = indexShop.map(function (val, index1) {
     return (
       <div
@@ -418,7 +438,7 @@ function InputrewardForShowByMoney(props) {
         <div className="promo-input-item-input">
           <Select
             mode="multiple"
-            value={indexShop[index1].rewards}
+            // value={indexShop[index1].rewards}
             style={{ width: "80%" }}
             onChange={(value) => handleChooseItem(index1, value)}
           >
@@ -450,14 +470,14 @@ function InputrewardForShowByMoney(props) {
         {props.typeEventByMoney === "ITEM" ? (
           <>
             {printItem}
-            < Button onClick={() => addItem()}>Add more conditions </ Button>
+            <Button onClick={() => addItem()}>Add more conditions </Button>
           </>
         ) : (
-            <>
-              {printItemOutGame}
-              <Button onClick={() => addItem2()}>Add more conditions</Button>
-            </>
-          )}
+          <>
+            {printItemOutGame}
+            <Button onClick={() => addItem2()}>Add more conditions</Button>
+          </>
+        )}
       </Row>
       <Modal
         title="Choose C.coin package"
@@ -476,15 +496,13 @@ function InputrewardForShowByMoney(props) {
             value={itemNumb}
             onChange={(e) => setItemNumb(e.target.value)}
           ></Input>
-          <Button onClick={submitCreateItem}>
-            Submit
-          </Button>
+          <Button onClick={submitCreateItem}>Submit</Button>
         </div>
         <Radio.Group onChange={(e) => setCoinForEventTypeMoney(e.target.value)}>
           {printItemsForEventTypeMoney}
         </Radio.Group>
       </Modal>
-    </div >
+    </div>
   );
 }
 

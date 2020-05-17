@@ -8,20 +8,29 @@ import { getDetailPromotion } from "../../../../utils/query/promotion";
 import { getListPartnerProducts } from "../../../../utils/queryPartnerProducts";
 import {
   dispatchDeatilPromo,
-  dispatchDetailPromo
+  dispatchDetailPromo,
 } from "../../../../redux/actions/index";
 import { useQuery, useLazyQuery } from "react-apollo";
 const { Option } = Select;
 const { RangePicker } = DatePicker;
 
 function TimePromo(props) {
-  const { name, status, eventTime, type, shop, game } = props.detailPromo;
+  const {
+    name,
+    status,
+    eventTime,
+    type,
+    shop,
+    game,
+    startedAt,
+    endedAt,
+  } = props.detailPromo;
   if (eventTime) {
-    const { startTime, endTime, hour, dates, daily } = JSON.parse(eventTime);
+    const { hours, dates, days } = JSON.parse(eventTime);
     const printAlertDatesPromo = dates.map((val, i) => (
       <Fragment key={i}> {val}rd,</Fragment>
     ));
-    const alertDailyPromo = printAlertDailyPromo(daily);
+    const alertDailyPromo = printAlertDailyPromo(days);
     console.log(eventTime);
     // const printAlertTimeTotalPromo = timeTotalAlert.map((val, i) => <>{val}</>);
     const childrenDates = [];
@@ -33,7 +42,7 @@ function TimePromo(props) {
         {val}
       </Option>
     ));
-    console.log(endTime);
+    console.log(endedAt);
     return (
       <Col md={12} className="section2-promotion">
         <div>
@@ -44,8 +53,8 @@ function TimePromo(props) {
               showTime={{ format: "HH:mm" }}
               format="DD-MM-YYYY HH:mm"
               value={[
-                moment(startTime, "DD-MM-YYYY HH:mm"),
-                moment(endTime, "DD-MM-YYYY HH:mm")
+                moment(startedAt, "DD-MM-YYYY HH:mm"),
+                moment(endedAt, "DD-MM-YYYY HH:mm"),
               ]}
             />
           </div>
@@ -57,7 +66,7 @@ function TimePromo(props) {
               placeholder="- Choose what day of the month the promotion is..."
               value={dates}
               dropdownClassName="dropdown-coin-event"
-              disabled={daily.length !== 0 ? true : false}
+              disabled={days.length !== 0 ? true : false}
             >
               {childrenDates}
             </Select>
@@ -68,7 +77,7 @@ function TimePromo(props) {
               mode="multiple"
               style={{ width: "80%" }}
               placeholder="- Choose what day of the week the promotion is..."
-              value={daily}
+              value={days}
               dropdownClassName="dropdown-coin-event"
               disabled={dates.length !== 0 ? true : false}
             >
@@ -77,27 +86,29 @@ function TimePromo(props) {
           </div>
           <div className="section2-promotion-pickTime">
             <h3>Time:</h3>
-            <div style={{width:"80%"}}>
-            <TimePicker
-              format={"HH:mm"}
-              style={{width:"50%"}}
-              defaultValue={moment(hour[0], "HH:mm")}
-              showClear={false}
-              placeholder="- Giờ bắt đầu"
-            />
-            <TimePicker
-              format={"HH:mm"}
-              style={{width:"50%"}}
-              defaultValue={moment(hour[1], "HH:mm")}
-              placeholder="- Giờ kết thúc"
-              showClear={false}
-            />
+            <div style={{ width: "80%" }}>
+              <TimePicker
+                format={"HH:mm"}
+                style={{ width: "50%" }}
+                defaultValue={moment(hours[0], "HH:mm")}
+                showClear={false}
+                placeholder="- Giờ bắt đầu"
+              />
+              <TimePicker
+                format={"HH:mm"}
+                style={{ width: "50%" }}
+                defaultValue={moment(hours[1], "HH:mm")}
+                placeholder="- Giờ kết thúc"
+                showClear={false}
+              />
             </div>
           </div>
         </div>
         <div style={{ background: "whitesmoke", color: "red" }}>
-         Promotion's timeline will be on {hour[0]==='00:00:00'?"":`${hour[0]} 'to' ${hour[1]}`} {alertDailyPromo}
-          {printAlertDatesPromo} from {startTime} to {endTime}
+          Promotion's timeline will be on{" "}
+          {hours[0] === "00:00:00" ? "" : `${hours[0]} 'to' ${hours[1]}`}{" "}
+          {alertDailyPromo}
+          {printAlertDatesPromo} from {startedAt} to {endedAt}
         </div>
       </Col>
     );
@@ -108,7 +119,7 @@ function TimePromo(props) {
 
 function mapStateToProps(state) {
   return {
-    detailPromo: state.detailPromo
+    detailPromo: state.detailPromo,
   };
 }
 export default connect(mapStateToProps, null)(TimePromo);

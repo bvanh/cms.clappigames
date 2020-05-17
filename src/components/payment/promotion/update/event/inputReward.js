@@ -304,7 +304,7 @@ function InputRewardForShowByMoney(props) {
       }}
       key={index1}
     >
-      <div style={{ width: "15%", display: "flex", alignItems: "center" }}>
+      <div style={{ width: "20%", display: "flex", alignItems: "center" }}>
         <span style={{ marginRight: ".2rem" }}>From</span>
         <Input
           value={val.point}
@@ -320,7 +320,7 @@ function InputRewardForShowByMoney(props) {
       </div>
       <div
         className="promo-input-coin-event"
-        style={{ width: "85%", paddingLeft: "1rem" }}
+        style={{ width: "80%", paddingLeft: "1rem" }}
       >
         <div style={{ width: "35%", display: "flex", alignItems: "center" }}>
           <Select

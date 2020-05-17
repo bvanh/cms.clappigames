@@ -27,9 +27,10 @@ const createEvent = gql`
       id
       name
       paymentType
-      linkUrl,
-      imageUrl,
+      linkUrl
+      imageUrl
       prefix
+      config
     }
   }
 `;
