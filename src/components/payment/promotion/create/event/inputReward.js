@@ -8,8 +8,10 @@ import {
 } from "../../../../../utils/mutation/promotion";
 import {
   checkMainInfoPromoAndEvent,
+  checkRewardsEventOutGame,
   checkRewardsIsEmtry,
   checkPoint,
+  checkLinkAndThumbnail,
   alertErrorNamePromo,
   alertErrorItemPromo,
   checkEndHour,
@@ -29,7 +31,7 @@ function InputrewardForShowByMoney(props) {
     itemsForEventTypeMoney: [{ productName: "", partnerProductId: "" }],
   });
   const [coinEvent, setCoinEvent] = useState([
-    { productId: "", productName: "" },
+    { partnerProductId: "", productName: "" },
   ]);
   const {
     name,
@@ -137,6 +139,8 @@ function InputrewardForShowByMoney(props) {
       req: {
         name: name,
         status: status,
+        gameId: '5A6DC0B0-B02B-40FB-BA2C-3C42EC442B89',
+        serverId: 0,
         startedAt: timeTotal[0],
         endedAt: timeTotal[1],
         paymentType: props.nameEventByMoney,
@@ -203,14 +207,12 @@ function InputrewardForShowByMoney(props) {
         timeTotal[0],
         startTime,
         endTime
-      )
+      ) && checkLinkAndThumbnail(linkUrl, linkSupport, props.imageUrl)
     ) {
       if (props.nameEventByMoney === "MONEY") {
-        // if (checkRewardsIsEmtry(indexShop2) && checkPoint(indexShop2)) {
+        if (checkRewardsEventOutGame(indexShop2) && checkPoint(indexShop2)) {
           createEventByMoney();
-        // } else {
-        //   alertErrorItemPromo();
-        // }
+        }
       } else if (props.nameEventByMoney === "COIN") {
         if (
           checkRewardsIsEmtry(indexShop) &&
@@ -219,12 +221,8 @@ function InputrewardForShowByMoney(props) {
           server !== ""
         ) {
           createEventByMoneyForItem();
-        } else {
-          alertErrorItemPromo();
         }
       }
-    } else {
-      alertErrorNamePromo();
     }
   };
   const changeTypeRewards = (positionItem, val) => {
@@ -268,7 +266,7 @@ function InputrewardForShowByMoney(props) {
   };
   const handleChooseItem = (positionItem, value) => {
     const newItem = [...indexShop];
-    newItem[positionItem].rewards = value.map(val=>JSON.parse(val));
+    newItem[positionItem].rewards = value.map(val => JSON.parse(val));
     setIndexShop(newItem);
   };
   const handleChooseNumbItem = (positionItem, e) => {
@@ -304,7 +302,7 @@ function InputrewardForShowByMoney(props) {
   };
   const printListItems = itemsForEventTypeMoney.map((val, index) => (
     <Option
-      value={`{"id":"${val.productId}","name":"${val.productName}"}`}
+      value={`{"id":"${val.partnerProductId}","name":"${val.productName}"}`}
       key={index}
     >
       {val.productName}
@@ -328,7 +326,7 @@ function InputrewardForShowByMoney(props) {
       </Radio>
     </Col>
   ));
-  console.log(indexShop2);
+  console.log(indexShop);
   const printItemOutGame = indexShop2.map(function (val, index1) {
     return (
       <div
@@ -473,11 +471,11 @@ function InputrewardForShowByMoney(props) {
             <Button onClick={() => addItem()}>Add more conditions </Button>
           </>
         ) : (
-          <>
-            {printItemOutGame}
-            <Button onClick={() => addItem2()}>Add more conditions</Button>
-          </>
-        )}
+            <>
+              {printItemOutGame}
+              <Button onClick={() => addItem2()}>Add more conditions</Button>
+            </>
+          )}
       </Row>
       <Modal
         title="Choose C.coin package"

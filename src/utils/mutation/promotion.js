@@ -10,6 +10,8 @@ const createPromotion = gql`
       linkUrl
       imageUrl
       prefix
+      startedAt
+      endedAt
     }
   }
 `;
@@ -31,6 +33,9 @@ const createEvent = gql`
       imageUrl
       prefix
       config
+      eventTime
+      startedAt
+      endedAt
     }
   }
 `;

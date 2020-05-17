@@ -116,11 +116,9 @@ const checkMainInfoPromoAndEvent = (
     return false;
   }
 };
-const checkLinkAndThumbnail = (link, thumbnail) => {
-  console.log(link,thumbnail)
-  if (link === "" || thumbnail === null) {
+const checkLinkAndThumbnail = (linkPost, linkSupport, thumbnail) => {
+  if (linkPost === "" || linkSupport === "" || thumbnail === null) {
     alertErrorItemPromo("Link post and thumbnail is emtry !")
-    console.log("Link post and thumbnail is emtry !")
     return false;
   } else {
     return true;
@@ -189,15 +187,27 @@ const checkRewardsEmtry = (indexShop) => {
   if (res === false) alertErrorItemPromo("Present is emtry !");
   return res;
 };
-const checkRewardsIsEmtry = (indexShop) => {
-  const result = indexShop.map((val, i) => {
-    if (val.rewards.length > 0 && val.rewards[0] !== "") {
-      return true;
-    } else {
-      return false;
+const checkRewardsIsEmtry = indexShop => {
+  let res = true;
+  indexShop.map((val, i) => {
+    if (val.rewards.length === 0) {
+      res = false;
+      return;
     }
   });
-  return result.every((val, i) => val != false);
+  if (res === false) alertErrorItemPromo("Present is emtry !");
+  return res;
+}
+const checkRewardsEventOutGame = (indexShop) => {
+  let res = true;
+  indexShop.map((val, i) => {
+    if (val.rewards.name == "") {
+      res = false;
+      return;
+    }
+  });
+  if (res === false) alertErrorItemPromo("Present is emtry !");
+  return res;
 };
 const checkItemIsEmtry = (indexShop) => {
   let demo = [];
@@ -213,12 +223,17 @@ const checkItemIsEmtry = (indexShop) => {
   return demo.every((val, i) => val != false);
 };
 const checkPoint = (indexShop) => {
-  const demo = indexShop.map((val, i) => {
+  let res = true;
+  indexShop.map((val, i) => {
+    if (res === false) {
+      return;
+    }
     if (i > 0) {
-      return val.point > indexShop[i - 1].point;
+      res = val.point > indexShop[i - 1].point;
     }
   });
-  return demo.every((val, i) => val === true || val === undefined);
+  if (res === false) alertErrorItemPromo("Milestones are sorted by increasing !");
+  return res;
 };
 const checkNumb = (indexShop) => {
   const demo = indexShop.map((val, i) => {
@@ -268,7 +283,7 @@ const alertErrorNamePromo = () => {
     title: "Error!!!",
     content: (
       <div>
-        <p>+ Check again promotion name, status, time.</p>
+        <p>+ Check again promotion name, status, time and type present</p>
       </div>
     ),
   });
@@ -293,6 +308,7 @@ export {
   checkDescriptionEmtry,
   checkMainInfoPromoAndEvent,
   checkRewardsIsEmtry,
+  checkRewardsEventOutGame,
   checkItemIsEmtry,
   checkPoint,
   checkNumb,

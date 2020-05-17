@@ -63,15 +63,13 @@ function ListEvents(props) {
     },
     {
       title: "Method",
-      dataIndex: "config",
+      dataIndex: "paymentType",
       key: "type",
       render: index => {
-        if (JSON.parse(index).type === 'INKIND') {
-          return <span>Tặng quà out Game</span>
-        } else if (JSON.parse(index).type === 'COIN') {
-          return <span>Tặng C.COIN</span>
-        } else {
+        if (index === 'COIN') {
           return <span>Tặng Item in Game</span>
+        } else {
+          return <span>Tặng Item OUT Game</span>
         }
       }
     },

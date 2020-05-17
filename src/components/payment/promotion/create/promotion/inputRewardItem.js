@@ -114,7 +114,7 @@ function EventByItems(props) {
       checkStepEmtry(indexShop2) &&
       checkDescriptionEmtry(indexShop2) &&
       checkRewardsEmtry(indexShop2) &&
-      checkLinkAndThumbnail(linkUrl, props.imageUrl)
+      checkLinkAndThumbnail(linkUrl,linkSupport, props.imageUrl)
     ) {
       createPromo();
       // console.log("src");
@@ -386,7 +386,7 @@ function EventByItems(props) {
   const printListItemsRewards = (i) =>
     filterRewards(i).map((val, index) => (
       <Option
-        value={`{"name":"${val.productName}","id":"${val.partnerProductId}"}`}
+        value={`{"id":"${val.partnerProductId}","name":"${val.productName}"}`}
         key={index}
       >
         {val.productName}
@@ -407,7 +407,7 @@ function EventByItems(props) {
             }
           />
           <Input
-            // value={indexShop2[index1].rewards[index2].numb}
+            value={indexShop2[index1].detail[index2].thresholds[index3].quantity}
             placeholder="số"
             type="number"
             name="pucharseTimes"
